@@ -212,6 +212,9 @@ Variables</h2></td></tr>
 <tr class="memitem:a3a7808dc58cf90a67c0d294d8a7893d9" id="r_a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
 <tr class="memitem:a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9">has_thermal_properties</a> = false</td></tr>
 <tr class="separator:a3a7808dc58cf90a67c0d294d8a7893d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1f23bd57892ec3af3d23132ae15fccb" id="r_ad1f23bd57892ec3af3d23132ae15fccb"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:ad1f23bd57892ec3af3d23132ae15fccb"><td class="memTemplItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#ad1f23bd57892ec3af3d23132ae15fccb">temperature_property_index</a> = -1</td></tr>
+<tr class="separator:ad1f23bd57892ec3af3d23132ae15fccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acda69e5351674a5179ca3a949874ef4b" id="r_acda69e5351674a5179ca3a949874ef4b"><td class="memTemplParams" colspan="2">template&lt;typename PropertiesIndex &gt; </td></tr>
 <tr class="memitem:acda69e5351674a5179ca3a949874ef4b"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">has_fluid_coupling_properties</a> = false</td></tr>
 <tr class="separator:acda69e5351674a5179ca3a949874ef4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -260,7 +263,7 @@ template&lt;typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00400">400</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00416">416</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>
@@ -1359,7 +1362,7 @@ template&lt;typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00376">376</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00392">392</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>
@@ -1395,6 +1398,41 @@ template&lt;typename PropertiesIndex &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00355">355</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+
+</div>
+</div>
+<a id="ad1f23bd57892ec3af3d23132ae15fccb" name="ad1f23bd57892ec3af3d23132ae15fccb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1f23bd57892ec3af3d23132ae15fccb">&#9670;&#160;</a></span>temperature_property_index</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int DEM::temperature_property_index = -1</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The index of the temperature property in a properties index set. </p>
+<p>This is the property start index passed to the <a class="el" href="classParticleFieldQCM.html" title="ParticleFieldQCM calculator. This class stores the required information for the calculation of a fiel...">ParticleFieldQCM</a> used to project the particle temperature; -1 indicates that the projection is not to be done.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">PropertiesIndex</td><td>Index of the properties used within the ParticleHandler. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00375">375</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>

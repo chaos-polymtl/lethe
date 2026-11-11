@@ -481,73 +481,89 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>  <span class="keyword">template</span> &lt;&gt;</div>
 <div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span></div>
 <div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    has_thermal_properties&lt;CFDDEMMPProperties::PropertiesIndex&gt; = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span> </div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span><span class="comment"></span> </div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span><span class="comment">   * @brief Whether a properties index set carries fluid coupling properties.</span></div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span><span class="comment">   * This is true for the index sets used by the CFD-DEM solvers, which store</span></div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span><span class="comment">   * the fluid-particle interaction forces and torques, the volumetric</span></div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span><span class="comment">   * contribution and the momentum transfer coefficient of every particle.</span></div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span><span class="comment">   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.</span></div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno"><a class="line" href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">  376</a></span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">has_fluid_coupling_properties</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span> </div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>  <span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    has_fluid_coupling_properties&lt;CFDDEMProperties::PropertiesIndex&gt; = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span> </div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>  <span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    has_fluid_coupling_properties&lt;CFDDEMMPProperties::PropertiesIndex&gt; = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span> </div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span><span class="comment"></span> </div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span><span class="comment">   * @brief The pure DEM index set matching a given index set.</span></div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span><span class="comment">   * A CFD-DEM simulation is usually started from the checkpoint of a pure DEM</span></div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span><span class="comment">   * simulation, whose particle handler carries fewer properties. This alias</span></div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span><span class="comment">   * gives the index set that checkpoint must have been written with: a</span></div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span><span class="comment">   * multiphysics CFD-DEM simulation is always restarted from a multiphysics</span></div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span><span class="comment">   * DEM simulation, so that the temperature and the specific heat of the</span></div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span><span class="comment">   * particles are carried over rather than reset.</span></div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span><span class="comment">   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.</span></div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">  400</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">matching_dem_properties_index</a> =</div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>    std::conditional_t&lt;has_thermal_properties&lt;PropertiesIndex&gt;,</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                       <a class="code hl_enumeration" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEMMPProperties::PropertiesIndex</a>,</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                       <a class="code hl_enumeration" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEMProperties::PropertiesIndex</a>&gt;;</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span> </div>
-<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span><span class="comment"></span> </div>
-<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span><span class="comment">   * @brief Controls the name of output variables for the vtu.</span></div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span><span class="comment">   * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span><span class="comment">   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.</span></div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
-<div class="foldopen" id="foldopen00412" data-start="{" data-end="};">
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno"><a class="line" href="classDEM_1_1ParticleProperties.html">  412</a></span>  <span class="keyword">class </span><a class="code hl_class" href="classDEM_1_1ParticleProperties.html">ParticleProperties</a></div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>  {</div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>  <span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span><span class="comment">    /**</span></div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span><span class="comment">     * @brief Return the names of each DEM property. Used to properly generate</span></div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span><span class="comment">     * output files.</span></div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span><span class="comment">     * @return A vector with the names of each property.</span></div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    <span class="keyword">static</span> std::vector&lt;std::pair&lt;std::string, int&gt;&gt;</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>    <a class="code hl_function" href="classDEM_1_1ParticleProperties.html#ae8bbaccc0e3dad899903c49dbbd1a612">get_properties_name</a>();</div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>  };</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span><span class="comment"></span> </div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span><span class="comment">   * @brief The index of the temperature property in a properties index set.</span></div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span><span class="comment">   * This is the property start index passed to the ParticleFieldQCM used</span></div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span><span class="comment">   * to project the particle temperature; -1 indicates that the projection is</span></div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span><span class="comment">   * not to be done.</span></div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span><span class="comment">   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.</span></div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ad1f23bd57892ec3af3d23132ae15fccb">  375</a></span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceDEM.html#ad1f23bd57892ec3af3d23132ae15fccb">temperature_property_index</a> = -1;</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span> </div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>  <span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span></div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>    temperature_property_index&lt;CFDDEMMPProperties::PropertiesIndex&gt; =</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>      <a class="code hl_enumvalue" href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3caf4aabb12c893362b361818df1d3af37e">CFDDEMMPProperties::T</a>;</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span><span class="comment"></span> </div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span><span class="comment">   * @brief Whether a properties index set carries fluid coupling properties.</span></div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span><span class="comment">   * This is true for the index sets used by the CFD-DEM solvers, which store</span></div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span><span class="comment">   * the fluid-particle interaction forces and torques, the volumetric</span></div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span><span class="comment">   * contribution and the momentum transfer coefficient of every particle.</span></div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span><span class="comment">   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.</span></div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno"><a class="line" href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">  392</a></span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">has_fluid_coupling_properties</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>  <span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>    has_fluid_coupling_properties&lt;CFDDEMProperties::PropertiesIndex&gt; = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span> </div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>  <span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>  <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    has_fluid_coupling_properties&lt;CFDDEMMPProperties::PropertiesIndex&gt; = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span><span class="comment"></span> </div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span><span class="comment">   * @brief The pure DEM index set matching a given index set.</span></div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span><span class="comment">   * A CFD-DEM simulation is usually started from the checkpoint of a pure DEM</span></div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span><span class="comment">   * simulation, whose particle handler carries fewer properties. This alias</span></div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span><span class="comment">   * gives the index set that checkpoint must have been written with: a</span></div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span><span class="comment">   * multiphysics CFD-DEM simulation is always restarted from a multiphysics</span></div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span><span class="comment">   * DEM simulation, so that the temperature and the specific heat of the</span></div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span><span class="comment">   * particles are carried over rather than reset.</span></div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span><span class="comment">   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.</span></div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">  416</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">matching_dem_properties_index</a> =</div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>    std::conditional_t&lt;has_thermal_properties&lt;PropertiesIndex&gt;,</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>                       <a class="code hl_enumeration" href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8">DEMMPProperties::PropertiesIndex</a>,</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>                       <a class="code hl_enumeration" href="namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987">DEMProperties::PropertiesIndex</a>&gt;;</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span> </div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span><span class="comment"></span> </div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span><span class="comment">   * @brief Controls the name of output variables for the vtu.</span></div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span><span class="comment">   * @tparam dim An integer that denotes the number of spatial dimensions.</span></div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span><span class="comment">   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.</span></div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
+<div class="foldopen" id="foldopen00428" data-start="{" data-end="};">
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno"><a class="line" href="classDEM_1_1ParticleProperties.html">  428</a></span>  <span class="keyword">class </span><a class="code hl_class" href="classDEM_1_1ParticleProperties.html">ParticleProperties</a></div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>  {</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>  <span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span><span class="comment">    /**</span></div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span><span class="comment">     * @brief Return the names of each DEM property. Used to properly generate</span></div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span><span class="comment">     * output files.</span></div>
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span><span class="comment">     * @return A vector with the names of each property.</span></div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>    <span class="keyword">static</span> std::vector&lt;std::pair&lt;std::string, int&gt;&gt;</div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>    <a class="code hl_function" href="classDEM_1_1ParticleProperties.html#ae8bbaccc0e3dad899903c49dbbd1a612">get_properties_name</a>();</div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>  };</div>
 </div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span> </div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>} <span class="comment">// namespace DEM</span></div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span> </div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>} <span class="comment">// namespace DEM</span></div>
 </div>
-<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span> </div>
-<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassDEM_1_1ParticleProperties_html"><div class="ttname"><a href="classDEM_1_1ParticleProperties.html">DEM::ParticleProperties</a></div><div class="ttdoc">Controls the name of output variables for the vtu.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00412">dem_properties.h:413</a></div></div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span> </div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassDEM_1_1ParticleProperties_html"><div class="ttname"><a href="classDEM_1_1ParticleProperties.html">DEM::ParticleProperties</a></div><div class="ttdoc">Controls the name of output variables for the vtu.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00428">dem_properties.h:429</a></div></div>
 <div class="ttc" id="aclassDEM_1_1ParticleProperties_html_ae8bbaccc0e3dad899903c49dbbd1a612"><div class="ttname"><a href="classDEM_1_1ParticleProperties.html#ae8bbaccc0e3dad899903c49dbbd1a612">DEM::ParticleProperties::get_properties_name</a></div><div class="ttdeci">static std::vector&lt; std::pair&lt; std::string, int &gt; &gt; get_properties_name()</div><div class="ttdoc">Return the names of each DEM property. Used to properly generate output files.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8cc_source.html#l00012">dem_properties.cc:12</a></div></div>
 <div class="ttc" id="anamespaceDEM_1_1CFDDEMMPProperties_html_afd71079056676d61e8b23e4076174b3c"><div class="ttname"><a href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3c">DEM::CFDDEMMPProperties::PropertiesIndex</a></div><div class="ttdeci">PropertiesIndex</div><div class="ttdoc">Particle property indices for CFD-DEM multiphysics simulations.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00203">dem_properties.h:204</a></div></div>
 <div class="ttc" id="anamespaceDEM_1_1CFDDEMMPProperties_html_afd71079056676d61e8b23e4076174b3ca005ac083ec4bfdd8844e383e7b52a368"><div class="ttname"><a href="namespaceDEM_1_1CFDDEMMPProperties.html#afd71079056676d61e8b23e4076174b3ca005ac083ec4bfdd8844e383e7b52a368">DEM::CFDDEMMPProperties::fem_drag_z</a></div><div class="ttdeci">@ fem_drag_z</div><div class="ttdoc">Drag force - z component.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00240">dem_properties.h:240</a></div></div>
@@ -628,11 +644,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00022">dem_properties.h:23</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_a3a7808dc58cf90a67c0d294d8a7893d9"><div class="ttname"><a href="namespaceDEM.html#a3a7808dc58cf90a67c0d294d8a7893d9">DEM::has_thermal_properties</a></div><div class="ttdeci">constexpr bool has_thermal_properties</div><div class="ttdoc">Whether a properties index set carries thermal properties.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00355">dem_properties.h:355</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_a7d860d523c8964d7ff5d28121a3cdcc5"><div class="ttname"><a href="namespaceDEM.html#a7d860d523c8964d7ff5d28121a3cdcc5">DEM::is_stored_at_the_same_index</a></div><div class="ttdeci">constexpr bool is_stored_at_the_same_index(const int first_index, const int second_index)</div><div class="ttdoc">Compare the position of a property in two different index sets.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00273">dem_properties.h:273</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_acda69e5351674a5179ca3a949874ef4b"><div class="ttname"><a href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">DEM::has_fluid_coupling_properties</a></div><div class="ttdeci">constexpr bool has_fluid_coupling_properties</div><div class="ttdoc">Whether a properties index set carries fluid coupling properties.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00376">dem_properties.h:376</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_acda69e5351674a5179ca3a949874ef4b"><div class="ttname"><a href="namespaceDEM.html#acda69e5351674a5179ca3a949874ef4b">DEM::has_fluid_coupling_properties</a></div><div class="ttdeci">constexpr bool has_fluid_coupling_properties</div><div class="ttdoc">Whether a properties index set carries fluid coupling properties.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00392">dem_properties.h:392</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_ace9d7c6b123aa13027ca7915f1fa4d16"><div class="ttname"><a href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16">DEM::SolverType</a></div><div class="ttdeci">SolverType</div><div class="ttdoc">Identifies which physics is solved for the DEM particles.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00037">dem_properties.h:38</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12"><div class="ttname"><a href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12">DEM::dem_mp</a></div><div class="ttdeci">@ dem_mp</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00040">dem_properties.h:40</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d"><div class="ttname"><a href="namespaceDEM.html#ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d">DEM::dem</a></div><div class="ttdeci">@ dem</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00039">dem_properties.h:39</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ad6f19a136c3504e472457942a25bac01"><div class="ttname"><a href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">DEM::matching_dem_properties_index</a></div><div class="ttdeci">std::conditional_t&lt; has_thermal_properties&lt; PropertiesIndex &gt;, DEMMPProperties::PropertiesIndex, DEMProperties::PropertiesIndex &gt; matching_dem_properties_index</div><div class="ttdoc">The pure DEM index set matching a given index set.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00400">dem_properties.h:403</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ad1f23bd57892ec3af3d23132ae15fccb"><div class="ttname"><a href="namespaceDEM.html#ad1f23bd57892ec3af3d23132ae15fccb">DEM::temperature_property_index</a></div><div class="ttdeci">constexpr int temperature_property_index</div><div class="ttdoc">The index of the temperature property in a properties index set.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00375">dem_properties.h:375</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ad6f19a136c3504e472457942a25bac01"><div class="ttname"><a href="namespaceDEM.html#ad6f19a136c3504e472457942a25bac01">DEM::matching_dem_properties_index</a></div><div class="ttdeci">std::conditional_t&lt; has_thermal_properties&lt; PropertiesIndex &gt;, DEMMPProperties::PropertiesIndex, DEMProperties::PropertiesIndex &gt; matching_dem_properties_index</div><div class="ttdoc">The pure DEM index set matching a given index set.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00416">dem_properties.h:419</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!--
 SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
