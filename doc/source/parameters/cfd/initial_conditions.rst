@@ -32,7 +32,9 @@ It is often necessary to set-up complex initial conditions when simulating trans
     end
 
     subsection QMOM
-      set Function expression = 0
+      subsection scalars
+        set Function expression = 0
+      end
       subsection distribution
         set type                = none
         set Function expression = 0

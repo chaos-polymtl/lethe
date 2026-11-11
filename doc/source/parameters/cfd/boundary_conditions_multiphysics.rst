@@ -145,7 +145,9 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
       set id   = 2
       set type = dirichlet
       subsection dirichlet
-        set Function expression = 0
+        subsection scalars
+          set Function expression = 0
+        end
         subsection distribution
           set type                = none
           set Function expression = 0
@@ -160,11 +162,9 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
 
   * ``none`` (default): the advective flux is zero (no flux). This is the natural choice for walls.
   * ``outlet``: a natural boundary condition that prevents backflow.
-  * ``dirichlet``: imposed ``dirichlet`` boundary conditions for each scalar and for the distribution.
+  * ``dirichlet``: the scalars and the particle size distribution are imposed, as functions of space and time, in the ``dirichlet`` subsection. The format of this subsection is described in :doc:`qmom`.
 
   Boundaries without a QMOM boundary condition are treated as ``none``.
-
-* ``dirichlet``: scalars and particle size distribution imposed by a ``dirichlet`` boundary condition, as functions of space and time. The format of this subsection is described in :doc:`qmom`.
 
 .. warning::
 

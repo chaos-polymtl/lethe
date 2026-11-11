@@ -22,7 +22,9 @@ If the problem being simulated has a known analytical solution, or an exact solu
       set Function expression = 0
     end
     subsection QMOM
-      set Function expression = 0
+      subsection scalars
+        set Function expression = 0
+      end
       subsection distribution
         set type                = none
         set Function expression = 0

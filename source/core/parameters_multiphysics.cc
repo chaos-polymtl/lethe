@@ -36,6 +36,32 @@ DeclException1(
   << " is equal or smaller than 0." << std::endl
   << "Interface reinitialization method requires an frequency larger than 0.");
 
+DeclException2(
+  QMOMScalarNamesCountError,
+  std::size_t,
+  unsigned int,
+  << "The \"scalar names\" of the QMOM subsection has " << arg1
+  << " names, but the \"number of scalars\" is " << arg2 << "." << std::endl
+  << "Give one name per scalar, or no name to use scalar_0, scalar_1, ...");
+
+DeclException1(
+  QMOMScalarNameError,
+  std::string,
+  << "The scalar name \"" << arg1 << "\" of the QMOM subsection is invalid."
+  << std::endl
+  << "Scalar names may only contain letters, digits and underscores.");
+
+DeclException3(
+  QMOMDistributionExpressionsCountError,
+  std::string,
+  unsigned int,
+  unsigned int,
+  << "The \"" << arg1
+  << "\" particle size distribution of the QMOM physics expects " << arg2
+  << " expressions, but " << arg3 << " are given." << std::endl
+  << "Give the number density, in particles per m^3, followed by the "
+  << "parameters of the distribution.");
+
 namespace Parameters
 {
   namespace
@@ -64,6 +90,27 @@ namespace Parameters
          Parameters::ElectromagneticScalingType::electric_field},
         {"magnetic field",
          Parameters::ElectromagneticScalingType::magnetic_field}};
+
+    /**
+     * @brief Check whether a QMOM scalar name is valid. The names are used as
+     * field names in the output files, so they may only contain letters,
+     * digits and underscores.
+     *
+     * @param[in] scalar_name Name of the scalar.
+     *
+     * @return Whether the name is non-empty and only contains letters, digits
+     * and underscores.
+     */
+    bool
+    is_valid_scalar_name(const std::string &scalar_name)
+    {
+      const auto is_valid_character = [](const char character) {
+        return std::isalnum(static_cast<unsigned char>(character)) != 0 ||
+               character == '_';
+      };
+      return !scalar_name.empty() &&
+             std::ranges::all_of(scalar_name, is_valid_character);
+    }
   } // namespace
 } // namespace Parameters
 
@@ -838,7 +885,7 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
                       "Include the growth source <true|false>");
 
     phase_evolution.declare_parameters(prm);
-    pharma.declare_parameters(prm);
+    lipid_nanoparticle_production.declare_parameters(prm);
     physical_constants.declare_parameters(prm);
   }
   prm.leave_subsection();
@@ -857,25 +904,11 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
       for (unsigned int i_scalar = 0; i_scalar < number_of_scalars; ++i_scalar)
         scalar_names.emplace_back("scalar_" + std::to_string(i_scalar));
     AssertThrow(scalar_names.size() == number_of_scalars,
-                ExcMessage("The \"scalar names\" of the QMOM subsection has " +
-                           std::to_string(scalar_names.size()) +
-                           " names, but the \"number of scalars\" is " +
-                           std::to_string(number_of_scalars) +
-                           ". Give one name per scalar, or no name to use "
-                           "scalar_0, scalar_1, ..."));
-    // The names are used as field names in the output files
+                QMOMScalarNamesCountError(scalar_names.size(),
+                                          number_of_scalars));
     for (const std::string &scalar_name : scalar_names)
-      AssertThrow(
-        !scalar_name.empty() &&
-          std::ranges::all_of(scalar_name,
-                              [](const char character) {
-                                return std::isalnum(static_cast<unsigned char>(
-                                         character)) != 0 ||
-                                       character == '_';
-                              }),
-        ExcMessage("The scalar name \"" + scalar_name +
-                   "\" of the QMOM subsection is invalid. Scalar names may "
-                   "only contain letters, digits and underscores."));
+      AssertThrow(is_valid_scalar_name(scalar_name),
+                  QMOMScalarNameError(scalar_name));
 
     splitting_scheme = string_to_enum<Parameters::QMOMSplittingScheme>(
       prm.get("splitting scheme"));
@@ -885,17 +918,18 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
     enable_growth      = prm.get_bool("enable growth");
 
     phase_evolution.parse_parameters(prm);
-    pharma.parse_parameters(prm);
+    lipid_nanoparticle_production.parse_parameters(prm);
     physical_constants.parse_parameters(prm);
   }
   prm.leave_subsection();
 }
 
 void
-Parameters::QMOMPharma::declare_parameters(ParameterHandler &prm) const
+Parameters::QMOMLipidNanoparticleProduction::declare_parameters(
+  ParameterHandler &prm) const
 {
-  const QMOMPharma defaults;
-  prm.enter_subsection("pharma");
+  const QMOMLipidNanoparticleProduction defaults;
+  prm.enter_subsection("lipid nanoparticle production");
   {
     prm.declare_entry("operating temperature",
                       Patterns::Tools::Convert<double>::to_string(
@@ -1000,9 +1034,10 @@ Parameters::QMOMPharma::declare_parameters(ParameterHandler &prm) const
 }
 
 void
-Parameters::QMOMPharma::parse_parameters(ParameterHandler &prm)
+Parameters::QMOMLipidNanoparticleProduction::parse_parameters(
+  ParameterHandler &prm)
 {
-  prm.enter_subsection("pharma");
+  prm.enter_subsection("lipid nanoparticle production");
   {
     operating_temperature = prm.get_double("operating temperature");
     flow_rate_ratio       = prm.get_double("flow rate ratio");
@@ -1100,9 +1135,14 @@ template <int dim>
 void
 Parameters::QMOMFunctions<dim>::declare_parameters(ParameterHandler &prm)
 {
-  // The number of scalars is not known yet: a single expression is declared
-  // by default, which is valid for a single scalar and ignored without scalars
-  Functions::ParsedFunction<dim>::declare_parameters(prm);
+  prm.enter_subsection("scalars");
+  {
+    // The number of scalars is not known yet: a single expression is declared
+    // by default, which is valid for a single scalar and ignored without
+    // scalars
+    Functions::ParsedFunction<dim>::declare_parameters(prm);
+  }
+  prm.leave_subsection();
 
   prm.enter_subsection("distribution");
   {
@@ -1127,9 +1167,13 @@ Parameters::QMOMFunctions<dim>::parse_parameters(ParameterHandler &prm)
       Utilities::split_string_list(prm.get("Function expression"), ';').size());
   };
 
-  scalars =
-    std::make_shared<Functions::ParsedFunction<dim>>(count_expressions());
-  scalars->parse_parameters(prm);
+  prm.enter_subsection("scalars");
+  {
+    scalars =
+      std::make_shared<Functions::ParsedFunction<dim>>(count_expressions());
+    scalars->parse_parameters(prm);
+  }
+  prm.leave_subsection();
 
   prm.enter_subsection("distribution");
   {
@@ -1140,15 +1184,8 @@ Parameters::QMOMFunctions<dim>::parse_parameters(ParameterHandler &prm)
         const unsigned int n_expected_expressions =
           1 + get_number_of_distribution_parameters(distribution_type);
         AssertThrow(n_expressions == n_expected_expressions,
-                    ExcMessage(
-                      "The \"" + prm.get("type") +
-                      "\" particle size distribution of the QMOM physics "
-                      "expects " +
-                      std::to_string(n_expected_expressions) +
-                      " expressions (the number density, in particles per "
-                      "m^3, followed by the parameters of the distribution), "
-                      "but " +
-                      std::to_string(n_expressions) + " are given."));
+                    QMOMDistributionExpressionsCountError(
+                      prm.get("type"), n_expected_expressions, n_expressions));
       }
     distribution =
       std::make_shared<Functions::ParsedFunction<dim>>(n_expressions);

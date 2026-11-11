@@ -499,12 +499,12 @@ namespace Parameters
   };
 
   /**
-   * @brief Process parameters of the lipid nanoparticle (LNP) formulation
+   * @brief Process parameters of the lipid nanoparticle (LNP) production
    * simulated with the QMOM physics: operating conditions, properties of the
    * aqueous and organic phases and shape factor of the particles. All of them
    * are in SI units.
    */
-  struct QMOMPharma
+  struct QMOMLipidNanoparticleProduction
   {
     /* Operating conditions */
     /// Operating temperature [K]
@@ -547,7 +547,7 @@ namespace Parameters
     double shape_factor = std::numbers::pi / 6.;
 
     /**
-     * @brief Declare the "pharma" subsection.
+     * @brief Declare the "lipid nanoparticle production" subsection.
      *
      * @param[in,out] prm Parameter handler.
      */
@@ -555,7 +555,7 @@ namespace Parameters
     declare_parameters(ParameterHandler &prm) const;
 
     /**
-     * @brief Parse the "pharma" subsection.
+     * @brief Parse the "lipid nanoparticle production" subsection.
      *
      * @param[in] prm Parameter handler.
      */
@@ -638,11 +638,12 @@ namespace Parameters
    * physics. They are used for the initial conditions, the Dirichlet boundary
    * conditions, the analytical solution and the source terms.
    *
-   * The scalars are given as a list of expressions, one per scalar. The
-   * moments are not given one by one: they are the raw moments of a particle
-   * size distribution, defined by its family and by a list of expressions
-   * whose first entry is the number density, in particles per m^3, followed by
-   * the parameters of the family.
+   * The scalars are given as a list of expressions, one per scalar, in the
+   * "scalars" subsection. The moments are not given one by one: they are the
+   * raw moments of a particle size distribution, defined in the "distribution"
+   * subsection by its family and by a list of expressions whose first entry is
+   * the number density, in particles per m^3, followed by the parameters of
+   * the family.
    *
    * The number of scalars is not known when the parameters are declared. The
    * number of components of the scalars function is therefore the number of
@@ -667,9 +668,9 @@ namespace Parameters
     std::shared_ptr<Functions::ParsedFunction<dim>> distribution;
 
     /**
-     * @brief Declare the scalars function in the current subsection and the
-     * "distribution" subsection. All the functions are zero and the
-     * distribution type is none by default.
+     * @brief Declare the "scalars" and "distribution" subsections in the
+     * current subsection. All the functions are zero and the distribution type
+     * is none by default.
      *
      * @param[in,out] prm Parameter handler.
      */
@@ -677,10 +678,11 @@ namespace Parameters
     declare_parameters(ParameterHandler &prm);
 
     /**
-     * @brief Parse the functions from the current subsection. The number of
-     * components of each function is the number of expressions separated by
-     * semicolons. The number of expressions of the distribution must be one
-     * (the number density) plus the number of parameters of its family.
+     * @brief Parse the "scalars" and "distribution" subsections of the
+     * current subsection. The number of components of each function is the
+     * number of expressions separated by semicolons. The number of expressions
+     * of the distribution must be one (the number density) plus the number of
+     * parameters of its family.
      *
      * @param[in,out] prm Parameter handler.
      */
@@ -739,8 +741,9 @@ namespace Parameters
     /// Phase-space evolution ("phase evolution" subsection)
     QMOMPhaseEvolution phase_evolution;
 
-    /// Process parameters of the LNP formulation ("pharma" subsection)
-    QMOMPharma pharma;
+    /// Process parameters of the lipid nanoparticle production ("lipid
+    /// nanoparticle production" subsection)
+    QMOMLipidNanoparticleProduction lipid_nanoparticle_production;
 
     /// Physical constants ("physical constants" subsection)
     QMOMPhysicalConstants physical_constants;
