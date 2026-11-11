@@ -123,7 +123,7 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
     end
   end
 
-* ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. Give either one expression per scalar, or a single expression, which is applied to every scalar.
+* ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. There must be one expression per scalar, in the same order as the ``scalar names``: the first expression is the first scalar, and so on. For example, ``set Function expression = 1; 0`` sets the first scalar to 1 and the second to 0. The default value, a single expression, is therefore only valid for one scalar. The expressions are ignored if ``number of scalars`` is 0.
 
 * ``distribution``: particle size distribution from which the moments are computed.
 

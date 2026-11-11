@@ -1101,7 +1101,7 @@ void
 Parameters::QMOMFunctions<dim>::declare_parameters(ParameterHandler &prm)
 {
   // The number of scalars is not known yet: a single expression is declared
-  // by default, which applies to all the scalars
+  // by default, which is valid for a single scalar and ignored without scalars
   Functions::ParsedFunction<dim>::declare_parameters(prm);
 
   prm.enter_subsection("distribution");
