@@ -3,13 +3,17 @@ Quadrature Method of Moments
 ============================
 
 This subsection defines the parameters of the quadrature method of moments (QMOM) auxiliary physics, used to solve population balance equations. The physics is enabled with ``set qmom = true`` in the :doc:`multiphysics` subsection and requires Lethe to be compiled with `QMOMKit <https://github.com/polycfd/QMOMKit>`_ (``-DLETHE_WITH_QMOMKIT=ON``).
-
+.. note::
+    For more information on the QMOMKit library, including details on the implementation and some application examples, visit the `repository <https://github.com/polycfd/QMOMKit>`_ page.
 The QMOM physics transports:
 
 * ``number of scalars`` regular scalars;
 * the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
-All the fields will be discretized with a single discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), reused by every field. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``. All the parameters of the QMOM physics are in SI units.
+All the fields will be discretized with a single discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), reused by every field. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+
+.. caution::
+    All the parameters of the QMOM physics are in SI units.
 
 .. warning::
 
@@ -115,6 +119,7 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
 
 .. code-block:: text
 
+  # QMOM block within initial conditions, boundary conditions, and analytical solution
   subsection QMOM
     set Function expression = 0
     subsection distribution
@@ -123,7 +128,10 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
     end
   end
 
-* ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. There must be one expression per scalar, in the same order as the ``scalar names``: the first expression is the first scalar, and so on. For example, ``set Function expression = 1; 0`` sets the first scalar to 1 and the second to 0. The default value, a single expression, is therefore only valid for one scalar. The expressions are ignored if ``number of scalars`` is 0.
+* ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. There must be one expression per scalar, in the same order as the ``scalar names``: the first expression is the first scalar, and so on. For example, ``set Function expression = 1; 0`` sets the first scalar to 1 and the second to 0. The default value, a single expression, is therefore only valid for one scalar. 
+* 
+.. note::
+    The function expressions are ignored if ``number of scalars`` is 0.
 
 * ``distribution``: particle size distribution from which the moments are computed.
 
