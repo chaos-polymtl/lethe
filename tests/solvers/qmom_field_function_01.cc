@@ -23,6 +23,7 @@
 
 #include <../tests/tests.h>
 
+#include <cmath>
 #include <exception>
 #include <functional>
 #include <string>
@@ -83,6 +84,10 @@ test()
 {
   const Point<2> point(0.25, 0.);
 
+  // value() and vector_value() evaluate the same expressions, so they must
+  // agree to round-off
+  constexpr double tolerance = 1e-12;
+
   // 2 scalars and 3 moments: components 0 and 1 are the scalars, components
   // 2 to 4 are the moments, which are zero without a distribution
   {
@@ -98,14 +103,17 @@ test()
     function.vector_value(point, values);
 
     bool vector_value_matches_value = true;
-    for (unsigned int c = 0; c < function.n_components; ++c)
+    for (unsigned int component = 0; component < function.n_components;
+         ++component)
       {
-        if (c < n_scalars)
-          deallog << "  scalar " << c << ": ";
+        if (component < n_scalars)
+          deallog << "  scalar " << component << ": ";
         else
-          deallog << "  moment " << c - n_scalars << ": ";
-        deallog << function.value(point, c) << std::endl;
-        vector_value_matches_value &= (values[c] == function.value(point, c));
+          deallog << "  moment " << component - n_scalars << ": ";
+        const double value = function.value(point, component);
+        deallog << value << std::endl;
+        vector_value_matches_value &=
+          (std::abs(values[component] - value) < tolerance);
       }
     deallog << "  vector_value matches value: "
             << (vector_value_matches_value ? "true" : "false") << std::endl;
@@ -119,7 +127,7 @@ test()
     function.vector_value(point, values);
     deallog << "No scalars, 4 moments: " << function.n_components
             << " components, all zero: "
-            << (values.l2_norm() == 0. ? "true" : "false") << std::endl;
+            << (values.l2_norm() < tolerance ? "true" : "false") << std::endl;
   }
 
   check_throws("One expression for 3 scalars", [] {

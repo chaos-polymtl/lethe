@@ -77,19 +77,22 @@ print_moments(const std::string &label,
               const std::string &type,
               const std::string &expressions)
 {
+  constexpr unsigned int n_scalars = 1;
+  constexpr unsigned int n_moments = 4;
+
   Point<dim> point;
   point[0] = 1.;
 
   const QMOMFieldFunction<dim> function(parse_functions<dim>(type, expressions),
-                                        1,
-                                        4,
+                                        n_scalars,
+                                        n_moments,
                                         "test");
   Vector<double>               values(function.n_components);
   function.vector_value(point, values);
 
   deallog << label << ":";
-  for (unsigned int i_moment = 0; i_moment < 4; ++i_moment)
-    deallog << " " << values[1 + i_moment];
+  for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+    deallog << " " << values[n_scalars + i_moment];
   deallog << std::endl;
 }
 

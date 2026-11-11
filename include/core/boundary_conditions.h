@@ -1229,11 +1229,11 @@ namespace BoundaryConditions
         Patterns::Bool(),
         "Bool to define if the boundary condition is time-dependent");
 
-      for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
+      for (unsigned int i_bc = 0; i_bc < number_of_boundary_conditions; ++i_bc)
         {
-          prm.enter_subsection("bc " + std::to_string(n));
+          prm.enter_subsection("bc " + std::to_string(i_bc));
           {
-            declare_default_entry(prm, n);
+            declare_default_entry(prm, i_bc);
           }
           prm.leave_subsection();
         }
@@ -1253,24 +1253,24 @@ namespace BoundaryConditions
       ExcMessage(
         "A boundary id has not been set for one of the QMOM boundary conditions. Please ensure that the id is set for every boundary condition."));
 
-    const std::string op = prm.get("type");
+    const std::string boundary_type = prm.get("type");
     for (const auto boundary_id : boundary_ids)
       {
         AssertThrow(this->type.find(boundary_id) == this->type.end(),
                     QMOMBoundaryDuplicated(boundary_id));
 
-        if (op == "dirichlet")
+        if (boundary_type == "dirichlet")
           {
             this->type[boundary_id] = BoundaryType::qmom_dirichlet;
             prm.enter_subsection("dirichlet");
             dirichlet[boundary_id].parse_parameters(prm);
             prm.leave_subsection();
           }
-        else if (op == "outlet")
+        else if (boundary_type == "outlet")
           {
             this->type[boundary_id] = BoundaryType::outlet;
           }
-        else if (op == "none")
+        else if (boundary_type == "none")
           {
             this->type[boundary_id] = BoundaryType::none;
           }
@@ -1278,7 +1278,8 @@ namespace BoundaryConditions
           {
             AssertThrow(false,
                         ExcMessage(
-                          "Unknown boundary condition type for QMOM: " + op));
+                          "Unknown boundary condition type for QMOM: " +
+                          boundary_type));
           }
       }
   }
@@ -1292,9 +1293,10 @@ namespace BoundaryConditions
       this->number_of_boundary_conditions = prm.get_integer("number");
       this->time_dependent                = prm.get_bool("time dependent");
 
-      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
+      for (unsigned int i_bc = 0; i_bc < this->number_of_boundary_conditions;
+           ++i_bc)
         {
-          prm.enter_subsection("bc " + std::to_string(n));
+          prm.enter_subsection("bc " + std::to_string(i_bc));
           {
             parse_boundary(prm);
           }
