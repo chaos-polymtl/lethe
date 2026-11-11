@@ -1,7 +1,8 @@
 add_library(lethe-core
   # Sources
   bdf.cc
-  boundary_conditions.cc
+  cahn_hilliard_boundary_conditions.cc
+  cls_boundary_conditions.cc
   dem_properties.cc
   density_model.cc
   dimensionality.cc
@@ -9,6 +10,7 @@ add_library(lethe-core
   electric_conductivity_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
+  fluid_dynamics_boundary_conditions.cc
   grid_birmingham_fluidized_bed.cc
   grid_cube_merged.cc
   grid_cylinder.cc
@@ -19,6 +21,7 @@ add_library(lethe-core
   grid_uniform_channel_with_meshed_cylinder.cc
   grid_uniform_channel_with_meshed_square_prism.cc
   grids.cc
+  heat_transfer_boundary_conditions.cc
   ib_particle.cc
   ib_stencil.cc
   interface_tools.cc
@@ -48,6 +51,8 @@ add_library(lethe-core
   surface_tension_model.cc
   thermal_conductivity_model.cc
   thermal_expansion_model.cc
+  time_harmonic_maxwell_boundary_conditions.cc
+  tracer_boundary_conditions.cc
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
   utilities.cc

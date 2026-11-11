@@ -10,6 +10,12 @@
 #include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
 
+DeclException1(
+  EmissivityError,
+  double,
+  << "Emissivity : " << arg1
+  << " cannot be larger than 1.0 (black body) or smaller than 0.0");
+
 template <int dim>
 void
 HeatTransferAssemblerCore<dim>::assemble_matrix(
