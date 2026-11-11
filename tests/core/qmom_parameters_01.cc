@@ -147,7 +147,9 @@ test()
 
   deallog << "Lognormal distribution" << std::endl;
   print_functions(
-    parse_functions("  set Function expression = 1; x\n"
+    parse_functions("  subsection scalars\n"
+                    "    set Function expression = 1; x\n"
+                    "  end\n"
                     "  subsection distribution\n"
                     "    set type                = lognormal\n"
                     "    set Function expression = 1e18; log(1e-7); 0.3\n"

@@ -43,9 +43,11 @@ parse_functions(const std::string &scalar_expressions)
   prm.leave_subsection();
 
   prm.parse_input_from_string("subsection QMOM\n"
-                              "  set Function expression = " +
+                              "  subsection scalars\n"
+                              "    set Function expression = " +
                               scalar_expressions +
                               "\n"
+                              "  end\n"
                               "end\n");
 
   Parameters::QMOMFunctions<2> functions;

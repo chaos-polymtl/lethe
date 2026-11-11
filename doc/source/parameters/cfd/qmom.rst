@@ -3,8 +3,10 @@ Quadrature Method of Moments
 ============================
 
 This subsection defines the parameters of the quadrature method of moments (QMOM) auxiliary physics, used to solve population balance equations. The physics is enabled with ``set qmom = true`` in the :doc:`multiphysics` subsection and requires Lethe to be compiled with `QMOMKit <https://github.com/polycfd/QMOMKit>`_ (``-DLETHE_WITH_QMOMKIT=ON``).
+
 .. note::
     For more information on the QMOMKit library, including details on the implementation and some application examples, visit the `repository <https://github.com/polycfd/QMOMKit>`_ page.
+
 The QMOM physics transports:
 
 * ``number of scalars`` regular scalars;
@@ -39,7 +41,7 @@ The default values of the QMOM parameters are given in the text box below:
       set enable adaptive node count = false
     end
 
-    subsection pharma
+    subsection lipid nanoparticle production
       # Operating conditions
       set operating temperature         = 295
       set flow rate ratio               = 3
@@ -90,7 +92,7 @@ The default values of the QMOM parameters are given in the text box below:
 
   * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set.
 
-* ``pharma``: process parameters of the formulation of lipid nanoparticles (LNP), in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
+* ``lipid nanoparticle production``: process parameters of the production of lipid nanoparticles (LNP), in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
 
   * ``operating temperature``: temperature of the mixture, in K.
   * ``flow rate ratio``: ratio of the aqueous phase flow rate to the organic phase flow rate.
@@ -121,17 +123,21 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
 
   # QMOM block within initial conditions, boundary conditions, and analytical solution
   subsection QMOM
-    set Function expression = 0
+    subsection scalars
+      set Function expression = 0
+    end
     subsection distribution
       set type                = none
       set Function expression = 0
     end
   end
 
-* ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. There must be one expression per scalar, in the same order as the ``scalar names``: the first expression is the first scalar, and so on. For example, ``set Function expression = 1; 0`` sets the first scalar to 1 and the second to 0. The default value, a single expression, is therefore only valid for one scalar. 
-* 
-.. note::
-    The function expressions are ignored if ``number of scalars`` is 0.
+* ``scalars``: values of the scalars.
+
+  * ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. There must be one expression per scalar, in the same order as the ``scalar names``: the first expression is the first scalar, and so on. For example, ``set Function expression = 1; 0`` sets the first scalar to 1 and the second to 0. The default value, a single expression, is therefore only valid for one scalar.
+
+  .. note::
+      The function expressions are ignored if ``number of scalars`` is 0.
 
 * ``distribution``: particle size distribution from which the moments are computed.
 
@@ -155,7 +161,9 @@ For example, with ``set number of scalars = 2``, two scalars and a log-normal di
 .. code-block:: text
 
   subsection QMOM
-    set Function expression = 1; 0
+    subsection scalars
+      set Function expression = 1; 0
+    end
     subsection distribution
       set type                = lognormal
       set Function expression = 1e18; log(1e-7); 0.3

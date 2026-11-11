@@ -12,6 +12,28 @@
 #  include <qmomkit/distributions.hpp>
 #endif
 
+DeclException3(QMOMScalarExpressionsCountError,
+               std::string,
+               unsigned int,
+               unsigned int,
+               << "The scalars function of the QMOM " << arg1 << " has " << arg2
+               << " expressions, but the QMOM physics transports " << arg3
+               << " scalars (the \"number of scalars\" of the QMOM subsection)."
+               << std::endl
+               << "Give one expression per scalar, separated by semicolons.");
+
+DeclException1(QMOMNegativeNumberDensityError,
+               double,
+               << "The number density of the particle size distribution of "
+               << "the QMOM physics must be positive or zero, but it is "
+               << arg1 << " particles/m^3.");
+
+DeclException1(QMOMKitMomentsError,
+               std::string,
+               << "QMOMKit could not compute the moments of the particle size "
+               << "distribution of the QMOM physics: " << arg1 << std::endl
+               << "Check the parameters of the distribution.");
+
 template <int dim>
 QMOMFieldFunction<dim>::QMOMFieldFunction(
   const Parameters::QMOMFunctions<dim> &functions,
@@ -26,14 +48,9 @@ QMOMFieldFunction<dim>::QMOMFieldFunction(
   // A function has at least one component: without scalars, the scalars
   // function is ignored
   AssertThrow(n_scalars == 0 || functions.scalars->n_components == n_scalars,
-              ExcMessage(
-                "The scalars function of the QMOM " + description + " has " +
-                std::to_string(functions.scalars->n_components) +
-                " expressions, but the QMOM physics transports " +
-                std::to_string(n_scalars) +
-                " scalars (the \"number of scalars\" of the QMOM "
-                "subsection). Give one expression per scalar, separated by "
-                "semicolons."));
+              QMOMScalarExpressionsCountError(description,
+                                              functions.scalars->n_components,
+                                              n_scalars));
 
 #ifndef LETHE_WITH_QMOMKIT
   // The moments of a particle size distribution are computed by QMOMKit
@@ -99,10 +116,7 @@ QMOMFieldFunction<dim>::compute_moments(
   const double number_density = distribution_values[0];
 
   AssertThrow(number_density >= 0.,
-              ExcMessage("The number density of the particle size "
-                         "distribution of the QMOM physics must be positive "
-                         "or zero, but it is " +
-                         std::to_string(number_density) + " particles/m^3."));
+              QMOMNegativeNumberDensityError(number_density));
 
   // Without particles, all the moments are zero whatever the distribution
   if (number_density <= 0.)
@@ -153,11 +167,7 @@ QMOMFieldFunction<dim>::compute_moments(
 
   const qmomkit::RawMomentResult result =
     qmomkit::compute_raw_moments(distribution, n_moments - 1, number_density);
-  AssertThrow(result.ok(),
-              ExcMessage("QMOMKit could not compute the moments of the "
-                         "particle size distribution of the QMOM physics: " +
-                         result.message +
-                         " Check the parameters of the distribution."));
+  AssertThrow(result.ok(), QMOMKitMomentsError(result.message));
 
   for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
     moments[i_moment] = result.moments[i_moment];
