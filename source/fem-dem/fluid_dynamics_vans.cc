@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/dem_properties.h>
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
 #include <core/time_integration_utilities.h>
@@ -44,6 +45,14 @@ FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
                 nsparam.cfd_parameters.simulation_control.method ==
                   Parameters::SimulationControl::TimeSteppingMethod::steady,
               NotSupportedMeshAdaptationMethod());
+
+  // Make the projected particle fields available to the other physics through
+  // the multiphysics interface.
+  this->multiphysics->enable_projected_particle_fields(
+    PhysicsID::void_fraction);
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    this->multiphysics->enable_projected_particle_fields(
+      PhysicsID::particle_temperature);
 
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
@@ -91,6 +100,18 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
     particle_projector.void_fraction_locally_relevant);
   this->multiphysics->set_previous_solutions(
     PhysicsID::void_fraction, particle_projector.previous_void_fraction);
+
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      this->multiphysics->set_dof_handler(
+        PhysicsID::particle_temperature,
+        particle_projector.particle_temperature.dof_handler);
+      this->multiphysics->set_mapping(PhysicsID::particle_temperature,
+                                      particle_projector.mapping);
+      this->multiphysics->set_solution(
+        PhysicsID::particle_temperature,
+        particle_projector.particle_temperature_locally_relevant);
+    }
 }
 
 template <int dim, typename PropertiesIndex>
@@ -588,28 +609,29 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_matrix(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &this->particle_projector.fluid_drag_on_particles.dof_handler);
+        &(*this->particle_projector.fluid_drag_on_particles.dof_handler));
 
       typename DoFHandler<dim>::active_cell_iterator
         particle_two_way_coupling_force_cell(
           &(*(this->triangulation)),
           cell->level(),
           cell->index(),
-          &this->particle_projector.fluid_force_on_particles_two_way_coupling
-             .dof_handler);
+          &(*this->particle_projector.fluid_force_on_particles_two_way_coupling
+               .dof_handler));
 
       typename DoFHandler<dim>::active_cell_iterator particle_velocity_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &this->particle_projector.particle_velocity.dof_handler);
+        &(*this->particle_projector.particle_velocity.dof_handler));
 
       typename DoFHandler<dim>::active_cell_iterator
         particle_momentum_transfer_coefficient_cell(
           &(*(this->triangulation)),
           cell->level(),
           cell->index(),
-          &this->particle_projector.momentum_transfer_coefficient.dof_handler);
+          &(*this->particle_projector.momentum_transfer_coefficient
+               .dof_handler));
 
       scratch_data.calculate_particle_fields_values(
         particle_drag_cell,
@@ -816,28 +838,29 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &this->particle_projector.fluid_drag_on_particles.dof_handler);
+        &(*this->particle_projector.fluid_drag_on_particles.dof_handler));
 
       typename DoFHandler<dim>::active_cell_iterator
         particle_two_way_coupling_force_cell(
           &(*(this->triangulation)),
           cell->level(),
           cell->index(),
-          &this->particle_projector.fluid_force_on_particles_two_way_coupling
-             .dof_handler);
+          &(*this->particle_projector.fluid_force_on_particles_two_way_coupling
+               .dof_handler));
 
       typename DoFHandler<dim>::active_cell_iterator particle_velocity_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &this->particle_projector.particle_velocity.dof_handler);
+        &(*this->particle_projector.particle_velocity.dof_handler));
 
       typename DoFHandler<dim>::active_cell_iterator
         particle_momentum_transfer_coefficient_cell(
           &(*(this->triangulation)),
           cell->level(),
           cell->index(),
-          &this->particle_projector.momentum_transfer_coefficient.dof_handler);
+          &(*this->particle_projector.momentum_transfer_coefficient
+               .dof_handler));
 
       scratch_data.calculate_particle_fields_values(
         particle_drag_cell,
@@ -935,7 +958,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
 
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-        particle_projector.particle_velocity.dof_handler,
+        *particle_projector.particle_velocity.dof_handler,
         particle_velocity,
         names,
         data_interpretation);
@@ -960,7 +983,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
           fluid_drag_on_particles = fluid_drag_on_particles_locally_owned;
           solution_output_structs.emplace_back(
             std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-            this->particle_projector.fluid_drag_on_particles.dof_handler,
+            *this->particle_projector.fluid_drag_on_particles.dof_handler,
             fluid_drag_on_particles,
             std::vector<std::string>(dim, "Particle_drag"),
             std::vector<
@@ -989,8 +1012,8 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
 
           solution_output_structs.emplace_back(
             std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-            this->particle_projector.fluid_force_on_particles_two_way_coupling
-              .dof_handler,
+            *this->particle_projector.fluid_force_on_particles_two_way_coupling
+               .dof_handler,
             fluid_force_on_particles_two_way_coupling,
             std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
             std::vector<
@@ -1000,14 +1023,14 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
 #else
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-        particle_projector.particle_velocity.dof_handler,
+        *particle_projector.particle_velocity.dof_handler,
         particle_projector.particle_velocity.particle_field_solution,
         names,
         data_interpretation);
 
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-        this->particle_projector.fluid_drag_on_particles.dof_handler,
+        *this->particle_projector.fluid_drag_on_particles.dof_handler,
         this->particle_projector.fluid_drag_on_particles
           .particle_field_solution,
         std::vector<std::string>(dim, "Particle_drag"),
@@ -1016,8 +1039,8 @@ FluidDynamicsVANS<dim, PropertiesIndex>::gather_output_hook()
 
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-        this->particle_projector.fluid_force_on_particles_two_way_coupling
-          .dof_handler,
+        *this->particle_projector.fluid_force_on_particles_two_way_coupling
+           .dof_handler,
         this->particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
