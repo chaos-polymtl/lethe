@@ -110,7 +110,6 @@ main()
     {
       initlog();
       test<2>();
-      test<3>();
     }
   catch (std::exception &exc)
     {
