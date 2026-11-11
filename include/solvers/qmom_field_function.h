@@ -35,11 +35,10 @@ DeclExceptionMsg(
   "-DQMOMKIT_DIR=/path/to/qmomkit/installation to use this physics.");
 
 /**
- * @brief Vector-valued function of all the QMOM fields, built from the
- * functions of the scalars and from the particle size distribution. Its
- * components follow the component layout of the QMOM FESystem: the scalars
- * followed by the raw moments M_0 to M_{n_moments - 1}. A scalars function
- * with a single component is applied to every scalar.
+ * @brief Function of all the QMOM fields, built from the functions of the
+ * scalars and from the particle size distribution. It has one component per
+ * field: the scalars followed by the raw moments M_0 to M_{n_moments - 1}. A
+ * scalars function with a single component is applied to every scalar.
  *
  * The moments are the raw moments of the particle size distribution, scaled by
  * the number density: M_k = n E[L^k], where n is the number density in
@@ -73,7 +72,8 @@ public:
    * @brief Evaluate one component of the function.
    *
    * @param[in] p Point at which the function is evaluated.
-   * @param[in] component Component of the QMOM FESystem.
+   * @param[in] component Index of the field: the scalars followed by the
+   * moments.
    *
    * @return Value of the component at p.
    */

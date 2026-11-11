@@ -4,12 +4,12 @@ Quadrature Method of Moments
 
 This subsection defines the parameters of the quadrature method of moments (QMOM) auxiliary physics, used to solve population balance equations. The physics is enabled with ``set qmom = true`` in the :doc:`multiphysics` subsection and requires Lethe to be compiled with `QMOMKit <https://github.com/polycfd/QMOMKit>`_ (``-DLETHE_WITH_QMOMKIT=ON``).
 
-The QMOM physics transports, in a single finite element system:
+The QMOM physics transports:
 
 * ``number of scalars`` regular scalars;
 * the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
-All the fields will be discretized with discontinuous Galerkin elements of degree ``qmom degree`` (see :doc:`fem`). The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``. All the parameters of the QMOM physics are in SI units.
+All the fields will be discretized with a single discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), reused by every field. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``. All the parameters of the QMOM physics are in SI units.
 
 .. warning::
 
