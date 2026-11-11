@@ -24,7 +24,6 @@ namespace BoundaryConditions
     BoundaryType::convection_radiation,
     BoundaryType::periodic};
 
-
   /**
    * @brief This class manages the boundary conditions for Heat-Transfer solver
    * It introduces the boundary functions and declares the boundary conditions
@@ -44,7 +43,6 @@ namespace BoundaryConditions
    * impose a heat flux using "heat_flux"
    *
    */
-
   template <int dim>
   class HeatTransferBoundaryConditions : public BoundaryConditions
   {
@@ -102,7 +100,6 @@ namespace BoundaryConditions
      */
     void
     parse_parameters(ParameterHandler &prm);
-
 
     // Flag that indicates wheter a convection-radiation boundary exists in the
     // domain

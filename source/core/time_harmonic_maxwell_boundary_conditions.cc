@@ -21,7 +21,6 @@ DeclException1(TimeHarmonicMaxwellDuplicated,
 
 namespace BoundaryConditions
 {
-
   template <int dim>
   void
   TimeHarmonicMaxwellBoundaryConditions<dim>::declare_default_entry(

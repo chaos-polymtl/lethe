@@ -35,7 +35,6 @@ namespace BoundaryConditions
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
-
   template <int dim>
   class CahnHilliardBoundaryConditions : public BoundaryConditions
   {

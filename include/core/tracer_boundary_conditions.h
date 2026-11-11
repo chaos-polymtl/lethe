@@ -21,7 +21,6 @@ namespace BoundaryConditions
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
-
   template <int dim>
   class TracerBoundaryConditions : public BoundaryConditions
   {
@@ -67,9 +66,6 @@ namespace BoundaryConditions
     void
     parse_parameters(ParameterHandler &prm);
   };
-
-
-
 } // namespace BoundaryConditions
 
 #endif

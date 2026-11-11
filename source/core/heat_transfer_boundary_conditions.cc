@@ -21,7 +21,6 @@ DeclException1(HeatTransferBoundaryDuplicated,
 
 namespace BoundaryConditions
 {
-
   template <int dim>
   void
   HeatTransferBoundaryConditions<dim>::declare_default_entry(

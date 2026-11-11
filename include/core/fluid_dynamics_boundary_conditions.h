@@ -19,7 +19,6 @@ using namespace dealii;
 
 namespace BoundaryConditions
 {
-
   /// Boundary condition types of the fluid dynamics
   inline const std::vector<BoundaryType> fluid_dynamics_boundary_types = {
     BoundaryType::none,
@@ -68,13 +67,9 @@ namespace BoundaryConditions
       assemble the traction term as FEFaceIntegrator uses MatrixFree which in
       turn is based on the DoFHandler which in turn is based on the FE system
       that has dim velocity components and 1 pressure component.
-
         t = (t₁, t₂, …, t_dim, 0.0 (dummy pressure component))
-
         φ = (φ₁, φ₂, …, φ_dim, φ_p)
-
         ∫_{Γ_t} = t · φ ds
-
     */
 
     NavierStokesBoundaryFunctions()
@@ -93,9 +88,8 @@ namespace BoundaryConditions
   {
   public:
     /// Functions for (u : x component of the velocity, v : y component of the
-    /// velocity
-    ///, w : z-component of the velocity, p : pressure, Neumann traction:
-    /// traction_fn) for all boundaries
+    /// velocity, w : z-component of the velocity, p : pressure, Neumann
+    /// traction: traction_fn) for all boundaries
     std::map<types::boundary_id,
              std::shared_ptr<NavierStokesBoundaryFunctions<dim>>>
       navier_stokes_functions;
@@ -109,7 +103,7 @@ namespace BoundaryConditions
     parse_boundary(ParameterHandler &prm);
 
     /**
-     * @brief Declares the default parameters for one fluid dynamics boundary condition.
+     * @brief Declares the default parameters for one fluid dynamics boundary condition
      *
      * @param[in] prm The parameter handler in which to declare the parameters.
      * @param[in] default_boundary_id The default mesh boundary id.
@@ -119,7 +113,7 @@ namespace BoundaryConditions
                           types::boundary_id default_boundary_id);
 
     /**
-     * @brief Declares the Navier-Stokes boundary conditions
+     * @brief Declares the fluid dynamics boundary conditions
      *
      * @param[in] prm The parameter handler in which to declare the parameters.
      * @param[in] number_of_boundary_conditions The number of boundary
@@ -130,7 +124,7 @@ namespace BoundaryConditions
                        unsigned int      number_of_boundary_conditions);
 
     /**
-     * @brief Parses the Navier-Stokes boundary conditions
+     * @brief Parses the fluid dynamics boundary conditions
      *
      * @param[in] prm The parameter handler containing the boundary conditions.
      */
@@ -138,8 +132,7 @@ namespace BoundaryConditions
     parse_parameters(ParameterHandler &prm);
 
     /**
-     * @brief Creates a noslip boundary condition for id=0
-     * Used in tests only
+     * @brief Creates a noslip boundary condition for id=0. Used in tests only
      */
     void
     createNoSlip();
@@ -148,11 +141,6 @@ namespace BoundaryConditions
     bool fix_pressure_constant;
   };
 
-
-  /**
-   * @brief Creates a noslip boundary condition for id=0
-   * Used in tests only
-   */
   template <int dim>
   void
   FluidDynamicsBoundaryConditions<dim>::createNoSlip()
@@ -161,9 +149,6 @@ namespace BoundaryConditions
     this->number_of_boundary_conditions = 1;
     this->beta[0]                       = 0;
   }
-
-
-
 } // namespace BoundaryConditions
 
 

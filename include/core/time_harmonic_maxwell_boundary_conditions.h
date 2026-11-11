@@ -29,8 +29,9 @@ namespace BoundaryConditions
      BoundaryType::waveguide_port};
 
   /**
-   * @brief This class manages the functions associated with both imposed electric and magnetic fields boundary conditions of the Time Harmonic Maxwell equations
-   *
+   * @brief This class manages the functions associated with both imposed electric
+   * and magnetic fields boundary conditions of the Time Harmonic Maxwell
+   * equations
    */
   template <int dim>
   class TimeHarmonicMaxwellBoundaryFunctions
@@ -53,13 +54,11 @@ namespace BoundaryConditions
     Functions::ParsedFunction<dim> h_z_imag;
   };
 
-
   /**
    * @brief This class manages the boundary conditions for Time Harmonic Maxwell solver.
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
-
   template <int dim>
   class TimeHarmonicMaxwellBoundaryConditions : public BoundaryConditions
   {

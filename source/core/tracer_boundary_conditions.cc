@@ -21,7 +21,6 @@ DeclException1(TracerBoundaryDuplicated,
 
 namespace BoundaryConditions
 {
-
   template <int dim>
   void
   TracerBoundaryConditions<dim>::declare_default_entry(
