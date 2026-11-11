@@ -86,7 +86,7 @@ The default values of the QMOM parameters are given in the text box below:
 
   * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set.
 
-* ``pharma``: process parameters of the LNP formulation, in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
+* ``pharma``: process parameters of the formulation of lipid nanoparticles (LNP), in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
 
   * ``operating temperature``: temperature of the mixture, in K.
   * ``flow rate ratio``: ratio of the aqueous phase flow rate to the organic phase flow rate.

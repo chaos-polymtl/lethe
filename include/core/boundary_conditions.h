@@ -50,6 +50,7 @@ DeclException1(QMOMBoundaryDuplicated,
                types::boundary_id,
                << "QMOM boundary id: " << arg1
                << " has already been declared as a boundary condition");
+
 DeclException1(CLSBoundaryDuplicated,
                types::boundary_id,
                << "CLS boundary id: " << arg1

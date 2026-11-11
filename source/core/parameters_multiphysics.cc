@@ -1159,7 +1159,7 @@ Parameters::QMOMFunctions<dim>::parse_parameters(ParameterHandler &prm)
 
 template <int dim>
 void
-Parameters::QMOMFunctions<dim>::set_time(const double time) const
+Parameters::QMOMFunctions<dim>::set_time(const double time)
 {
   scalars->set_time(time);
   distribution->set_time(time);
