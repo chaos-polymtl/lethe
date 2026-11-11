@@ -6,12 +6,11 @@
  * physics (initial conditions, Dirichlet boundary conditions, analytical
  * solution and source terms) without a particle size distribution, so that it
  * does not require QMOMKit. It checks that:
- * - the default functions are zero, including all the moments;
- * - a single scalar expression applies to every scalar;
+ * - the default functions, without scalars, are zero for all the moments;
  * - one expression per scalar gives each scalar its own function, and the
  *   time of the functions is propagated to the time-dependent expressions;
- * - a number of scalar expressions that is neither 1 nor the number of
- *   scalars throws.
+ * - a number of scalar expressions that differs from the number of scalars
+ *   throws, including a single expression for several scalars.
  */
 
 #include <core/parameters_multiphysics.h>
@@ -82,21 +81,12 @@ test()
   Point<dim> point;
   point[0] = 0.25;
 
-  // Default functions: zero, with 2 scalars and 4 moments
+  // Default functions: zero, without scalars and with 4 moments
   {
     const Parameters::QMOMFunctions<dim> functions = parse_functions<dim>("");
-    const QMOMFieldFunction<dim>         function(functions, 2, 4, "test");
+    const QMOMFieldFunction<dim>         function(functions, 0, 4, "test");
     deallog << "Default function components: " << function.n_components
             << std::endl;
-    print_components(function, point);
-  }
-
-  // A single expression applied to the 3 scalars
-  {
-    const Parameters::QMOMFunctions<dim> functions =
-      parse_functions<dim>("  set Function expression = 3 * x\n");
-    const QMOMFieldFunction<dim> function(functions, 3, 2, "test");
-    deallog << "Single scalar expression:" << std::endl;
     print_components(function, point);
   }
 
@@ -111,21 +101,23 @@ test()
     print_components(function, point);
   }
 
-  // Two scalar expressions for 3 scalars
-  {
-    const Parameters::QMOMFunctions<dim> functions =
-      parse_functions<dim>("  set Function expression = 1; 2\n");
-    try
-      {
-        const QMOMFieldFunction<dim> function(functions, 3, 2, "test");
-        deallog << "Wrong number of scalar expressions did not throw"
-                << std::endl;
-      }
-    catch (const std::exception &)
-      {
-        deallog << "Wrong number of scalar expressions threw" << std::endl;
-      }
-  }
+  // One and two scalar expressions for 3 scalars
+  for (const std::string expressions : {"1", "1; 2"})
+    {
+      const Parameters::QMOMFunctions<dim> functions = parse_functions<dim>(
+        "  set Function expression = " + expressions + "\n");
+      try
+        {
+          const QMOMFieldFunction<dim> function(functions, 3, 2, "test");
+          deallog << "Scalar expressions \"" << expressions
+                  << "\" for 3 scalars did not throw" << std::endl;
+        }
+      catch (const std::exception &)
+        {
+          deallog << "Scalar expressions \"" << expressions
+                  << "\" for 3 scalars threw" << std::endl;
+        }
+    }
 }
 
 int

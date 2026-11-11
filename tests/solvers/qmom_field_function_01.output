@@ -1,39 +1,25 @@
 
-DEAL::Default function components: 6
+DEAL::Default function components: 4
 DEAL::  component 0: 0.00000 0.00000
 DEAL::  component 1: 0.00000 0.00000
 DEAL::  component 2: 0.00000 0.00000
 DEAL::  component 3: 0.00000 0.00000
-DEAL::  component 4: 0.00000 0.00000
-DEAL::  component 5: 0.00000 0.00000
-DEAL::Single scalar expression:
-DEAL::  component 0: 0.750000 0.750000
-DEAL::  component 1: 0.750000 0.750000
-DEAL::  component 2: 0.750000 0.750000
-DEAL::  component 3: 0.00000 0.00000
-DEAL::  component 4: 0.00000 0.00000
 DEAL::Per-scalar function at t = 0.500000:
 DEAL::  component 0: 1.25000 1.25000
 DEAL::  component 1: 2.50000 2.50000
 DEAL::  component 2: 0.00000 0.00000
 DEAL::  component 3: 0.00000 0.00000
-DEAL::Wrong number of scalar expressions threw
-DEAL::Default function components: 6
+DEAL::Scalar expressions "1" for 3 scalars threw
+DEAL::Scalar expressions "1; 2" for 3 scalars threw
+DEAL::Default function components: 4
 DEAL::  component 0: 0.00000 0.00000
 DEAL::  component 1: 0.00000 0.00000
 DEAL::  component 2: 0.00000 0.00000
 DEAL::  component 3: 0.00000 0.00000
-DEAL::  component 4: 0.00000 0.00000
-DEAL::  component 5: 0.00000 0.00000
-DEAL::Single scalar expression:
-DEAL::  component 0: 0.750000 0.750000
-DEAL::  component 1: 0.750000 0.750000
-DEAL::  component 2: 0.750000 0.750000
-DEAL::  component 3: 0.00000 0.00000
-DEAL::  component 4: 0.00000 0.00000
 DEAL::Per-scalar function at t = 0.500000:
 DEAL::  component 0: 1.25000 1.25000
 DEAL::  component 1: 2.50000 2.50000
 DEAL::  component 2: 0.00000 0.00000
 DEAL::  component 3: 0.00000 0.00000
-DEAL::Wrong number of scalar expressions threw
+DEAL::Scalar expressions "1" for 3 scalars threw
+DEAL::Scalar expressions "1; 2" for 3 scalars threw
