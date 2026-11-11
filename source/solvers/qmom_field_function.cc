@@ -22,18 +22,18 @@ QMOMFieldFunction<dim>::QMOMFieldFunction(
   , functions(functions)
   , n_scalars(n_scalars)
   , n_moments(n_moments)
-  , scalars_are_broadcast(functions.scalars->n_components == 1)
 {
-  AssertThrow(
-    scalars_are_broadcast || functions.scalars->n_components == n_scalars,
-    ExcMessage("The scalars function of the QMOM " + description + " has " +
-               std::to_string(functions.scalars->n_components) +
-               " expressions, but the QMOM physics transports " +
-               std::to_string(n_scalars) +
-               " scalars (the \"number of scalars\" of the QMOM "
-               "subsection). Give either a single expression, applied to "
-               "every scalar, or one expression per scalar, separated by "
-               "semicolons."));
+  // A function has at least one component: without scalars, the scalars
+  // function is ignored
+  AssertThrow(n_scalars == 0 || functions.scalars->n_components == n_scalars,
+              ExcMessage(
+                "The scalars function of the QMOM " + description + " has " +
+                std::to_string(functions.scalars->n_components) +
+                " expressions, but the QMOM physics transports " +
+                std::to_string(n_scalars) +
+                " scalars (the \"number of scalars\" of the QMOM "
+                "subsection). Give one expression per scalar, separated by "
+                "semicolons."));
 
 #ifndef LETHE_WITH_QMOMKIT
   // The moments of a particle size distribution are computed by QMOMKit
@@ -50,8 +50,10 @@ QMOMFieldFunction<dim>::value(const Point<dim>  &p,
 {
   AssertIndexRange(component, this->n_components);
 
+  // Components 0 to n_scalars - 1 are the scalars, and component
+  // n_scalars + k is the moment M_k
   if (component < n_scalars)
-    return functions.scalars->value(p, scalars_are_broadcast ? 0 : component);
+    return functions.scalars->value(p, component);
 
   return compute_moments(p)[component - n_scalars];
 }
@@ -64,8 +66,7 @@ QMOMFieldFunction<dim>::vector_value(const Point<dim> &p,
   AssertDimension(values.size(), this->n_components);
 
   for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
-    values[i_scalar] =
-      functions.scalars->value(p, scalars_are_broadcast ? 0 : i_scalar);
+    values[i_scalar] = functions.scalars->value(p, i_scalar);
 
   const std::vector<double> moments = compute_moments(p);
   for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)

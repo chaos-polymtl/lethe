@@ -645,16 +645,17 @@ namespace Parameters
    * the parameters of the family.
    *
    * The number of scalars is not known when the parameters are declared. The
-   * scalars function therefore accepts either a single expression, applied to
-   * every scalar, or one expression per scalar. The QMOM physics verifies the
-   * number of expressions once the number of scalars is known.
+   * number of components of the scalars function is therefore the number of
+   * expressions given, and the QMOM physics verifies that it matches the
+   * number of scalars once it is known. The scalars function is ignored if
+   * the number of scalars is 0.
    *
    * @tparam dim Number of spatial dimensions.
    */
   template <int dim>
   struct QMOMFunctions
   {
-    /// Scalars, or a single function applied to all of them
+    /// Scalars, one component per scalar
     std::shared_ptr<Functions::ParsedFunction<dim>> scalars;
 
     /// Family of the particle size distribution
