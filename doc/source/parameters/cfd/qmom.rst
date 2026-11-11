@@ -2,11 +2,11 @@
 Quadrature Method of Moments
 ============================
 
-This subsection defines the parameters of the quadrature method of moments (QMOM) auxiliary physics, which models the formation of lipid nanoparticles (LNP). The physics is enabled with ``set qmom = true`` in the :doc:`multiphysics` subsection and requires Lethe to be compiled with `QMOMKit <https://github.com/polycfd/QMOMKit>`_ (``-DLETHE_WITH_QMOMKIT=ON``).
+This subsection defines the parameters of the quadrature method of moments (QMOM) auxiliary physics, used to solve population balance equations. The physics is enabled with ``set qmom = true`` in the :doc:`multiphysics` subsection and requires Lethe to be compiled with `QMOMKit <https://github.com/polycfd/QMOMKit>`_ (``-DLETHE_WITH_QMOMKIT=ON``).
 
 The QMOM physics transports, in a single finite element system:
 
-* ``number of scalars`` regular scalars, for example the ethanol concentration and the free lipids concentration;
+* ``number of scalars`` regular scalars;
 * the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
 All the fields will be discretized with discontinuous Galerkin elements of degree ``qmom degree`` (see :doc:`fem`). The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``. All the parameters of the QMOM physics are in SI units.
@@ -23,13 +23,13 @@ The default values of the QMOM parameters are given in the text box below:
 .. code-block:: text
 
   subsection QMOM
-    set number of scalars  = 2
-    set scalar names       =
-    set number of moments  = 2
+    set number of scalars  = 0
+    set scalar names       = # empty: scalar_0, scalar_1, ...
+    set number of moments  = 4
     set splitting scheme   = lie
-    set enable nucleation  = true
-    set enable coalescence = true
-    set enable growth      = true
+    set enable nucleation  = false
+    set enable coalescence = false
+    set enable growth      = false
 
     subsection phase evolution
       set enable adaptive node count = false
@@ -38,8 +38,8 @@ The default values of the QMOM parameters are given in the text box below:
     subsection pharma
       # Operating conditions
       set operating temperature         = 295
-      set flow rate ratio               = 1
-      set total flow rate               = 1
+      set flow rate ratio               = 3
+      set total flow rate               = 2e-07
       set mixing time scale             = 0
       set initial concentration organic = 1
       set ion concentration mixture     = 1
@@ -71,22 +71,22 @@ The default values of the QMOM parameters are given in the text box below:
 
 * ``number of scalars``: number of regular scalars transported together with the moments.
 
-* ``scalar names``: comma-separated names of the scalars, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). There must be one name per scalar, and the names may only contain letters, digits and underscores. If empty, the scalars are named ``scalar_0``, ``scalar_1``, etc.
+* ``scalar names``: comma-separated names of the scalars, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). There must be one name per scalar, and the names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
 
-* ``number of moments``: number :math:`K` of transported raw moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature.
+* ``number of moments``: number :math:`K` of transported raw moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
   * ``lie``: :math:`T(\Delta t)` followed by :math:`P(\Delta t)`. This scheme is first-order accurate in time.
   * ``strang``: :math:`P(\Delta t / 2)`, then :math:`T(\Delta t)`, then :math:`P(\Delta t / 2)`. This scheme is second-order accurate in time when both parts are at least second-order accurate.
 
-* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space sources.
+* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space sources. They are disabled by default, so that the moments are only transported.
 
 * ``phase evolution``: options of the phase-space evolution in QMOMKit.
 
   * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set.
 
-* ``pharma``: process parameters of the LNP formulation, in SI units.
+* ``pharma``: process parameters of the LNP formulation, in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
 
   * ``operating temperature``: temperature of the mixture, in K.
   * ``flow rate ratio``: ratio of the aqueous phase flow rate to the organic phase flow rate.
@@ -108,7 +108,7 @@ The default values of the QMOM parameters are given in the text box below:
   * ``elementary charge``: elementary charge, in C.
   * ``permittivity vacuum``: vacuum permittivity, in F/m.
 
-Functions of the QMOM Fields
+Functions of the QMOM fields
 ----------------------------
 
 The initial conditions (see :doc:`initial_conditions`), the values of the ``dirichlet`` boundary conditions (see :doc:`boundary_conditions_multiphysics`), the analytical solution (see :doc:`analytical_solution`) and the source terms (see :doc:`source_term`) of the QMOM fields are all given in the same way. The scalars are given as a list of expressions, while the moments are not given one by one: they are the raw moments of a particle size distribution. The default values are:
@@ -142,7 +142,7 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
 
 The moment of order :math:`k` is :math:`M_k = n \, \mathrm{E}[L^k]`, where :math:`n` is the number density and :math:`L` the size of the particles. In particular, :math:`M_0` is the number density. A number density of 0 gives zero moments whatever the distribution.
 
-For example, two scalars and a log-normal distribution of :math:`10^{18}` particles per m\ :sup:`3` with a median size of 100 nm, at the inlet of the domain:
+For example, with ``set number of scalars = 2``, two scalars and a log-normal distribution of :math:`10^{18}` particles per m\ :sup:`3` with a median size of 100 nm, at the inlet of the domain:
 
 .. code-block:: text
 

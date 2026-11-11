@@ -1,17 +1,17 @@
 
 DEAL::Default values
-DEAL::number of scalars: 2
-DEAL::scalar names: scalar_0 scalar_1
-DEAL::number of moments: 2
-DEAL::number of nodes: 1
+DEAL::number of scalars: 0
+DEAL::scalar names:
+DEAL::number of moments: 4
+DEAL::number of nodes: 2
 DEAL::splitting scheme: lie
-DEAL::enable nucleation: 1
-DEAL::enable coalescence: 1
-DEAL::enable growth: 1
+DEAL::enable nucleation: 0
+DEAL::enable coalescence: 0
+DEAL::enable growth: 0
 DEAL::enable adaptive node count: 0
 DEAL::operating temperature: 295.000
-DEAL::flow rate ratio: 1.00000
-DEAL::total flow rate: 1.00000
+DEAL::flow rate ratio: 3.00000
+DEAL::total flow rate: 2.00000e-07
 DEAL::mixing time scale: 0.00000
 DEAL::initial concentration organic: 1.00000
 DEAL::ion concentration mixture: 1.00000
@@ -35,13 +35,13 @@ DEAL::scalar names: ethanol lipids ions
 DEAL::number of moments: 5
 DEAL::number of nodes: 3
 DEAL::splitting scheme: strang
-DEAL::enable nucleation: 0
-DEAL::enable coalescence: 0
-DEAL::enable growth: 0
+DEAL::enable nucleation: 1
+DEAL::enable coalescence: 1
+DEAL::enable growth: 1
 DEAL::enable adaptive node count: 1
 DEAL::operating temperature: 300.000
-DEAL::flow rate ratio: 3.00000
-DEAL::total flow rate: 2.00000e-07
+DEAL::flow rate ratio: 2.50000
+DEAL::total flow rate: 1.00000e-07
 DEAL::mixing time scale: 0.0100000
 DEAL::initial concentration organic: 12.5000
 DEAL::ion concentration mixture: 150.000
