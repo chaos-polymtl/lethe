@@ -510,9 +510,9 @@ namespace Parameters
     /// Operating temperature [K]
     double operating_temperature = 295.;
     /// Ratio of the aqueous phase flow rate to the organic phase flow rate [-]
-    double flow_rate_ratio = 1.;
+    double flow_rate_ratio = 3.;
     /// Total flow rate of the aqueous and organic phases [m^3/s]
-    double total_flow_rate = 1.;
+    double total_flow_rate = 2e-7;
     /// Mixing time scale of the aqueous and organic phases [s]
     double mixing_time_scale = 0.;
     /// Initial lipid concentration in the organic phase [mol/m^3]
@@ -702,14 +702,14 @@ namespace Parameters
   struct QMOM
   {
     /// Number of scalars transported together with the moments
-    unsigned int number_of_scalars = 2;
+    unsigned int number_of_scalars = 0;
 
     /// Names of the scalars, used for the output. scalar_0, scalar_1, ... if
     /// they are not given in the parameter file.
-    std::vector<std::string> scalar_names = {"scalar_0", "scalar_1"};
+    std::vector<std::string> scalar_names;
 
     /// Number of transported raw moments M_0 to M_{number_of_moments - 1}
-    unsigned int number_of_moments = 2;
+    unsigned int number_of_moments = 4;
 
     /**
      * @brief Get the number of nodes of the quadrature that uses all the
@@ -729,11 +729,11 @@ namespace Parameters
     QMOMSplittingScheme splitting_scheme = QMOMSplittingScheme::lie;
 
     /// Include the nucleation source
-    bool enable_nucleation = true;
+    bool enable_nucleation = false;
     /// Include the coalescence source
-    bool enable_coalescence = true;
+    bool enable_coalescence = false;
     /// Include the growth source
-    bool enable_growth = true;
+    bool enable_growth = false;
 
     /// Phase-space evolution ("phase evolution" subsection)
     QMOMPhaseEvolution phase_evolution;

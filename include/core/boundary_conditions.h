@@ -1194,7 +1194,7 @@ namespace BoundaryConditions
     const types::boundary_id default_boundary_id)
   {
     prm.declare_entry("type",
-                      "outlet",
+                      "none",
                       Patterns::Selection("dirichlet|outlet|none"),
                       "Type of boundary condition for the QMOM fields. "
                       "Choices are <dirichlet|outlet|none>.");
