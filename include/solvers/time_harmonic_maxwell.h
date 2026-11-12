@@ -485,7 +485,8 @@ private:
    * @brief Reconstruct the interior solution from the skeleton solution after solving
    * the linear system on the skeleton only. The local DPG system of each cell
    * is assembled again to compute the interior solution
-   * \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ and the DPG residual
+   * \f$u_h = M_1^{-1} (G^{-1} B)^\dagger (l - \hat{B}\hat{u}_h)\f$ and the
+   * DPG residual
    * \f$\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)\f$ when the DPG error
    * estimate on the cell and is not stored anywhere else.
    */
@@ -504,9 +505,8 @@ private:
    * \f$\hat{B}\f$ and \f$l\f$) of a cell with the cell and face assemblers,
    * and compute the condensation operators that are common to the assembly
    * and to the interior reconstruction: the Cholesky factorizations of the
-   * Gram matrix \f$G\f$ and of \f$M_1 = B^\dagger G^{-1}B\f$, the matrix
-   * \f$M_2 = B^\dagger G^{-1}\hat{B}\f$ and the vector
-   * \f$M_4 l = B^\dagger G^{-1} l\f$.
+   * Gram matrix \f$G\f$ and of \f$M_1 = B^\dagger G^{-1}B\f$, and the matrix
+   * \f$G^{-1}B\f$.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler.
    *
@@ -527,7 +527,9 @@ private:
    * `assemble_local_dpg_system` and condense it on the
    * skeleton unknowns. The condensed matrix is \f$M_3 - M_2^\dagger M_1^{-1}
    * M_2\f$ and the condensed right-hand side is \f$(M_5 - M_2^\dagger
-   * M_1^{-1} M_4) l\f$.
+   * M_1^{-1} M_4) l\f$. The operators \f$M_2 = B^\dagger G^{-1}\hat{B}\f$ and
+   * \f$M_4 l = B^\dagger G^{-1} l\f$ are computed here since only the
+   * condensed system needs them.
    *
    * @param[in] cell The cell of the interior trial space DoFHandler.
    *
@@ -556,7 +558,9 @@ private:
    * local DPG system of a cell with `assemble_local_dpg_system()` and uses the
    * skeleton solution of the cell \f$\hat{u}_h\f$ to compute:
    * - the interior solution of the cell
-   *   \f$u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$;
+   *   \f$u_h = M_1^{-1} (G^{-1} B)^\dagger (l - \hat{B}\hat{u}_h)\f$, which is
+   *   equal to \f$M_1^{-1} (M_4 l - M_2 \hat{u}_h)\f$ since \f$G\f$ is
+   *   symmetric, but does not require the matrix \f$M_2\f$;
    * - if the DPG error estimator is activated, the error representation
    *   function of the cell, which is the Riesz representation of the residual
    *   in the test space (it solves \f$G \Psi = R\f$),
