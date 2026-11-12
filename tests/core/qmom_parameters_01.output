@@ -1,0 +1,16 @@
+
+DEAL::Generic scalar names, even number of moments
+DEAL::scalar names: scalar_0 scalar_1 scalar_2
+DEAL::number of moments: 4, number of nodes: 2
+DEAL::Given scalar names, odd number of moments
+DEAL::scalar names: ethanol lipids
+DEAL::number of moments: 5, number of nodes: 3
+DEAL::Too few scalar names: threw
+DEAL::Invalid scalar name: threw
+DEAL::Default functions
+DEAL::scalar expressions: 1, distribution type: none, distribution expressions: 1
+DEAL::Lognormal distribution
+DEAL::scalar expressions: 2, distribution type: lognormal, distribution expressions: 3
+DEAL::Chi squared distribution
+DEAL::scalar expressions: 1, distribution type: chi_squared, distribution expressions: 2
+DEAL::Wrong number of distribution expressions: threw

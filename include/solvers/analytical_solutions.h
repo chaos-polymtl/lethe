@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_analytical_solutions_h
 #define lethe_analytical_solutions_h
 
 #include <core/parameters.h>
+#include <core/parameters_multiphysics.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
@@ -140,6 +141,12 @@ namespace AnalyticalSolutions
      * ParsedFunction that contains the analytical solution for the tracer.
      */
     Functions::ParsedFunction<dim> tracer;
+
+    /**
+     * Functions that contain the analytical solution for the fields of the
+     * QMOM physics.
+     */
+    Parameters::QMOMFunctions<dim> qmom;
 
     /**
      * ParsedFunction that contains the analytical solution for the phase.
