@@ -393,9 +393,9 @@ private:
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
         AssertThrow(
-          simulation_parameters.boundary_conditions_cahn_hilliard.type.find(
+          simulation_parameters.cahn_hilliard_boundary_conditions.type.find(
             boundary_id_in_tria) !=
-            simulation_parameters.boundary_conditions_cahn_hilliard.type.end(),
+            simulation_parameters.cahn_hilliard_boundary_conditions.type.end(),
           CahnHilliardBoundaryConditionMissing(boundary_id_in_tria));
       }
   }

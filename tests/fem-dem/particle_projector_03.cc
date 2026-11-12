@@ -194,7 +194,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
   ConditionalOStream pcout(deallog.get_file_stream(), true);
 
-  BoundaryConditions::NSBoundaryConditions<3> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<3> boundary_conditions;
 
   ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>
     particle_projector(&domain_triangulation,

@@ -176,7 +176,7 @@ test()
 
   ConditionalOStream pcout(deallog.get_file_stream(), true);
 
-  BoundaryConditions::NSBoundaryConditions<3> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<3> boundary_conditions;
 
   ParticleProjector<3, DEM::CFDDEMMPProperties::PropertiesIndex>
     particle_projector(&domain_triangulation,

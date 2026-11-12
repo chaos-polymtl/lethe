@@ -1,7 +1,8 @@
 add_library(lethe-core
   # Sources
   bdf.cc
-  boundary_conditions.cc
+  cahn_hilliard_boundary_conditions.cc
+  cls_boundary_conditions.cc
   dem_properties.cc
   density_model.cc
   dimensionality.cc
@@ -9,6 +10,7 @@ add_library(lethe-core
   electric_conductivity_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
+  fluid_dynamics_boundary_conditions.cc
   grid_birmingham_fluidized_bed.cc
   grid_cube_merged.cc
   grid_cylinder.cc
@@ -19,6 +21,7 @@ add_library(lethe-core
   grid_uniform_channel_with_meshed_cylinder.cc
   grid_uniform_channel_with_meshed_square_prism.cc
   grids.cc
+  heat_transfer_boundary_conditions.cc
   ib_particle.cc
   ib_stencil.cc
   interface_tools.cc
@@ -48,6 +51,8 @@ add_library(lethe-core
   surface_tension_model.cc
   thermal_conductivity_model.cc
   thermal_expansion_model.cc
+  time_harmonic_maxwell_boundary_conditions.cc
+  tracer_boundary_conditions.cc
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
   utilities.cc
@@ -56,7 +61,9 @@ add_library(lethe-core
   ../../include/core/auxiliary_math_functions.h
   ../../include/core/bdf.h
   ../../include/core/boundary_conditions.h
+  ../../include/core/cahn_hilliard_boundary_conditions.h
   ../../include/core/checkpoint_control.h
+  ../../include/core/cls_boundary_conditions.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
@@ -65,6 +72,7 @@ add_library(lethe-core
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
+  ../../include/core/fluid_dynamics_boundary_conditions.h
   ../../include/core/grid_birmingham_fluidized_bed.h
   ../../include/core/grid_cube_merged.h
   ../../include/core/grid_cylinder.h
@@ -74,6 +82,7 @@ add_library(lethe-core
   ../../include/core/grid_uniform_channel_with_meshed_cylinder.h
   ../../include/core/grid_uniform_channel_with_meshed_square_prism.h
   ../../include/core/grids.h
+  ../../include/core/heat_transfer_boundary_conditions.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver_strategy.h
@@ -114,7 +123,9 @@ add_library(lethe-core
   ../../include/core/tensors_and_points_dimension_manipulation.h
   ../../include/core/thermal_conductivity_model.h
   ../../include/core/thermal_expansion_model.h
+  ../../include/core/time_harmonic_maxwell_boundary_conditions.h
   ../../include/core/time_integration_utilities.h
+  ../../include/core/tracer_boundary_conditions.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
   ../../include/core/utilities.h)

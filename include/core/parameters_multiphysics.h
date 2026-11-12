@@ -179,8 +179,19 @@ namespace Parameters
     // Type of verbosity for the phase filter
     Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
+    /**
+     * @brief Declare the Cahn-Hilliard phase-filter parameters.
+     *
+     * @param[in,out] prm Parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the Cahn-Hilliard phase-filter parameters.
+     *
+     * @param[in] prm Parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -218,8 +229,19 @@ namespace Parameters
     Parameters::FluidIndicator monitored_fluid =
       Parameters::FluidIndicator::fluid_1;
 
+    /**
+     * @brief Declare the CLS interface-sharpening parameters.
+     *
+     * @param[in,out] prm Parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parsesthe CLS interface-sharpening parameters.
+     *
+     * @param[in] prm Parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -243,8 +265,19 @@ namespace Parameters
     // Enable marangoni effect
     bool enable_marangoni_effect = false;
 
+    /**
+     * @brief Declare the CLS surface-tension force parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the CLS surface-tension force parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -263,8 +296,19 @@ namespace Parameters
     // Type of verbosity for the phase filter
     Parameters::Verbosity verbosity = Parameters::Verbosity::quiet;
 
+    /**
+     * @brief Declare the CLS phase-filter parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the CLS phase-filter parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -311,7 +355,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
+     * @param[in] prm The ParameterHandler.
      */
     void
     parse_parameters(ParameterHandler &prm);
@@ -347,7 +391,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
+     * @param[in] prm The ParameterHandler.
      */
     void
     parse_parameters(ParameterHandler &prm);
@@ -394,7 +438,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
+     * @param[in] prm The ParameterHandler.
      */
     void
     parse_parameters(ParameterHandler &prm);
@@ -422,8 +466,19 @@ namespace Parameters
 
     bool compressible = false;
 
+    /**
+     * @brief Declare the CLS parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the CLS parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -447,8 +502,21 @@ namespace Parameters
     // Phase filtration parameters
     Parameters::CahnHilliard_PhaseFilter cahn_hilliard_phase_filter;
 
+    /**
+     * @brief Declare the Cahn-Hilliard parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the Cahn-Hilliard parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -520,9 +588,21 @@ namespace Parameters
     std::vector<std::array<Tensor<1, dim>, Utilities::fixed_power<2>(dim - 1)>>
       waveguide_corners;
 
+    /**
+     * @brief Declare the time-harmonic Maxwell parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm) const;
 
+    /**
+     * @brief Parse the time-harmonic Maxwell parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -551,8 +631,21 @@ namespace Parameters
     Parameters::CahnHilliard             cahn_hilliard_parameters;
     Parameters::TimeHarmonicMaxwell<dim> time_harmonic_maxwell_parameters;
 
+    /**
+     * @brief Declare the multiphysics parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the multiphysics parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };

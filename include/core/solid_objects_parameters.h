@@ -62,7 +62,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -71,7 +71,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -273,7 +273,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      */
     void
     declare_parameters(ParameterHandler &prm);
@@ -281,7 +281,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);
@@ -369,7 +369,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -378,7 +378,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -540,7 +540,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      */
     void
     declare_parameters(ParameterHandler &prm);
@@ -548,7 +548,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);

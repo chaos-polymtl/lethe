@@ -37,12 +37,12 @@ CLSLinearSubequationsSolver<dim>::setup_dofs()
 
   // Add periodic boundary conditions for the linear subequation
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_cls
+            this->simulation_parameters.cls_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,

@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_postprocessing_cfd_h
 #define lethe_postprocessing_cfd_h
 
-#include <core/boundary_conditions.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 
 #include <solvers/physical_properties_manager.h>
 
@@ -199,13 +199,13 @@ calculate_apparent_viscosity(
  */
 template <int dim, typename VectorType>
 std::vector<std::map<types::boundary_id, Tensor<1, dim>>>
-calculate_forces(
-  const DoFHandler<dim>                               &dof_handler,
-  const VectorType                                    &evaluation_point,
-  const PhysicalPropertiesManager                     &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1>                           &face_quadrature_formula,
-  const Mapping<dim>                                  &mapping);
+calculate_forces(const DoFHandler<dim>           &dof_handler,
+                 const VectorType                &evaluation_point,
+                 const PhysicalPropertiesManager &properties_manager,
+                 const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+                                           &boundary_conditions,
+                 const Quadrature<dim - 1> &face_quadrature_formula,
+                 const Mapping<dim>        &mapping);
 
 
 /**
@@ -230,13 +230,13 @@ calculate_forces(
  */
 template <int dim, typename VectorType>
 std::map<types::boundary_id, Tensor<1, 3>>
-calculate_torques(
-  const DoFHandler<dim>                               &dof_handler,
-  const VectorType                                    &evaluation_point,
-  const PhysicalPropertiesManager                     &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1>                           &face_quadrature_formula,
-  const Mapping<dim>                                  &mapping);
+calculate_torques(const DoFHandler<dim>           &dof_handler,
+                  const VectorType                &evaluation_point,
+                  const PhysicalPropertiesManager &properties_manager,
+                  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+                                            &boundary_conditions,
+                  const Quadrature<dim - 1> &face_quadrature_formula,
+                  const Mapping<dim>        &mapping);
 
 
 /**

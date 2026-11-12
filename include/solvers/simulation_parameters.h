@@ -5,12 +5,17 @@
 #define lethe_simulation_parameters_h
 
 #include <core/ale.h>
-#include <core/boundary_conditions.h>
+#include <core/cahn_hilliard_boundary_conditions.h>
+#include <core/cls_boundary_conditions.h>
 #include <core/dimensionality.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
+#include <core/heat_transfer_boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
 #include <core/solid_objects_parameters.h>
+#include <core/time_harmonic_maxwell_boundary_conditions.h>
+#include <core/tracer_boundary_conditions.h>
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/cls_subequations.h>
@@ -35,22 +40,23 @@ public:
   Parameters::MeshAdaptation mesh_adaptation;
   Parameters::Mesh<dim>      mesh;
   Parameters::Dimensionality dimensionality;
-  std::shared_ptr<Parameters::MeshBoxRefinement<dim>> mesh_box_refinement;
-  std::shared_ptr<Parameters::Nitsche<dim>>           nitsche;
-  Parameters::SimulationControl                       simulation_control;
-  Parameters::Timer                                   timer;
-  Parameters::FEM                                     fem_parameters;
-  Parameters::Forces                                  forces_parameters;
-  std::shared_ptr<Parameters::Laser<dim>>             laser_parameters;
-  Parameters::PostProcessing<dim>                     post_processing;
-  Parameters::Restart                                 restart_parameters;
-  Parameters::Manifolds                               manifolds_parameters;
-  BoundaryConditions::NSBoundaryConditions<dim>       boundary_conditions;
-  BoundaryConditions::HTBoundaryConditions<dim>       boundary_conditions_ht;
-  BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
-  BoundaryConditions::CLSBoundaryConditions<dim>    boundary_conditions_cls;
+  std::shared_ptr<Parameters::MeshBoxRefinement<dim>>      mesh_box_refinement;
+  std::shared_ptr<Parameters::Nitsche<dim>>                nitsche;
+  Parameters::SimulationControl                            simulation_control;
+  Parameters::Timer                                        timer;
+  Parameters::FEM                                          fem_parameters;
+  Parameters::Forces                                       forces_parameters;
+  std::shared_ptr<Parameters::Laser<dim>>                  laser_parameters;
+  Parameters::PostProcessing<dim>                          post_processing;
+  Parameters::Restart                                      restart_parameters;
+  Parameters::Manifolds                                    manifolds_parameters;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::HeatTransferBoundaryConditions<dim>
+                                                    boundary_conditions_ht;
+  BoundaryConditions::TracerBoundaryConditions<dim> tracer_boundary_conditions;
+  BoundaryConditions::CLSBoundaryConditions<dim>    cls_boundary_conditions;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-    boundary_conditions_cahn_hilliard;
+    cahn_hilliard_boundary_conditions;
   BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
     boundary_conditions_time_harmonic_electromagnetics;
   Parameters::InitialConditions<dim>           *initial_condition;
@@ -102,11 +108,11 @@ public:
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_ht.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_tracer.declare_parameters(
+    tracer_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_cls.declare_parameters(
+    cls_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_cahn_hilliard.declare_parameters(
+    cahn_hilliard_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_time_harmonic_electromagnetics.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
@@ -140,7 +146,7 @@ public:
       }
 
     post_processing.declare_parameters(prm);
-    Parameters::DynamicFlowControl ::declare_parameters(prm);
+    Parameters::DynamicFlowControl::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
@@ -210,9 +216,9 @@ public:
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
-    boundary_conditions_tracer.parse_parameters(prm);
-    boundary_conditions_cls.parse_parameters(prm);
-    boundary_conditions_cahn_hilliard.parse_parameters(prm);
+    tracer_boundary_conditions.parse_parameters(prm);
+    cls_boundary_conditions.parse_parameters(prm);
+    cahn_hilliard_boundary_conditions.parse_parameters(prm);
     boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);

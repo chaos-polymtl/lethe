@@ -1878,7 +1878,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             *this->get_mapping(),
             *this->dof_handler,
             id,
-            NavierStokesFunctionDefined<dim>(
+            FluidDynamicsVelocityFunctionDefined<dim>(
               &this->simulation_parameters.boundary_conditions
                  .navier_stokes_functions.at(id)
                  ->u,

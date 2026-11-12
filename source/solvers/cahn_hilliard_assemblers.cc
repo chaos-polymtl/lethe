@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -188,12 +188,12 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
       // Check if the face is on a boundary
       if (scratch_data.is_boundary_face[f])
         {
-          if (this->boundary_conditions_cahn_hilliard.type.at(
+          if (this->cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
               BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
             {
               const double angle_of_contact =
-                this->boundary_conditions_cahn_hilliard.angle_of_contact.at(
+                this->cahn_hilliard_boundary_conditions.angle_of_contact.at(
                   scratch_data.boundary_face_id[f]);
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
@@ -249,12 +249,12 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
       // Check if the face is on a boundary
       if (scratch_data.is_boundary_face[f])
         {
-          if (this->boundary_conditions_cahn_hilliard.type.at(
+          if (this->cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
               BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
             {
               const double angle_of_contact =
-                this->boundary_conditions_cahn_hilliard.angle_of_contact.at(
+                this->cahn_hilliard_boundary_conditions.angle_of_contact.at(
                   scratch_data.boundary_face_id[f]);
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
@@ -305,7 +305,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
       // Check if the face is on a boundary
       if (scratch_data.is_boundary_face[f])
         {
-          if (boundary_conditions_cahn_hilliard.type.at(
+          if (cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
               BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
             {
@@ -358,7 +358,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
       // Check if the face is on a boundary
       if (scratch_data.is_boundary_face[f])
         {
-          if (this->boundary_conditions_cahn_hilliard.type.at(
+          if (this->cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
               BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
             {

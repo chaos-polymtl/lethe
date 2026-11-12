@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Base
@@ -26,7 +26,7 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
-#include <core/boundary_conditions.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/parameters.h>
 #include <core/rheological_model.h>
 #include <core/vector.h>
@@ -879,13 +879,13 @@ calculate_apparent_viscosity<3, LinearAlgebra::distributed::Vector<double>>(
 
 template <int dim, typename VectorType>
 std::vector<std::map<types::boundary_id, Tensor<1, dim>>>
-calculate_forces(
-  const DoFHandler<dim>                               &dof_handler,
-  const VectorType                                    &evaluation_point,
-  const PhysicalPropertiesManager                     &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1>                           &face_quadrature_formula,
-  const Mapping<dim>                                  &mapping)
+calculate_forces(const DoFHandler<dim>           &dof_handler,
+                 const VectorType                &evaluation_point,
+                 const PhysicalPropertiesManager &properties_manager,
+                 const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+                                           &boundary_conditions,
+                 const Quadrature<dim - 1> &face_quadrature_formula,
+                 const Mapping<dim>        &mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
@@ -991,68 +991,74 @@ calculate_forces(
 
 template std::vector<std::map<types::boundary_id, Tensor<1, 2>>>
 calculate_forces<2, GlobalVectorType>(
-  const DoFHandler<2>                               &dof_handler,
-  const GlobalVectorType                            &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const Quadrature<1>                               &face_quadrature_formula,
-  const Mapping<2>                                  &mapping);
+  const DoFHandler<2>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
+                      &boundary_conditions,
+  const Quadrature<1> &face_quadrature_formula,
+  const Mapping<2>    &mapping);
 template std::vector<std::map<types::boundary_id, Tensor<1, 3>>>
 calculate_forces<3, GlobalVectorType>(
-  const DoFHandler<3>                               &dof_handler,
-  const GlobalVectorType                            &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const Quadrature<2>                               &face_quadrature_formula,
-  const Mapping<3>                                  &mapping);
+  const DoFHandler<3>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
+                      &boundary_conditions,
+  const Quadrature<2> &face_quadrature_formula,
+  const Mapping<3>    &mapping);
 
 template std::vector<std::map<types::boundary_id, Tensor<1, 2>>>
 calculate_forces<2, GlobalBlockVectorType>(
-  const DoFHandler<2>                               &dof_handler,
-  const GlobalBlockVectorType                       &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const Quadrature<1>                               &face_quadrature_formula,
-  const Mapping<2>                                  &mapping);
+  const DoFHandler<2>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
+                      &boundary_conditions,
+  const Quadrature<1> &face_quadrature_formula,
+  const Mapping<2>    &mapping);
 
 template std::vector<std::map<types::boundary_id, Tensor<1, 3>>>
 calculate_forces<3, GlobalBlockVectorType>(
-  const DoFHandler<3>                               &dof_handler,
-  const GlobalBlockVectorType                       &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const Quadrature<2>                               &face_quadrature_formula,
-  const Mapping<3>                                  &mapping);
+  const DoFHandler<3>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
+                      &boundary_conditions,
+  const Quadrature<2> &face_quadrature_formula,
+  const Mapping<3>    &mapping);
 
 #ifndef LETHE_USE_LDV
 template std::vector<std::map<types::boundary_id, Tensor<1, 2>>>
 calculate_forces<2, LinearAlgebra::distributed::Vector<double>>(
-  const DoFHandler<2>                               &dof_handler,
-  const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const Quadrature<1>                               &face_quadrature_formula,
-  const Mapping<2>                                  &mapping);
+  const DoFHandler<2>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const PhysicalPropertiesManager                  &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
+                      &boundary_conditions,
+  const Quadrature<1> &face_quadrature_formula,
+  const Mapping<2>    &mapping);
 
 template std::vector<std::map<types::boundary_id, Tensor<1, 3>>>
 calculate_forces<3, LinearAlgebra::distributed::Vector<double>>(
-  const DoFHandler<3>                               &dof_handler,
-  const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const Quadrature<2>                               &face_quadrature_formula,
-  const Mapping<3>                                  &mapping);
+  const DoFHandler<3>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const PhysicalPropertiesManager                  &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
+                      &boundary_conditions,
+  const Quadrature<2> &face_quadrature_formula,
+  const Mapping<3>    &mapping);
 #endif
 
 template <int dim, typename VectorType>
 std::map<types::boundary_id, Tensor<1, 3>>
-calculate_torques(
-  const DoFHandler<dim>                               &dof_handler,
-  const VectorType                                    &evaluation_point,
-  const PhysicalPropertiesManager                     &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1>                           &face_quadrature_formula,
-  const Mapping<dim>                                  &mapping)
+calculate_torques(const DoFHandler<dim>           &dof_handler,
+                  const VectorType                &evaluation_point,
+                  const PhysicalPropertiesManager &properties_manager,
+                  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+                                            &boundary_conditions,
+                  const Quadrature<dim - 1> &face_quadrature_formula,
+                  const Mapping<dim>        &mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
@@ -1159,58 +1165,64 @@ calculate_torques(
 
 template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<2, GlobalVectorType>(
-  const DoFHandler<2>                               &dof_handler,
-  const GlobalVectorType                            &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const Quadrature<1>                               &face_quadrature_formula,
-  const Mapping<2>                                  &mapping);
+  const DoFHandler<2>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
+                      &boundary_conditions,
+  const Quadrature<1> &face_quadrature_formula,
+  const Mapping<2>    &mapping);
 
 template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<3, GlobalVectorType>(
-  const DoFHandler<3>                               &dof_handler,
-  const GlobalVectorType                            &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const Quadrature<2>                               &face_quadrature_formula,
-  const Mapping<3>                                  &mapping);
+  const DoFHandler<3>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
+                      &boundary_conditions,
+  const Quadrature<2> &face_quadrature_formula,
+  const Mapping<3>    &mapping);
 
 template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<2, GlobalBlockVectorType>(
-  const DoFHandler<2>                               &dof_handler,
-  const GlobalBlockVectorType                       &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const Quadrature<1>                               &face_quadrature_formula,
-  const Mapping<2>                                  &mapping);
+  const DoFHandler<2>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
+                      &boundary_conditions,
+  const Quadrature<1> &face_quadrature_formula,
+  const Mapping<2>    &mapping);
 
 template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<3, GlobalBlockVectorType>(
-  const DoFHandler<3>                               &dof_handler,
-  const GlobalBlockVectorType                       &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const Quadrature<2>                               &face_quadrature_formula,
-  const Mapping<3>                                  &mapping);
+  const DoFHandler<3>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const PhysicalPropertiesManager &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
+                      &boundary_conditions,
+  const Quadrature<2> &face_quadrature_formula,
+  const Mapping<3>    &mapping);
 
 #ifndef LETHE_USE_LDV
 template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<2, LinearAlgebra::distributed::Vector<double>>(
-  const DoFHandler<2>                               &dof_handler,
-  const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const Quadrature<1>                               &face_quadrature_formula,
-  const Mapping<2>                                  &mapping);
+  const DoFHandler<2>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const PhysicalPropertiesManager                  &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<2>
+                      &boundary_conditions,
+  const Quadrature<1> &face_quadrature_formula,
+  const Mapping<2>    &mapping);
 
 template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<3, LinearAlgebra::distributed::Vector<double>>(
-  const DoFHandler<3>                               &dof_handler,
-  const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  const PhysicalPropertiesManager                   &properties_manager,
-  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const Quadrature<2>                               &face_quadrature_formula,
-  const Mapping<3>                                  &mapping);
+  const DoFHandler<3>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const PhysicalPropertiesManager                  &properties_manager,
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<3>
+                      &boundary_conditions,
+  const Quadrature<2> &face_quadrature_formula,
+  const Mapping<3>    &mapping);
 #endif
 
 // Find the l2 norm of the error between the finite element sol'n and the exact

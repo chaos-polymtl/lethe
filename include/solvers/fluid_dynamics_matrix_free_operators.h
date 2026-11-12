@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_matrix_free_operators_h
 
 #include <core/bdf.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
@@ -210,7 +211,8 @@ public:
     const StabilizationType                   stabilization,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+               &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual,
     const bool &enable_mortar);
@@ -241,21 +243,21 @@ public:
    * @param[in] enable_mortar Flag to turn mortar parameters on or off.
    */
   void
-  reinit(
-    const Mapping<dim>                   &mapping,
-    const DoFHandler<dim>                &dof_handler,
-    const AffineConstraints<number>      &constraints,
-    const Quadrature<dim>                &quadrature,
-    const std::shared_ptr<Function<dim>> &forcing_function,
-    const std::shared_ptr<PhysicalPropertiesManager>
-                                             &physical_properties_manager,
-    const StabilizationType                   stabilization,
-    const unsigned int                        mg_level,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-    const bool &enable_hessians_jacobian,
-    const bool &enable_hessians_residual,
-    const bool &enable_mortar);
+  reinit(const Mapping<dim>                   &mapping,
+         const DoFHandler<dim>                &dof_handler,
+         const AffineConstraints<number>      &constraints,
+         const Quadrature<dim>                &quadrature,
+         const std::shared_ptr<Function<dim>> &forcing_function,
+         const std::shared_ptr<PhysicalPropertiesManager>
+                                                  &physical_properties_manager,
+         const StabilizationType                   stabilization,
+         const unsigned int                        mg_level,
+         const std::shared_ptr<SimulationControl> &simulation_control,
+         const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+                    &boundary_conditions,
+         const bool &enable_hessians_jacobian,
+         const bool &enable_hessians_residual,
+         const bool &enable_mortar);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -713,7 +715,7 @@ protected:
    * initialization of the boundary conditions.
    *
    */
-  BoundaryConditions::NSBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<dim> boundary_conditions;
 
   /**
    * @brief Flag to turn hessian terms from jacobian on or off.

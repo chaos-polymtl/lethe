@@ -64,7 +64,7 @@ CahnHilliard<dim>::setup_assemblers()
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
         GridTools::minimal_cell_diameter(*triangulation),
-      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+      this->simulation_parameters.cahn_hilliard_boundary_conditions));
 
   // Free angle of contact boundary condition
   this->assemblers.emplace_back(
@@ -76,7 +76,7 @@ CahnHilliard<dim>::setup_assemblers()
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
         GridTools::minimal_cell_diameter(*triangulation),
-      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+      this->simulation_parameters.cahn_hilliard_boundary_conditions));
 
   // Core assembler
   this->assemblers.emplace_back(
@@ -1106,7 +1106,7 @@ CahnHilliard<dim>::setup_dofs()
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
+         this->simulation_parameters.cahn_hilliard_boundary_conditions.type)
       {
         ComponentMask mask(2, true);
         mask.set(1, false);
@@ -1121,7 +1121,7 @@ CahnHilliard<dim>::setup_dofs()
               *this->dof_handler,
               id,
               CahnHilliardFunctionDefined<dim>(
-                &this->simulation_parameters.boundary_conditions_cahn_hilliard
+                &this->simulation_parameters.cahn_hilliard_boundary_conditions
                    .bcFunctions.at(id)
                    ->phi),
               nonzero_constraints,
@@ -1130,7 +1130,7 @@ CahnHilliard<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             const auto &periodic_boundary =
-              this->simulation_parameters.boundary_conditions_cahn_hilliard
+              this->simulation_parameters.cahn_hilliard_boundary_conditions
                 .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,
@@ -1150,7 +1150,7 @@ CahnHilliard<dim>::setup_dofs()
                                             zero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
+         this->simulation_parameters.cahn_hilliard_boundary_conditions.type)
       {
         if (type == BoundaryConditions::BoundaryType::
                       cahn_hilliard_dirichlet_phase_order)
@@ -1164,7 +1164,7 @@ CahnHilliard<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             const auto &periodic_boundary =
-              this->simulation_parameters.boundary_conditions_cahn_hilliard
+              this->simulation_parameters.cahn_hilliard_boundary_conditions
                 .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,
@@ -1212,7 +1212,7 @@ template <int dim>
 void
 CahnHilliard<dim>::update_boundary_conditions()
 {
-  if (!this->simulation_parameters.boundary_conditions_cahn_hilliard
+  if (!this->simulation_parameters.cahn_hilliard_boundary_conditions
          .time_dependent)
     return;
 
@@ -1222,7 +1222,7 @@ CahnHilliard<dim>::update_boundary_conditions()
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
+       this->simulation_parameters.cahn_hilliard_boundary_conditions.type)
     {
       ComponentMask mask(2, true);
       mask.set(1, false);
@@ -1233,7 +1233,7 @@ CahnHilliard<dim>::update_boundary_conditions()
       if (type ==
           BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order)
         {
-          this->simulation_parameters.boundary_conditions_cahn_hilliard
+          this->simulation_parameters.cahn_hilliard_boundary_conditions
             .bcFunctions.at(id)
             ->phi.set_time(time);
 
@@ -1241,7 +1241,7 @@ CahnHilliard<dim>::update_boundary_conditions()
             *this->dof_handler,
             id,
             CahnHilliardFunctionDefined<dim>(
-              &this->simulation_parameters.boundary_conditions_cahn_hilliard
+              &this->simulation_parameters.cahn_hilliard_boundary_conditions
                  .bcFunctions.at(id)
                  ->phi),
             nonzero_constraints,
@@ -1250,7 +1250,7 @@ CahnHilliard<dim>::update_boundary_conditions()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_cahn_hilliard
+            this->simulation_parameters.cahn_hilliard_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,

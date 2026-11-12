@@ -91,10 +91,11 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const StabilizationType                           stabilization,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const bool                                          &enable_hessians_jacobian,
-  const bool                                          &enable_hessians_residual,
-  const bool                                          &enable_mortar)
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+             &boundary_conditions,
+  const bool &enable_hessians_jacobian,
+  const bool &enable_hessians_residual,
+  const bool &enable_mortar)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -125,10 +126,11 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const StabilizationType                           stabilization,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const bool                                          &enable_hessians_jacobian,
-  const bool                                          &enable_hessians_residual,
-  const bool                                          &enable_mortar)
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+             &boundary_conditions,
+  const bool &enable_hessians_jacobian,
+  const bool &enable_hessians_residual,
+  const bool &enable_mortar)
 {
   this->enable_face_terms = false;
 

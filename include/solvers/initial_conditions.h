@@ -36,8 +36,19 @@ namespace Parameters
     int    n_iter = 0;
     double alpha  = 0.5;
 
+    /**
+     * @brief Declares parameters for the ramped power-law exponent.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parses parameters for the ramped power-law exponent.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -48,8 +59,19 @@ namespace Parameters
     int    n_iter                   = 0;
     double alpha                    = 0.5;
 
+    /**
+     * @brief Declares parameters for the ramped kinematic viscosity.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parses parameters for the ramped kinematic viscosity.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -59,8 +81,19 @@ namespace Parameters
     Ramp_n         ramp_n;
     Ramp_viscosity ramp_viscosity;
 
+    /**
+     * @brief Declares parameters for all ramp functions.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parses parameters for all ramp functions.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -111,8 +144,19 @@ namespace Parameters
     std::string average_velocity_folder    = "./";
     std::string average_velocity_file_name = "restart";
 
+    /**
+     * @brief Declares initial-condition parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parses initial-condition parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };

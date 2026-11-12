@@ -150,7 +150,7 @@ test_void_fraction_qcm_gaussian(const unsigned int fe_degree,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-  BoundaryConditions::NSBoundaryConditions<3> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<3> boundary_conditions;
 
   ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>
     particle_projector(&domain_triangulation,

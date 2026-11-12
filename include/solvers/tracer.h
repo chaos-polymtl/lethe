@@ -382,9 +382,9 @@ private:
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
         AssertThrow(
-          simulation_parameters.boundary_conditions_tracer.type.find(
+          simulation_parameters.tracer_boundary_conditions.type.find(
             boundary_id_in_tria) !=
-            simulation_parameters.boundary_conditions_tracer.type.end(),
+            simulation_parameters.tracer_boundary_conditions.type.end(),
           TracerBoundaryConditionMissing(boundary_id_in_tria));
       }
   }

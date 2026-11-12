@@ -210,7 +210,8 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
 template <int dim, typename PropertiesIndex>
 void
 ParticleProjector<dim, PropertiesIndex>::setup_constraints(
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions)
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+    &boundary_conditions)
 {
   has_periodic_boundaries = false;
   // Define constraints for periodic boundary conditions

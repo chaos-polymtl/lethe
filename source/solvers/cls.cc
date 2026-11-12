@@ -2816,16 +2816,16 @@ template <int dim>
 void
 ConservativeLevelSet<dim>::update_boundary_conditions()
 {
-  if (!this->simulation_parameters.boundary_conditions_cls.time_dependent)
+  if (!this->simulation_parameters.cls_boundary_conditions.time_dependent)
     return;
 
   double time = this->simulation_control->get_current_time();
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
       if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_cls.phase_indicator
+          this->simulation_parameters.cls_boundary_conditions.phase_indicator
             .at(id)
             ->set_time(time);
         }
@@ -2847,7 +2847,7 @@ ConservativeLevelSet<dim>::define_zero_constraints()
                                           this->zero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
       if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
         {
@@ -2860,7 +2860,7 @@ ConservativeLevelSet<dim>::define_zero_constraints()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_cls
+            this->simulation_parameters.cls_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -2886,21 +2886,21 @@ ConservativeLevelSet<dim>::define_non_zero_constraints()
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_cls.type)
+         this->simulation_parameters.cls_boundary_conditions.type)
       {
         if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
               id,
-              *this->simulation_parameters.boundary_conditions_cls
+              *this->simulation_parameters.cls_boundary_conditions
                  .phase_indicator.at(id),
               nonzero_constraints);
           }
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             const auto &periodic_boundary =
-              this->simulation_parameters.boundary_conditions_cls
+              this->simulation_parameters.cls_boundary_conditions
                 .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,

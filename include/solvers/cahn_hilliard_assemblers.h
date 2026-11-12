@@ -4,6 +4,7 @@
 #ifndef lethe_cahn_hilliard_assemblers_h
 #define lethe_cahn_hilliard_assemblers_h
 
+#include <core/cahn_hilliard_boundary_conditions.h>
 #include <core/simulation_control.h>
 
 #include <solvers/cahn_hilliard_scratch_data.h>
@@ -91,11 +92,11 @@ public:
     const Parameters::CahnHilliard            cahn_hilliard_parameters,
     const double                              epsilon,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-      &p_boundary_conditions_cahn_hilliard)
+      &p_cahn_hilliard_boundary_conditions)
     : simulation_control(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
     , epsilon(epsilon)
-    , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
+    , cahn_hilliard_boundary_conditions(p_cahn_hilliard_boundary_conditions)
   {}
 
   /**
@@ -123,7 +124,7 @@ public:
   // the interface between the two phases is proportional to epsilon
   const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-    &boundary_conditions_cahn_hilliard;
+    &cahn_hilliard_boundary_conditions;
 };
 
 
@@ -144,11 +145,11 @@ public:
     const Parameters::CahnHilliard            cahn_hilliard_parameters,
     const double                              epsilon,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-      &p_boundary_conditions_cahn_hilliard)
+      &p_cahn_hilliard_boundary_conditions)
     : simulation_control(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
     , epsilon(epsilon)
-    , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
+    , cahn_hilliard_boundary_conditions(p_cahn_hilliard_boundary_conditions)
   {}
 
   /**
@@ -176,7 +177,7 @@ public:
   // the interface between the two phases is proportional to espilon
   const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-    &boundary_conditions_cahn_hilliard;
+    &cahn_hilliard_boundary_conditions;
 };
 
 

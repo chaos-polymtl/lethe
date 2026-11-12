@@ -5,6 +5,7 @@
 #define lethe_void_fraction_h
 
 #include <core/dem_properties.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/parameters_cfd_dem.h>
 #include <core/vector.h>
 
@@ -428,7 +429,8 @@ public:
    */
   void
   setup_constraints(
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions);
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+      &boundary_conditions);
 
   /**
    * @brief Calculate the void fraction.
