@@ -39,7 +39,9 @@ add_library(lethe-solvers
   postprocessing_probes.cc
   postprocessing_scalar.cc
   postprocessing_velocities.cc
+  qmom.cc
   qmom_field_function.cc
+  qmom_scratch_data.cc
   signed_distance_transformation.cc
   simulation_parameters.cc
   solid_constraints.cc
@@ -98,7 +100,9 @@ add_library(lethe-solvers
   ../../include/solvers/postprocessing_scalar.h
   ../../include/solvers/postprocessing_velocities.h
   ../../include/solvers/postprocessors.h
+  ../../include/solvers/qmom.h
   ../../include/solvers/qmom_field_function.h
+  ../../include/solvers/qmom_scratch_data.h
   ../../include/solvers/signed_distance_transformation.h
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/solid_constraints.h
