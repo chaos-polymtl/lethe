@@ -16,7 +16,7 @@ var searchData=
   ['heattransferassemblerrobinbc_13',['HeatTransferAssemblerRobinBC',['../classHeatTransferAssemblerRobinBC.html',1,'']]],
   ['heattransferassemblerviscousdissipation_14',['HeatTransferAssemblerViscousDissipation',['../classHeatTransferAssemblerViscousDissipation.html',1,'']]],
   ['heattransferassemblerviscousdissipationcls_15',['HeatTransferAssemblerViscousDissipationCLS',['../classHeatTransferAssemblerViscousDissipationCLS.html',1,'']]],
-  ['heattransferscratchdata_16',['HeatTransferScratchData',['../classHeatTransferScratchData.html',1,'']]],
-  ['htboundaryconditions_17',['HTBoundaryConditions',['../classBoundaryConditions_1_1HTBoundaryConditions.html',1,'BoundaryConditions']]],
+  ['heattransferboundaryconditions_16',['HeatTransferBoundaryConditions',['../classBoundaryConditions_1_1HeatTransferBoundaryConditions.html',1,'BoundaryConditions']]],
+  ['heattransferscratchdata_17',['HeatTransferScratchData',['../classHeatTransferScratchData.html',1,'']]],
   ['hyperrectangle_18',['HyperRectangle',['../classHyperRectangle.html',1,'']]]
 ];

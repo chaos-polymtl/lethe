@@ -95,14 +95,14 @@ $(function() {
   <div class="headertitle"><div class="title">postprocessing_cfd.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="boundary__conditions_8h_source.html">core/boundary_conditions.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html">core/fluid_dynamics_boundary_conditions.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="physical__properties__manager_8h_source.html">solvers/physical_properties_manager.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/quadrature_lib.h&gt;</code><br />
 <code>#include &lt;deal.II/dofs/dof_handler.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for postprocessing_cfd.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="postprocessing__cfd_8h__incl.svg" width="4303" height="667"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="postprocessing__cfd_8h__incl.svg" width="4038" height="755"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -140,12 +140,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a435a5183c6ea1ba3055d9d24b1a699da" id="r_a435a5183c6ea1ba3055d9d24b1a699da"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a435a5183c6ea1ba3055d9d24b1a699da"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8h.html#a435a5183c6ea1ba3055d9d24b1a699da">calculate_apparent_viscosity</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
 <tr class="separator:a435a5183c6ea1ba3055d9d24b1a699da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a005fde469d4ada72cb97626d77c420a8" id="r_a005fde469d4ada72cb97626d77c420a8"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:a005fde469d4ada72cb97626d77c420a8"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8h.html#a005fde469d4ada72cb97626d77c420a8">calculate_forces</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
-<tr class="separator:a005fde469d4ada72cb97626d77c420a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae728951e3443d452f4801efee46373e3" id="r_ae728951e3443d452f4801efee46373e3"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:ae728951e3443d452f4801efee46373e3"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8h.html#ae728951e3443d452f4801efee46373e3">calculate_torques</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
-<tr class="separator:ae728951e3443d452f4801efee46373e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5b0b2413c76a554ae8af6cad03e64f6" id="r_aa5b0b2413c76a554ae8af6cad03e64f6"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:aa5b0b2413c76a554ae8af6cad03e64f6"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8h.html#aa5b0b2413c76a554ae8af6cad03e64f6">calculate_forces</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1FluidDynamicsBoundaryConditions.html">BoundaryConditions::FluidDynamicsBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="separator:aa5b0b2413c76a554ae8af6cad03e64f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f92d91e578654754fd552e2a1f9b668" id="r_a5f92d91e578654754fd552e2a1f9b668"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a5f92d91e578654754fd552e2a1f9b668"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8h.html#a5f92d91e578654754fd552e2a1f9b668">calculate_torques</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1FluidDynamicsBoundaryConditions.html">BoundaryConditions::FluidDynamicsBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="separator:a5f92d91e578654754fd552e2a1f9b668"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b636835e83ecfabab925b0df0efd246" id="r_a9b636835e83ecfabab925b0df0efd246"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:a9b636835e83ecfabab925b0df0efd246"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8h.html#a9b636835e83ecfabab925b0df0efd246">calculate_L2_error</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Function&lt; dim &gt; *exact_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a9b636835e83ecfabab925b0df0efd246"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -315,7 +315,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01552">1552</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01564">1564</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00044">void_fraction</a>.</p>
 
@@ -379,9 +379,9 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01485">1485</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01497">1497</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__cfd_8cc_source.html#l01380">calculate_flow_rate()</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__cfd_8cc_source.html#l01392">calculate_flow_rate()</a>.</p>
 
 </div>
 </div>
@@ -563,12 +563,12 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01380">1380</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01392">1392</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
 </div>
 </div>
-<a id="a005fde469d4ada72cb97626d77c420a8" name="a005fde469d4ada72cb97626d77c420a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a005fde469d4ada72cb97626d77c420a8">&#9670;&#160;</a></span>calculate_forces()</h2>
+<a id="aa5b0b2413c76a554ae8af6cad03e64f6" name="aa5b0b2413c76a554ae8af6cad03e64f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5b0b2413c76a554ae8af6cad03e64f6">&#9670;&#160;</a></span>calculate_forces()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -596,7 +596,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1FluidDynamicsBoundaryConditions.html">BoundaryConditions::FluidDynamicsBoundaryConditions</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_conditions</em>, </td>
         </tr>
         <tr>
@@ -635,7 +635,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l00882">882</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00151">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00158">BoundaryConditions::BoundaryConditions::type</a>.</p>
+<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00151">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00082">BoundaryConditions::BoundaryConditions::type</a>.</p>
 
 </div>
 </div>
@@ -754,7 +754,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01221">1221</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01233">1233</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>.</p>
 
@@ -897,8 +897,8 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 </div>
 </div>
-<a id="ae728951e3443d452f4801efee46373e3" name="ae728951e3443d452f4801efee46373e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae728951e3443d452f4801efee46373e3">&#9670;&#160;</a></span>calculate_torques()</h2>
+<a id="a5f92d91e578654754fd552e2a1f9b668" name="a5f92d91e578654754fd552e2a1f9b668"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f92d91e578654754fd552e2a1f9b668">&#9670;&#160;</a></span>calculate_torques()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -926,7 +926,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1FluidDynamicsBoundaryConditions.html">BoundaryConditions::FluidDynamicsBoundaryConditions</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>boundary_conditions</em>, </td>
         </tr>
         <tr>
@@ -963,9 +963,9 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01049">1049</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01055">1055</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00151">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="boundary__conditions_8h_source.html#l00285">BoundaryConditions::NSBoundaryConditions&lt; dim &gt;::navier_stokes_functions</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00158">BoundaryConditions::BoundaryConditions::type</a>.</p>
+<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00151">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00095">BoundaryConditions::FluidDynamicsBoundaryConditions&lt; dim &gt;::navier_stokes_functions</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>, <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a5a203f21bd5c156af2c1256be782d696">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00082">BoundaryConditions::BoundaryConditions::type</a>.</p>
 
 </div>
 </div>

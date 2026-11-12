@@ -97,7 +97,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="tracer__boundary__conditions_8h_source.html">tracer_boundary_conditions.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for BoundaryConditions::TracerBoundaryConditions&lt; dim &gt;:</div>
 <div class="dyncontent">
@@ -137,7 +137,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 class BoundaryConditions::TracerBoundaryConditions&lt; dim &gt;</div><p>This class manages the boundary conditions for <a class="el" href="classTracer.html">Tracer</a> solver It introduces the boundary functions and declares the boundary conditions coherently. </p>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00916">916</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8h_source.html#l00025">25</a> of file <a class="el" href="tracer__boundary__conditions_8h_source.html">tracer_boundary_conditions.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a815ef7a84e3bc33fe587ec09ee2a7599" name="a815ef7a84e3bc33fe587ec09ee2a7599"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a815ef7a84e3bc33fe587ec09ee2a7599">&#9670;&#160;</a></span>declare_default_entry()</h2>
@@ -167,16 +167,16 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Declares the default parameters for a boundary condition id i_bc i.e. Dirichlet condition (ConstantFunction) with value 0. </p>
+<p>Declare the default parameters for one tracer boundary condition. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information.</td></tr>
-    <tr><td class="paramname">default_boundary_id</td><td>Default value given to the boundary id. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">default_boundary_id</td><td>The default mesh boundary id. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00946">946</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8cc_source.html#l00026">26</a> of file <a class="el" href="tracer__boundary__conditions_8cc_source.html">tracer_boundary_conditions.cc</a>.</p>
 
 </div>
 </div>
@@ -208,16 +208,16 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Declare the boundary conditions default parameters Calls declareDefaultEntry method for each boundary (max 14 boundaries) </p>
+<p>Declare the tracer boundary condition parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information</td></tr>
-    <tr><td class="paramname">number_of_boundary_conditions</td><td>Number of tracer boundary conditions </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">number_of_boundary_conditions</td><td>The number of boundary conditions to declare. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00990">990</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8cc_source.html#l00062">62</a> of file <a class="el" href="tracer__boundary__conditions_8cc_source.html">tracer_boundary_conditions.cc</a>.</p>
 
 </div>
 </div>
@@ -239,15 +239,15 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Parse the information for a boundary condition. </p>
+<p>Parse the information for one tracer boundary condition. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01028">1028</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8cc_source.html#l00093">93</a> of file <a class="el" href="tracer__boundary__conditions_8cc_source.html">tracer_boundary_conditions.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::none</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a526a99532e70736e1153dec9f45ff924">BoundaryConditions::periodic_neighbor</a>, <a class="el" href="multiphysics_8h_source.html#l00035">tracer</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>.</p>
 
@@ -271,15 +271,15 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Parse the boundary conditions Calls parse_boundary method for each boundary (max 14 boundaries) </p>
+<p>Parse the tracer boundary condition parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01103">1103</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8cc_source.html#l00160">160</a> of file <a class="el" href="tracer__boundary__conditions_8cc_source.html">tracer_boundary_conditions.cc</a>.</p>
 
 </div>
 </div>
@@ -298,12 +298,13 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00921">921</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8h_source.html#l00030">30</a> of file <a class="el" href="tracer__boundary__conditions_8h_source.html">tracer_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/runner/work/lethe/lethe/include/core/<a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a></li>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>/home/runner/work/lethe/lethe/include/core/<a class="el" href="tracer__boundary__conditions_8h_source.html">tracer_boundary_conditions.h</a></li>
+<li>/home/runner/work/lethe/lethe/source/core/<a class="el" href="tracer__boundary__conditions_8cc_source.html">tracer_boundary_conditions.cc</a></li>
 </ul>
 </div><!-- contents -->
 <!--

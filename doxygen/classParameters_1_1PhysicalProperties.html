@@ -150,7 +150,7 @@ Static Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classParameters_1_1PhysicalProperties.html" title="PhysicalProperties - Define the possible physical properties. All continuum equations share the same ...">PhysicalProperties</a> - Define the possible physical properties. All continuum equations share the same physical properties object but only take the subset of properties they require Defined as a class with public attributes in order to use a non-static declare_parameters methods (useful for multiple fluid simulations). </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00722">722</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00838">838</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a49bbc837e14577f9841e985fdffd342e" name="a49bbc837e14577f9841e985fdffd342e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a49bbc837e14577f9841e985fdffd342e">&#9670;&#160;</a></span>PhysicalProperties()</h2>
@@ -194,9 +194,18 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Declare the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The ParameterHandler. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>The material id. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01162">1162</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8cc_source.html#l01075">Parameters::PhaseChange::declare_parameters()</a>, <a class="el" href="parameters_8h_source.html#l00728">fluids</a>, <a class="el" href="parameters_8h_source.html#l00745">material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00730">max_fluids</a>, <a class="el" href="parameters_8h_source.html#l00747">max_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00735">max_solids</a>, <a class="el" href="parameters_8h_source.html#l00741">max_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00729">number_of_fluids</a>, <a class="el" href="parameters_8h_source.html#l00746">number_of_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00734">number_of_solids</a>, <a class="el" href="parameters_8h_source.html#l00740">number_of_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00758">reference_temperature</a>, <a class="el" href="parameters_8h_source.html#l00733">solids</a>, and <a class="el" href="parameters_8h_source.html#l00739">unresolved_dispersed_phases</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8cc_source.html#l01075">Parameters::PhaseChange::declare_parameters()</a>, <a class="el" href="parameters_8h_source.html#l00844">fluids</a>, <a class="el" href="parameters_8h_source.html#l00861">material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00846">max_fluids</a>, <a class="el" href="parameters_8h_source.html#l00863">max_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00851">max_solids</a>, <a class="el" href="parameters_8h_source.html#l00857">max_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00845">number_of_fluids</a>, <a class="el" href="parameters_8h_source.html#l00862">number_of_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00850">number_of_solids</a>, <a class="el" href="parameters_8h_source.html#l00856">number_of_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00874">reference_temperature</a>, <a class="el" href="parameters_8h_source.html#l00849">solids</a>, and <a class="el" href="parameters_8h_source.html#l00855">unresolved_dispersed_phases</a>.</p>
 
 </div>
 </div>
@@ -226,9 +235,18 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The ParameterHandler. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimensions</td><td>The <a class="el" href="classParameters_1_1Dimensionality.html" title="Class used to rescale physical properties for cases where the main dimensions of the problems (Length...">Dimensionality</a> object controlling the fundamental dimensions (length, time, mass, temperature) of the problem. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01237">1237</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_dispersed_phase</a>, <a class="el" href="parameters_8h_source.html#l00753">fluid_dispersed_phase_interactions_with_material_interaction_ids</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2">Parameters::MaterialInteractions::fluid_fluid</a>, <a class="el" href="parameters_8h_source.html#l00749">fluid_fluid_interactions_with_material_interaction_ids</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a7426537cf506209635da9eebebd9886a">Parameters::MaterialInteractions::fluid_solid</a>, <a class="el" href="parameters_8h_source.html#l00751">fluid_solid_interactions_with_material_interaction_ids</a>, <a class="el" href="parameters_8h_source.html#l00728">fluids</a>, <a class="el" href="parameters_8h_source.html#l00745">material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00730">max_fluids</a>, <a class="el" href="parameters_8h_source.html#l00747">max_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00735">max_solids</a>, <a class="el" href="parameters_8h_source.html#l00741">max_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00729">number_of_fluids</a>, <a class="el" href="parameters_8h_source.html#l00746">number_of_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00734">number_of_solids</a>, <a class="el" href="parameters_8h_source.html#l00740">number_of_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00758">reference_temperature</a>, <a class="el" href="parameters_8h_source.html#l00733">solids</a>, and <a class="el" href="parameters_8h_source.html#l00739">unresolved_dispersed_phases</a>.</p>
+<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_dispersed_phase</a>, <a class="el" href="parameters_8h_source.html#l00869">fluid_dispersed_phase_interactions_with_material_interaction_ids</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2">Parameters::MaterialInteractions::fluid_fluid</a>, <a class="el" href="parameters_8h_source.html#l00865">fluid_fluid_interactions_with_material_interaction_ids</a>, <a class="el" href="classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a7426537cf506209635da9eebebd9886a">Parameters::MaterialInteractions::fluid_solid</a>, <a class="el" href="parameters_8h_source.html#l00867">fluid_solid_interactions_with_material_interaction_ids</a>, <a class="el" href="parameters_8h_source.html#l00844">fluids</a>, <a class="el" href="parameters_8h_source.html#l00861">material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00846">max_fluids</a>, <a class="el" href="parameters_8h_source.html#l00863">max_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00851">max_solids</a>, <a class="el" href="parameters_8h_source.html#l00857">max_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00845">number_of_fluids</a>, <a class="el" href="parameters_8h_source.html#l00862">number_of_material_interactions</a>, <a class="el" href="parameters_8h_source.html#l00850">number_of_solids</a>, <a class="el" href="parameters_8h_source.html#l00856">number_of_unresolved_dispersed_phases</a>, <a class="el" href="parameters_8h_source.html#l00874">reference_temperature</a>, <a class="el" href="parameters_8h_source.html#l00849">solids</a>, and <a class="el" href="parameters_8h_source.html#l00855">unresolved_dispersed_phases</a>.</p>
 
 </div>
 </div>
@@ -245,7 +263,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00753">753</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00869">869</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -261,7 +279,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00749">749</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00865">865</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -277,7 +295,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00751">751</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00867">867</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -293,7 +311,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00728">728</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00844">844</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -309,7 +327,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00745">745</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00861">861</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -333,7 +351,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00730">730</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00846">846</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -357,7 +375,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00747">747</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00863">863</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -381,7 +399,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00735">735</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00851">851</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -407,7 +425,7 @@ Static Public Attributes</h2></td></tr>
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">      1</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00741">741</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00857">857</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -423,7 +441,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00729">729</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00845">845</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -439,7 +457,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00746">746</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00862">862</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -455,7 +473,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00734">734</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00850">850</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -471,7 +489,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00740">740</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00856">856</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -487,7 +505,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00758">758</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00874">874</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -503,7 +521,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00733">733</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00849">849</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -519,7 +537,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00739">739</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00855">855</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

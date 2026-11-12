@@ -214,7 +214,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        }</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    }</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>       this-&gt;simulation_parameters.boundary_conditions_cls.type)</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>       this-&gt;simulation_parameters.cls_boundary_conditions.type)</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    {</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad">BoundaryConditions::BoundaryType::cls_dirichlet</a>)</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        {</div>
@@ -258,14 +258,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        }</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    }</div>
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>       this-&gt;simulation_parameters.boundary_conditions_cls.type)</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>       this-&gt;simulation_parameters.cls_boundary_conditions.type)</div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    {</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad">BoundaryConditions::BoundaryType::cls_dirichlet</a>)</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>        {</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>          VectorTools::interpolate_boundary_values(</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>            *this-&gt;dof_handler,</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            <span class="keywordtype">id</span>,</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            *this-&gt;simulation_parameters.boundary_conditions_cls.phase_indicator</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            *this-&gt;simulation_parameters.cls_boundary_conditions.phase_indicator</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>               .at(<span class="keywordtype">id</span>),</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>            this-&gt;nonzero_constraints);</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        }</div>

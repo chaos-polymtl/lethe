@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['u_0',['u',['../classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6',1,'NavierStokesFunctionDefined::u'],['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a5f38f4daa23429562d9592444c26288f',1,'BoundaryConditions::NSBoundaryFunctions::u']]],
+  ['u_0',['u',['../classFluidDynamicsVelocityFunctionDefined.html#af7018bf07cff8b34d7b902c3a09b9bd3',1,'FluidDynamicsVelocityFunctionDefined::u'],['../classBoundaryConditions_1_1NavierStokesBoundaryFunctions.html#a30c052a6982ecbd876913872515391c9',1,'BoundaryConditions::NavierStokesBoundaryFunctions::u']]],
   ['unit_5fnormal_1',['unit_normal',['../structLetheGridTools_1_1TriangleProjectionData.html#ab370047f17af1e0777c72bc6524e32da',1,'LetheGridTools::TriangleProjectionData']]],
   ['universal_5fgas_5fconstant_2',['universal_gas_constant',['../classEvaporationModelTemperature.html#acdd77bfc5b6ba38f05a5bc1294a0fbac',1,'EvaporationModelTemperature::universal_gas_constant'],['../structParameters_1_1Evaporation.html#a15f2f02a2d8e907300c55573a1468a36',1,'Parameters::Evaporation::universal_gas_constant']]],
   ['unresolved_5fdispersed_5fphases_3',['unresolved_dispersed_phases',['../classParameters_1_1PhysicalProperties.html#a43523f4548d4762fdbb52a77f636f50e',1,'Parameters::PhysicalProperties']]],

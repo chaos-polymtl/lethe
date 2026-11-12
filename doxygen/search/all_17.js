@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_0',['w',['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a001101f1afbfc6adfae4f195e8bfa254',1,'BoundaryConditions::NSBoundaryFunctions::w'],['../classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65',1,'NavierStokesFunctionDefined::w']]],
+  ['w_0',['w',['../classBoundaryConditions_1_1NavierStokesBoundaryFunctions.html#ae002678a44518dbab9e7854c748acbc6',1,'BoundaryConditions::NavierStokesBoundaryFunctions::w'],['../classFluidDynamicsVelocityFunctionDefined.html#a4bc103b389faec940e1bfec5abe35311',1,'FluidDynamicsVelocityFunctionDefined::w']]],
   ['wall_5ffriction_5fcoefficient_1',['wall_friction_coefficient',['../classParameters_1_1IBParticles.html#afbec6bf829e8bd730915f2850938a396',1,'Parameters::IBParticles']]],
   ['wall_5fpoisson_5fratio_2',['wall_poisson_ratio',['../classParameters_1_1IBParticles.html#a2f6beb3ee6d2314b6c8118a3e2186deb',1,'Parameters::IBParticles']]],
   ['wall_5frestitution_5fcoefficient_3',['wall_restitution_coefficient',['../classParameters_1_1IBParticles.html#ad1ae14a462083b89d26607662084da42',1,'Parameters::IBParticles']]],
@@ -18,7 +18,7 @@ var searchData=
   ['waveguide_5fports_5frelative_5famplitudes_15',['waveguide_ports_relative_amplitudes',['../classTimeHarmonicMaxwellAssemblerRobinBC.html#a23593d3cea8f85b99d038fe9dcba904b',1,'TimeHarmonicMaxwellAssemblerRobinBC']]],
   ['waveguide_5fpower_16',['waveguide_power',['../structParameters_1_1TimeHarmonicMaxwell.html#ad1b34565996151b57f8dd56839901357',1,'Parameters::TimeHarmonicMaxwell']]],
   ['waveguidemode_17',['WaveguideMode',['../namespaceParameters.html#a3c6eda968f919b83f3e2e3fc92c54a08',1,'Parameters']]],
-  ['weakdirichletboundarycondition_18',['weakdirichletboundarycondition',['../classWeakDirichletBoundaryCondition.html#af490e26e05f68ed431d12fbf744b459c',1,'WeakDirichletBoundaryCondition::WeakDirichletBoundaryCondition()'],['../classWeakDirichletBoundaryCondition.html',1,'WeakDirichletBoundaryCondition&lt; dim &gt;']]],
+  ['weakdirichletboundarycondition_18',['weakdirichletboundarycondition',['../classWeakDirichletBoundaryCondition.html#a300bc557bc8058d58d2581f216d7c3f3',1,'WeakDirichletBoundaryCondition::WeakDirichletBoundaryCondition()'],['../classWeakDirichletBoundaryCondition.html',1,'WeakDirichletBoundaryCondition&lt; dim &gt;']]],
   ['weighting_5ftype_19',['weighting_type',['../classDistribution.html#a7e09273b70dd38a97eb39f621a406bf3',1,'Distribution::weighting_type'],['../classPreconditionASM.html#a8d85fcf5a96522fc5c8361b980f2d5f4',1,'PreconditionASM::weighting_type']]],
   ['weightingtype_20',['WeightingType',['../classPreconditionASM.html#aa6db2cd2ca97a487ef86465f299230cc',1,'PreconditionASM']]],
   ['weights_21',['weights',['../classRBFShape.html#a8cc4d4b1396d905f163cfa5851c27e48',1,'RBFShape::weights'],['../classPreconditionASM.html#abefaf957da70a206468f2ded86e84a7d',1,'PreconditionASM::weights']]],

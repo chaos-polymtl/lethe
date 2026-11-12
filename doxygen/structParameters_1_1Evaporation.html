@@ -150,7 +150,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1Evaporation.html" title="Evaporation - Defines the subparameters for the evaporation cooling and recoil pressure at the free s...">Evaporation</a> - Defines the subparameters for the evaporation cooling and recoil pressure at the free surface (air/metal interface). </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02213">2213</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02541">2541</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a742034885edb0655b51eb54c6b81b67b" name="a742034885edb0655b51eb54c6b81b67b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a742034885edb0655b51eb54c6b81b67b">&#9670;&#160;</a></span>EvaporativeMassFluxModelType</h2>
@@ -176,7 +176,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a742034885edb0655b51eb54c6b81b67ba46d46243c42461372724bbe607c6660d" name="a742034885edb0655b51eb54c6b81b67ba46d46243c42461372724bbe607c6660d"></a>temperature_dependent&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02215">2215</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02543">2543</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -205,9 +205,17 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the default parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>ParameterHandler object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l05049">5049</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l02232">ambient_gas_density</a>, <a class="el" href="parameters_8h_source.html#l02231">ambient_pressure</a>, <a class="el" href="parameters_8h_source.html#l02229">boiling_temperature</a>, <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8h_source.html#l02221">enable_evaporation_cooling</a>, <a class="el" href="parameters_8h_source.html#l02222">enable_recoil_pressure</a>, <a class="el" href="parameters_8h_source.html#l02226">evaporation_coefficient</a>, <a class="el" href="parameters_8h_source.html#l02225">evaporation_mass_flux</a>, <a class="el" href="structParameters_1_1Evaporation.html#ae42d81884b2864647c4dc3cbc7b12196">evaporative_mass_flux_model_type</a>, <a class="el" href="parameters_8h_source.html#l02230">latent_heat_evaporation</a>, <a class="el" href="parameters_8h_source.html#l02233">liquid_density</a>, <a class="el" href="parameters_8h_source.html#l02228">molar_mass</a>, <a class="el" href="parameters_8h_source.html#l02227">recoil_pressure_coefficient</a>, and <a class="el" href="parameters_8h_source.html#l02234">universal_gas_constant</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l02560">ambient_gas_density</a>, <a class="el" href="parameters_8h_source.html#l02559">ambient_pressure</a>, <a class="el" href="parameters_8h_source.html#l02557">boiling_temperature</a>, <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8h_source.html#l02549">enable_evaporation_cooling</a>, <a class="el" href="parameters_8h_source.html#l02550">enable_recoil_pressure</a>, <a class="el" href="parameters_8h_source.html#l02554">evaporation_coefficient</a>, <a class="el" href="parameters_8h_source.html#l02553">evaporation_mass_flux</a>, <a class="el" href="structParameters_1_1Evaporation.html#ae42d81884b2864647c4dc3cbc7b12196">evaporative_mass_flux_model_type</a>, <a class="el" href="parameters_8h_source.html#l02558">latent_heat_evaporation</a>, <a class="el" href="parameters_8h_source.html#l02561">liquid_density</a>, <a class="el" href="parameters_8h_source.html#l02556">molar_mass</a>, <a class="el" href="parameters_8h_source.html#l02555">recoil_pressure_coefficient</a>, and <a class="el" href="parameters_8h_source.html#l02562">universal_gas_constant</a>.</p>
 
 </div>
 </div>
@@ -227,6 +235,14 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>ParameterHandler object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l05129">5129</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 </div>
@@ -244,7 +260,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02232">2232</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02560">2560</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -260,7 +276,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02231">2231</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02559">2559</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -276,7 +292,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02229">2229</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02557">2557</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -292,7 +308,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02221">2221</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02549">2549</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -308,7 +324,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02222">2222</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02550">2550</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -324,7 +340,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02226">2226</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02554">2554</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -340,7 +356,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02225">2225</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02553">2553</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -370,7 +386,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02230">2230</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02558">2558</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -386,7 +402,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02233">2233</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02561">2561</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -402,7 +418,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02228">2228</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02556">2556</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -418,7 +434,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02227">2227</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02555">2555</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -434,7 +450,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02234">2234</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02562">2562</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

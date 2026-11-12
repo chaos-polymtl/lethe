@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_0',['w',['../classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65',1,'NavierStokesFunctionDefined::w'],['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a001101f1afbfc6adfae4f195e8bfa254',1,'BoundaryConditions::NSBoundaryFunctions::w']]],
+  ['w_0',['w',['../classFluidDynamicsVelocityFunctionDefined.html#a4bc103b389faec940e1bfec5abe35311',1,'FluidDynamicsVelocityFunctionDefined::w'],['../classBoundaryConditions_1_1NavierStokesBoundaryFunctions.html#ae002678a44518dbab9e7854c748acbc6',1,'BoundaryConditions::NavierStokesBoundaryFunctions::w']]],
   ['wall_5ffriction_5fcoefficient_1',['wall_friction_coefficient',['../classParameters_1_1IBParticles.html#afbec6bf829e8bd730915f2850938a396',1,'Parameters::IBParticles']]],
   ['wall_5fpoisson_5fratio_2',['wall_poisson_ratio',['../classParameters_1_1IBParticles.html#a2f6beb3ee6d2314b6c8118a3e2186deb',1,'Parameters::IBParticles']]],
   ['wall_5frestitution_5fcoefficient_3',['wall_restitution_coefficient',['../classParameters_1_1IBParticles.html#ad1ae14a462083b89d26607662084da42',1,'Parameters::IBParticles']]],

@@ -93,7 +93,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for TimeHarmonicMaxwellElectricFieldDefined&lt; dim &gt;:</div>
 <div class="dyncontent">
@@ -126,7 +126,7 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 class TimeHarmonicMaxwellElectricFieldDefined&lt; dim &gt;</div><p>This class implements a boundary condition type for the Time Harmonic Maxwell equation where the electric field components are defined using individual functions. </p>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02112">2112</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00152">152</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7b69de5e73991bdf18e10ed2eb60dfa0" name="a7b69de5e73991bdf18e10ed2eb60dfa0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7b69de5e73991bdf18e10ed2eb60dfa0">&#9670;&#160;</a></span>TimeHarmonicMaxwellElectricFieldDefined()</h2>
@@ -188,7 +188,20 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02122">2122</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p>Initialize the electric-field boundary function with real and imaginary component functions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_e_x_real</td><td>The parsed function for the real x-component. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_e_y_real</td><td>The parsed function for the real y-component. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_e_z_real</td><td>The parsed function for the real z-component. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_e_x_imag</td><td>The parsed function for the imaginary x-component. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_e_y_imag</td><td>The parsed function for the imaginary y-component. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_e_z_imag</td><td>The parsed function for the imaginary z-component. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00173">173</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -232,13 +245,13 @@ template&lt;int dim&gt; </div>
 <p>Calculates the value of an imposed electric field equations. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">point</td><td>A point at which the function will be evaluated. </td></tr>
-    <tr><td class="paramname">component</td><td>The vector component of the boundary condition (0-&gt; E x real, 1-&gt; E y real, 2-&gt; E z real, 3-&gt; E x imag, 4-&gt; E y imag, 5-&gt; E z imag) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td>A point at which the function will be evaluated. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">component</td><td>The vector component of the boundary condition (0-&gt; E x real, 1-&gt; E y real, 2-&gt; E z real, 3-&gt; E x imag, 4-&gt; E y imag, 5-&gt; E z imag) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02151">2151</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8cc_source.html#l00337">337</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8cc_source.html">time_harmonic_maxwell_boundary_conditions.cc</a>.</p>
 
 </div>
 </div>
@@ -265,7 +278,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02117">2117</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00157">157</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -291,7 +304,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02114">2114</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00154">154</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -317,7 +330,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02118">2118</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00158">158</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -343,7 +356,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02115">2115</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00155">155</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -369,7 +382,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02119">2119</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00159">159</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -395,12 +408,13 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l02116">2116</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00156">156</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/runner/work/lethe/lethe/include/core/<a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a></li>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>/home/runner/work/lethe/lethe/include/core/<a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a></li>
+<li>/home/runner/work/lethe/lethe/source/core/<a class="el" href="time__harmonic__maxwell__boundary__conditions_8cc_source.html">time_harmonic_maxwell_boundary_conditions.cc</a></li>
 </ul>
 </div><!-- contents -->
 <!--

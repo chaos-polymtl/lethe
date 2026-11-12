@@ -147,7 +147,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1VelocitySource.html" title="VelocitySource - Adds velocity-dependent source term to the Navier-Stokes equations with the appropri...">VelocitySource</a> - Adds velocity-dependent source term to the Navier-Stokes equations with the appropriate jacobian matrix. Currently only a change to a rotating frame is supported, but additional terms such as a Darcy force or similar could be easily added. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01999">1999</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02285">2285</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a81ec83ea0a3ec8ff5cf518dd4c357536" name="a81ec83ea0a3ec8ff5cf518dd4c357536"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a81ec83ea0a3ec8ff5cf518dd4c357536">&#9670;&#160;</a></span>PermeabilityModel</h2>
@@ -177,7 +177,7 @@ Public Attributes</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02001">2001</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02287">2287</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -205,7 +205,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92" name="a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92"></a>srf&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02011">2011</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02297">2297</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -234,9 +234,17 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>ParameterHandler object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04155">4155</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l02044">carman_kozeny_permeability_area</a>, <a class="el" href="parameters_8h_source.html#l02047">carman_kozeny_tolerance</a>, <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8cc_source.html#l00118">Parameters::deprecated_fluid_indicator_names()</a>, <a class="el" href="parameters_8h_source.html#l02041">enable_darcy_multiply_by_density</a>, <a class="el" href="parameters_8h_source.html#l02026">fluid_with_phase_change</a>, <a class="el" href="parameters_8h_source.html#l02018">omega_x</a>, <a class="el" href="parameters_8h_source.html#l02019">omega_y</a>, <a class="el" href="parameters_8h_source.html#l02020">omega_z</a>, <a class="el" href="parameters_8h_source.html#l02023">permeability_model</a>, and <a class="el" href="parameters_8h_source.html#l02017">rotating_frame_type</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l02330">carman_kozeny_permeability_area</a>, <a class="el" href="parameters_8h_source.html#l02333">carman_kozeny_tolerance</a>, <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8cc_source.html#l00118">Parameters::deprecated_fluid_indicator_names()</a>, <a class="el" href="parameters_8h_source.html#l02327">enable_darcy_multiply_by_density</a>, <a class="el" href="parameters_8h_source.html#l02312">fluid_with_phase_change</a>, <a class="el" href="parameters_8h_source.html#l02304">omega_x</a>, <a class="el" href="parameters_8h_source.html#l02305">omega_y</a>, <a class="el" href="parameters_8h_source.html#l02306">omega_z</a>, <a class="el" href="parameters_8h_source.html#l02309">permeability_model</a>, and <a class="el" href="parameters_8h_source.html#l02303">rotating_frame_type</a>.</p>
 
 </div>
 </div>
@@ -255,6 +263,14 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Parse the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>ParameterHandler object. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04224">4224</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
@@ -277,7 +293,7 @@ Public Attributes</h2></td></tr>
 
 <p>Permeability area of the pseudo-porous bed (solid phase). </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02044">2044</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02330">2330</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -295,7 +311,7 @@ Public Attributes</h2></td></tr>
 
 <p>Tolerance in the Carman-Kozeny source term that avoids division by zero. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02047">2047</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02333">2333</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -318,7 +334,7 @@ Public Attributes</h2></td></tr>
 </p>
 <p>with \(\rho\) the density, \(K\) the Darcy penalty, and \(\vec{u}\) the velocity. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02041">2041</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02327">2327</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -336,7 +352,7 @@ Public Attributes</h2></td></tr>
 
 <p>Indicates which fluids are with liquid-solid phase change. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02026">2026</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02312">2312</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -352,7 +368,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02018">2018</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02304">2304</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -368,7 +384,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02019">2019</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02305">2305</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -384,7 +400,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02020">2020</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02306">2306</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -402,7 +418,7 @@ Public Attributes</h2></td></tr>
 
 <p>Type of permeability model applied to the Navier-Stokes equations. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02023">2023</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02309">2309</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -418,7 +434,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02017">2017</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l02303">2303</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

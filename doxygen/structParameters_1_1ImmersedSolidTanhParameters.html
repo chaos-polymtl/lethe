@@ -126,7 +126,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Tanh-based physical properties model to handle properties in/out of immersed solids. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00361">361</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00424">424</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac0c797a09a6e401253ca015ac30641c2" name="ac0c797a09a6e401253ca015ac30641c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac0c797a09a6e401253ca015ac30641c2">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -152,9 +152,17 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the immersed-solid tanh model parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00553">553</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l00368">thickness</a>, <a class="el" href="parameters_8h_source.html#l00364">tracer_diffusivity_inside</a>, <a class="el" href="parameters_8h_source.html#l00365">tracer_diffusivity_outside</a>, <a class="el" href="parameters_8h_source.html#l00366">tracer_reaction_constant_inside</a>, and <a class="el" href="parameters_8h_source.html#l00367">tracer_reaction_constant_outside</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00431">thickness</a>, <a class="el" href="parameters_8h_source.html#l00427">tracer_diffusivity_inside</a>, <a class="el" href="parameters_8h_source.html#l00428">tracer_diffusivity_outside</a>, <a class="el" href="parameters_8h_source.html#l00429">tracer_reaction_constant_inside</a>, and <a class="el" href="parameters_8h_source.html#l00430">tracer_reaction_constant_outside</a>.</p>
 
 </div>
 </div>
@@ -184,9 +192,18 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the immersed-solid tanh model parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimensions</td><td><a class="el" href="classParameters_1_1Dimensionality.html" title="Class used to rescale physical properties for cases where the main dimensions of the problems (Length...">Dimensionality</a> used to interpret the parameter units. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00588">588</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dimensionality_8h_source.html#l00092">Parameters::Dimensionality::diffusivity_scaling</a>, <a class="el" href="parameters_8h_source.html#l00368">thickness</a>, <a class="el" href="parameters_8h_source.html#l00364">tracer_diffusivity_inside</a>, <a class="el" href="parameters_8h_source.html#l00365">tracer_diffusivity_outside</a>, <a class="el" href="parameters_8h_source.html#l00366">tracer_reaction_constant_inside</a>, and <a class="el" href="parameters_8h_source.html#l00367">tracer_reaction_constant_outside</a>.</p>
+<p class="reference">References <a class="el" href="dimensionality_8h_source.html#l00092">Parameters::Dimensionality::diffusivity_scaling</a>, <a class="el" href="parameters_8h_source.html#l00431">thickness</a>, <a class="el" href="parameters_8h_source.html#l00427">tracer_diffusivity_inside</a>, <a class="el" href="parameters_8h_source.html#l00428">tracer_diffusivity_outside</a>, <a class="el" href="parameters_8h_source.html#l00429">tracer_reaction_constant_inside</a>, and <a class="el" href="parameters_8h_source.html#l00430">tracer_reaction_constant_outside</a>.</p>
 
 </div>
 </div>
@@ -203,7 +220,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00368">368</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00431">431</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -219,7 +236,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00364">364</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00427">427</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -235,7 +252,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00365">365</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00428">428</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -251,7 +268,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00366">366</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00429">429</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -267,7 +284,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00367">367</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00430">430</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

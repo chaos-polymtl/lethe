@@ -95,7 +95,7 @@ var searchData=
   ['filtered_5fsolution_92',['filtered_solution',['../classCahnHilliard.html#a5695e1f1a1905f0139cce6ff30aa2f59',1,'CahnHilliard::filtered_solution'],['../classConservativeLevelSet.html#a14011729b4120a7513ac925a5d721660',1,'ConservativeLevelSet::filtered_solution']]],
   ['first_5fassembly_93',['first_assembly',['../classSimulationControl.html#ad268d2371b110c1f754a35578d16522b',1,'SimulationControl']]],
   ['first_5findex_5fthis_5fproc_94',['first_index_this_proc',['../classInsertionVolume.html#acdcf07b71005cd89f018371f375236cf',1,'InsertionVolume']]],
-  ['fix_5fpressure_5fconstant_95',['fix_pressure_constant',['../classBoundaryConditions_1_1NSBoundaryConditions.html#aa09ad70979369794f0928490d1cc6964',1,'BoundaryConditions::NSBoundaryConditions']]],
+  ['fix_5fpressure_5fconstant_95',['fix_pressure_constant',['../classBoundaryConditions_1_1FluidDynamicsBoundaryConditions.html#a670b6c15f49b94cb6f4c9111e7bc5375',1,'BoundaryConditions::FluidDynamicsBoundaryConditions']]],
   ['floating_5fgrid_96',['floating_grid',['../classDEMSolverParameters.html#ab27d6d626f95107e6075bc8dc60f898f',1,'DEMSolverParameters']]],
   ['floating_5fwalls_97',['floating_walls',['../classDEMSolverParameters.html#a95bc55e508a79c152b69eb05ae0bb8dd',1,'DEMSolverParameters']]],
   ['floating_5fwalls_5fnormal_5fvectors_98',['floating_walls_normal_vectors',['../classParameters_1_1Lagrangian_1_1FloatingWalls.html#a98dd1a5b3f6f923b717cdbe7b49f19d5',1,'Parameters::Lagrangian::FloatingWalls']]],

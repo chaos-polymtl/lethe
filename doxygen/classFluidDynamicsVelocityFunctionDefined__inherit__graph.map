@@ -1,0 +1,5 @@
+<map id="FluidDynamicsVelocityFunctionDefined&lt; dim &gt;" name="FluidDynamicsVelocityFunctionDefined&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="This class implements a boundary conditions for the fluid dynamics solver where the velocity componen..." alt="" coords="5,79,232,119"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="53,5,185,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,44,121,79,116,79,116,44"/>
+</map>

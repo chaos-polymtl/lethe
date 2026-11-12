@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['v_0',['v',['../classNavierStokesFunctionDefined.html#a3f01b369dbe69adf9f936af57b958723',1,'NavierStokesFunctionDefined::v'],['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a26c33815fd3eaacbf2d00f9eb72c2a39',1,'BoundaryConditions::NSBoundaryFunctions::v']]],
+  ['v_0',['v',['../classFluidDynamicsVelocityFunctionDefined.html#afd0212238e03e9f291dc56380c8942f1',1,'FluidDynamicsVelocityFunctionDefined::v'],['../classBoundaryConditions_1_1NavierStokesBoundaryFunctions.html#acb8552ec7857b210836575d0c820df85',1,'BoundaryConditions::NavierStokesBoundaryFunctions::v']]],
   ['vacuum_5fpermeability_1',['vacuum_permeability',['../classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html#a1f00ae5a5b46a94a58297c8005d4a93e',1,'HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell']]],
   ['vacuum_5fpermeability_5fscaling_2',['vacuum_permeability_scaling',['../classParameters_1_1Dimensionality.html#ad72b3c7e441c655c55b9ec301f5102be',1,'Parameters::Dimensionality']]],
   ['vacuum_5fpermittivity_3',['vacuum_permittivity',['../classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html#a62a966709de1d17acbf9c2f7dd08d306',1,'HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell']]],

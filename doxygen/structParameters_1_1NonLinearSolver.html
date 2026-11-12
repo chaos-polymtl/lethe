@@ -152,7 +152,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1NonLinearSolver.html" title="NonLinearSolver - Parameter that controls the solution of the non-linear problems.">NonLinearSolver</a> - Parameter that controls the solution of the non-linear problems. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01498">1498</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01702">1702</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="aadd162b7703a436847050b2aaae3871d" name="aadd162b7703a436847050b2aaae3871d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aadd162b7703a436847050b2aaae3871d">&#9670;&#160;</a></span>KinsolStrategy</h2>
@@ -179,7 +179,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="aadd162b7703a436847050b2aaae3871dae24fa5f1901c2c38540e9adef2e3b0a1" name="aadd162b7703a436847050b2aaae3871dae24fa5f1901c2c38540e9adef2e3b0a1"></a>picard&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01509">1509</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01713">1713</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -208,7 +208,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a9d1844967a4984adba50fc94732dc172a8b8658b5ecaa6986a18b5fbba6a8230f" name="a9d1844967a4984adba50fc94732dc172a8b8658b5ecaa6986a18b5fbba6a8230f"></a>kinsol_newton&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01501">1501</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01705">1705</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -247,9 +247,18 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>ParameterHandler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_name</td><td>Name of the current physics </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03050">3050</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01554">abort_at_convergence_failure</a>, <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8cc_source.html#l00102">Parameters::deprecated_verbosity_names()</a>, <a class="el" href="parameters_8h_source.html#l01535">force_rhs_calculation</a>, <a class="el" href="parameters_8h_source.html#l01522">kinsol_strategy</a>, <a class="el" href="parameters_8h_source.html#l01542">matrix_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01528">max_iterations</a>, <a class="el" href="parameters_8cc_source.html#l00110">Parameters::quiet_or_verbose()</a>, <a class="el" href="parameters_8h_source.html#l01548">reuse_matrix</a>, <a class="el" href="parameters_8h_source.html#l01551">reuse_preconditioner</a>, <a class="el" href="parameters_8h_source.html#l01519">solver</a>, <a class="el" href="parameters_8h_source.html#l01545">step_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01525">tolerance</a>, and <a class="el" href="parameters_8h_source.html#l01516">verbosity</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01758">abort_at_convergence_failure</a>, <a class="el" href="core_2utilities_8h_source.html#l00890">declare_enum_entry()</a>, <a class="el" href="parameters_8cc_source.html#l00102">Parameters::deprecated_verbosity_names()</a>, <a class="el" href="parameters_8h_source.html#l01739">force_rhs_calculation</a>, <a class="el" href="parameters_8h_source.html#l01726">kinsol_strategy</a>, <a class="el" href="parameters_8h_source.html#l01746">matrix_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01732">max_iterations</a>, <a class="el" href="parameters_8cc_source.html#l00110">Parameters::quiet_or_verbose()</a>, <a class="el" href="parameters_8h_source.html#l01752">reuse_matrix</a>, <a class="el" href="parameters_8h_source.html#l01755">reuse_preconditioner</a>, <a class="el" href="parameters_8h_source.html#l01723">solver</a>, <a class="el" href="parameters_8h_source.html#l01749">step_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01729">tolerance</a>, and <a class="el" href="parameters_8h_source.html#l01720">verbosity</a>.</p>
 
 </div>
 </div>
@@ -279,9 +288,18 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>ParameterHandler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_name</td><td>Name of the current physics </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03148">3148</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8cc_source.html#l00102">Parameters::deprecated_verbosity_names()</a>, and <a class="el" href="parameters_8h_source.html#l01270">Parameters::PostProcessing&lt; dim &gt;::verbosity</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8cc_source.html#l00102">Parameters::deprecated_verbosity_names()</a>, and <a class="el" href="parameters_8h_source.html#l01452">Parameters::PostProcessing&lt; dim &gt;::verbosity</a>.</p>
 
 </div>
 </div>
@@ -298,7 +316,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01554">1554</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01758">1758</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -314,7 +332,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01535">1535</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01739">1739</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -330,7 +348,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01522">1522</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01726">1726</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -346,7 +364,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01542">1542</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01746">1746</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -362,7 +380,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01528">1528</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01732">1732</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -378,7 +396,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01548">1548</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01752">1752</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -394,7 +412,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01551">1551</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01755">1755</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -410,7 +428,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01519">1519</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01723">1723</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -426,7 +444,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01545">1545</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01749">1749</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -442,7 +460,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01525">1525</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01729">1729</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -458,7 +476,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01516">1516</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01720">1720</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

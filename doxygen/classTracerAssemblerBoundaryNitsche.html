@@ -102,8 +102,8 @@ Inheritance diagram for TracerAssemblerBoundaryNitsche&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a68e4ad7333f811e501696f3793151fa3" id="r_a68e4ad7333f811e501696f3793151fa3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBoundaryNitsche.html#a68e4ad7333f811e501696f3793151fa3">TracerAssemblerBoundaryNitsche</a> (const <a class="el" href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a>&lt; dim &gt; &amp;p_boundary_conditions_tracer)</td></tr>
-<tr class="separator:a68e4ad7333f811e501696f3793151fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51fb17f701257babf45164278078ecfa" id="r_a51fb17f701257babf45164278078ecfa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBoundaryNitsche.html#a51fb17f701257babf45164278078ecfa">TracerAssemblerBoundaryNitsche</a> (const <a class="el" href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a>&lt; dim &gt; &amp;p_tracer_boundary_conditions)</td></tr>
+<tr class="separator:a51fb17f701257babf45164278078ecfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7bfc4479ee47a95b744ddc9145af5eb" id="r_ab7bfc4479ee47a95b744ddc9145af5eb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBoundaryNitsche.html#ab7bfc4479ee47a95b744ddc9145af5eb">assemble_matrix</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &amp;copy_data) override</td></tr>
 <tr class="separator:ab7bfc4479ee47a95b744ddc9145af5eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59ff5dfa09afeb195c5c0c7a01a5399b" id="r_a59ff5dfa09afeb195c5c0c7a01a5399b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBoundaryNitsche.html#a59ff5dfa09afeb195c5c0c7a01a5399b">assemble_rhs</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &amp;copy_data) override</td></tr>
@@ -118,8 +118,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:af37e45fcc30b2188f9052bffd5cb01e8" id="r_af37e45fcc30b2188f9052bffd5cb01e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBoundaryNitsche.html#af37e45fcc30b2188f9052bffd5cb01e8">boundary_conditions_tracer</a></td></tr>
-<tr class="separator:af37e45fcc30b2188f9052bffd5cb01e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31e6f10423a95d79cbe4357fc230f68e" id="r_a31e6f10423a95d79cbe4357fc230f68e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBoundaryNitsche.html#a31e6f10423a95d79cbe4357fc230f68e">tracer_boundary_conditions</a></td></tr>
+<tr class="separator:a31e6f10423a95d79cbe4357fc230f68e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -131,10 +131,10 @@ class TracerAssemblerBoundaryNitsche&lt; dim &gt;</div><p>Assembles Nitsche's me
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00216">216</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00217">217</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a68e4ad7333f811e501696f3793151fa3" name="a68e4ad7333f811e501696f3793151fa3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68e4ad7333f811e501696f3793151fa3">&#9670;&#160;</a></span>TracerAssemblerBoundaryNitsche()</h2>
+<a id="a51fb17f701257babf45164278078ecfa" name="a51fb17f701257babf45164278078ecfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51fb17f701257babf45164278078ecfa">&#9670;&#160;</a></span>TracerAssemblerBoundaryNitsche()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -148,7 +148,7 @@ template&lt;int dim&gt; </div>
           <td class="memname"><a class="el" href="classTracerAssemblerBoundaryNitsche.html">TracerAssemblerBoundaryNitsche</a>&lt; dim &gt;<a class="el" href="classTracerAssemblerBoundaryNitsche.html">::TracerAssemblerBoundaryNitsche</a> </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a>&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>p_boundary_conditions_tracer</em></td><td>)</td>
+          <td class="paramname"><em>p_tracer_boundary_conditions</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -159,7 +159,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00219">219</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00220">220</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -267,8 +267,8 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="af37e45fcc30b2188f9052bffd5cb01e8" name="af37e45fcc30b2188f9052bffd5cb01e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af37e45fcc30b2188f9052bffd5cb01e8">&#9670;&#160;</a></span>boundary_conditions_tracer</h2>
+<a id="a31e6f10423a95d79cbe4357fc230f68e" name="a31e6f10423a95d79cbe4357fc230f68e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31e6f10423a95d79cbe4357fc230f68e">&#9670;&#160;</a></span>tracer_boundary_conditions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,12 +276,12 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a>&lt;dim&gt; <a class="el" href="classTracerAssemblerBoundaryNitsche.html">TracerAssemblerBoundaryNitsche</a>&lt; dim &gt;::boundary_conditions_tracer</td>
+          <td class="memname"><a class="el" href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a>&lt;dim&gt; <a class="el" href="classTracerAssemblerBoundaryNitsche.html">TracerAssemblerBoundaryNitsche</a>&lt; dim &gt;::tracer_boundary_conditions</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00250">250</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00251">251</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 
 </div>
 </div>

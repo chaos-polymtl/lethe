@@ -122,7 +122,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Isothermal ideal gas model to solve for isothermal weakly compressible fluid flows. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00399">399</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00488">488</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab7a75513dbb55b16057c75904876d9c6" name="ab7a75513dbb55b16057c75904876d9c6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab7a75513dbb55b16057c75904876d9c6">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -148,9 +148,17 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the isothermal ideal-gas density parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00669">669</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l00402">density_ref</a>, <a class="el" href="parameters_8h_source.html#l00404">R</a>, and <a class="el" href="parameters_8h_source.html#l00406">T</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00491">density_ref</a>, <a class="el" href="parameters_8h_source.html#l00493">R</a>, and <a class="el" href="parameters_8h_source.html#l00495">T</a>.</p>
 
 </div>
 </div>
@@ -180,9 +188,18 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the isothermal ideal-gas density parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimensions</td><td><a class="el" href="classParameters_1_1Dimensionality.html" title="Class used to rescale physical properties for cases where the main dimensions of the problems (Length...">Dimensionality</a> used to interpret the parameter units. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00698">698</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l00402">density_ref</a>, <a class="el" href="dimensionality_8h_source.html#l00086">Parameters::Dimensionality::density_scaling</a>, <a class="el" href="parameters_8h_source.html#l00404">R</a>, <a class="el" href="dimensionality_8h_source.html#l00087">Parameters::Dimensionality::specific_gas_constant_scaling</a>, <a class="el" href="parameters_8h_source.html#l00406">T</a>, and <a class="el" href="dimensionality_8h_source.html#l00076">Parameters::Dimensionality::temperature</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00491">density_ref</a>, <a class="el" href="dimensionality_8h_source.html#l00086">Parameters::Dimensionality::density_scaling</a>, <a class="el" href="parameters_8h_source.html#l00493">R</a>, <a class="el" href="dimensionality_8h_source.html#l00087">Parameters::Dimensionality::specific_gas_constant_scaling</a>, <a class="el" href="parameters_8h_source.html#l00495">T</a>, and <a class="el" href="dimensionality_8h_source.html#l00076">Parameters::Dimensionality::temperature</a>.</p>
 
 </div>
 </div>
@@ -201,7 +218,7 @@ Public Attributes</h2></td></tr>
 
 <p>Reference state density of the gas in kg/m^3. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00402">402</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00491">491</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -219,7 +236,7 @@ Public Attributes</h2></td></tr>
 
 <p>Specific gas constant in J/kg/K. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00404">404</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00493">493</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -237,7 +254,7 @@ Public Attributes</h2></td></tr>
 
 <p>Absolute temperature of the ideal gas in K. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00406">406</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00495">495</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

@@ -148,7 +148,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1FEM.html" title="FEM - The finite element section controls the properties of the finite element method....">FEM</a> - The finite element section controls the properties of the finite element method. This section controls the interpolation degree of polynomial integration and the number of quadrature points within the cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01439">1439</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01632">1632</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a0f26120a2f4f8d08336584ba061864fc" name="a0f26120a2f4f8d08336584ba061864fc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0f26120a2f4f8d08336584ba061864fc">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -174,9 +174,17 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>ParameterHandler object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01960">1960</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01460">CLS_degree</a>, <a class="el" href="parameters_8h_source.html#l01463">CLS_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01478">electromagnetics_test_degree</a>, <a class="el" href="parameters_8h_source.html#l01477">electromagnetics_trial_degree</a>, <a class="el" href="parameters_8h_source.html#l01471">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01470">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01466">phase_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01467">potential_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01445">pressure_degree</a>, <a class="el" href="parameters_8h_source.html#l01481">solid_velocity_degree</a>, <a class="el" href="parameters_8h_source.html#l01485">solid_volume_fraction_degree</a>, <a class="el" href="parameters_8h_source.html#l01451">temperature_degree</a>, <a class="el" href="parameters_8h_source.html#l01454">tracer_degree</a>, <a class="el" href="parameters_8h_source.html#l01457">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01442">velocity_degree</a>, and <a class="el" href="parameters_8h_source.html#l01448">void_fraction_degree</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01653">CLS_degree</a>, <a class="el" href="parameters_8h_source.html#l01656">CLS_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01671">electromagnetics_test_degree</a>, <a class="el" href="parameters_8h_source.html#l01670">electromagnetics_trial_degree</a>, <a class="el" href="parameters_8h_source.html#l01664">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01663">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01659">phase_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01660">potential_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01638">pressure_degree</a>, <a class="el" href="parameters_8h_source.html#l01674">solid_velocity_degree</a>, <a class="el" href="parameters_8h_source.html#l01678">solid_volume_fraction_degree</a>, <a class="el" href="parameters_8h_source.html#l01644">temperature_degree</a>, <a class="el" href="parameters_8h_source.html#l01647">tracer_degree</a>, <a class="el" href="parameters_8h_source.html#l01650">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01635">velocity_degree</a>, and <a class="el" href="parameters_8h_source.html#l01641">void_fraction_degree</a>.</p>
 
 </div>
 </div>
@@ -196,9 +204,15 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02063">2063</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p>Parse the parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The ParameterHandler. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01460">CLS_degree</a>, <a class="el" href="parameters_8h_source.html#l01463">CLS_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01478">electromagnetics_test_degree</a>, <a class="el" href="parameters_8h_source.html#l01477">electromagnetics_trial_degree</a>, <a class="el" href="parameters_8h_source.html#l01471">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01470">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01466">phase_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01467">potential_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01445">pressure_degree</a>, <a class="el" href="parameters_8h_source.html#l01481">solid_velocity_degree</a>, <a class="el" href="parameters_8h_source.html#l01485">solid_volume_fraction_degree</a>, <a class="el" href="parameters_8h_source.html#l01451">temperature_degree</a>, <a class="el" href="parameters_8h_source.html#l01454">tracer_degree</a>, <a class="el" href="parameters_8h_source.html#l01457">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01442">velocity_degree</a>, and <a class="el" href="parameters_8h_source.html#l01448">void_fraction_degree</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02063">2063</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 </div>
 </div>
@@ -215,7 +229,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01460">1460</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01653">1653</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -231,7 +245,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01463">1463</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01656">1656</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +261,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01478">1478</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01671">1671</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -264,7 +278,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Polynomial degree for the different electromagnetics spaces. The trial degree sets the polynomial degree for the solution and the test degree is used for the computation of the cell matrix necessary when solving a system using the DPG method. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01477">1477</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01670">1670</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -280,7 +294,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01471">1471</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01664">1664</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -296,7 +310,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01470">1470</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01663">1663</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -312,7 +326,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01466">1466</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01659">1659</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -328,7 +342,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01467">1467</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01660">1660</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +358,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01445">1445</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01638">1638</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -362,7 +376,7 @@ Public Attributes</h2></td></tr>
 
 <p>Polynomial degree of the solid velocity of the Euler-Euler model. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01481">1481</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01674">1674</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -379,7 +393,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Polynomial degree of the solid volume fraction of the Euler-Euler model. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01485">1485</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01678">1678</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -395,7 +409,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01451">1451</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01644">1644</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -411,7 +425,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01454">1454</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01647">1647</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -427,7 +441,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01457">1457</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01650">1650</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -443,7 +457,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01442">1442</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01635">1635</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -459,7 +473,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01448">1448</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01641">1641</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

@@ -143,7 +143,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 struct Parameters::TimeHarmonicMaxwell&lt; dim &gt;</div><p><a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html" title="TimeHarmonicMaxwell - Defines the parameters for time-harmonic Maxwell simulations.">TimeHarmonicMaxwell</a> - Defines the parameters for time-harmonic Maxwell simulations. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00461">461</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00529">529</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa7a12fd3750263f42f60b731068a4560" name="aa7a12fd3750263f42f60b731068a4560"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa7a12fd3750263f42f60b731068a4560">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -162,6 +162,14 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Declare the time-harmonic Maxwell parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00749">749</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
 
@@ -197,9 +205,18 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the time-harmonic Maxwell parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimensions</td><td><a class="el" href="classParameters_1_1Dimensionality.html" title="Class used to rescale physical properties for cases where the main dimensions of the problems (Length...">Dimensionality</a> used to interpret the parameter units. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l00895">895</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00472">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::coupling_iteration</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00483">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::coupling_threshold</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00477">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::coupling_time</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00502">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electric_field_amplitude</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00490">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_frequency</a>, <a class="el" href="dimensionality_8h_source.html#l00098">Parameters::Dimensionality::electromagnetic_frequency_scaling</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00509">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_scaling_type</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00506">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::magnetic_field_amplitude</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00516">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_m</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00517">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_n</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00487">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::number_of_waveguide_inlets</a>, <a class="el" href="namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2a62cd275989e78ee56a81f0265a87562e">Parameters::power</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00494">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_boundary_ids</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00521">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_corners</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00513">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_mode</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00498">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_power</a>.</p>
+<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00540">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::coupling_iteration</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00551">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::coupling_threshold</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00545">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::coupling_time</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00570">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electric_field_amplitude</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00558">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_frequency</a>, <a class="el" href="dimensionality_8h_source.html#l00098">Parameters::Dimensionality::electromagnetic_frequency_scaling</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00577">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_scaling_type</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00574">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::magnetic_field_amplitude</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00584">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_m</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00585">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_n</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00555">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::number_of_waveguide_inlets</a>, <a class="el" href="namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2a62cd275989e78ee56a81f0265a87562e">Parameters::power</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00562">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_boundary_ids</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00589">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_corners</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00581">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_mode</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00566">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_power</a>.</p>
 
 </div>
 </div>
@@ -218,7 +235,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00472">472</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00540">540</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -236,7 +253,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00483">483</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00551">551</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -254,7 +271,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00477">477</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00545">545</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -272,7 +289,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00502">502</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00570">570</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -290,7 +307,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00490">490</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00558">558</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -311,7 +328,7 @@ template&lt;int dim&gt; </div>
 <div class="line">      <a class="code hl_enumvalue" href="namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2a334c4a4c42fdb79d7ebc3e73b517e6f8">ElectromagneticScalingType::none</a></div>
 <div class="ttc" id="anamespaceParameters_html_ae2409eaf7621323659ebf4a3ec3c77d2a334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::ElectromagneticScalingType::none</a></div><div class="ttdeci">@ none</div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00509">509</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00577">577</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -329,7 +346,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00506">506</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00574">574</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -347,7 +364,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00516">516</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00584">584</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -365,7 +382,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00517">517</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00585">585</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -383,7 +400,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00487">487</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00555">555</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -404,7 +421,7 @@ template&lt;int dim&gt; </div>
 <div class="line">      <a class="code hl_enumvalue" href="namespaceParameters.html#aa00157f43a0189c3afc66a469b3e7aaea334c4a4c42fdb79d7ebc3e73b517e6f8">TimeHarmonicMaxwellCouplingStrategy::none</a></div>
 <div class="ttc" id="anamespaceParameters_html_aa00157f43a0189c3afc66a469b3e7aaea334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="namespaceParameters.html#aa00157f43a0189c3afc66a469b3e7aaea334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::TimeHarmonicMaxwellCouplingStrategy::none</a></div><div class="ttdeci">@ none</div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00465">465</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00533">533</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -422,7 +439,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00494">494</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00562">562</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -440,7 +457,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00521">521</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00589">589</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -458,7 +475,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00513">513</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00581">581</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -476,7 +493,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00498">498</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00566">566</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>

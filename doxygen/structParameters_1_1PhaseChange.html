@@ -142,7 +142,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Phase change model for melting/freezing liquids The model assumes that the phase change occurs between a solidus and liquidus temperature. This defines a solidification interval which is used to smooth the non-linearity of the melting problem or to fit the real thermodynamics of the melting process. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00252">252</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00263">263</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac25a068ddfc311952145dc2c3fc80f91" name="ac25a068ddfc311952145dc2c3fc80f91"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac25a068ddfc311952145dc2c3fc80f91">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -168,9 +168,17 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the phase change parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01075">1075</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l00264">cp_l</a>, <a class="el" href="parameters_8h_source.html#l00267">cp_s</a>, <a class="el" href="parameters_8h_source.html#l00282">kinematic_viscosity_l</a>, <a class="el" href="parameters_8h_source.html#l00285">kinematic_viscosity_s</a>, <a class="el" href="parameters_8h_source.html#l00261">latent_enthalpy</a>, <a class="el" href="parameters_8h_source.html#l00288">penalty_l</a>, <a class="el" href="parameters_8h_source.html#l00291">penalty_s</a>, <a class="el" href="parameters_8h_source.html#l00258">T_liquidus</a>, <a class="el" href="parameters_8h_source.html#l00255">T_solidus</a>, <a class="el" href="parameters_8h_source.html#l00270">thermal_conductivity_l</a>, <a class="el" href="parameters_8h_source.html#l00273">thermal_conductivity_s</a>, <a class="el" href="parameters_8h_source.html#l00276">thermal_expansion_l</a>, and <a class="el" href="parameters_8h_source.html#l00279">thermal_expansion_s</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00275">cp_l</a>, <a class="el" href="parameters_8h_source.html#l00278">cp_s</a>, <a class="el" href="parameters_8h_source.html#l00293">kinematic_viscosity_l</a>, <a class="el" href="parameters_8h_source.html#l00296">kinematic_viscosity_s</a>, <a class="el" href="parameters_8h_source.html#l00272">latent_enthalpy</a>, <a class="el" href="parameters_8h_source.html#l00299">penalty_l</a>, <a class="el" href="parameters_8h_source.html#l00302">penalty_s</a>, <a class="el" href="parameters_8h_source.html#l00269">T_liquidus</a>, <a class="el" href="parameters_8h_source.html#l00266">T_solidus</a>, <a class="el" href="parameters_8h_source.html#l00281">thermal_conductivity_l</a>, <a class="el" href="parameters_8h_source.html#l00284">thermal_conductivity_s</a>, <a class="el" href="parameters_8h_source.html#l00287">thermal_expansion_l</a>, and <a class="el" href="parameters_8h_source.html#l00290">thermal_expansion_s</a>.</p>
 
 </div>
 </div>
@@ -200,9 +208,18 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the phase change parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prm</td><td>The parameter handler object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimensions</td><td><a class="el" href="classParameters_1_1Dimensionality.html" title="Class used to rescale physical properties for cases where the main dimensions of the problems (Length...">Dimensionality</a> used to interpret the parameter units. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01021">1021</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l00264">cp_l</a>, <a class="el" href="parameters_8h_source.html#l00267">cp_s</a>, <a class="el" href="dimensionality_8h_source.html#l00091">Parameters::Dimensionality::enthalpy_scaling</a>, <a class="el" href="parameters_8h_source.html#l00282">kinematic_viscosity_l</a>, <a class="el" href="parameters_8h_source.html#l00285">kinematic_viscosity_s</a>, <a class="el" href="parameters_8h_source.html#l00261">latent_enthalpy</a>, <a class="el" href="parameters_8h_source.html#l00288">penalty_l</a>, <a class="el" href="parameters_8h_source.html#l00291">penalty_s</a>, <a class="el" href="dimensionality_8h_source.html#l00089">Parameters::Dimensionality::specific_heat_scaling</a>, <a class="el" href="parameters_8h_source.html#l00258">T_liquidus</a>, <a class="el" href="parameters_8h_source.html#l00255">T_solidus</a>, <a class="el" href="dimensionality_8h_source.html#l00076">Parameters::Dimensionality::temperature</a>, <a class="el" href="parameters_8h_source.html#l00270">thermal_conductivity_l</a>, <a class="el" href="parameters_8h_source.html#l00273">thermal_conductivity_s</a>, <a class="el" href="dimensionality_8h_source.html#l00090">Parameters::Dimensionality::thermal_conductivity_scaling</a>, <a class="el" href="parameters_8h_source.html#l00276">thermal_expansion_l</a>, <a class="el" href="parameters_8h_source.html#l00279">thermal_expansion_s</a>, <a class="el" href="dimensionality_8h_source.html#l00093">Parameters::Dimensionality::thermal_expansion_scaling</a>, and <a class="el" href="dimensionality_8h_source.html#l00088">Parameters::Dimensionality::viscosity_scaling</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00275">cp_l</a>, <a class="el" href="parameters_8h_source.html#l00278">cp_s</a>, <a class="el" href="dimensionality_8h_source.html#l00091">Parameters::Dimensionality::enthalpy_scaling</a>, <a class="el" href="parameters_8h_source.html#l00293">kinematic_viscosity_l</a>, <a class="el" href="parameters_8h_source.html#l00296">kinematic_viscosity_s</a>, <a class="el" href="parameters_8h_source.html#l00272">latent_enthalpy</a>, <a class="el" href="parameters_8h_source.html#l00299">penalty_l</a>, <a class="el" href="parameters_8h_source.html#l00302">penalty_s</a>, <a class="el" href="dimensionality_8h_source.html#l00089">Parameters::Dimensionality::specific_heat_scaling</a>, <a class="el" href="parameters_8h_source.html#l00269">T_liquidus</a>, <a class="el" href="parameters_8h_source.html#l00266">T_solidus</a>, <a class="el" href="dimensionality_8h_source.html#l00076">Parameters::Dimensionality::temperature</a>, <a class="el" href="parameters_8h_source.html#l00281">thermal_conductivity_l</a>, <a class="el" href="parameters_8h_source.html#l00284">thermal_conductivity_s</a>, <a class="el" href="dimensionality_8h_source.html#l00090">Parameters::Dimensionality::thermal_conductivity_scaling</a>, <a class="el" href="parameters_8h_source.html#l00287">thermal_expansion_l</a>, <a class="el" href="parameters_8h_source.html#l00290">thermal_expansion_s</a>, <a class="el" href="dimensionality_8h_source.html#l00093">Parameters::Dimensionality::thermal_expansion_scaling</a>, and <a class="el" href="dimensionality_8h_source.html#l00088">Parameters::Dimensionality::viscosity_scaling</a>.</p>
 
 </div>
 </div>
@@ -221,7 +238,7 @@ Public Attributes</h2></td></tr>
 
 <p>Specific heat of liquid - Units in J/(kg*K) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00264">264</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00275">275</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -239,7 +256,7 @@ Public Attributes</h2></td></tr>
 
 <p>Specific heat of solid - Units in J/(kg*K) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00267">267</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00278">278</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -257,7 +274,7 @@ Public Attributes</h2></td></tr>
 
 <p>kinematic viscosity of liquid - Units in m^2/(s) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00282">282</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00293">293</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -275,7 +292,7 @@ Public Attributes</h2></td></tr>
 
 <p>kinematic viscosity of solid - Units in m^2/(s) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00285">285</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00296">296</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -293,7 +310,7 @@ Public Attributes</h2></td></tr>
 
 <p>Latent enthalpy for the phase change - Units in J/kg. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00261">261</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00272">272</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -311,7 +328,7 @@ Public Attributes</h2></td></tr>
 
 <p>Darcy penalty of liquid - Units in 1/(s) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00288">288</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00299">299</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -329,7 +346,7 @@ Public Attributes</h2></td></tr>
 
 <p>Darcy penalty of solid - Units in 1/(s) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00291">291</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00302">302</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -347,7 +364,7 @@ Public Attributes</h2></td></tr>
 
 <p>Liquidus temperature - Units in K. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00258">258</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00269">269</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -365,7 +382,7 @@ Public Attributes</h2></td></tr>
 
 <p>Solidus temperature - Units in K. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00255">255</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00266">266</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -383,7 +400,7 @@ Public Attributes</h2></td></tr>
 
 <p>Thermal conductivity of liquid - Units in W/(m*K) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00270">270</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00281">281</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -401,7 +418,7 @@ Public Attributes</h2></td></tr>
 
 <p>Thermal conductivity of solid - Units in W/(m*K) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00273">273</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00284">284</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -419,7 +436,7 @@ Public Attributes</h2></td></tr>
 
 <p>Thermal expansion coefficient of liquid - Units in 1/K. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00276">276</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00287">287</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -437,7 +454,7 @@ Public Attributes</h2></td></tr>
 
 <p>Thermal expansion coefficient of solid - Units in 1/K. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00279">279</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00290">290</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
