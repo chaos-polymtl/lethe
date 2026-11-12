@@ -144,7 +144,7 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
   mpirun lethe_application_name_wanted parameter_file_name.prm
 
   # When using Nibi
-  mpirun --mca fs_ufs_lock_algorithm 1 lethe_application_name_wanted parameter_file_name.prm
+  mpirun --mca fs_ufs_lock_algorithm 1 lethe_application_name_wanted parameter_file_name.prm #does not work for >1 nodes
 
 
 .. tip::
