@@ -297,8 +297,9 @@ namespace BoundaryConditions
 
 template <int dim>
 double
-FluidDynamicsVelocityFunctionDefined<dim>::value(const Point<dim>  &point,
-                                        const unsigned int component) const
+FluidDynamicsVelocityFunctionDefined<dim>::value(
+  const Point<dim>  &point,
+  const unsigned int component) const
 {
   Assert(component < this->n_components,
          ExcIndexRange(component, 0, this->n_components));

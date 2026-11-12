@@ -66,7 +66,7 @@ namespace BoundaryConditions
     /// Heat-flux values for flux boundary conditions
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
-           heat_flux_bc;
+      heat_flux_bc;
     /// Stefan-Boltzmann constant used in radiation boundary conditions
     double Stefan_Boltzmann_constant;
 
