@@ -3195,6 +3195,11 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
       .enable_hessians_residual,
     this->simulation_parameters.mortar_parameters.enable);
 
+  // History of the dynamic RBVMS fine-scale velocity. Only the operator of the
+  // system stores it; the operators of the multigrid levels neglect it.
+  this->system_operator->initialize_fine_scale_velocity_history(
+    this->simulation_parameters.simulation_control.method);
+
 
   // Initialize vectors using operator
   this->system_operator->initialize_dof_vector(*this->present_solution);

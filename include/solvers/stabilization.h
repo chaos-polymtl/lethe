@@ -62,6 +62,33 @@ calculate_navier_stokes_gls_tau_transient(const double u_mag,
 }
 
 /**
+ * @brief Inverse-estimate constant C_I of the RBVMS momentum stabilization
+ * parameter tau_M (Bazilevs et al. 2007, eq. 64, see calculate_rbvms_tau).
+ * Since the metric tensor already accounts for the FE degree (see
+ * calculate_rbvms_reference_scaling), this degree-independent value recovers,
+ * in 1D, the viscous limit tau_M = h^2/(12 nu) of the pspg_supg and gls
+ * stabilizations.
+ */
+inline constexpr double rbvms_inverse_estimate_constant = 9.;
+
+/**
+ * @brief Return the factor by which the RBVMS stabilization scales the
+ * derivatives dxi/dx of the reference coordinates (see compute_metric_tensor).
+ * The factor 2 maps the deal.II reference cell [0,1]^d to the bi-unit cell
+ * [-1,1]^d of Bazilevs et al. (2007), and the degree k matches the element
+ * size h/k used by the other stabilizations.
+ *
+ * @param[in] velocity_degree Degree k of the velocity interpolation.
+ *
+ * @return The reference scaling 2k.
+ */
+inline double
+calculate_rbvms_reference_scaling(const unsigned int velocity_degree)
+{
+  return 2. * static_cast<double>(velocity_degree);
+}
+
+/**
  * @brief Compute the element metric tensor G and metric vector g used by the
  * residual-based variational multiscale (RBVMS) stabilization from the inverse
  * of the mapping Jacobian.
@@ -89,18 +116,22 @@ calculate_navier_stokes_gls_tau_transient(const double u_mag,
  *
  * Reference-cell scaling: Bazilevs et al. define xi on the bi-unit cell
  * [-1,1]^d, whereas deal.II uses [0,1]^d, so dxi/dx is half as large.
- * Furthermore, Lethe's element size used by the other stabilizations is h/k
- * (see compute_cell_diameter). Passing reference_scaling = 2k multiplies dxi/dx
- * by that factor (G by (2k)^2 and g by 2k), so that tau_M -> h/(2|u|) and
- * tau_C -> |u|h/2 in the advective limit, consistently with the pspg_supg and
- * gls stabilizations.
+ * Furthermore, Lethe's element size used by the other stabilizations is
+ * h_k = h/k, with h the cell size (see compute_cell_diameter). Passing
+ * reference_scaling = 2k multiplies dxi/dx by that factor (G by (2k)^2 and g
+ * by 2k). On a Cartesian cell, dxi/dx then becomes 2/h_k, so that, in the
+ * advective limit, tau_M -> h_k/(2|u|), consistently with the pspg_supg and
+ * gls stabilizations. Since g.g = dim (2/h_k)^2, tau_C -> |u| h_k/(2 dim),
+ * which matches the LSIC parameter |u| h_k/2 of the gls stabilization in 1D
+ * only, and is dim times smaller otherwise.
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
  * @param[in] inverse_jacobian J^{-T} as returned by inverse_jacobian(q), with
  *   entry [i][j] = dxi_j/dx_i.
  * @param[in] reference_scaling Scaling factor applied to dxi/dx (2k in Lethe,
- *   with k the FE degree of the velocity).
+ *   with k the FE degree of the velocity, see
+ *   calculate_rbvms_reference_scaling).
  * @param[out] metric_tensor The contravariant metric tensor G (eq. 66).
  * @param[out] metric_vector The metric vector g (eq. 69).
  */
@@ -153,8 +184,9 @@ compute_metric_tensor(const Tensor<2, dim, Number> &inverse_jacobian,
  * Both SUPG and PSPG use tau_M (eq. 72). C_I is the positive constant from an
  * element-wise inverse estimate (Johnson; see paper text after eq. 70). Since
  * G already accounts for the FE degree (see compute_metric_tensor), Lethe uses
- * the constant C_I = 9, which recovers (in 1D) the viscous limit
- * tau_M = h^2/(12 nu) of the pspg_supg and gls stabilizations.
+ * the constant C_I = rbvms_inverse_estimate_constant = 9, which recovers (in
+ * 1D) the viscous limit tau_M = h^2/(12 nu) of the pspg_supg and gls
+ * stabilizations.
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).

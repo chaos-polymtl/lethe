@@ -405,6 +405,21 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                          "the rbvms stabilization of the matrix-free solver "
                          "(lethe-fluid-matrix-free)."));
 
+  // The multiphase (CLS and Cahn-Hilliard) core assemblers below implement
+  // their own stabilization and would otherwise silently replace the RBVMS
+  // stabilization.
+  AssertThrow(
+    this->simulation_parameters.stabilization.use_default_stabilization ||
+      this->simulation_parameters.stabilization.stabilization !=
+        Parameters::Stabilization::NavierStokesStabilization::rbvms ||
+      (!this->simulation_parameters.multiphysics.CLS &&
+       !this->simulation_parameters.multiphysics.cahn_hilliard),
+    ExcMessage("The rbvms stabilization is not supported for multiphase flows "
+               "with the conservative level set (CLS) or the Cahn-Hilliard "
+               "equations. Use the pspg_supg or gls stabilization, or set "
+               "'use default stabilization = true' in the stabilization "
+               "subsection."));
+
   this->assemblers.clear();
 
   if (this->check_existance_of_bc(
@@ -1457,15 +1472,15 @@ FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
-  FEValues<dim>      fe_values(*this->get_mapping(),
-                               *this->fe,
-                               *this->cell_quadrature,
-                               update_values | update_quadrature_points |
-                                 update_JxW_values);
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int n_q_points    = this->cell_quadrature->size();
-  FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     local_rhs(dofs_per_cell);
+  FEValues<dim>               fe_values(*this->get_mapping(),
+                          *this->fe,
+                          *this->cell_quadrature,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
+  const unsigned int          dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int          n_q_points    = this->cell_quadrature->size();
+  FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>              local_rhs(dofs_per_cell);
   std::vector<Vector<double>> initial_velocity(n_q_points,
                                                Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);

@@ -52,7 +52,7 @@ protected:
 #ifndef LETHE_GMG_USE_FLOAT
   using MGNumber = double;
 #else
-  using MGNumber = float;
+  using MGNumber       = float;
 #endif
 
   using VectorType         = LinearAlgebra::distributed::Vector<Number>;
