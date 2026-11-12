@@ -126,7 +126,7 @@ For tracer boundary conditions, the defaults parameters are:
 QMOM
 ^^^^
 
-The boundary conditions of the quadrature method of moments (see :doc:`qmom`) apply to the advective flux of all its fields: the scalars and the moments. The possible ``types`` are ``none`` (default), ``outlet`` and ``dirichlet``. The parameters for each type of QMOM boundary conditions are:
+The boundary conditions of the quadrature method of moments (see :doc:`qmom`) apply to the scalars and the moments. The possible ``types`` are ``none`` (default), ``outlet`` and ``dirichlet``. The parameters for each type of QMOM boundary conditions are:
 
 .. code-block:: text
 
@@ -163,8 +163,6 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
   * ``none`` (default): the advective flux is zero (no flux). This is the natural choice for walls.
   * ``outlet``: a natural boundary condition that prevents backflow.
   * ``dirichlet``: the scalars and the particle size distribution are imposed, as functions of space and time, in the ``dirichlet`` subsection. The format of this subsection is described in :doc:`qmom`.
-
-  Boundaries without a QMOM boundary condition are treated as ``none``.
 
 .. warning::
 
