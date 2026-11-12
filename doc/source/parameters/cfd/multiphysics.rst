@@ -97,7 +97,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   The solid phase is under development. Its fields are allocated, written to the output files and checkpointed, but its equations are not solved yet.
 
-* ``qmom``: enables the quadrature method of moments (QMOM) auxiliary physics, which transports regular scalars, together with the first raw moments of the particle size distribution. The numbers of scalars and of moments are set in the ``QMOM`` subsection. The moments of particle size distributions, the reconstruction of the quadrature and the evolution of the moments in phase space are computed by the `QMOMKit <https://github.com/polycfd/QMOMKit>`_ library, so Lethe must be compiled with ``-DLETHE_WITH_QMOMKIT=ON`` (see :doc:`../../installation/regular_installation`). Its parameters are described in :doc:`qmom`.
+* ``qmom``: enables the quadrature method of moments (QMOM) auxiliary physics, which transports regular scalars, together with the first raw moments of the particle size distribution. The numbers of scalars and moments are set in the ``QMOM`` subsection. The moments of particle size distributions, the reconstruction of the quadrature and the evolution of the moments in phase space are computed by the `QMOMKit <https://github.com/polycfd/QMOMKit>`_ library, so Lethe must be compiled with ``-DLETHE_WITH_QMOMKIT=ON`` (see :doc:`../../installation/regular_installation`). Its parameters are described in :doc:`qmom`.
 
 .. warning::
 

@@ -12,7 +12,7 @@ The QMOM physics transports:
 * ``number of scalars`` regular scalars;
 * the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
-All the fields will be discretized with a single discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), reused by every field. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+All the fields are discretized with a discontinuous Galerkin finite elements of degree ``qmom degree`` (see :doc:`fem`). The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
 
 .. caution::
     All the parameters of the QMOM physics are in SI units.
@@ -77,7 +77,7 @@ The default values of the QMOM parameters are given in the text box below:
 
 * ``number of scalars``: number of regular scalars transported together with the moments.
 
-* ``scalar names``: comma-separated names of the scalars, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). There must be one name per scalar, and the names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
+* ``scalar names``: comma-separated list of scalars names, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). The names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
 
 * ``number of moments``: number :math:`K` of transported raw moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 
@@ -86,7 +86,7 @@ The default values of the QMOM parameters are given in the text box below:
   * ``lie``: :math:`T(\Delta t)` followed by :math:`P(\Delta t)`. This scheme is first-order accurate in time.
   * ``strang``: :math:`P(\Delta t / 2)`, then :math:`T(\Delta t)`, then :math:`P(\Delta t / 2)`. This scheme is second-order accurate in time when both parts are at least second-order accurate.
 
-* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space sources. They are disabled by default, so that the moments are only transported.
+* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space mecanisms. They are disabled by default, so that the moments are only transported.
 
 * ``phase evolution``: options of the phase-space evolution in QMOMKit.
 
@@ -107,7 +107,7 @@ The default values of the QMOM parameters are given in the text box below:
   * ``viscosity mixture``: dynamic viscosity of the mixture of the aqueous and organic phases, in Pa s.
   * ``shape factor``: volume shape factor of the particles, which is :math:`\pi/6` for spheres.
 
-* ``physical constants``: physical constants, in SI units. Their default values are the exact values of the 2019 redefinition of the SI base units and the CODATA 2022 value of the vacuum permittivity.
+* ``physical constants``: physical constants, in SI units.
 
   * ``boltzmann constant``: Boltzmann constant, in J/K.
   * ``avogadro number``: Avogadro number, in 1/mol.
@@ -134,7 +134,7 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
 
 * ``scalars``: values of the scalars.
 
-  * ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. There must be one expression per scalar, in the same order as the ``scalar names``: the first expression is the first scalar, and so on. For example, ``set Function expression = 1; 0`` sets the first scalar to 1 and the second to 0. The default value, a single expression, is therefore only valid for one scalar.
+  * ``Function expression``: expressions of the scalars, as functions of space and time, separated by semicolons. There must be one expression per scalar, in the same order as the ``scalar names``. The default value, a single expression, is therefore only valid for one scalar.
 
   .. note::
       The function expressions are ignored if ``number of scalars`` is 0.

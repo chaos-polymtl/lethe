@@ -71,7 +71,7 @@ This subsection specifies the characteristics of the finite element method used 
 
 * ``solid velocity degree`` and ``solid volume fraction degree`` specify the polynomial degree of the solid velocity and of the solid volume fraction of the Euler-Euler model.
 
-* ``qmom degree`` specifies the polynomial degree of all the fields of the quadrature method of moments (QMOM) physics: the scalars and the moments. These fields will be discretized with a single discontinuous Galerkin finite element, reused by every field, so a degree of ``0`` is allowed and corresponds to a finite volume discretization (see :doc:`qmom`).
+* ``qmom degree`` specifies the polynomial degree of the scalar and moment fields of the quadrature method of moments (QMOM) physics. These fields are discretized with discontinuous Galerkin finite elements. A degree of ``0`` is allowed and corresponds to a finite volume discretization (see :doc:`qmom`).
 
 * ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  `Franca and Farhat 1995 <https://www.sciencedirect.com/science/article/abs/pii/004578259400721X>`_ and `Brezzi et al 1992 <https://www.sciencedirect.com/science/article/abs/pii/004578259290102P>`_ for more detail.
 
