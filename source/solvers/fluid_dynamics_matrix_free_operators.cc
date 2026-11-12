@@ -7,6 +7,8 @@
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
 #include <solvers/stabilization.h>
 
+#include <deal.II/base/mpi.h>
+
 #include <deal.II/grid/grid_generator.h>
 
 #include <deal.II/lac/sparsity_tools.h>
@@ -14,6 +16,7 @@
 #include <deal.II/multigrid/mg_tools.h>
 
 #include <algorithm>
+#include <string>
 
 /**
  * @brief Creates and fills a table that works as bool dof mask object
@@ -223,22 +226,14 @@ NavierStokesOperatorBase<dim, number>::reinit(
     ExcMessage("The dynamic velocity subscale is only available with the rbvms "
                "stabilization."));
 
-  // The history and memory of the dynamic fine-scale velocity live on the
-  // fine level only. On the multigrid levels, the tables stay empty and the
-  // memory is neglected, which only affects the preconditioner.
-  for (auto &history : this->fine_scale_velocity_history)
-    history.reinit(0, 0);
+  // The history and memory of the dynamic fine-scale velocity are attached to
+  // the cells of the matrix-free object, so they are discarded here. Only the
+  // operator of the system allocates them again, through
+  // initialize_fine_scale_velocity_history(). On the multigrid levels, the
+  // tables stay empty and the memory is neglected, which only affects the
+  // preconditioner.
+  this->fine_scale_velocity_history.clear();
   this->fine_scale_velocity_memory.reinit(0, 0);
-  if (this->velocity_subscale ==
-        Parameters::Stabilization::VelocitySubscale::dynamic &&
-      mg_level == numbers::invalid_unsigned_int)
-    {
-      const FECellIntegrator integrator(this->matrix_free);
-      const unsigned int     n_cells = this->matrix_free.n_cell_batches();
-      for (auto &history : this->fine_scale_velocity_history)
-        history.reinit(n_cells, integrator.n_q_points);
-      this->fine_scale_velocity_memory.reinit(n_cells, integrator.n_q_points);
-    }
 
   this->simulation_control = simulation_control;
 
@@ -1010,13 +1005,13 @@ NavierStokesOperatorBase<dim, number>::
 
   // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
   // (eq. 64) is 4/dt^2 = 4*sdt^2 (0 for steady). The inverse Jacobian is
-  // scaled by 2k (see compute_metric_tensor) and the inverse-estimate constant
-  // C_I (see paper text after eq. 70) is taken as 9 (see calculate_rbvms_tau).
+  // scaled by 2k (see calculate_rbvms_reference_scaling) and the
+  // inverse-estimate constant C_I (see paper text after eq. 70) is
+  // rbvms_inverse_estimate_constant.
   const double four_over_dt_squared = 4. * sdt * sdt;
   const double rbvms_reference_scaling =
-    2. * static_cast<double>(this->fe_degree);
-  const double rbvms_c_i = 9.;
-  const bool   is_rbvms =
+    calculate_rbvms_reference_scaling(this->fe_degree);
+  const bool is_rbvms =
     this->stabilization ==
     Parameters::Stabilization::NavierStokesStabilization::rbvms;
 
@@ -1227,7 +1222,7 @@ NavierStokesOperatorBase<dim, number>::
                 velocity,
                 VectorizedArray<number>(kinematic_viscosity),
                 VectorizedArray<number>(rbvms_transient_term),
-                rbvms_c_i,
+                rbvms_inverse_estimate_constant,
                 tau_momentum,
                 tau_continuity);
 
@@ -1386,10 +1381,39 @@ NavierStokesOperatorBase<dim, number>::
 
 template <int dim, typename number>
 void
+NavierStokesOperatorBase<dim, number>::initialize_fine_scale_velocity_history(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+{
+  this->fine_scale_velocity_history.clear();
+  this->fine_scale_velocity_memory.reinit(0, 0);
+
+  // Only a transient simulation with the dynamic velocity subscale needs the
+  // history. In a steady simulation, the memory would always be zero.
+  const unsigned int n_previous =
+    number_of_previous_solutions(time_stepping_method);
+  if (this->velocity_subscale !=
+        Parameters::Stabilization::VelocitySubscale::dynamic ||
+      n_previous == 0)
+    return;
+
+  // The fine-scale velocity starts from zero, which is the default value of
+  // the table entries.
+  const FECellIntegrator integrator(this->matrix_free);
+  const unsigned int     n_cells = this->matrix_free.n_cell_batches();
+  this->fine_scale_velocity_history.resize(n_previous);
+  for (auto &history : this->fine_scale_velocity_history)
+    history.reinit(n_cells, integrator.n_q_points);
+  this->fine_scale_velocity_memory.reinit(n_cells, integrator.n_q_points);
+}
+
+template <int dim, typename number>
+void
 NavierStokesOperatorBase<dim, number>::evaluate_fine_scale_velocity_memory()
 {
-  // The memory only exists on the fine level of a dynamic velocity subscale.
-  if (fine_scale_velocity_memory.empty())
+  // The memory only exists if initialize_fine_scale_velocity_history()
+  // allocated it. The number of history entries does not depend on the
+  // locally owned cells, so every rank takes the same branch.
+  if (fine_scale_velocity_history.empty())
     return;
 
   this->timer.enter_subsection("operator::evaluate_fine_scale_velocity_memory");
@@ -1403,7 +1427,14 @@ NavierStokesOperatorBase<dim, number>::evaluate_fine_scale_velocity_memory()
   // holding u'_{n-p}, mirroring calculate_time_derivative_previous_solutions.
   const Vector<double> &bdf_coefs  = simulation_control->get_bdf_coefficients();
   const unsigned int    n_previous = number_of_previous_solutions(method);
-  AssertIndexRange(n_previous, fine_scale_velocity_history.size() + 1);
+  AssertThrow(n_previous <= fine_scale_velocity_history.size(),
+              ExcMessage(
+                "The time-stepping method uses " + std::to_string(n_previous) +
+                " previous solutions, but the history of the dynamic RBVMS "
+                "fine-scale velocity only stores " +
+                std::to_string(fine_scale_velocity_history.size()) +
+                ". Call initialize_fine_scale_velocity_history() with the "
+                "time-stepping method of the simulation."));
 
   const unsigned int n_cells    = fine_scale_velocity_memory.size(0);
   const unsigned int n_q_points = fine_scale_velocity_memory.size(1);
@@ -1426,8 +1457,9 @@ void
 NavierStokesOperatorBase<dim, number>::update_fine_scale_velocity_history(
   const VectorType &solution)
 {
-  // The history only exists on the fine level of a dynamic velocity subscale.
-  if (fine_scale_velocity_history[0].empty())
+  // The history only exists if initialize_fine_scale_velocity_history()
+  // allocated it.
+  if (fine_scale_velocity_history.empty())
     return;
 
   this->timer.enter_subsection("operator::update_fine_scale_velocity_history");
@@ -1436,22 +1468,33 @@ NavierStokesOperatorBase<dim, number>::update_fine_scale_velocity_history(
   AssertThrow(time_stepping_is_bdf(method),
               ExcMessage("The dynamic velocity subscale is only implemented "
                          "for BDF time-stepping schemes."));
-  Assert(!this->time_derivatives_previous_solutions.empty(),
-         ExcMessage("The history of the fine-scale velocity can only be "
-                    "updated after a time step has been solved."));
+  // The time derivatives of the previous solutions are part of the strong
+  // residual, so they must have been evaluated for this time step. The size of
+  // their table depends on the locally owned cells, so the check is reduced
+  // over the ranks to fail on all of them at once.
+  const bool time_derivatives_are_missing =
+    this->time_derivatives_previous_solutions.size(0) !=
+    this->matrix_free.n_cell_batches();
+  AssertThrow(!Utilities::MPI::logical_or(time_derivatives_are_missing,
+                                          solution.get_mpi_communicator()),
+              ExcMessage("The history of the dynamic RBVMS fine-scale velocity "
+                         "was updated before the time derivatives of the "
+                         "previous solutions were evaluated. Call "
+                         "evaluate_time_derivative_previous_solutions() at "
+                         "the beginning of every BDF time step."));
 
   const double beta_0 = simulation_control->get_bdf_coefficients()[0];
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
 
-  // Same RBVMS constants as in evaluate_non_linear_term_and_calculate_tau.
+  // Same reference scaling as in evaluate_non_linear_term_and_calculate_tau.
   const double rbvms_reference_scaling =
-    2. * static_cast<double>(this->fe_degree);
-  const double rbvms_c_i = 9.;
+    calculate_rbvms_reference_scaling(this->fe_degree);
 
-  // Shift the history, [2] <- [1] <- [0], so that entry 0 can receive the
-  // fine-scale velocity of the time step that just converged.
+  // Shift the history by one entry (e.g. [2] <- [1] <- [0] for BDF3), so that
+  // entry 0 can receive the fine-scale velocity of the time step that just
+  // converged. The oldest entry is overwritten below.
   std::rotate(fine_scale_velocity_history.begin(),
               fine_scale_velocity_history.end() - 1,
               fine_scale_velocity_history.end());
@@ -1530,7 +1573,7 @@ NavierStokesOperatorBase<dim, number>::update_fine_scale_velocity_history(
             advective_velocity,
             VectorizedArray<number>(kinematic_viscosity),
             VectorizedArray<number>(0.),
-            rbvms_c_i,
+            rbvms_inverse_estimate_constant,
             tau_static,
             tau_continuity);
           const VectorizedArray<number> tau =
@@ -2057,9 +2100,10 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
     this->stabilization ==
     Parameters::Stabilization::NavierStokesStabilization::rbvms;
 
-  // The memory of the dynamic RBVMS fine-scale velocity is only stored on the
-  // fine level when the velocity subscale is dynamic. On the multigrid levels,
-  // it is neglected, which only affects the preconditioner.
+  // The memory of the dynamic RBVMS fine-scale velocity is only stored by the
+  // operator of the system of a transient simulation with the dynamic
+  // velocity subscale. On the multigrid levels, it is neglected, which only
+  // affects the preconditioner.
   const bool has_fine_scale_memory = !this->fine_scale_velocity_memory.empty();
 
   for (const auto q : integrator.quadrature_point_indices())
@@ -2431,8 +2475,9 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
     this->stabilization ==
     Parameters::Stabilization::NavierStokesStabilization::rbvms;
 
-  // The memory of the dynamic RBVMS fine-scale velocity is only stored on the
-  // fine level when the velocity subscale is dynamic.
+  // The memory of the dynamic RBVMS fine-scale velocity is only stored by the
+  // operator of the system of a transient simulation with the dynamic
+  // velocity subscale.
   const bool has_fine_scale_memory = !this->fine_scale_velocity_memory.empty();
 
   for (unsigned int cell = range.first; cell < range.second; ++cell)
@@ -2638,7 +2683,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
               // Quasi-static: u' = -τ r_M. Dynamic: u' = -τ_t (r_M + m'),
               // where the memory m' gathers the previous fine-scale
-              // velocities (only stored on the fine level).
+              // velocities (only stored by the operator of the system).
               if (has_fine_scale_memory)
                 fine_scale_velocity =
                   -tau * (r_m + this->fine_scale_velocity_memory(cell, q));

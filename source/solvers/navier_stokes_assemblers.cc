@@ -341,15 +341,14 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
   // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
   // (eq. 64) is 4/dt^2 (0 for steady). The inverse Jacobian is scaled by 2k
-  // (see compute_metric_tensor) and the inverse-estimate constant C_I (see
-  // paper text after eq. 70) is taken as 9 (see calculate_rbvms_tau).
+  // (see calculate_rbvms_reference_scaling) and the inverse-estimate constant
+  // C_I (see paper text after eq. 70) is rbvms_inverse_estimate_constant.
   const bool is_steady =
     this->simulation_control->get_assembly_method() ==
     Parameters::SimulationControl::TimeSteppingMethod::steady;
   const double four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
   const double rbvms_reference_scaling =
-    2. * static_cast<double>(scratch_data.fe_values.get_fe().degree);
-  const double rbvms_c_i = 9.;
+    calculate_rbvms_reference_scaling(scratch_data.fe_values.get_fe().degree);
 
   // Pressure scaling factor
   const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
@@ -407,7 +406,7 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
                                        advective_velocity,
                                        viscosity_for_stabilization_vector[q],
                                        four_over_dt_squared,
-                                       rbvms_c_i,
+                                       rbvms_inverse_estimate_constant,
                                        tau,
                                        tau_lsic);
 
@@ -573,8 +572,7 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
     Parameters::SimulationControl::TimeSteppingMethod::steady;
   const double four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
   const double rbvms_reference_scaling =
-    2. * static_cast<double>(scratch_data.fe_values.get_fe().degree);
-  const double rbvms_c_i = 9.;
+    calculate_rbvms_reference_scaling(scratch_data.fe_values.get_fe().degree);
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -623,7 +621,7 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
                                        advective_velocity,
                                        viscosity_for_stabilization_vector[q],
                                        four_over_dt_squared,
-                                       rbvms_c_i,
+                                       rbvms_inverse_estimate_constant,
                                        tau,
                                        tau_lsic);
 

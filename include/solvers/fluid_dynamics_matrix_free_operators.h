@@ -21,7 +21,7 @@
 #include <deal.II/matrix_free/operators.h>
 #include <deal.II/matrix_free/tools.h>
 
-#include <array>
+#include <vector>
 
 using namespace dealii;
 
@@ -456,14 +456,33 @@ public:
     const VectorType &time_derivative_previous_solutions);
 
   /**
+   * @brief Allocate, filled with zeros, the history and the memory of the
+   * dynamic RBVMS fine-scale velocity at the quadrature points of the cells.
+   * One history entry is allocated per previous solution of the
+   * time-stepping method. Nothing is allocated if the velocity subscale is
+   * not dynamic or if the method has no previous solution (steady
+   * simulations, where the memory would always be zero). This function must
+   * only be called on the operator of the system, after reinit(): the
+   * operators of the multigrid levels neglect the memory, which only affects
+   * the preconditioner.
+   *
+   * @param[in] time_stepping_method Time-stepping method of the simulation,
+   * which sets the number of previous fine-scale velocities to store.
+   */
+  void
+  initialize_fine_scale_velocity_history(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method);
+
+  /**
    * @brief Compute the memory of the dynamic RBVMS fine-scale velocity,
    * m' = sum_{j>=1} beta_j u'_{n+1-j}, from the stored history of u' and the
    * BDF coefficients beta_j of the current time step. The fine-scale velocity
    * of the time step is then u' = -tau_t (r_M + m'). This mirrors the time
    * derivative of the previous solutions of the coarse-scale velocity and must
    * be called at the beginning of every BDF time step, after the time step
-   * has been set. It does nothing if the velocity subscale is not dynamic or
-   * if the operator is a multigrid level operator.
+   * has been set. It does nothing if the history has not been allocated by
+   * initialize_fine_scale_velocity_history().
    */
   void
   evaluate_fine_scale_velocity_memory();
@@ -475,8 +494,7 @@ public:
    * momentum residual r_M is rebuilt from @p solution with the forcing,
    * buoyancy and time-derivative data of the time step, which must therefore
    * not have been updated for the next time step yet. It does nothing if the
-   * velocity subscale is not dynamic or if the operator is a multigrid level
-   * operator.
+   * history has not been allocated by initialize_fine_scale_velocity_history().
    *
    * @param[in] solution Converged solution of the time step, with up-to-date
    * ghost values.
@@ -830,8 +848,9 @@ protected:
   /**
    * @brief Table with correct alignment for vectorization to store the memory
    * m' = sum_{j>=1} beta_j u'_{n+1-j} of the dynamic RBVMS fine-scale velocity.
-   * It is only allocated on the fine level when the velocity subscale is
-   * dynamic, and is empty otherwise.
+   * It is only allocated by initialize_fine_scale_velocity_history() (operator
+   * of the system, dynamic velocity subscale, transient simulation), and is
+   * empty otherwise.
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> fine_scale_velocity_memory;
@@ -840,11 +859,13 @@ protected:
    * @brief Tables with correct alignment for vectorization to store the
    * history of the dynamic RBVMS fine-scale velocity: entry j holds u'_{n-j},
    * that is the fine-scale velocity of the last converged time step and of the
-   * two before it (enough for BDF3). They are only allocated on the fine level
-   * when the velocity subscale is dynamic, and are empty otherwise.
+   * ones before it. There is one entry per previous solution of the
+   * time-stepping method (three for BDF3). They are only allocated by
+   * initialize_fine_scale_velocity_history(), and the vector is empty
+   * otherwise.
    *
    */
-  std::array<Table<2, Tensor<1, dim, VectorizedArray<number>>>, 3>
+  std::vector<Table<2, Tensor<1, dim, VectorizedArray<number>>>>
     fine_scale_velocity_history;
 
   /**
