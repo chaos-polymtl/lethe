@@ -267,8 +267,7 @@ public:
     , local_skeleton_solution(n_dofs_trial_skeleton)
     , local_interior_rhs(n_dofs_trial_interior)
     , local_interior_solution(n_dofs_trial_interior)
-    , tmp_vector_interior(n_dofs_trial_interior)
-    , tmp_vector_error_indicator(n_dofs_test)
+    , tmp_vector_reconstruction(n_dofs_test)
     , local_residual(n_dofs_test)
     , local_dof_indices_trial_interior(n_dofs_trial_interior)
     , local_residual_norm_squared(0.)
@@ -333,11 +332,9 @@ public:
   Vector<double> local_interior_rhs;
   // Cell interior solution
   Vector<double> local_interior_solution;
-  // Temporary vectors used for the interior reconstruction M_2 * x_skeleton
-  Vector<double> tmp_vector_interior;
-  // Temporary vectors used for the error indicator B * x_interior + B_hat *
-  // x_skeleton
-  Vector<double> tmp_vector_error_indicator;
+  // Temporary vector of the test space used for the products B_hat *
+  // x_skeleton and B * x_interior of the interior reconstruction
+  Vector<double> tmp_vector_reconstruction;
   // Cell error representation function (Riesz representation of the residual)
   Vector<double> local_residual;
   // Cell dof indices of the interior trial space
