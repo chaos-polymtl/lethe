@@ -6,8 +6,8 @@
 # Taylor-Green vortex, RBVMS stabilization, dynamic velocity subscale, BDF3), up
 # to t = 0.3, and writes a checkpoint at every time step. The checkpoint holds
 # the history of the dynamic fine-scale velocity, attached to the cells of the
-# triangulation. Run it on one process and copy the restart.* and *.checkpoint
-# files of the output folder to rbvms_transient_bdf3_dynamic_restart/.
+# triangulation. Run it on one process from the generators folder: it writes
+# all the files read by the test to ../rbvms_transient_bdf3_dynamic_restart_files/.
 
 # Listing of Parameters
 #----------------------
@@ -25,7 +25,7 @@ subsection simulation control
   set time end          = 0.3
   set output name       = tgv
   set output frequency  = 0
-  set output path       = ./output/
+  set output path       = ../rbvms_transient_bdf3_dynamic_restart_files/
 end
 
 #---------------------------------------------------
@@ -34,7 +34,7 @@ end
 
 subsection restart
   set checkpoint = true
-  set filename   = restart
+  set filename   = rbvms_transient_bdf3_dynamic_restart
   set frequency  = 1
   set restart    = false
 end

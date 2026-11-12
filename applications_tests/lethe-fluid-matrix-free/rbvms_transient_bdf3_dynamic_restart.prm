@@ -28,7 +28,6 @@ subsection simulation control
   set time end          = 0.5
   set output name       = tgv
   set output frequency  = 0
-  set output path       = ../
 end
 
 #---------------------------------------------------
@@ -37,7 +36,7 @@ end
 
 subsection restart
   set checkpoint = false
-  set filename   = restart
+  set filename   = rbvms_transient_bdf3_dynamic_restart
   set frequency  = 1
   set restart    = true
 end
