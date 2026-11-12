@@ -486,7 +486,8 @@ SimulationControlTransient::is_output_iteration()
         return false;
 
       // As for iteration control, we always output the initial iteration and
-      // the last iteration of the simulation
+      // the last iteration of the simulation, as long as they lie within the
+      // output time interval (checked above)
       if (iteration_number == 0 || is_at_end())
         return true;
 
@@ -499,10 +500,10 @@ SimulationControlTransient::is_output_iteration()
       return output_time_index(current_time) > output_time_index(previous_time);
     }
 
-  // Time reached at the end of the next time step. Since the specific output
-  // times and the bounds of the output time interval do not necessarily
-  // correspond to the time of an iteration, we also output the iteration that
-  // precedes them.
+  // Time reached at the end of the next time step. It is used by the two
+  // remaining cases: since the specific output times and the bounds of the
+  // output time interval do not necessarily correspond to the time of an
+  // iteration, we also output the iteration that precedes them.
   const double next_time = current_time + calculate_time_step();
 
   // Case 2. One or several specific output times are given, in any order. We
