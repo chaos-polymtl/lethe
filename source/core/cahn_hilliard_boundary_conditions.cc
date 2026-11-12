@@ -196,3 +196,27 @@ namespace BoundaryConditions
   template class CahnHilliardBoundaryConditions<2>;
   template class CahnHilliardBoundaryConditions<3>;
 } // namespace BoundaryConditions
+
+
+template <int dim>
+double
+CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
+                                        const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 0)
+    {
+      return phi->value(p);
+    }
+  if (component == 1)
+    {
+      return 0.;
+    }
+  return 0.;
+}
+
+
+template class CahnHilliardFunctionDefined<2>;
+template class CahnHilliardFunctionDefined<3>;

@@ -159,6 +159,17 @@ class TimeHarmonicMaxwellElectricFieldDefined : public Function<dim>
   Functions::ParsedFunction<dim> *e_z_imag;
 
 public:
+  /**
+   * @brief Initialize the electric-field boundary function with real and
+   * imaginary component functions.
+   *
+   * @param[in] p_e_x_real The parsed function for the real x-component.
+   * @param[in] p_e_y_real The parsed function for the real y-component.
+   * @param[in] p_e_z_real The parsed function for the real z-component.
+   * @param[in] p_e_x_imag The parsed function for the imaginary x-component.
+   * @param[in] p_e_y_imag The parsed function for the imaginary y-component.
+   * @param[in] p_e_z_imag The parsed function for the imaginary z-component.
+   */
   TimeHarmonicMaxwellElectricFieldDefined(
     Functions::ParsedFunction<dim> *p_e_x_real,
     Functions::ParsedFunction<dim> *p_e_y_real,
@@ -175,52 +186,17 @@ public:
     , e_z_imag(p_e_z_imag)
   {}
 
+  /**
+   * @brief Calculates the value of an imposed electric field equations.
+   *
+   * @param[in] point A point at which the function will be evaluated.
+   * @param[in] component The vector component of the boundary condition (0-> E
+   * x real, 1-> E y real, 2-> E z real, 3-> E x imag, 4-> E y imag, 5-> E z
+   * imag)
+   */
   double
   value(const Point<dim> &point, const unsigned int component) const override;
 };
-
-/**
- * @brief Calculates the value of an imposed electric field equations.
- *
- * @param[in] point A point at which the function will be evaluated.
- * @param[in] component The vector component of the boundary condition (0-> E x
- * real, 1-> E y real, 2-> E z real, 3-> E x imag, 4-> E y imag, 5-> E z imag)
- */
-template <int dim>
-double
-TimeHarmonicMaxwellElectricFieldDefined<dim>::value(
-  const Point<dim>  &point,
-  const unsigned int component) const
-{
-  Assert(component < this->n_components,
-         ExcIndexRange(component, 0, this->n_components));
-
-  if (component == 0)
-    {
-      return e_x_real->value(point);
-    }
-  if (component == 1)
-    {
-      return e_y_real->value(point);
-    }
-  if (component == 2)
-    {
-      return e_z_real->value(point);
-    }
-  if (component == 3)
-    {
-      return e_x_imag->value(point);
-    }
-  if (component == 4)
-    {
-      return e_y_imag->value(point);
-    }
-  if (component == 5)
-    {
-      return e_z_imag->value(point);
-    }
-  return 0.;
-}
 
 /**
  * @brief This class implements a boundary condition type for the Time Harmonic Maxwell equation
@@ -237,6 +213,17 @@ class TimeHarmonicMaxwellMagneticFieldDefined : public Function<dim>
   Functions::ParsedFunction<dim> *h_z_imag;
 
 public:
+  /**
+   * @brief Initialize the magnetic-field boundary function with real and
+   * imaginary component functions.
+   *
+   * @param[in] p_h_x_real The parsed function for the real x-component.
+   * @param[in] p_h_y_real The parsed function for the real y-component.
+   * @param[in] p_h_z_real The parsed function for the real z-component.
+   * @param[in] p_h_x_imag The parsed function for the imaginary x-component.
+   * @param[in] p_h_y_imag The parsed function for the imaginary y-component.
+   * @param[in] p_h_z_imag The parsed function for the imaginary z-component.
+   */
   TimeHarmonicMaxwellMagneticFieldDefined(
     Functions::ParsedFunction<dim> *p_h_x_real,
     Functions::ParsedFunction<dim> *p_h_y_real,
@@ -253,51 +240,16 @@ public:
     , h_z_imag(p_h_z_imag)
   {}
 
+  /**
+   * @brief Calculates the value of an imposed magnetic field equations.
+   *
+   * @param[in] point A point at which the function will be evaluated.
+   * @param[in] component The vector component of the boundary condition (6-> H
+   * x real, 7-> H y real, 8-> H z real, 9-> H x imag, 10-> H y imag, 11-> H z
+   * imag)
+   */
   double
   value(const Point<dim> &point, const unsigned int component) const override;
 };
-
-/**
- * @brief Calculates the value of an imposed magnetic field equations.
- *
- * @param[in] point A point at which the function will be evaluated.
- * @param[in] component The vector component of the boundary condition (6-> H x
- * real, 7-> H y real, 8-> H z real, 9-> H x imag, 10-> H y imag, 11-> H z imag)
- */
-template <int dim>
-double
-TimeHarmonicMaxwellMagneticFieldDefined<dim>::value(
-  const Point<dim>  &point,
-  const unsigned int component) const
-{
-  Assert(component < this->n_components,
-         ExcIndexRange(component, 0, this->n_components));
-
-  if (component == 6)
-    {
-      return h_x_real->value(point);
-    }
-  if (component == 7)
-    {
-      return h_y_real->value(point);
-    }
-  if (component == 8)
-    {
-      return h_z_real->value(point);
-    }
-  if (component == 9)
-    {
-      return h_x_imag->value(point);
-    }
-  if (component == 10)
-    {
-      return h_y_imag->value(point);
-    }
-  if (component == 11)
-    {
-      return h_z_imag->value(point);
-    }
-  return 0.;
-}
 
 #endif

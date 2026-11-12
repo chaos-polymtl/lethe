@@ -96,40 +96,25 @@ private:
   Functions::ParsedFunction<dim> *phi;
 
 public:
+  /**
+   * @brief Initialize the Cahn-Hilliard boundary function with its phase field.
+   *
+   * @param[in] p_phi The parsed function defining the phase field.
+   */
   CahnHilliardFunctionDefined(Functions::ParsedFunction<dim> *p_phi)
     : Function<dim>(2)
     , phi(p_phi)
   {}
 
-  virtual double
+  /**
+   * @brief Calculates the value of a Function-type for the Cahn-Hilliard equations
+   *
+   * @param[in] p A point (generally a gauss point)
+   * @param[in] component The vector component of the boundary condition (0-x,
+   * 1-y and 2-z)
+   */
+  double
   value(const Point<dim> &p, unsigned int component) const override;
 };
-
-
-/**
- * @brief Calculates the value of a Function-type for the Cahn-Hilliard equations
- *
- * @param[in] p A point (generally a gauss point)
- * @param[in] component The vector component of the boundary condition (0-x, 1-y
- * and 2-z)
- */
-template <int dim>
-double
-CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
-                                        const unsigned int component) const
-{
-  Assert(component < this->n_components,
-         ExcIndexRange(component, 0, this->n_components));
-
-  if (component == 0)
-    {
-      return phi->value(p);
-    }
-  if (component == 1)
-    {
-      return 0.;
-    }
-  return 0.;
-}
 
 #endif

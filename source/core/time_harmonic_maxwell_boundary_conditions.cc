@@ -330,3 +330,82 @@ namespace BoundaryConditions
   template class TimeHarmonicMaxwellBoundaryConditions<2>;
   template class TimeHarmonicMaxwellBoundaryConditions<3>;
 } // namespace BoundaryConditions
+
+
+template <int dim>
+double
+TimeHarmonicMaxwellElectricFieldDefined<dim>::value(
+  const Point<dim>  &point,
+  const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 0)
+    {
+      return e_x_real->value(point);
+    }
+  if (component == 1)
+    {
+      return e_y_real->value(point);
+    }
+  if (component == 2)
+    {
+      return e_z_real->value(point);
+    }
+  if (component == 3)
+    {
+      return e_x_imag->value(point);
+    }
+  if (component == 4)
+    {
+      return e_y_imag->value(point);
+    }
+  if (component == 5)
+    {
+      return e_z_imag->value(point);
+    }
+  return 0.;
+}
+
+
+template <int dim>
+double
+TimeHarmonicMaxwellMagneticFieldDefined<dim>::value(
+  const Point<dim>  &point,
+  const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 6)
+    {
+      return h_x_real->value(point);
+    }
+  if (component == 7)
+    {
+      return h_y_real->value(point);
+    }
+  if (component == 8)
+    {
+      return h_z_real->value(point);
+    }
+  if (component == 9)
+    {
+      return h_x_imag->value(point);
+    }
+  if (component == 10)
+    {
+      return h_y_imag->value(point);
+    }
+  if (component == 11)
+    {
+      return h_z_imag->value(point);
+    }
+  return 0.;
+}
+
+template class TimeHarmonicMaxwellElectricFieldDefined<2>;
+template class TimeHarmonicMaxwellElectricFieldDefined<3>;
+template class TimeHarmonicMaxwellMagneticFieldDefined<2>;
+template class TimeHarmonicMaxwellMagneticFieldDefined<3>;

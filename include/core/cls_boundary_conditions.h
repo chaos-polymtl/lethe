@@ -66,9 +66,6 @@ namespace BoundaryConditions
     void
     parse_parameters(ParameterHandler &prm);
   };
-
-
-
 } // namespace BoundaryConditions
 
 #endif

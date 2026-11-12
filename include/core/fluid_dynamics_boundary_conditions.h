@@ -154,98 +154,73 @@ namespace BoundaryConditions
 
 
 /**
- * @brief This class implements a boundary conditions for the Navier-Stokes equation
+ * @brief This class implements a boundary conditions for the fluid dynamics solver
  * where the velocity component are defined using individual functions
  */
 template <int dim>
-class NavierStokesFunctionDefined : public Function<dim>
+class FluidDynamicsVelocityFunctionDefined : public Function<dim>
 {
   Functions::ParsedFunction<dim> *u;
   Functions::ParsedFunction<dim> *v;
   Functions::ParsedFunction<dim> *w;
 
 public:
-  NavierStokesFunctionDefined(Functions::ParsedFunction<dim> *p_u,
-                              Functions::ParsedFunction<dim> *p_v,
-                              Functions::ParsedFunction<dim> *p_w)
+  /**
+   * @brief Initialize the fluid dynamics boundary function with its velocity
+   * components.
+   *
+   * @param[in] p_u The parsed function defining the x-velocity component.
+   * @param[in] p_v The parsed function defining the y-velocity component.
+   * @param[in] p_w The parsed function defining the z-velocity component.
+   */
+  FluidDynamicsVelocityFunctionDefined(Functions::ParsedFunction<dim> *p_u,
+                                       Functions::ParsedFunction<dim> *p_v,
+                                       Functions::ParsedFunction<dim> *p_w)
     : Function<dim>(dim + 1)
     , u(p_u)
     , v(p_v)
     , w(p_w)
   {}
 
+  /**
+   * @brief Calculates the value of a Function-type fluid dynamics equations
+   *
+   * @param[in] point A point at which the function will be evaluated
+   * @param[in] component The vector component of the boundary condition (0-x,
+   * 1-y and 2-z)
+   */
   double
   value(const Point<dim> &point, const unsigned int component) const override;
 };
-
-
-/**
- * @brief Calculates the value of a Function-type Navier-Stokes equations
- *
- * @param[in] point A point at which the function will be evaluated
- * @param[in] component The vector component of the boundary condition (0-x, 1-y
- * and 2-z)
- */
-template <int dim>
-double
-NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
-                                        const unsigned int component) const
-{
-  Assert(component < this->n_components,
-         ExcIndexRange(component, 0, this->n_components));
-
-  if (component == 0)
-    {
-      return u->value(point);
-    }
-  if (component == 1)
-    {
-      return v->value(point);
-    }
-  if (component == 2)
-    {
-      return w->value(point);
-    }
-  return 0.;
-}
 
 /**
  * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.
  */
 template <int dim>
-class NavierStokesPressureFunctionDefined : public Function<dim>
+class FluidDynamicsPressureFunctionDefined : public Function<dim>
 {
   Functions::ParsedFunction<dim> *p;
 
 public:
-  NavierStokesPressureFunctionDefined(Functions::ParsedFunction<dim> *p_p)
+  /**
+   * @brief Initialize the fluid dynamics pressure boundary function.
+   *
+   * @param[in] p_p The parsed function defining the pressure.
+   */
+  FluidDynamicsPressureFunctionDefined(Functions::ParsedFunction<dim> *p_p)
     : Function<dim>(dim + 1)
     , p(p_p)
   {}
 
+  /**
+   * @brief Calculates the value of a Function-type fluid dynamics equations
+   *
+   * @param[in] point A point (generally a gauss point)
+   * @param[in] component The vector component of the boundary condition (0-x,
+   * 1-y and 2-z)
+   */
   double
   value(const Point<dim> &point, unsigned int component) const override;
 };
-
-
-/**
- * @brief Calculates the value of a Function-type Navier-Stokes equations
- *
- * @param[in] point A point (generally a gauss point)
- * @param[in] component The vector component of the boundary condition (0-x, 1-y
- * and 2-z)
- */
-template <int dim>
-double
-NavierStokesPressureFunctionDefined<dim>::value(
-  const Point<dim>  &point,
-  const unsigned int component) const
-{
-  if (std::cmp_equal(component, dim))
-    {
-      return p->value(point);
-    }
-  return 0.;
-}
 
 #endif

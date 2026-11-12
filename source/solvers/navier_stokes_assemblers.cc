@@ -2217,7 +2217,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
         {
           types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
 
-          NavierStokesPressureFunctionDefined<dim> function_p(
+          FluidDynamicsPressureFunctionDefined<dim> function_p(
             &pressure_boundary_conditions.navier_stokes_functions
                .at(boundary_id)
                ->p);
@@ -2470,7 +2470,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
             {
               const double beta = boundary_conditions.beta.at(boundary_id);
 
-              NavierStokesFunctionDefined<dim> function_v(
+              FluidDynamicsVelocityFunctionDefined<dim> function_v(
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->u,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->v,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)
@@ -2687,7 +2687,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
                 boundary_conditions.boundary_layer_thickness.at(boundary_id);
               const double beta_tangent =
                 kinematic_viscosity / boundary_layer_thickness;
-              NavierStokesFunctionDefined<dim> function_v(
+              FluidDynamicsVelocityFunctionDefined<dim> function_v(
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->u,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->v,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)

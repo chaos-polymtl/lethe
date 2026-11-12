@@ -1974,7 +1974,7 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
                             .at(boundary_id) ==
                           BoundaryConditions::BoundaryType::function_weak)
                         {
-                          NavierStokesFunctionDefined<dim> function_v(
+                          FluidDynamicsVelocityFunctionDefined<dim> function_v(
                             &this->simulation_parameters.boundary_conditions
                                .navier_stokes_functions.at(boundary_id)
                                ->u,

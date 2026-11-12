@@ -294,3 +294,44 @@ namespace BoundaryConditions
   template class FluidDynamicsBoundaryConditions<2>;
   template class FluidDynamicsBoundaryConditions<3>;
 } // namespace BoundaryConditions
+
+template <int dim>
+double
+FluidDynamicsVelocityFunctionDefined<dim>::value(const Point<dim>  &point,
+                                        const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 0)
+    {
+      return u->value(point);
+    }
+  if (component == 1)
+    {
+      return v->value(point);
+    }
+  if (component == 2)
+    {
+      return w->value(point);
+    }
+  return 0.;
+}
+
+template <int dim>
+double
+FluidDynamicsPressureFunctionDefined<dim>::value(
+  const Point<dim>  &point,
+  const unsigned int component) const
+{
+  if (std::cmp_equal(component, dim))
+    {
+      return p->value(point);
+    }
+  return 0.;
+}
+
+template class FluidDynamicsVelocityFunctionDefined<2>;
+template class FluidDynamicsVelocityFunctionDefined<3>;
+template class FluidDynamicsPressureFunctionDefined<2>;
+template class FluidDynamicsPressureFunctionDefined<3>;

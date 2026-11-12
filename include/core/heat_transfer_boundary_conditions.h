@@ -47,21 +47,27 @@ namespace BoundaryConditions
   class HeatTransferBoundaryConditions : public BoundaryConditions
   {
   public:
+    /// Temperature values for Dirichlet boundary conditions
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
       dirichlet_value;
+    /// Convective heat transfer coefficients for Robin conditions
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
       h;
+    /// Environment temperatures for Robin conditions
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
       Tinf;
+    /// Emissivity coefficients for radiation boundary conditions
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
       emissivity;
+    /// Heat-flux values for flux boundary conditions
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
            heat_flux_bc;
+    /// Stefan-Boltzmann constant used in radiation boundary conditions
     double Stefan_Boltzmann_constant;
 
     /**
