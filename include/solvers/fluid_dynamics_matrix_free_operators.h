@@ -15,6 +15,7 @@
 
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/vector.h>
 
 #include <deal.II/matrix_free/fe_evaluation.h>
 #include <deal.II/matrix_free/matrix_free.h>
@@ -501,6 +502,45 @@ public:
    */
   void
   update_fine_scale_velocity_history(const VectorType &solution);
+
+  /**
+   * @brief Return the number of values of the history of the dynamic RBVMS
+   * fine-scale velocity per cell, that is the number of history entries times
+   * the number of quadrature points times dim. It is zero if the history has
+   * not been allocated by initialize_fine_scale_velocity_history(), and it is
+   * the same on every process.
+   *
+   * @return Number of values of the fine-scale velocity history per cell.
+   */
+  unsigned int
+  n_fine_scale_velocity_history_values_per_cell() const;
+
+  /**
+   * @brief Copy the history of the dynamic RBVMS fine-scale velocity to
+   * cell-wise vectors, for instance to write it to a checkpoint. There is one
+   * vector per history entry, quadrature point and velocity component, in this
+   * order. Entry cell->active_cell_index() of each vector holds the value of a
+   * locally owned cell, and the entries of the other cells are zero.
+   *
+   * @return The n_fine_scale_velocity_history_values_per_cell() cell-wise
+   * vectors, of size Triangulation::n_active_cells().
+   */
+  std::vector<Vector<double>>
+  get_fine_scale_velocity_history_cell_data() const;
+
+  /**
+   * @brief Set the history of the dynamic RBVMS fine-scale velocity from the
+   * cell-wise vectors of get_fine_scale_velocity_history_cell_data(), for
+   * instance when a simulation is restarted from a checkpoint. The history
+   * must have been allocated by initialize_fine_scale_velocity_history() for
+   * the same number of values per cell.
+   *
+   * @param[in] cell_data The n_fine_scale_velocity_history_values_per_cell()
+   * cell-wise vectors, of size Triangulation::n_active_cells().
+   */
+  void
+  set_fine_scale_velocity_history_from_cell_data(
+    const std::vector<Vector<double>> &cell_data);
 
   /**
    * @brief Store the values of the vector containing the ALE velocity to use

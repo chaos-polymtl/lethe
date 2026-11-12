@@ -806,6 +806,31 @@ protected:
   write_checkpoint();
 
   /**
+   * @brief Attach solver-specific data to the cells of the triangulation, so
+   * that it is saved with the triangulation in the checkpoint. It is called by
+   * write_checkpoint() just before the triangulation is saved, after the
+   * solutions of all the physics have been attached. The attached data, and
+   * the objects that attach it, must stay alive until the triangulation has
+   * been saved. By default, nothing is attached.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  virtual void
+  attach_cell_data_to_checkpoint(const std::string &checkpoint_file_prefix);
+
+  /**
+   * @brief Read the solver-specific data attached to the cells of the
+   * triangulation by attach_cell_data_to_checkpoint(). It is called by
+   * read_checkpoint() after the solutions of all the physics have been read,
+   * since the data attached to a triangulation must be read in the order in
+   * which it was attached. By default, nothing is read.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  virtual void
+  read_cell_data_from_checkpoint(const std::string &checkpoint_file_prefix);
+
+  /**
    * @brief Gather and return vector of output structs that are particular to some applications.
    *
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.
