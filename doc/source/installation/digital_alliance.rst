@@ -139,7 +139,12 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
   #SBATCH --mail-user=$your.email.address@email.provider
 
   source $HOME/.dealii
+
+  # When using Narval, Trillium, Rorqual or Fir
   mpirun lethe_application_name_wanted parameter_file_name.prm
+
+  # When using Nibi
+  mpirun --mca fs_ufs_lock_algorithm 1 lethe_application_name_wanted parameter_file_name.prm
 
 
 .. tip::
