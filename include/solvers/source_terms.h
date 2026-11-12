@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // TODO : Refactor so the class itself is not a pointer, but contains a pointer
@@ -41,8 +41,19 @@ namespace SourceTerms
         std::make_shared<Functions::ParsedFunction<dim>>(2);
     }
 
+    /**
+     * @brief Declares parameters for the source terms.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     virtual void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parses parameters for the source terms.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     virtual void
     parse_parameters(ParameterHandler &prm);
 

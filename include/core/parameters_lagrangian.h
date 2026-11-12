@@ -291,7 +291,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm) const;
@@ -299,7 +299,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -307,7 +307,7 @@ namespace Parameters
       /**
        * @brief Declare default parameter entries for a single particle type.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_default_entry(ParameterHandler &prm);
@@ -316,7 +316,7 @@ namespace Parameters
        * @brief Parse the physical properties for a given particle type.
        *
        * @param[in] particle_type Index of the particle type to parse.
-       * @param[in, out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_particle_properties(const unsigned int     &particle_type,
@@ -512,7 +512,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -520,7 +520,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -666,7 +666,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -674,7 +674,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -707,7 +707,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -715,7 +715,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -752,7 +752,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm) const;
@@ -760,7 +760,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -768,7 +768,7 @@ namespace Parameters
       /**
        * @brief Declare default parameter entries for a single floating wall.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_default_entry(ParameterHandler &prm);
@@ -776,7 +776,7 @@ namespace Parameters
       /**
        * @brief Parse parameters for a single floating wall.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_floating_wall(const ParameterHandler &prm);
@@ -859,7 +859,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm) const;
@@ -867,7 +867,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -876,7 +876,7 @@ namespace Parameters
        * @brief Declare default parameter entries for a single boundary
        * condition.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        *
        * @param[in] default_boundary_id Default value of the boundary id. This
        * corresponds to the number of the boundary condition subsection.
@@ -888,7 +888,7 @@ namespace Parameters
       /**
        * @brief Parse boundary condition parameters for a single boundary.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_boundary_conditions(ParameterHandler &prm);
@@ -938,7 +938,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -946,7 +946,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -983,7 +983,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -991,7 +991,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -1024,7 +1024,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm);
@@ -1032,7 +1032,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -1080,7 +1080,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -1088,7 +1088,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);

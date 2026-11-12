@@ -28,8 +28,7 @@ public:
   /**
    * @brief Declare all the parameters of a ray tracing simulation.
    *
-   * @param[in,out] prm The parameter handler.
-   *
+   * @param[in,out] prm The parameter handler object.
    * @param[in] size_of_subsections The maximum size of the variable-size
    * subsections of the parameter file, as returned by
    * Parameters::get_size_of_subsections.
@@ -68,7 +67,7 @@ public:
   /**
    * @brief Handles the parsing of all the parameters in the parameter handler file.
    *
-   * @param[in,out] prm The parameter handler.
+   * @param[in] prm The parameter handler object.
    */
   void
   parse(ParameterHandler &prm)

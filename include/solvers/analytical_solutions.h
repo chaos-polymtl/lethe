@@ -65,20 +65,20 @@ namespace AnalyticalSolutions
     {}
 
     /**
-     * @brief Declares the parameters required by the analytical solution
+     * @brief Declare the parameters required by the analytical solution
      * within a parameter file
      *
-     * @param prm ParameterHandler used to declare the parameters.
+     * @param[in,out] prm The parameter handler object.
      *
      */
     virtual void
     declare_parameters(ParameterHandler &prm);
 
     /**
-     * @brief Parses the parameters required by the analytical solution
+     * @brief Parse the parameters required by the analytical solution
      * within a parameter file
      *
-     * @param prm ParameterHandler used to parse the parameters.
+     * @param[in] prm The parameter handler object.
      *
      */
     virtual void

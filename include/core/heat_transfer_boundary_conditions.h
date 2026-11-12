@@ -65,9 +65,9 @@ namespace BoundaryConditions
     double Stefan_Boltzmann_constant;
 
     /**
-     * @brief Declares the default parameters for one heat transfer boundary condition.
+     * @brief Declare the default parameters for one heat transfer boundary condition.
      *
-     * @param[in] prm The parameter handler in which to declare the parameters.
+     * @param[in, out] prm The parameter handler object.
      * @param[in] default_boundary_id The default mesh boundary id.
      */
     void
@@ -75,9 +75,9 @@ namespace BoundaryConditions
                           types::boundary_id default_boundary_id);
 
     /**
-     * @brief Declares the heat transfer boundary condition parameters.
+     * @brief Declare the heat transfer boundary condition parameters.
      *
-     * @param[in] prm The parameter handler in which to declare the parameters.
+     * @param[in, out] prm The parameter handler object.
      * @param[in] number_of_boundary_conditions The number of boundary
      * conditions to declare.
      */
@@ -86,17 +86,17 @@ namespace BoundaryConditions
                        unsigned int      number_of_boundary_conditions);
 
     /**
-     * @brief Parses the information for one heat transfer boundary condition.
+     * @brief Parse the information for one heat transfer boundary condition.
      *
-     * @param[in] prm The parameter handler containing the boundary condition.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_boundary(ParameterHandler &prm);
 
     /**
-     * @brief Parses the heat transfer boundary condition parameters.
+     * @brief Parse the heat transfer boundary condition parameters.
      *
-     * @param[in] prm The parameter handler containing the boundary conditions.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);

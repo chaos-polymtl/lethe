@@ -95,17 +95,9 @@ namespace BoundaryConditions
       navier_stokes_functions;
 
     /**
-     * @brief Parses the information for one fluid dynamics boundary condition.
+     * @brief Declare the default parameters for one fluid dynamics boundary condition
      *
-     * @param[in] prm The parameter handler containing the boundary condition.
-     */
-    void
-    parse_boundary(ParameterHandler &prm);
-
-    /**
-     * @brief Declares the default parameters for one fluid dynamics boundary condition
-     *
-     * @param[in] prm The parameter handler in which to declare the parameters.
+     * @param[in,out] prm The parameter handler object.
      * @param[in] default_boundary_id The default mesh boundary id.
      */
     void
@@ -113,9 +105,9 @@ namespace BoundaryConditions
                           types::boundary_id default_boundary_id);
 
     /**
-     * @brief Declares the fluid dynamics boundary conditions
+     * @brief Declare the fluid dynamics boundary conditions
      *
-     * @param[in] prm The parameter handler in which to declare the parameters.
+     * @param[in,out] prm The parameter handler object.
      * @param[in] number_of_boundary_conditions The number of boundary
      * conditions to declare.
      */
@@ -124,9 +116,18 @@ namespace BoundaryConditions
                        unsigned int      number_of_boundary_conditions);
 
     /**
-     * @brief Parses the fluid dynamics boundary conditions
+     * @brief Parse the information for one fluid dynamics boundary condition.
      *
-     * @param[in] prm The parameter handler containing the boundary conditions.
+     * @param[in] prm The parameter handler containing the boundary
+     * condition.
+     */
+    void
+    parse_boundary(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the fluid dynamics boundary conditions
+     *
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);

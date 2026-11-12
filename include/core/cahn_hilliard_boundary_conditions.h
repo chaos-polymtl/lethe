@@ -46,9 +46,9 @@ namespace BoundaryConditions
       bcFunctions;
 
     /**
-     * @brief Declares the default parameters for one Cahn-Hilliard boundary condition.
+     * @brief Declare the default parameters for one Cahn-Hilliard boundary condition.
      *
-     * @param[in] prm The parameter handler in which to declare the parameters.
+     * @param[in, out] prm The parameter handler object.
      * @param[in] default_boundary_id The default mesh boundary id.
      */
     void
@@ -56,9 +56,9 @@ namespace BoundaryConditions
                           types::boundary_id default_boundary_id);
 
     /**
-     * @brief Declares the Cahn-Hilliard boundary condition parameters.
+     * @brief Declare the Cahn-Hilliard boundary condition parameters.
      *
-     * @param[in] prm The parameter handler in which to declare the parameters.
+     * @param[in, out] prm The parameter handler object.
      * @param[in] number_of_boundary_conditions The number of boundary
      * conditions to declare.
      */
@@ -67,17 +67,17 @@ namespace BoundaryConditions
                        unsigned int      number_of_boundary_conditions);
 
     /**
-     * @brief Parses the information for one Cahn-Hilliard boundary condition.
+     * @brief Parse the information for one Cahn-Hilliard boundary condition.
      *
-     * @param[in] prm The parameter handler containing the boundary condition.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_boundary(ParameterHandler &prm);
 
     /**
-     * @brief Parses the Cahn-Hilliard boundary condition parameters.
+     * @brief Parse the Cahn-Hilliard boundary condition parameters.
      *
-     * @param[in] prm The parameter handler containing the boundary conditions.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);
