@@ -1,0 +1,7 @@
+
+DEAL::Time step 2: checkpoint in slot 1
+DEAL::Time step 4: checkpoint in slot 0
+DEAL::Time step 5: checkpoint in slot 1
+DEAL::Restart from slot 1
+DEAL::Time step 6: checkpoint in slot 0
+DEAL::Checkpoint with checkpointing disabled: 0
