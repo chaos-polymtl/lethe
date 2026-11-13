@@ -4,6 +4,7 @@
 #ifndef lethe_navier_stokes_base_h
 #define lethe_navier_stokes_base_h
 
+#include <core/checkpoint_control.h>
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/multiphysics.h>
@@ -44,6 +45,8 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/affine_constraints.h>
+
+#include <string>
 
 using namespace dealii;
 
@@ -806,6 +809,35 @@ protected:
   write_checkpoint();
 
   /**
+   * @brief Write the checkpoint controller, which gives the id of the last
+   * checkpoint. It is called after write_checkpoint(), once every file of the
+   * checkpoint is written.
+   */
+  void
+  write_checkpoint_controller() const;
+
+  /**
+   * @brief Read the checkpoint controller, which gives the id of the last
+   * checkpoint. It is called before read_checkpoint().
+   */
+  void
+  read_checkpoint_controller();
+
+  /**
+   * @brief Return the prefix of the checkpoint files: the output path, the
+   * restart file name and the suffix of the checkpoint id.
+   */
+  std::string
+  get_checkpoint_prefix() const;
+
+  /**
+   * @brief Return the suffix of the checkpoint files, "_" followed by the
+   * checkpoint id.
+   */
+  std::string
+  get_checkpoint_suffix() const;
+
+  /**
    * @brief Gather and return vector of output structs that are particular to some applications.
    *
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.
@@ -906,6 +938,9 @@ protected:
 
   // Dynamic flow control
   FlowControl<dim> flow_control;
+
+  // Id of the checkpoint, which alternates between the checkpoint slots
+  CheckpointControl checkpoint_controller;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;

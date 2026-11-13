@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -131,6 +131,7 @@ RestartNavierStokes<dim>::run()
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step();
   this->write_checkpoint(); // write_checkpoint needs to be called explicitly
+  this->write_checkpoint_controller();
 
   *this->present_solution = 0;
   auto errors_p2          = calculate_L2_error(*this->dof_handler,

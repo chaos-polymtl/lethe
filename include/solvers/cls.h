@@ -260,16 +260,20 @@ public:
 
   /**
    * @brief Prepares auxiliary physics to write checkpoint
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   void
-  write_checkpoint() override;
+  write_checkpoint(const std::string &checkpoint_suffix) override;
 
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   void
-  read_checkpoint() override;
+  read_checkpoint(const std::string &checkpoint_suffix) override;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to

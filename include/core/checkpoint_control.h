@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_checkpoint_control_h
@@ -28,13 +28,17 @@ public:
   {}
 
   /**
-   * @brief Return true if a checkpoint should be made at the current time step.
+   * @brief Return true if a checkpoint should be made at the current time step:
+   * every checkpointing frequency time steps and at the last time step.
    * @param time_step_number Current time step.
+   * @param is_last_time_step Whether the current time step is the last one.
    */
   bool
-  is_checkpoint_time_step(const unsigned int time_step_number)
+  is_checkpoint_time_step(const unsigned int time_step_number,
+                          const bool         is_last_time_step)
   {
-    if (restart && !(time_step_number % checkpointing_frequency))
+    if (restart &&
+        (!(time_step_number % checkpointing_frequency) || is_last_time_step))
       {
         increment_checkpoint_id();
         return true;

@@ -395,9 +395,7 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
 
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  std::string prefix           = this->get_checkpoint_prefix();
   std::string prefix_particles = prefix + "_particles";
   std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
 
@@ -472,7 +470,7 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
         &this->particle_projector.previous_void_fraction->at(i));
     }
 
-  this->multiphysics->write_checkpoint();
+  this->multiphysics->write_checkpoint(this->get_checkpoint_suffix());
 
   // Prepare for Serialization
   SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
@@ -489,12 +487,16 @@ CFDDEMSolver<dim, PropertiesIndex>::write_checkpoint()
   // Serialize the post-processing tables that are additional in this solver
   const std::vector<OutputStructTableHandler> &table_output_structs_add =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs_add, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs_add,
+                          this->get_checkpoint_suffix(),
+                          this->mpi_communicator);
   // Serialize the default post-processing tables that are members of
   // NavierStokesBase
   const std::vector<OutputStructTableHandler> &table_output_structs =
     NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
-  serialize_tables_vector(table_output_structs, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          this->get_checkpoint_suffix(),
+                          this->mpi_communicator);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -502,11 +504,9 @@ void
 CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  std::string        prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
-  std::string prefix_particles = prefix + "_particles";
-  std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+  std::string        prefix           = this->get_checkpoint_prefix();
+  std::string        prefix_particles = prefix + "_particles";
+  std::string        prefix_grid      = prefix + "_lagrangian_postprocessing";
 
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
@@ -658,7 +658,7 @@ CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
       this->flow_control.read(prefix);
     }
 
-  this->multiphysics->read_checkpoint();
+  this->multiphysics->read_checkpoint(this->get_checkpoint_suffix());
 
   // Deserialize particles have the triangulation has been read
   this->particle_handler.deserialize();
@@ -667,13 +667,17 @@ CFDDEMSolver<dim, PropertiesIndex>::read_checkpoint()
   // Deserialize the post-processing tables that are particular to this solver
   std::vector<OutputStructTableHandler> table_output_structs_add =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs_add, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs_add,
+                            this->get_checkpoint_suffix(),
+                            this->mpi_communicator);
 
   // Deserialize the default post-processing tables that are members of
   // NavierStokesBase
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
-  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            this->get_checkpoint_suffix(),
+                            this->mpi_communicator);
 }
 
 template <int dim, typename PropertiesIndex>

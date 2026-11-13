@@ -152,15 +152,19 @@ public:
 
   /**
    * @brief Serialize the present and previous solutions for restart.
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   void
-  write_checkpoint() override;
+  write_checkpoint(const std::string &checkpoint_suffix) override;
 
   /**
    * @brief Deserialize the present and previous solutions for restart.
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   void
-  read_checkpoint() override;
+  read_checkpoint(const std::string &checkpoint_suffix) override;
 
   /**
    * @brief Gather the post-processing tables to serialize. None yet.

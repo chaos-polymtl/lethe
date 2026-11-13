@@ -249,15 +249,19 @@ public:
 
   /**
    * @brief Prepares Cahn-Hilliard to write checkpoint
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   void
-  write_checkpoint() override;
+  write_checkpoint(const std::string &checkpoint_suffix) override;
 
   /**
    * @brief Allows Cahn-Hilliard physics to set-up solution vector from checkpoint file;
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   void
-  read_checkpoint() override;
+  read_checkpoint(const std::string &checkpoint_suffix) override;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to
