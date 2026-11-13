@@ -214,15 +214,14 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
     this->present_solution_skeleton->memory_consumption() * bytes_to_gb;
   const auto system_rhs_memory =
     this->system_rhs.memory_consumption() * bytes_to_gb;
+  // The TrilinosWrappers::SparsityPattern class does not implement
+  // memory_consumption(), so we use a proxy: the number of nonzero entries
+  // stored on this process times the size of the local column indices, which
+  // Epetra stores as int.
   const auto sparsity_pattern_memory =
-    sparsity_pattern.n_nonzero_elements() *
-    sizeof(TrilinosWrappers::types::int_type) *
-    bytes_to_gb; // We use a proxy for the memory consumption of the
-                 // sparsity pattern based on the number of non-zero
-                 // elements and the size of the integer type used to store
-                 // the sparsity pattern, since the
-                 // TrilinosWrappers::SparsityPattern class does not have a
-                 // memory_consumption() function implemented.
+    static_cast<double>(
+      sparsity_pattern.trilinos_sparsity_pattern().NumMyNonzeros()) *
+    sizeof(int) * bytes_to_gb;
   const auto system_matrix_memory =
     this->system_matrix.memory_consumption() * bytes_to_gb;
   const auto dof_handler_trial_interior_memory =
