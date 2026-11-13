@@ -4,6 +4,7 @@
 #ifndef lethe_cfd_dem_simulation_parameters_h
 #define lethe_cfd_dem_simulation_parameters_h
 
+#include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
@@ -12,6 +13,10 @@
 
 #include <dem/dem_solver_parameters.h>
 
+#include <deal.II/base/exceptions.h>
+
+#include <filesystem>
+#include <string>
 
 template <int dim>
 class CFDDEMSimulationParameters
@@ -43,6 +48,25 @@ public:
 
     void_fraction->parse_parameters(prm);
     cfd_dem.parse_parameters(prm);
+
+    // The checkpoints of the simulation must not overwrite the DEM checkpoint
+    // it starts from.
+    if (void_fraction->read_dem && cfd_parameters.restart_parameters.checkpoint)
+      {
+        const auto normalized_path = [](const std::string &path) {
+          return std::filesystem::absolute(path).lexically_normal();
+        };
+        AssertThrow(
+          normalized_path(cfd_parameters.simulation_control.output_folder +
+                          cfd_parameters.restart_parameters.filename) !=
+            normalized_path(void_fraction->dem_file_name),
+          ExcMessage(
+            "The checkpoints of this simulation, given by 'subsection "
+            "simulation control' - 'set output path' and 'subsection restart' "
+            "- 'set filename', would overwrite the DEM checkpoint it starts "
+            "from, given by 'subsection void fraction' - 'set dem file name' (" +
+            void_fraction->dem_file_name + "). Give them different names."));
+      }
   }
 };
 

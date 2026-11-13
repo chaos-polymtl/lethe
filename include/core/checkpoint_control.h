@@ -19,9 +19,9 @@ public:
    * @param param Restart struct - Controls writing and reading
    * simulation checkpoints.
    */
-  CheckpointControl(Parameters::Restart &param)
+  CheckpointControl(const Parameters::Restart &param)
     : max_checkpoint_id(2)
-    , next_checkpoint_id(max_checkpoint_id)
+    , next_checkpoint_id(0)
     , checkpointing_frequency(param.frequency)
     , restart(param.checkpoint)
     , filename(param.filename)
