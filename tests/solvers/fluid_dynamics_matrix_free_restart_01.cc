@@ -371,6 +371,8 @@ FluidDynamicsMatrixFreeRestart<dim>::run_and_checkpoint()
 
   this->write_checkpoint();
 
+  this->write_checkpoint_controller();
+
   // Keep going in the same solver. This is the reference that the restarted
   // run must reproduce.
   advance(number_of_steps);

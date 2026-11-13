@@ -1426,7 +1426,7 @@ HeatTransfer<dim>::gather_tables()
 
 template <int dim>
 void
-HeatTransfer<dim>::write_checkpoint()
+HeatTransfer<dim>::write_checkpoint(const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1442,7 +1442,7 @@ HeatTransfer<dim>::write_checkpoint()
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+    this->simulation_parameters.restart_parameters.filename + checkpoint_suffix;
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
@@ -1460,12 +1460,14 @@ HeatTransfer<dim>::write_checkpoint()
   // Transfer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_suffix,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::read_checkpoint()
+HeatTransfer<dim>::read_checkpoint(const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading heat transfer checkpoint" << std::endl;
@@ -1489,7 +1491,7 @@ HeatTransfer<dim>::read_checkpoint()
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+    this->simulation_parameters.restart_parameters.filename + checkpoint_suffix;
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
@@ -1530,7 +1532,9 @@ HeatTransfer<dim>::read_checkpoint()
   // Heat Transfer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_suffix,
+                            mpi_communicator);
 }
 
 

@@ -32,8 +32,11 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <boost/archive/text_iarchive.hpp>
+
 #include <cmath>
 #include <exception>
+#include <fstream>
 
 
 // Constructor for class FluidDynamicsMatrixBased
@@ -1221,6 +1224,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->pcout << "************************" << std::endl;
       this->pcout << "---> Simulation Restart " << std::endl;
       this->pcout << "************************" << std::endl;
+      this->read_checkpoint_controller();
       this->read_checkpoint();
     }
   else if (initial_condition_type ==
@@ -1387,6 +1391,23 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->average_velocity_folder +
         this->simulation_parameters.initial_condition
           ->average_velocity_file_name;
+
+      // Load the checkpoint controller of that simulation, which gives the id
+      // of its last checkpoint
+      const std::string checkpoint_controller_object_filename =
+        checkpoint_file_name + ".checkpoint_controller";
+      check_file_exists(
+        checkpoint_controller_object_filename,
+        "checkpoint file of the checkpoint controller, given by "
+        "'subsection initial conditions' - 'subsection average "
+        "velocity profile' - 'set checkpoint file name'");
+      std::ifstream iss_checkpoint_controller_obj(
+        checkpoint_controller_object_filename);
+      boost::archive::text_iarchive ia_checkpoint_controller_obj(
+        iss_checkpoint_controller_obj, boost::archive::no_header);
+      unsigned int checkpoint_id;
+      ia_checkpoint_controller_obj >> checkpoint_id;
+      checkpoint_file_name += "_" + Utilities::int_to_string(checkpoint_id);
 
       // The average velocity profile needs to come from the results of a
       // simulation. The checkpoint/restart mechanism is used to obtain all the

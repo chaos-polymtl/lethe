@@ -4332,9 +4332,7 @@ FluidDynamicsSharp<dim>::write_checkpoint()
   // Write a table with all the relevant properties of the particle in a table.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
-      std::string prefix =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename;
+      std::string prefix = this->get_checkpoint_prefix();
 
       TableHandler  particles_information_table;
       std::string   filename = prefix + ".ib_particles";
@@ -4474,9 +4472,7 @@ FluidDynamicsSharp<dim>::read_checkpoint()
   TimerOutput::Scope t(this->computing_timer,
                        "Reset Sharp-Edge particle information");
 
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  std::string prefix = this->get_checkpoint_prefix();
 
   std::string filename = prefix + ".ib_particles";
 

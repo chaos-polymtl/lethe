@@ -78,6 +78,7 @@ Total number of p-p contacts: 1
 Total number of p-w contacts: 0
 
 No contact detected. Exiting simulation.
+Writing restart file
 id, type, dp, x, y, z
 0 0 0.00500 -0.0043 -0.0059 0.0017
 1 0 0.00500 -0.0081 0.0030 -0.0148

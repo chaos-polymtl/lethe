@@ -1290,7 +1290,26 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // that no particle-wall or particle-particle contact remain, we break
       // the simulation control loop.
       if (packed_insertion_report_and_status())
-        break;
+        {
+          // The packing ends the simulation, so this is its last time step.
+          if (checkpoint_controller.is_checkpoint_time_step(
+                simulation_control->get_iteration_number(), true))
+            {
+              write_checkpoint(computing_timer,
+                               parameters,
+                               simulation_control,
+                               particles_pvdhandler,
+                               grid_pvdhandler,
+                               triangulation,
+                               particle_handler,
+                               insertion_object,
+                               solid_surfaces,
+                               pcout,
+                               mpi_communicator,
+                               checkpoint_controller);
+            }
+          break;
+        }
 
       // Visualization
       if (simulation_control->is_output_iteration())
@@ -1330,7 +1349,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Write checkpoint if needed
       if (checkpoint_controller.is_checkpoint_time_step(
-            simulation_control->get_iteration_number()))
+            simulation_control->get_iteration_number(),
+            simulation_control->is_at_end()))
         {
           write_checkpoint(computing_timer,
                            parameters,
