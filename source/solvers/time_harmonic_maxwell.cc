@@ -1883,13 +1883,14 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
-  // Setup each dof handlers
+  // Setup each dof handlers. Only the skeleton dofs, which form the global
+  // system, are renumbered. The interior dofs only couple within a cell and
+  // the test dofs are only used locally on each cell, so renumbering them
+  // brings nothing.
   this->dof_handler_trial_interior->distribute_dofs(*this->fe_trial_interior);
-  DoFRenumbering::Cuthill_McKee(*this->dof_handler_trial_interior);
   this->dof_handler_trial_skeleton->distribute_dofs(*this->fe_trial_skeleton);
   DoFRenumbering::Cuthill_McKee(*this->dof_handler_trial_skeleton);
   this->dof_handler_test->distribute_dofs(*this->fe_test);
-  DoFRenumbering::Cuthill_McKee(*this->dof_handler_test);
 
   // Get the locally owned dofs
   this->locally_owned_dofs_trial_interior =
