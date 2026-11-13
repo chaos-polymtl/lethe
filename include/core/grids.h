@@ -8,6 +8,8 @@
 #include <core/parameters.h>
 #include <core/periodic_boundary.h>
 
+#include <deal.II/base/timer.h>
+
 #include <deal.II/distributed/tria_base.h>
 
 using namespace dealii;
@@ -63,6 +65,8 @@ setup_periodic_boundary_conditions(
  * restart.
  * @param[in]     periodic_boundaries  The periodic boundary pairs and their
  * direction of periodicity, used to set up the periodicity of the domain.
+ * @param[in,out] computing_timer Optional timer for mesh creation, periodicity,
+ * and manifold/refinement setup. If null, no timing sections are recorded.
  */
 template <int dim, int spacedim = dim>
 void
@@ -71,7 +75,8 @@ read_mesh_and_manifolds(
   const Parameters::Mesh<dim, spacedim>                 &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
   bool                                                   restart,
-  const Parameters::PeriodicBoundaries                  &periodic_boundaries);
+  const Parameters::PeriodicBoundaries                  &periodic_boundaries,
+  TimerOutput *computing_timer = nullptr);
 
 /**
  * @brief Completely sets up a mesh and its manifolds for rotor-stator domains.

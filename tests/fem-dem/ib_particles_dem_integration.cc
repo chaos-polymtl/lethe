@@ -103,7 +103,7 @@ test()
 
   IBParticlesDEM<dim> ib_dem;
   ib_dem.initialize(parameters, nullptr, nullptr, MPI_COMM_WORLD, particles);
-  ib_dem.update_particles(particles, 0.);
+  ib_dem.update_particles(particles, 0., true);
   ib_dem.update_contact_candidates();
   ib_dem.integrate_particles_motion(dt, 0., 0., 0., 0.);
 
