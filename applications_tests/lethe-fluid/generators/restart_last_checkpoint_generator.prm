@@ -4,9 +4,7 @@
 # Generates the checkpoints of the restart_last_checkpoint test. Run from the
 # generators folder. A checkpoint is written at every time step, alternately in
 # the slots 1 and 0, so that slot 1 holds the checkpoint at t = 0.03 and slot 0
-# the last one, at t = 0.04, which restart.checkpoint_controller records. The
-# last checkpoint is in slot 0, the slot that is not written first, so that the
-# test fails if the record is ignored.
+# the last one, at t = 0.04, which restart.checkpoint_controller records.
 
 # Listing of Parameters
 #----------------------

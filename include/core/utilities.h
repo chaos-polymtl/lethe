@@ -594,7 +594,7 @@ deserialize_table(TableHandler      &table,
  * @brief Return the name of the file in which a table is checkpointed in a
  * given checkpoint slot. The suffix of the slot is inserted between the stem
  * and the extension of the table file name, e.g. "output/force.checkpoint"
- * becomes "output/force_A.checkpoint".
+ * becomes "output/force_0.checkpoint".
  *
  * @param[in] table_filename Name of the checkpoint file of the table, without
  * checkpoint slot.
