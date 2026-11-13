@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Test description: Verify the `packed` insertion method. A total of 200 particles are inserted into a tight insertion box inside a hyper_cube. Since the particles initially overlap, the insertion algorithm shifts them apart iteratively until they no longer overlap.
+# Test description: Verify the `packed` insertion method. A total of 200 particles are inserted into a tight insertion box inside a hyper_cube. Since the particles initially overlap, the insertion algorithm shifts them apart iteratively until they no longer overlap. Also checks the checkpoint written when the packing ends.
 
 # Listing of Parameters
 #----------------------
