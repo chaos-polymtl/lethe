@@ -1212,21 +1212,6 @@ DEMSolver<dim, PropertiesIndex>::solve()
     parameters.mesh.expand_particle_wall_contact_search,
     pcout);
 
-  const auto write_dem_checkpoint = [&]() {
-    write_checkpoint(computing_timer,
-                     parameters,
-                     simulation_control,
-                     particles_pvdhandler,
-                     grid_pvdhandler,
-                     triangulation,
-                     particle_handler,
-                     insertion_object,
-                     solid_surfaces,
-                     pcout,
-                     mpi_communicator,
-                     checkpoint_controller);
-  };
-
   // DEM engine iterator
   while (simulation_control->integrate())
     {
@@ -1309,7 +1294,20 @@ DEMSolver<dim, PropertiesIndex>::solve()
           // The packing ends the simulation, so this is its last time step.
           if (checkpoint_controller.is_checkpoint_time_step(
                 simulation_control->get_iteration_number(), true))
-            write_dem_checkpoint();
+            {
+              write_checkpoint(computing_timer,
+                               parameters,
+                               simulation_control,
+                               particles_pvdhandler,
+                               grid_pvdhandler,
+                               triangulation,
+                               particle_handler,
+                               insertion_object,
+                               solid_surfaces,
+                               pcout,
+                               mpi_communicator,
+                               checkpoint_controller);
+            }
           break;
         }
 
@@ -1353,7 +1351,20 @@ DEMSolver<dim, PropertiesIndex>::solve()
       if (checkpoint_controller.is_checkpoint_time_step(
             simulation_control->get_iteration_number(),
             simulation_control->is_at_end()))
-        write_dem_checkpoint();
+        {
+          write_checkpoint(computing_timer,
+                           parameters,
+                           simulation_control,
+                           particles_pvdhandler,
+                           grid_pvdhandler,
+                           triangulation,
+                           particle_handler,
+                           insertion_object,
+                           solid_surfaces,
+                           pcout,
+                           mpi_communicator,
+                           checkpoint_controller);
+        }
 
       // Reset all trigger flags
       action_manager->reset_triggers();
