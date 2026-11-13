@@ -164,10 +164,6 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
   * ``outlet``: a natural boundary condition that prevents backflow.
   * ``dirichlet``: the scalars and the particle size distribution are imposed, as functions of space and time, in the ``dirichlet`` subsection. The format of this subsection is described in :doc:`qmom`.
 
-.. warning::
-
-  The solver of the QMOM physics is not implemented yet: the boundary conditions are parsed, but not applied.
-
 CLS
 ^^^
 
