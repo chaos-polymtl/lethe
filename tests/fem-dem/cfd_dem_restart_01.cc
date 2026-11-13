@@ -293,8 +293,6 @@ CFDDEMRestart<dim, PropertiesIndex>::run_and_checkpoint()
 
   this->write_checkpoint();
 
-  this->write_checkpoint_controller();
-
   // Keep going in the same solver. This is the reference that the restarted
   // run must reproduce.
   advance(number_of_steps);
@@ -312,8 +310,6 @@ CFDDEMRestart<dim, PropertiesIndex>::restart_and_check()
 
   setup();
   print_state("State before the restart");
-
-  this->read_checkpoint_controller();
 
   this->read_checkpoint();
 
