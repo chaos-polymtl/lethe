@@ -4,7 +4,9 @@
 #include <core/simulation_control.h>
 #include <core/utilities.h>
 
+#include <algorithm>
 #include <cfloat>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -14,6 +16,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   : method(param.method)
   , assembly_method(param.method)
   , current_time(0)
+  , previous_time(0)
   , time_step(param.dt)
   , initial_time_step(param.dt)
   , end_time(param.time_end)
@@ -241,6 +244,11 @@ SimulationControl::read(const std::string &prefix)
   input >> buffer >> current_time;
   input >> buffer >> iteration_number;
 
+  // The previous time is only known once the next iteration is integrated.
+  // Until then, set it to the current time so that queries made before the
+  // first iteration after the restart (e.g., is_output_iteration) are defined.
+  previous_time = current_time;
+
   // Fix time step to be the last time_step that was used
   time_step = time_step_vector[0];
 }
@@ -287,16 +295,19 @@ SimulationControlTransient::SimulationControlTransient(
   , adapt_with_cfl(param.adapt_with_cfl)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
-  , time_last_output(0.)
   , output_time_frequency(param.output_time_frequency)
   , output_times_vector(param.output_times_vector)
-  , output_times_counter(0)
-  , no_more_output_times(false)
   , override_time_step_on_restart(param.override_time_step_on_restart)
   , output_time_interval(param.output_time_interval)
   , end_control(param.end_control)
   , output_control(param.output_control)
-{}
+{
+  AssertThrow(output_control !=
+                  Parameters::SimulationControl::OutputControl::time ||
+                output_time_frequency == -1 || output_time_frequency > 0,
+              ExcMessage("The output time frequency must be strictly positive. "
+                         "Set it to -1 to disable it."));
+}
 
 void
 SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
@@ -451,123 +462,105 @@ SimulationControlTransient::is_output_iteration()
   // If time control there are several options:
 
   // Case 1. A specific output time frequency is given (with or without a
-  // specific time interval):
+  // specific time interval). The output times are
+  // t_k = t_start + k * output_time_frequency, where t_start is the lower bound
+  // of the output time interval. This criterion only depends on the current
+  // and previous times, so it returns the same result when it is called
+  // several times within the same iteration.
   if (output_time_frequency != -1)
     {
-      if ((current_time - time_last_output) - output_time_frequency >
-            -1e-12 * output_time_frequency &&
-          current_time >= output_time_interval[0] &&
-          current_time <= output_time_interval[1])
-        {
-          time_last_output = current_time;
-          return true;
-        }
-      else // if it does not match the time frequency we do not output
+      const double start_time = output_time_interval[0];
+
+      // The tolerance prevents round-off errors accumulated in the current time
+      // from delaying or skipping an output. It is proportional to the output
+      // time frequency, and not to the time step, so that it is the same at
+      // every iteration. Consequently, every output time is attributed to
+      // exactly one iteration, even when the time step changes.
+      const double margin = output_time_tolerance * output_time_frequency;
+
+      // We never output outside of the output time interval. The same
+      // tolerance is used so that the bounds of the interval are considered as
+      // reached when they are reached up to round-off errors.
+      if (current_time < start_time - margin ||
+          current_time > output_time_interval[1] + margin)
         return false;
+
+      // As for iteration control, we always output the initial iteration and
+      // the last iteration of the simulation, as long as they lie within the
+      // output time interval (checked above)
+      if (iteration_number == 0 || is_at_end())
+        return true;
+
+      // We output if the time step that led to the current time reached or
+      // crossed an output time
+      const auto output_time_index = [&](const double time) {
+        return std::floor((time - start_time + margin) / output_time_frequency);
+      };
+
+      return output_time_index(current_time) > output_time_index(previous_time);
     }
 
-  // For cases 2 and 3:
-  bool   is_output_time = false;
-  double upper_bound, lower_bound, local_output_time;
+  // Time reached at the end of the next time step. It is used by the two
+  // remaining cases: since the specific output times and the bounds of the
+  // output time interval do not necessarily correspond to the time of an
+  // iteration, we also output the iteration that precedes them.
+  const double next_time = current_time + calculate_time_step();
 
-  // Case 2. If one or several specific output times are given
-  // We check the vector of output times one at a time. Once the list of
-  // specific times is over, we do not check anymore.
-  local_output_time = output_times_vector[output_times_counter];
-  if (local_output_time != -1)
+  // Case 2. One or several specific output times are given, in any order. We
+  // output the iteration whose time step reaches or crosses one of these times,
+  // and the iteration that precedes it, i.e., the iteration whose next time
+  // step reaches or crosses it. Both conditions amount to an output time lying
+  // within (previous_time, next_time]. At the initial iteration, there is no
+  // previous time step, so only the output times equal to the current time are
+  // considered as reached. The tolerance prevents round-off errors accumulated
+  // in the current time from delaying an output by one iteration. This
+  // criterion only depends on the current, previous and next times, so it
+  // returns the same result when it is called several times within the same
+  // iteration.
+  if (!output_times_vector.empty() && output_times_vector[0] != -1)
     {
-      if (!no_more_output_times)
-        {
-          upper_bound = local_output_time;
-          lower_bound = local_output_time;
-        }
-      else // if no more output times, we do not output anymore
-        return false;
-    }
-  else // Case 3. Only a specific time interval is specified
-    {
-      upper_bound = output_time_interval[1];
-      lower_bound = output_time_interval[0];
-    }
+      const double margin      = output_time_tolerance * time_step;
+      const double lower_bound = (iteration_number == 0) ?
+                                   current_time - margin :
+                                   previous_time + margin;
+      const double upper_bound = next_time + margin;
 
-  // We output in the current time.
-  is_output_time = (current_time >= lower_bound && current_time <= upper_bound);
-
-  // We always write one step before, in case the specific time or the
-  // interval lower bound does not correspond exactly to a time iteration
-  // performed (due to time step)
-  double next_time = current_time + calculate_time_step();
-  if (current_time < lower_bound && (next_time >= lower_bound))
-    {
-      is_output_time = true;
-
-      // If the end time is exactly the output time, there is not one step
-      // after to output and we need to update the output times counter for
-      // case 2
-      if (is_at_end() && local_output_time != -1 && is_output_time)
-        {
-          // Update the counter only if there are more elements in vector
-          if (output_times_vector.size() > output_times_counter + 1)
-            output_times_counter++;
-          else // otherwise set flag to false as no more times need to be
-               // checked
-            no_more_output_times = true;
-        }
+      return std::ranges::any_of(output_times_vector,
+                                 [&](const double output_time) {
+                                   return output_time > lower_bound &&
+                                          output_time <= upper_bound;
+                                 });
     }
 
-  // We always write one step after, in case the specific time or the
-  // interval upper bound does not correspond exactly to a time iteration
-  // performed (due to time step)
-  if (current_time >= upper_bound && (previous_time < upper_bound))
-    {
-      is_output_time = true;
+  // Case 3. Only a specific time interval is specified
+  const double lower_bound = output_time_interval[0];
+  const double upper_bound = output_time_interval[1];
 
-      // Update specific time for case 2 once we have written the upper bound
-      if (local_output_time != -1 && is_output_time)
-        {
-          // Update the counter only if there are more elements in vector
-          if (output_times_vector.size() > output_times_counter + 1)
-            output_times_counter++;
-          else // otherwise set flag to false as no more times need to be
-               // checked
-            no_more_output_times = true;
-        }
-    }
+  // We output if the current time is within the interval
+  bool is_output_time =
+    (current_time >= lower_bound && current_time <= upper_bound);
+
+  // We always write one step before, in case the interval lower bound does not
+  // correspond exactly to a time iteration performed (due to time step)
+  if (current_time < lower_bound && next_time >= lower_bound)
+    is_output_time = true;
+
+  // We always write one step after, in case the interval upper bound does not
+  // correspond exactly to a time iteration performed (due to time step)
+  if (current_time >= upper_bound && previous_time < upper_bound)
+    is_output_time = true;
 
   return is_output_time;
 }
 
 void
-SimulationControlTransient::save(const std::string &prefix)
-{
-  SimulationControl::save(prefix);
-
-  if (output_control == Parameters::SimulationControl::OutputControl::time)
-    {
-      std::string   filename = prefix + ".simulationcontrol";
-      std::ofstream output(filename.c_str(), std::ios::app);
-      output << "Output_index " << output_times_counter << std::endl;
-    }
-}
-
-void
 SimulationControlTransient::read(const std::string &prefix)
 {
+  // Checkpoints written by previous versions of Lethe with time output control
+  // contain an additional line with the index of the next specific output time.
+  // This line follows the information read here and is ignored, since the
+  // output criterion no longer depends on it.
   SimulationControl::read(prefix);
-
-  if (output_control == Parameters::SimulationControl::OutputControl::time)
-    {
-      std::string   filename = prefix + ".simulationcontrol";
-      std::ifstream input(filename.c_str());
-      unsigned int  line_no = 0;
-      std::string   buffer;
-      while (line_no != 8)
-        {
-          std::getline(input, buffer);
-          line_no++;
-        }
-      input >> buffer >> output_times_counter;
-    }
 
   if (override_time_step_on_restart)
     {

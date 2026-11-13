@@ -2,7 +2,7 @@
 Simulation Control
 ==================
 
-This subsection is the most important in a simulation and therefore, the most commonly modified in a parameter file. It controls the general parameters of the simulation, such as the time integration method, end time of a simulation and output settings for Paraview files. 
+This subsection is the most important in a simulation and therefore, the most commonly modified in a parameter file. It controls the general parameters of the simulation, such as the time integration method, end time of a simulation and output settings for Paraview files.
 
 .. tip::
 	A standard convention in Lethe is to keep this section at the top of the parameter file, since it is generally the most accessed one.
@@ -11,26 +11,26 @@ This subsection is the most important in a simulation and therefore, the most co
 
   subsection simulation control
     # Type of solver or time-stepping scheme
-    set method = steady 
-  
+    set method = steady
+
     #---------------------------------------------------
     # Steady-state simulation parameters
     #---------------------------------------------------
     # Number of mesh adaptation
     set number mesh adapt = 0
-  
+
     # Tolerance at which the simulation is stopped
     set stop tolerance = 1e-10
-  
+
     #---------------------------------------------------
     # BDF scheme parameters
     #---------------------------------------------------
     # Method used to startup high order BDF methods
     set bdf startup method = multiple_step_bdf
-  
+
     # Scaling factor used in the iterations necessary to startup the BDF schemes
     set startup time scaling = 0.4
-  
+
     #---------------------------------------------------
     # Transient simulations parameters
     #---------------------------------------------------
@@ -42,67 +42,67 @@ This subsection is the most important in a simulation and therefore, the most co
 
     # End time value of the simulation
     set time end = 1
-  
+
     # Time step value
     set time step = 1
-  
+
     # Adaptive time-stepping with an imposed max CFL
     set adapt time step to respect CFL = false
 
     # True if the time step should be overridden upon restart
     set override time step on restart = false
-  
+
     # Maximum CFL value
     set max cfl = 1
-  
+
     # Maximum time step value
     set max time step = 1e6
-  
+
     # Adaptative time step scaling
     set adaptative time step scaling = 1.1
-  
+
     # Time step independent of end time
     set time step independent of end time = true
-  
+
     #---------------------------------------------------
     # Log file parameters
     #---------------------------------------------------
     # Log frequency
     set log frequency = 1
-  
+
     # Display precision when writing to log
     set log precision = 6
-  
+
     #---------------------------------------------------
     # Output file parameters
     #---------------------------------------------------
     # File output path
     set output path = ./
-  
+
     # File output prefix
     set output name = out
-  
+
     # The control for the output of the simulation results
     set output control = iteration
-  
+
     # Output iteration frequency
     set output frequency = 1
-  
+
     # Output time frequency
     set output time frequency = -1
-  
+
     # List of specific output times
     set output times = -1
-  
+
     # Output time interval
     set output time interval = 0, 1.7e308
-  
+
     # Maximum number of vtu output files
     set group files = 1
-  
+
     # Output the boundaries of the domain along with their ID
     set output boundaries = false
-  
+
     # Subdivision of mesh cell in postprocessing
     set subdivision = 1
 
@@ -116,7 +116,7 @@ This subsection is the most important in a simulation and therefore, the most co
     set max capillary time-step ratio = 1.0
   end
 
-* ``method``: time-stepping method used. The available options are: 
+* ``method``: time-stepping method used. The available options are:
 	* ``steady``: steady-state simulation
 	* ``steady_bdf``: steady-state simulation using adjoint time stepping with a bdf1 scheme
 	* ``bdf1``: 1st order backward differentiation
@@ -147,9 +147,9 @@ Steady-state simulation parameters
 BDF scheme parameters
 ----------------------
 
-* ``bdf startup method``: scheme used to start a high order BDF scheme (2nd order and above). The available options are: 
+* ``bdf startup method``: scheme used to start a high order BDF scheme (2nd order and above). The available options are:
 	* ``multiple_step_bdf``:  A lower order BDF scheme is used to start the simulation. For example, in the case of ``bdf3``, the first step is done using ``bdf1``, the second with ``bdf2`` and the third and onward are done with ``bdf3``.
-	* ``initial_solution``: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solutions to establish the formal accuracy of the BDF time stepping schemes. 
+	* ``initial_solution``: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solutions to establish the formal accuracy of the BDF time stepping schemes.
 
 * ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes.
 
@@ -160,7 +160,7 @@ BDF scheme parameters
 Transient simulations parameters
 ---------------------------------
 
-* ``end control``: control for the end condition of a transient simulation. The available options are: 
+* ``end control``: control for the end condition of a transient simulation. The available options are:
 	* ``iteration``: simulation will end at a specified maximum iteration number.
 	* ``time``: simulation will end at a specified maximum time value.
 
@@ -192,7 +192,7 @@ Transient simulations parameters
 
    ``max time step`` and ``adaptative time step scaling`` are only used when either ``adapt time step to respect CFL`` or ``adapt time step to respect CTR`` is set to ``true`` (adaptive time-stepping enabled). ``max time step`` enforces a strict upper bound to the time step, while ``adaptative time step scaling`` controls the adaptive time-stepping, by limiting the time-step variation from one time iteration to the following.
 
-* ``time step independent of end time``: this variable ensures that the time step of the simulation is always consistent at the end of the simulation. If one uses a time step that eventually leads exactly to the end time of the simulation this variable does not do anything. However, if adaptive time stepping is used or the end time is not exactly reached when using certain fixed time step, this flag ensures that the simulation does not change the last time step to reach the end time. For example, if your end time is 20, and you have a time step that leads to a last iteration at 20.1, all your results will be outputted at 20.1. If you wish to have exactly 20, you need to set this flag to ``false``. 
+* ``time step independent of end time``: this variable ensures that the time step of the simulation is always consistent at the end of the simulation. If one uses a time step that eventually leads exactly to the end time of the simulation this variable does not do anything. However, if adaptive time stepping is used or the end time is not exactly reached when using certain fixed time step, this flag ensures that the simulation does not change the last time step to reach the end time. For example, if your end time is 20, and you have a time step that leads to a last iteration at 20.1, all your results will be outputted at 20.1. If you wish to have exactly 20, you need to set this flag to ``false``.
 
 --------------------
 Log file parameters
@@ -217,8 +217,8 @@ Paraview output file parameters
     One of the components in the output files is the velocity gradient. Note that the 9 gradient components are numbered in a way that the following correspondence is valid:
     0 = :math:`xx`, 1 = :math:`xy`, 2 = :math:`xz`, 3 = :math:`yx`, 4 = :math:`yy`, 5 = :math:`yz`, 6 = :math:`zx`, 7 = :math:`zy`, 8 = :math:`zz`
 
-* ``output control``: control for the output of the simulation results. The available options are: 
-	* ``iteration``: results will be outputted at constant iteration frequency. 
+* ``output control``: control for the output of the simulation results. The available options are:
+	* ``iteration``: results will be outputted at constant iteration frequency.
 	* ``time`` : results will be outputted based on time parameters (specific times or time frequency). The results can also be outputted for certain time interval.
 
 * ``output frequency``: controls after which number of iterations the results are written. This parameter is only used when ``set output control = iteration``.
@@ -226,16 +226,16 @@ Paraview output file parameters
   .. tip::
 	  If ``set output frequency = 0``, no output file will be generated. This is the only way to prevent the generation of output files.
 
-* ``output time frequency``: controls the time frequency when the results are written, e.g., if set to 1, paraview files will be outputted every unit of time. This parameter is only used when ``set output control = time``.
+* ``output time frequency``: controls the time frequency when the results are written, e.g., if set to 1, paraview files will be outputted every unit of time. This parameter is only used when ``set output control = time``. The output times are :math:`t_{\text{start}} + k \Delta t_{\text{output}}`, where :math:`t_{\text{start}}` is the lower bound of the ``output time interval`` and :math:`\Delta t_{\text{output}}` is the ``output time frequency``. The results are written at the first iteration that reaches or exceeds each of these output times, so the output times do not drift when the time step is not a divisor of the output time frequency. To absorb round-off errors in the simulation time, an output time (or a bound of the ``output time interval``) is considered as reached when the simulation time is within :math:`10^{-6} \Delta t_{\text{output}}` of it. The initial condition and the last iteration of the simulation are also always written, as long as they lie within the ``output time interval``.
 
-* ``output times``: allows to specify specific times for the output of ``.pvd`` / ``.vtu`` files. This parameter is only used when ``set output control = time``. As an example, one can output files only at 5 seconds, by setting ``set output times = 5`` or at multiple specific times separating the values with commas: ``set output times = 5, 14``.
+* ``output times``: allows to specify specific times for the output of ``.pvd`` / ``.vtu`` files. This parameter is only used when ``set output control = time``. As an example, one can output files only at 5 seconds, by setting ``set output times = 5`` or at multiple specific times separating the values with commas: ``set output times = 5, 14``. The times may be listed in any order, may include the initial time (to write the initial condition), and several of them may lie within the same time step. For each specified output time, the output is done for the iteration whose time step reaches or crosses the time and the iteration that precedes it.
 
   .. warning::
-	  Since it is possible that the times specified in the interval or in specific output times do not correspond to the time of specific iterations, Lethe will always write the Paraview files before and after the time specified. Furthermore, it is **not possible** to use both ``output times`` and ``output time frequency`` at the same time. For the ``output times`` to work, the value of ``output time frequency`` must be set to -1, which is the default value for the parameter. 
+	  Since it is possible that the times specified in the interval or in specific output times do not correspond to the time of specific iterations, Lethe will always write the Paraview files before and after the time specified. Furthermore, it is **not possible** to use both ``output times`` and ``output time frequency`` at the same time. For the ``output times`` to work, the value of ``output time frequency`` must be set to -1, which is the default value for the parameter.
 
-* ``output time interval``: Only writes the ``.pvd`` / ``.vtu`` files when the simulation time is within the closed interval defined by the ``output time interval``. Default values are 0s and 1.7e308s. Used for both ``iteration`` and ``time`` output control.
+* ``output time interval``: Only writes the ``.pvd`` / ``.vtu`` files when the simulation time is within the closed interval defined by the ``output time interval``. Default values are 0s and 1.7e308s. Used for both ``iteration`` and ``time`` output control. For the ``list of times`` this parameter is ignored.
 
-* ``group files``: number of ``.vtu`` files generated in a parallel simulation. 
+* ``group files``: number of ``.vtu`` files generated in a parallel simulation.
 
   .. tip::
 	  This parameter reduces the number of files generated when the simulation is run with a large number of processors. ``set group files = 1`` ensures that a single ``.vtu`` file will be generated. In this case, the file is written using MPI IO functionalities.
@@ -245,12 +245,12 @@ Paraview output file parameters
 	  .. warning::
 	  	As soon as the size of the output ``.vtu`` files reaches 3 Gb, it is preferable to start splitting them into multiple smaller files as this may lead to corrupted files on some file systems.
 
-* ``output boundaries``: controls if the boundaries of the domain are written to a file. This will write additional ``.vtu`` files made of the contour of the domain. 
+* ``output boundaries``: controls if the boundaries of the domain are written to a file. This will write additional ``.vtu`` files made of the contour of the domain.
 
   .. tip::
 	  This is particularly useful for the visualisation of 3D flows with obstacles or objects.
 
-* ``subdivision``: sub-division of the mesh cells to enable visualisation of high-order elements with Paraview. 
+* ``subdivision``: sub-division of the mesh cells to enable visualisation of high-order elements with Paraview.
 
   .. tip::
 	  Generally, we advise to use a subdivision level of :math:`p` where :math:`p` is the highest interpolation degree. For example, a Q2-Q1 interpolation could be visualized with ``set subdivision = 2``.

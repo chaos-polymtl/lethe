@@ -954,8 +954,20 @@ protected:
   /// Maximum allowed time step
   double max_dt;
 
-  /// Time of the last output
-  double time_last_output;
+  /**
+   * @brief Relative tolerance used to decide whether an output time has been
+   * reached
+   *
+   * An output time that lies within this tolerance after the current time is
+   * considered as reached. This prevents round-off errors accumulated in the
+   * current time from delaying or skipping an output. With an output time
+   * frequency, the tolerance is relative to the output time frequency, so that
+   * it does not change from one iteration to the next and every output time is
+   * attributed to exactly one iteration. It also applies to the bounds of the
+   * output time interval. With specific output times, the tolerance is relative
+   * to the time step.
+   */
+  static constexpr double output_time_tolerance = 1e-6;
 
   /// Output frequency for time-based output control
   double output_time_frequency;
@@ -966,17 +978,6 @@ protected:
    * Vector containing specific times at which output should be generated.
    */
   std::vector<double> output_times_vector;
-
-  /// Counter to move between output times given in output_times_vector
-  unsigned int output_times_counter;
-
-  /**
-   * @brief Flag indicating whether there are more output times to check
-   *
-   * Set to true when all specific output times in output_times_vector have been
-   * reached.
-   */
-  bool no_more_output_times;
 
   /**
    * @brief Flag to override the time step with the set value upon restart
@@ -1067,29 +1068,41 @@ public:
    * Output iterations are determined based on the value of the output time,
    * the output interval, and the output frequency within the interval.
    *
+   * When an output time frequency is used, the output times are
+   * \f$t_k = t_{\text{start}} + k \Delta t_{\text{output}}\f$, where
+   * \f$t_{\text{start}}\f$ is the lower bound of the output time interval. An
+   * iteration is an output iteration if the time step that leads to it reaches
+   * or crosses one of these output times. The initial iteration and the last
+   * iteration are also output iterations. In all cases, the current time must
+   * lie within the output time interval. Both the output times and the bounds
+   * of the interval are considered as reached up to
+   * SimulationControlTransient::output_time_tolerance times the output time
+   * frequency.
+   *
+   * When specific output times are used, they may be given in any order. An
+   * iteration is an output iteration if the time step that leads to it, or
+   * the next time step, reaches or crosses one of these output times. Since
+   * the output times do not necessarily correspond to the time of an
+   * iteration, the iterations before and after each output time are thus
+   * written. At the initial iteration, only the output times equal to the
+   * current time are considered. Several output times may lie within the same
+   * time step.
+   *
+   * These criteria only depend on the current, previous and next times, so
+   * calling this function several times within the same iteration always
+   * returns the same result.
+   *
    * @return true if output should be written at this iteration, false otherwise
    */
   virtual bool
   is_output_iteration() override;
 
   /**
-   * @brief Save the simulation control information to a checkpoint file
-   *
-   * Saves the time step vector, the CFL value, the time, the iteration number
-   * and the index of the output times vector if time control is used.
-   *
-   * @param[in] prefix The prefix of the checkpoint file for the simulation
-   */
-  void
-  save(const std::string &prefix) override;
-
-  /**
    * @brief Read the simulation control information from a checkpoint file
    *
-   * Reads and updates the time step vector, the CFL value, the time, the
-   * iteration number and the index of the output times vector if time control
-   * is used. Allows changing the time step if adaptive time stepping is
-   * disabled.
+   * Reads and updates the time step vector, the CFL value, the time and the
+   * iteration number. Allows changing the time step if adaptive time stepping
+   * is disabled.
    *
    * @param[in] prefix The prefix of the checkpoint file for the simulation
    */
