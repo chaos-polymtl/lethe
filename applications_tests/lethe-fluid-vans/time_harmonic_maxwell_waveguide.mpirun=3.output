@@ -16,10 +16,10 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 L2 error velocity: 0.000000e+00
-L2 error E real: 8.631365e-02
-L2 error E imag: 9.611845e-02
-L2 error H real: 9.351336e-02
-L2 error H imag: 8.562457e-02
+L2 error E real: 7.249084e-02
+L2 error E imag: 9.447120e-02
+L2 error H real: 9.352466e-02
+L2 error H imag: 6.827508e-02
 Global continuity equation error: 0.000000e+00 s^-1
 Max local continuity error: 0.000000e+00 s^-1
 
@@ -39,15 +39,15 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 L2 error velocity: 0.000000e+00
-L2 error E real: 2.115071e-02
-L2 error E imag: 2.437166e-02
-L2 error H real: 2.252773e-02
-L2 error H imag: 2.192158e-02
+L2 error E real: 1.273612e-02
+L2 error E imag: 1.263799e-02
+L2 error H real: 1.275839e-02
+L2 error H imag: 1.288260e-02
 Global continuity equation error: 0.000000e+00 s^-1
 Max local continuity error: 0.000000e+00 s^-1
 cells  error_velocity   error_pressure  
     4 0.000000e+00   - 0.000000e+00   - 
    32 0.000000e+00 nan 0.000000e+00 nan 
 cells   error_E_real      error_E_imag      error_H_real      error_H_imag    
-    4 8.631365e-02    - 9.611845e-02    - 9.351336e-02    - 8.562457e-02    - 
-   32 2.115071e-02 2.03 2.437166e-02 1.98 2.252773e-02 2.05 2.192158e-02 1.97 
+    4 7.249084e-02    - 9.447120e-02    - 9.352466e-02    - 6.827508e-02    - 
+   32 1.273612e-02 2.51 1.263799e-02 2.90 1.275839e-02 2.87 1.288260e-02 2.41 

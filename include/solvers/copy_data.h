@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_copy_data_h
@@ -222,12 +222,11 @@ public:
  * local system: the Gram matrix of the test space \f$G\f$, the matrices of the
  * bilinear form in the cell interior \f$B\f$ and on the skeleton \f$\hat{B}\f$,
  * and the load vector \f$l\f$. The solver then condenses this system on the
- * skeleton unknowns using the operators
- * \f$M_1 = B^\dagger G^{-1} B\f$, \f$M_2 = B^\dagger G^{-1} \hat{B}\f$,
- * \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$, \f$M_4 = B^\dagger G^{-1}\f$ and
- * \f$M_5 = \hat{B}^\dagger G^{-1}\f$, and stores either the condensed skeleton
- * system (assembly) or the reconstructed interior solution (interior
- * reconstruction).
+ * skeleton unknowns using the operators \f$M_1 = B^\dagger G^{-1} B\f$,
+ * \f$M_2 = B^\dagger G^{-1} \hat{B}\f$, \f$M_3 = \hat{B}^\dagger G^{-1}
+ *\hat{B}\f$, and the vectors \f$M_4 l = B^\dagger G^{-1} l\f$ and \f$M_5 l =
+ *\hat{B}^\dagger G^{-1} l\f$, and stores either the condensed skeleton system
+ *(assembly) or the reconstructed interior solution (interior reconstruction).
  **/
 class DPGCopyData
 {
@@ -253,22 +252,22 @@ public:
     , B_matrix(n_dofs_test, n_dofs_trial_interior)
     , B_hat_matrix(n_dofs_test, n_dofs_trial_skeleton)
     , l_vector(n_dofs_test)
+    , G_inverse_B(n_dofs_test, n_dofs_trial_interior)
+    , G_inverse_B_hat(n_dofs_test, n_dofs_trial_skeleton)
     , M1_matrix(n_dofs_trial_interior, n_dofs_trial_interior)
     , M2_matrix(n_dofs_trial_interior, n_dofs_trial_skeleton)
     , M3_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
-    , M4_matrix(n_dofs_trial_interior, n_dofs_test)
-    , M5_matrix(n_dofs_trial_skeleton, n_dofs_test)
-    , tmp_matrix_M2M1(n_dofs_trial_skeleton, n_dofs_trial_interior)
+    , M4_l(n_dofs_trial_interior)
+    , M5_l(n_dofs_trial_skeleton)
+    , M1_inverse_M2(n_dofs_trial_interior, n_dofs_trial_skeleton)
     , tmp_matrix_M2M1M2(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
-    , tmp_matrix_M2M1M4(n_dofs_trial_skeleton, n_dofs_test)
     , local_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
     , local_rhs(n_dofs_trial_skeleton)
     , local_dof_indices(n_dofs_trial_skeleton)
     , local_skeleton_solution(n_dofs_trial_skeleton)
     , local_interior_rhs(n_dofs_trial_interior)
     , local_interior_solution(n_dofs_trial_interior)
-    , tmp_vector_interior(n_dofs_trial_interior)
-    , tmp_vector_error_indicator(n_dofs_test)
+    , tmp_vector_reconstruction(n_dofs_test)
     , local_residual(n_dofs_test)
     , local_dof_indices_trial_interior(n_dofs_trial_interior)
     , local_residual_norm_squared(0.)
@@ -277,8 +276,9 @@ public:
 
   /**
    * @brief Resets the uncondensed local system to zero. The \f$M_1\f$ matrix
-   * is also reset since LAPACKFullMatrix keeps track of its inverse status and
-   * forbids inverting it again if it has already been inverted.
+   * is also reset since LAPACKFullMatrix keeps track of its factorization
+   * status and forbids writing into it or factorizing it again once it has
+   * been factorized.
    */
   void
   reset()
@@ -299,22 +299,25 @@ public:
   // Local load vector
   Vector<double> l_vector;
 
+  // Solution of G X = B with the Cholesky factorization of G
+  LAPACKFullMatrix<double> G_inverse_B;
+  // Solution of G X = B_hat with the Cholesky factorization of G
+  LAPACKFullMatrix<double> G_inverse_B_hat;
+
   // Static condensation matrix 1 \f$M_1 = B^\dagger G^{-1} B\f$
   LAPACKFullMatrix<double> M1_matrix;
   // Static condensation matrix 2 \f$M_2 = B^\dagger G^{-1} \hat{B}\f$
   LAPACKFullMatrix<double> M2_matrix;
   // Static condensation matrix 3 \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$
   LAPACKFullMatrix<double> M3_matrix;
-  // Static condensation matrix 4 \f$M_4 = B^\dagger G^{-1}\f$
-  LAPACKFullMatrix<double> M4_matrix;
-  // Static condensation matrix 5 \f$M_5 = \hat{B}^\dagger G^{-1}\f$
-  LAPACKFullMatrix<double> M5_matrix;
-  // Temporary matrix products M_2^\dagger M_1^{-1}
-  LAPACKFullMatrix<double> tmp_matrix_M2M1;
-  // Temporary matrix products M_2^\dagger M_1^{-1} M_2
+  // Static condensation vector \f$M_4 l = B^\dagger G^{-1} l\f$
+  Vector<double> M4_l;
+  // Static condensation vector \f$M_5 l = \hat{B}^\dagger G^{-1} l\f$
+  Vector<double> M5_l;
+  // Solution of M_1 X = M_2 with the Cholesky factorization of M_1
+  LAPACKFullMatrix<double> M1_inverse_M2;
+  // Temporary matrix product M_2^\dagger M_1^{-1} M_2
   LAPACKFullMatrix<double> tmp_matrix_M2M1M2;
-  // Temporary matrix products M_2^\dagger M_1^{-1} M_4
-  LAPACKFullMatrix<double> tmp_matrix_M2M1M4;
 
   // Cell condensed skeleton system
   FullMatrix<double> local_matrix;
@@ -329,11 +332,9 @@ public:
   Vector<double> local_interior_rhs;
   // Cell interior solution
   Vector<double> local_interior_solution;
-  // Temporary vectors used for the interior reconstruction M_2 * x_skeleton
-  Vector<double> tmp_vector_interior;
-  // Temporary vectors used for the error indicator B * x_interior + B_hat *
-  // x_skeleton
-  Vector<double> tmp_vector_error_indicator;
+  // Temporary vector of the test space used for the products B_hat *
+  // x_skeleton and B * x_interior of the interior reconstruction
+  Vector<double> tmp_vector_reconstruction;
   // Cell error representation function (Riesz representation of the residual)
   Vector<double> local_residual;
   // Cell dof indices of the interior trial space
