@@ -27,13 +27,13 @@ The default parameters are:
 
 * ``checkpoint``: controls if a checkpoint of the simulation is created. All the files needed to restart the simulation from this checkpoint (such as ``.pvdhandler``, ``.triangulation``) will be written.
 
-* ``frequency``: number of iteration before the first checkpoint, and between each subsequent checkpoint. 
+* ``frequency``: number of iteration before the first checkpoint, and between each subsequent checkpoint. A checkpoint is also written at the last time step.
 
 .. tip::
   Checkpointing is very intensive from an I/O point of view, consequently it should not be done at every iteration. The checkpointing frequency is in accordance to the number of ``time step`` (see :doc:`simulation_control`).
 
-.. warning::
-  Each checkpoint erases the previous one, so a simulation can only be restarted from the last check-point.
+.. note::
+  Checkpoints alternate between two slots, so a simulation interrupted while writing a checkpoint can restart from the previous one. Their files end with ``_0`` or ``_1`` (``<filename>_0.triangulation``, ``force_00_0.checkpoint``, ...), and ``<filename>.checkpoint_controller`` gives the slot of the last checkpoint, from which a restart starts.
 
 * ``filename``: prefix for the files. This parameter is used to output checkpoint files as well as to load files during a restart.
 

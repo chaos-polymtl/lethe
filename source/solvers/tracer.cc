@@ -1218,7 +1218,7 @@ Tracer<dim>::gather_tables()
 
 template <int dim>
 void
-Tracer<dim>::write_checkpoint()
+Tracer<dim>::write_checkpoint(const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1237,12 +1237,14 @@ Tracer<dim>::write_checkpoint()
   // Tracer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_suffix,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-Tracer<dim>::read_checkpoint()
+Tracer<dim>::read_checkpoint(const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading tracer checkpoint" << std::endl;
@@ -1273,7 +1275,9 @@ Tracer<dim>::read_checkpoint()
   // Tracer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_suffix,
+                            mpi_communicator);
 }
 
 

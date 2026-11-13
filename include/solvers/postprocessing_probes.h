@@ -144,24 +144,32 @@ public:
 
   /**
    * @brief Serializes all probe tables.
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   inline void
-  write_checkpoint()
+  write_checkpoint(const std::string &checkpoint_suffix)
   {
     const std::vector<OutputStructTableHandler> &table_output_structs =
       this->gather_tables();
-    serialize_tables_vector(table_output_structs, MPI_COMM_WORLD);
+    serialize_tables_vector(table_output_structs,
+                            checkpoint_suffix,
+                            MPI_COMM_WORLD);
   }
 
   /**
    * @brief Deserializes all probe tables.
+   *
+   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
    */
   inline void
-  read_checkpoint()
+  read_checkpoint(const std::string &checkpoint_suffix)
   {
     std::vector<OutputStructTableHandler> table_output_structs =
       this->gather_tables();
-    deserialize_tables_vector(table_output_structs, MPI_COMM_WORLD);
+    deserialize_tables_vector(table_output_structs,
+                              checkpoint_suffix,
+                              MPI_COMM_WORLD);
   }
 
   /// Set of valid scalar variables

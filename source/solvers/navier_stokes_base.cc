@@ -40,7 +40,13 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <sys/stat.h>
+
+#include <fstream>
+#include <string>
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -61,6 +67,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                     TimerOutput::wall_times)
   , simulation_parameters(p_nsparam)
   , flow_control(simulation_parameters.flow_control)
+  , checkpoint_controller(simulation_parameters.restart_parameters)
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_degree)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_degree)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_degree + 1)
@@ -585,14 +592,13 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
                                        *this->get_mapping());
       this->simulation_control->set_CFL(CFL);
     }
-  if (this->simulation_parameters.restart_parameters.checkpoint &&
-      simulation_control->get_iteration_number() != 0 &&
-      (simulation_control->get_iteration_number() %
-           this->simulation_parameters.restart_parameters.frequency ==
-         0 ||
-       simulation_control->is_at_end()))
+  if (simulation_control->get_iteration_number() != 0 &&
+      this->checkpoint_controller.is_checkpoint_time_step(
+        simulation_control->get_iteration_number(),
+        simulation_control->is_at_end()))
     {
       this->write_checkpoint();
+      this->write_checkpoint_controller();
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -2193,17 +2199,13 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  std::string        prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  std::string        prefix = this->get_checkpoint_prefix();
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
   if (this->simulation_control->get_output_boundaries())
     {
-      std::string prefix_boundary =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename + ".boundary";
+      std::string prefix_boundary = this->get_checkpoint_prefix() + ".boundary";
 
       this->pvdhandler_boundary.read(prefix_boundary);
     }
@@ -2215,12 +2217,14 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       this->flow_control.read(prefix);
     }
 
-  multiphysics->read_checkpoint();
+  multiphysics->read_checkpoint(this->get_checkpoint_suffix());
 
   // Deserialize all post-processing tables that are currently used
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            this->get_checkpoint_suffix(),
+                            this->mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -3065,9 +3069,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
-  std::string        prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  std::string        prefix = this->get_checkpoint_prefix();
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);
@@ -3079,9 +3081,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       if (this->simulation_control->get_output_boundaries())
         {
           std::string prefix_boundary =
-            this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.restart_parameters.filename +
-            ".boundary";
+            this->get_checkpoint_prefix() + ".boundary";
 
           this->pvdhandler_boundary.save(prefix_boundary);
         }
@@ -3108,7 +3108,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  multiphysics->write_checkpoint();
+  multiphysics->write_checkpoint(this->get_checkpoint_suffix());
 
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
@@ -3120,7 +3120,59 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   // Serialize all post-processing tables that are currently used
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          this->get_checkpoint_suffix(),
+                          this->mpi_communicator);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint_controller() const
+{
+  // This file has the same name for every checkpoint id. It gives the id of
+  // the last checkpoint, from which a restart reads.
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      std::ofstream output(
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename +
+        ".checkpoint_controller");
+      boost::archive::text_oarchive archive(output, boost::archive::no_header);
+      this->checkpoint_controller.serialize(archive);
+    }
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint_controller()
+{
+  const std::string filename =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename +
+    ".checkpoint_controller";
+  check_file_exists(filename,
+                    "checkpoint file of the checkpoint controller, given by "
+                    "'subsection restart' - 'set filename'");
+  std::ifstream                 input(filename);
+  boost::archive::text_iarchive archive(input, boost::archive::no_header);
+  this->checkpoint_controller.deserialize(archive);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::string
+NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_prefix() const
+{
+  return this->simulation_parameters.simulation_control.output_folder +
+         this->simulation_parameters.restart_parameters.filename +
+         this->get_checkpoint_suffix();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::string
+NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_suffix() const
+{
+  return "_" + Utilities::int_to_string(
+                 this->checkpoint_controller.get_next_checkpoint_id());
 }
 
 template <int dim, typename VectorType, typename DofsType>

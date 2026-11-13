@@ -262,6 +262,7 @@ AverageVelocitiesRestart<dim>::run()
 
   // write_checkpoint needs to be called explicitly
   this->write_checkpoint();
+  this->write_checkpoint_controller();
 
   // Destroy the averaged fields. Resetting the triangulation and redistributing
   // the degrees of freedom reinitializes every vector of the averaging object,

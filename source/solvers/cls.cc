@@ -2595,7 +2595,8 @@ ConservativeLevelSet<dim>::gather_tables()
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::write_checkpoint()
+ConservativeLevelSet<dim>::write_checkpoint(
+  const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2615,12 +2616,14 @@ ConservativeLevelSet<dim>::write_checkpoint()
   // solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_suffix,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::read_checkpoint()
+ConservativeLevelSet<dim>::read_checkpoint(const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2657,7 +2660,9 @@ ConservativeLevelSet<dim>::read_checkpoint()
   // solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_suffix,
+                            mpi_communicator);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
         .reinitialization_method.sharpening.type ==

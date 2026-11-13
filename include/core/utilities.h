@@ -29,6 +29,7 @@
 #include <magic_enum.hpp>
 
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <map>
 #include <optional>
@@ -590,23 +591,49 @@ deserialize_table(TableHandler      &table,
 }
 
 /**
+ * @brief Return the name of the file in which a table is checkpointed in a
+ * given checkpoint slot. The suffix of the slot is inserted between the stem
+ * and the extension of the table file name, e.g. "output/force.checkpoint"
+ * becomes "output/force_A.checkpoint".
+ *
+ * @param[in] table_filename Name of the checkpoint file of the table, without
+ * checkpoint slot.
+ * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
+ *
+ * @return Name of the checkpoint file of the table in the checkpoint slot.
+ */
+inline std::string
+get_checkpoint_table_filename(const std::string &table_filename,
+                              const std::string &checkpoint_suffix)
+{
+  const std::filesystem::path path(table_filename);
+  return (path.parent_path() / (path.stem().string() + checkpoint_suffix +
+                                path.extension().string()))
+    .string();
+}
+
+/**
  * @brief Serializes all the TableHandler objects in table_output_structs.
  *
  * @param[in] table_output_structs Vector of structures containing references
  * to TableHandler objects that need to be serialized/deserialized for a
  * given solver, and their corresponding file names.
  *
+ * @param[in] checkpoint_suffix Suffix of the checkpoint slot in which the
+ * tables are written.
  * @param[in] mpi_communicator The MPI communicator
  */
 inline void
 serialize_tables_vector(
   const std::vector<OutputStructTableHandler> &table_output_structs,
+  const std::string                           &checkpoint_suffix,
   const MPI_Comm                               mpi_communicator)
 {
   for (const auto &output_table : table_output_structs)
     {
       serialize_table(output_table.table,
-                      output_table.table_filename,
+                      get_checkpoint_table_filename(output_table.table_filename,
+                                                    checkpoint_suffix),
                       mpi_communicator);
     }
 }
@@ -618,17 +645,21 @@ serialize_tables_vector(
  * references to TableHandler objects that needs to be serialized/deserialized
  * for a given solver, and their corresponding file names.
  *
+ * @param[in] checkpoint_suffix Suffix of the checkpoint slot from which the
+ * tables are read.
  * @param[in] mpi_communicator The MPI communicator
  */
 inline void
 deserialize_tables_vector(
   std::vector<OutputStructTableHandler> &table_output_structs,
+  const std::string                     &checkpoint_suffix,
   const MPI_Comm                         mpi_communicator)
 {
   for (auto &output_table : table_output_structs)
     {
       deserialize_table(output_table.table,
-                        output_table.table_filename,
+                        get_checkpoint_table_filename(
+                          output_table.table_filename, checkpoint_suffix),
                         mpi_communicator);
     }
 }

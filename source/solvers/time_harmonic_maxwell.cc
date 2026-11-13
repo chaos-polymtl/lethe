@@ -1075,7 +1075,7 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::write_checkpoint()
+TimeHarmonicMaxwell<dim>::write_checkpoint(const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -1109,12 +1109,14 @@ TimeHarmonicMaxwell<dim>::write_checkpoint()
   // TimeHarmonicMaxwell solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_suffix,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::read_checkpoint()
+TimeHarmonicMaxwell<dim>::read_checkpoint(const std::string &checkpoint_suffix)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading time-harmonic Maxwell checkpoint" << std::endl;
@@ -1165,7 +1167,9 @@ TimeHarmonicMaxwell<dim>::read_checkpoint()
   // TimeHarmonicMaxwell solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_suffix,
+                            mpi_communicator);
 }
 
 template <int dim>
