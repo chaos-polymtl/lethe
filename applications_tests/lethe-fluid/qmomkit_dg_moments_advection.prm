@@ -1,0 +1,204 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+# Transport of the moments of a log-normal particle size distribution by a
+# uniform velocity. The number density varies along x and is advected without
+# deformation, so that the moments are a translation of their initial
+# condition. The moments are constant in phase space.
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set time end         = 0.05
+  set time step        = 0.005
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+  set qmom degree     = 1
+end
+
+#---------------------------------------------------
+# QMOM
+#---------------------------------------------------
+
+subsection QMOM
+  set number of moments = 4
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection QMOM
+    subsection distribution
+      set type                = lognormal
+      set Function expression = 1e18 * (1 + 0.5 * sin(2 * pi * x)); log(1e-7); 0.3
+    end
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 20, 1 : 0, 0 : 1, 0.05 : true
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set qmom = true
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection QMOM
+    subsection distribution
+      set type                = lognormal
+      set Function expression = 1e18 * (1 + 0.5 * sin(2 * pi * (x - t))); log(1e-7); 0.3
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 1
+    set type = outlet
+    set beta = 0
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions QMOM
+#---------------------------------------------------
+
+subsection boundary conditions qmom
+  set number         = 4
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      subsection distribution
+        set type                = lognormal
+        set Function expression = 1e18 * (1 + 0.5 * sin(2 * pi * (x - t))); log(1e-7); 0.3
+      end
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = none
+  end
+  subsection bc 3
+    set id   = 3
+    set type = none
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-9
+    set max iterations = 1
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 100
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-14
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection qmom
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 100
+    set max krylov vectors                    = 100
+    set relative residual                     = 1e-12
+    set minimum residual                      = 1e-30
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end
