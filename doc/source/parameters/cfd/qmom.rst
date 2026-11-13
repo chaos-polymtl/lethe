@@ -12,27 +12,29 @@ The QMOM physics transports:
 * ``number of scalars`` regular scalars;
 * the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
-All the fields are discretized with the same scalar discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), on a single set of degrees of freedom, and each field is stored in its own vector. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+All the scalars and moments are discretized with the same scalar discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), on a single set of degrees of freedom, and each of them is stored in its own vector. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
 
 .. caution::
     All the parameters of the QMOM physics are in SI units.
 
 .. warning::
 
-  The QMOM physics is under development. Only the transport of the moments in physical space is implemented. The following features are not available yet and stop the simulation with an error: the scalars (``number of scalars`` must be 0), the ``strang`` splitting scheme, the evolution of the moments in phase space (``enable nucleation``, ``enable coalescence`` and ``enable growth`` must be ``false``) and the source terms.
+  The QMOM physics is under development. Only the transport of the moments in physical space, with their source terms, is implemented. The following features are not available yet and stop the simulation with an error: the scalars (``number of scalars`` must be 0), the ``strang`` splitting scheme and the evolution of the moments in phase space (``enable nucleation``, ``enable coalescence`` and ``enable growth`` must be ``false``).
 
 Discretization
 --------------
 
-Each time step of the fluid dynamics is split into the transport of the fields in physical space, followed by their evolution in phase space (``lie`` splitting).
+Each time step of the fluid dynamics is split into the transport of the scalars and moments in physical space, followed by their evolution in phase space (``lie`` splitting).
 
-Every field :math:`c` is transported by the velocity :math:`\mathbf{u}` of the fluid at the end of the time step, which is solved before the QMOM physics:
+Every component :math:`\zeta_c`, scalar or moment, is transported by the velocity :math:`\mathbf{u}` of the fluid at the end of the time step, which is solved before the QMOM physics, with the source term :math:`S_c` of the :doc:`source_term` subsection:
 
 .. math::
 
-  \frac{\partial c}{\partial t} + \nabla \cdot (\mathbf{u} c) = 0
+  \frac{\partial \zeta_c}{\partial t} + \nabla \cdot (\mathbf{u} \zeta_c) = S_c
 
-This equation is discretized with an upwind discontinuous Galerkin method and integrated in time with the BDF scheme of the ``method`` of the :doc:`simulation_control` subsection (``bdf1``, ``bdf2`` or ``bdf3``, or ``steady``). SDIRK schemes are not supported. Since all the fields share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every field. The linear systems are solved with the parameters of the ``qmom`` subsection of the :doc:`linear_solver_control` subsection, with the GMRES method and an ``ilu`` preconditioner, the only one supported. The QMOM physics has no ``non-linear solver`` subsection. Since the moments have very different magnitudes, the convergence of each field is controlled by the ``relative residual``: the ``minimum residual`` should be much smaller than the right-hand side of the smallest moment.
+The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c` smaller than the ``number of scalars``, and the moment :math:`M_{c - n_s}` otherwise, where :math:`n_s` is the ``number of scalars``.
+
+This equation is discretized with an upwind discontinuous Galerkin method and integrated in time with the BDF scheme of the ``method`` of the :doc:`simulation_control` subsection (``bdf1``, ``bdf2`` or ``bdf3``, or ``steady``). SDIRK schemes are not supported. Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every scalar and moment. The linear systems are solved with the parameters of the ``qmom`` subsection of the :doc:`linear_solver_control` subsection, with the GMRES method and an ``ilu`` or ``amg`` preconditioner. The QMOM physics has no ``non-linear solver`` subsection. Since the moments have very different magnitudes, the convergence of each scalar and moment is controlled by the ``relative residual``: the ``minimum residual`` should be much smaller than the right-hand side of the smallest moment.
 
 Parameters
 ----------

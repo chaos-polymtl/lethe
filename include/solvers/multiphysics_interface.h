@@ -45,11 +45,10 @@ DeclException1(
   << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected particle fields to be available. The projected particle temperature field is only available in thermal CFD-DEM simulations (solver type = dem_mp). ");
 
 DeclExceptionMsg(
-  QMOMFieldsNotAvailable,
-  "The QMOM physics stores one solution vector per field (scalars and "
-  "moments) and does not share them with the other physics through the "
-  "multiphysics interface. Coupling another physics to the QMOM fields is not "
-  "implemented.");
+  QMOMSolutionNotAvailable,
+  "The QMOM physics does not provide its solution through the multiphysics "
+  "interface, since it stores one solution vector per component (scalars and "
+  "moments).");
 
 template <int dim>
 class MultiphysicsInterface
@@ -584,7 +583,7 @@ public:
   const GlobalVectorType &
   get_solution(const PhysicsID physics_id)
   {
-    AssertThrow(physics_id != PhysicsID::qmom, QMOMFieldsNotAvailable());
+    AssertThrow(physics_id != PhysicsID::qmom, QMOMSolutionNotAvailable());
     // PhysicsID::void_fraction is not an auxiliary physics and is only accepted
     // when the fluid dynamics formulation is VANS.
     AssertThrow(is_field_available(physics_id),
@@ -728,7 +727,7 @@ public:
   const std::vector<GlobalVectorType> &
   get_previous_solutions(const PhysicsID physics_id)
   {
-    AssertThrow(physics_id != PhysicsID::qmom, QMOMFieldsNotAvailable());
+    AssertThrow(physics_id != PhysicsID::qmom, QMOMSolutionNotAvailable());
     // PhysicsID::void_fraction is not an auxiliary physics and is only accepted
     // when the fluid dynamics formulation is VANS.
     AssertThrow(is_field_available(physics_id),

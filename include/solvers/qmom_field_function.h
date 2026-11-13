@@ -108,6 +108,28 @@ public:
   vector_value(const Point<dim> &p, Vector<double> &values) const override;
 
   /**
+   * @brief Evaluate the scalars only, indexed from 0 regardless of the
+   * moments.
+   *
+   * @param[in] p Point at which the function is evaluated.
+   * @param[out] values Values of the scalars at p, of size n_scalars:
+   * values[i] is scalar i.
+   */
+  void
+  scalar_values(const Point<dim> &p, Vector<double> &values) const;
+
+  /**
+   * @brief Evaluate the moments only, indexed from 0 regardless of the
+   * scalars. The moments are computed once for all of them.
+   *
+   * @param[in] p Point at which the function is evaluated.
+   * @param[out] values Values of the moments at p, of size n_moments:
+   * values[k] is the moment M_k.
+   */
+  void
+  moment_values(const Point<dim> &p, Vector<double> &values) const;
+
+  /**
    * @brief Set the time of the function and of the underlying functions.
    *
    * @param[in] new_time New time.

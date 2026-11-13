@@ -156,7 +156,7 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
     end
   end
 
-* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions.
+* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions. Every boundary of the mesh must have a QMOM boundary condition, including the walls (type ``none``).
 
 * ``type``: This is the type of boundary condition being imposed:
 

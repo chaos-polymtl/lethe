@@ -92,6 +92,29 @@ QMOMFieldFunction<dim>::vector_value(const Point<dim> &p,
 
 template <int dim>
 void
+QMOMFieldFunction<dim>::scalar_values(const Point<dim> &p,
+                                      Vector<double>   &values) const
+{
+  AssertDimension(values.size(), n_scalars);
+
+  for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
+    values[i_scalar] = functions.scalars->value(p, i_scalar);
+}
+
+template <int dim>
+void
+QMOMFieldFunction<dim>::moment_values(const Point<dim> &p,
+                                      Vector<double>   &values) const
+{
+  AssertDimension(values.size(), n_moments);
+
+  const std::vector<double> moments = compute_moments(p);
+  for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+    values[i_moment] = moments[i_moment];
+}
+
+template <int dim>
+void
 QMOMFieldFunction<dim>::set_time(const double new_time)
 {
   Function<dim>::set_time(new_time);
