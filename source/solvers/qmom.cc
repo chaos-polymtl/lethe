@@ -6,6 +6,7 @@
 #include <core/dimensionality.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 #include <core/vector.h>
 
@@ -24,24 +25,25 @@
 
 #include <deal.II/fe/fe_dgq.h>
 #include <deal.II/fe/fe_simplex_p.h>
-#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/meshworker/mesh_loop.h>
 
 #include <deal.II/numerics/data_component_interpretation.h>
-#include <deal.II/numerics/vector_tools.h>
 
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
-#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -54,12 +56,11 @@ QMOM<dim>::QMOM(
                                            &p_triangulation,
   const std::shared_ptr<SimulationControl> &p_simulation_control)
   : AuxiliaryPhysics<dim, GlobalVectorType>()
-  , n_scalars(p_simulation_parameters.multiphysics.qmom_parameters
-                .get_number_of_nodes())
+  , n_scalars(
+      p_simulation_parameters.multiphysics.qmom_parameters.number_of_scalars)
   , n_moments(
       p_simulation_parameters.multiphysics.qmom_parameters.number_of_moments)
-  , n_components(n_moments + n_scalars)
-  , first_moment_component(n_scalars)
+  , n_fields(n_scalars + n_moments)
   , multiphysics(multiphysics_interface)
   , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,
@@ -70,10 +71,13 @@ QMOM<dim>::QMOM(
   , simulation_control(p_simulation_control)
   , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
 {
+  const Parameters::QMOM &qmom_parameters =
+    simulation_parameters.multiphysics.qmom_parameters;
+
   // Relative tolerance used to compare parameter values
   constexpr double parameter_relative_tolerance = 1e-12;
-  const auto       values_are_equal = [](const double first_value,
-                                         const double second_value) {
+  const auto       values_are_equal             = [](const double first_value,
+                                   const double second_value) {
     return std::abs(first_value - second_value) <=
            parameter_relative_tolerance *
              std::max({1., std::abs(first_value), std::abs(second_value)});
@@ -102,35 +106,74 @@ QMOM<dim>::QMOM(
                          "Lagrangian-Eulerian (ALE) formulation yet."));
 
   // The aqueous and organic phases form a single fluid, whose QMOM properties
-  // are used by the phase-space step
+  // are used by the phase-space evolution
   AssertThrow(
     simulation_parameters.physical_properties_manager.get_number_of_fluids() ==
       1,
-    InvalidNumberOfFluid(simulation_parameters.physical_properties_manager
-                           .get_number_of_fluids()));
+    QMOMInvalidNumberOfFluids(simulation_parameters.physical_properties_manager
+                                .get_number_of_fluids()));
 
-  lipid_nanoparticle_production =
-    simulation_parameters.multiphysics.qmom_parameters
-      .lipid_nanoparticle_production;
+  // Features of the QMOM physics that are not implemented yet
+  AssertThrow(n_scalars == 0,
+              ExcMessage("The transport of the QMOM scalars is not "
+                         "implemented yet, but \"number of scalars\" is " +
+                         std::to_string(n_scalars) +
+                         " in the QMOM subsection. Set it to 0."));
+  AssertThrow(
+    !time_stepping_is_sdirk(simulation_parameters.simulation_control.method),
+    ExcMessage("The SDIRK scheme is not yet supported for this physics"));
+  AssertThrow(qmom_parameters.splitting_scheme ==
+                Parameters::QMOMSplittingScheme::lie,
+              ExcMessage("The strang splitting scheme of the QMOM physics is "
+                         "not implemented yet. Set \"splitting scheme\" to lie "
+                         "in the QMOM subsection."));
+  AssertThrow(!qmom_parameters.enable_nucleation &&
+                !qmom_parameters.enable_coalescence &&
+                !qmom_parameters.enable_growth,
+              ExcMessage("The evolution of the moments in phase space is not "
+                         "implemented yet. Set \"enable nucleation\", \"enable "
+                         "coalescence\" and \"enable growth\" to false in the "
+                         "QMOM subsection."));
+  AssertThrow(simulation_parameters.source_term.qmom_source.distribution_type ==
+                Parameters::QMOMDistributionType::none,
+              ExcMessage("The source terms of the QMOM physics are not "
+                         "implemented yet. Set the distribution type of the "
+                         "QMOM subsection of the source term subsection to "
+                         "none."));
+  AssertThrow(
+    simulation_parameters.linear_solver.at(PhysicsID::qmom).preconditioner ==
+      Parameters::LinearSolver::PreconditionerType::ilu,
+    ExcMessage("The QMOM physics only supports the ilu "
+               "preconditioner. Set \"preconditioner\" to ilu in the "
+               "qmom subsection of the linear solver subsection."));
+
+  // The QMOM boundary conditions are imposed weakly by the upwind fluxes
+  for (const auto &[boundary_id, type] :
+       simulation_parameters.boundary_conditions_qmom.type)
+    AssertThrow(type == BoundaryConditions::BoundaryType::none ||
+                  type == BoundaryConditions::BoundaryType::outlet ||
+                  type == BoundaryConditions::BoundaryType::qmom_dirichlet,
+                ExcMessage("The QMOM boundary condition of boundary id " +
+                           std::to_string(boundary_id) +
+                           " is not supported. The supported types are none, "
+                           "outlet and dirichlet."));
 
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
 
   // Names of the fields, used for the output and the error table
-  field_names = simulation_parameters.multiphysics.qmom_parameters.scalar_names;
+  field_names = qmom_parameters.scalar_names;
   for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
     field_names.emplace_back("moment_" + std::to_string(i_moment));
 
-  // All the components share the same discontinuous scalar element, so that
-  // they have the same support points.
+  // All the fields share the same scalar discontinuous element
   const unsigned int qmom_degree =
     simulation_parameters.fem_parameters.qmom_degree;
   if (simulation_parameters.mesh.simplex)
     {
       // Simplex meshes (triangles and tetrahedra)
-      const FE_SimplexDGP<dim> scalar_fe(qmom_degree);
-      fe      = std::make_unique<FESystem<dim>>(scalar_fe, n_components);
-      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(1));
+      fe              = std::make_unique<FE_SimplexDGP<dim>>(qmom_degree);
+      mapping         = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(1));
       cell_quadrature = std::make_unique<QGaussSimplex<dim>>(qmom_degree + 1);
       face_quadrature =
         std::make_unique<QGaussSimplex<dim - 1>>(qmom_degree + 1);
@@ -139,15 +182,14 @@ QMOM<dim>::QMOM(
     {
       // Quadrilateral and hexahedral meshes. A degree of 0 still requires a
       // linear mapping.
-      fe =
-        std::make_unique<FESystem<dim>>(FE_DGQ<dim>(qmom_degree), n_components);
+      fe      = std::make_unique<FE_DGQ<dim>>(qmom_degree);
       mapping = std::make_shared<MappingQ<dim>>(std::max(1U, qmom_degree));
       cell_quadrature = std::make_unique<QGauss<dim>>(qmom_degree + 1);
       face_quadrature = std::make_unique<QGauss<dim - 1>>(qmom_degree + 1);
     }
 
   // Functions of all the fields. Their constructors verify the number of
-  // expressions given for the moments.
+  // expressions given for the scalars.
   initial_conditions = std::make_shared<QMOMFieldFunction<dim>>(
     simulation_parameters.initial_condition->qmom,
     n_scalars,
@@ -167,18 +209,11 @@ QMOM<dim>::QMOM(
     n_moments,
     "analytical solution");
 
-  present_solution = std::make_shared<GlobalVectorType>();
-  solution_transfer =
-    std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
-
-  previous_solutions = std::make_shared<std::vector<GlobalVectorType>>(
-    maximum_number_of_previous_solutions());
-  previous_solutions_transfer.reserve(previous_solutions->size());
-  for (unsigned int i_previous_solution = 0;
-       i_previous_solution < previous_solutions->size();
-       ++i_previous_solution)
-    previous_solutions_transfer.emplace_back(
-      SolutionTransfer<dim, GlobalVectorType>(*dof_handler));
+  present_solutions.resize(n_fields);
+  previous_solutions.assign(n_fields,
+                            std::vector<GlobalVectorType>(
+                              maximum_number_of_previous_solutions()));
+  system_rhs.resize(n_fields);
 }
 
 template <int dim>
@@ -186,17 +221,17 @@ std::vector<OutputStruct<dim, GlobalVectorType>>
 QMOM<dim>::gather_output_hook()
 {
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+  solution_output_structs.reserve(n_fields);
 
-  const std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    component_interpretation(n_components,
-                             DataComponentInterpretation::component_is_scalar);
+  for (unsigned int field = 0; field < n_fields; ++field)
+    solution_output_structs.emplace_back(
+      std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+      *dof_handler,
+      present_solutions[field],
+      std::vector<std::string>{field_names[field]},
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>{
+        DataComponentInterpretation::component_is_scalar});
 
-  solution_output_structs.emplace_back(
-    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    *dof_handler,
-    *present_solution,
-    field_names,
-    component_interpretation);
   return solution_output_structs;
 }
 
@@ -234,12 +269,18 @@ template <int dim>
 void
 QMOM<dim>::percolate_time_vectors()
 {
-  for (unsigned int i_previous_solution = previous_solutions->size() - 1;
-       i_previous_solution > 0;
-       --i_previous_solution)
-    (*previous_solutions)[i_previous_solution] =
-      (*previous_solutions)[i_previous_solution - 1];
-  (*previous_solutions)[0] = *present_solution;
+  for (unsigned int field = 0; field < n_fields; ++field)
+    {
+      std::vector<GlobalVectorType> &field_previous_solutions =
+        previous_solutions[field];
+      for (unsigned int i_previous_solution =
+             field_previous_solutions.size() - 1;
+           i_previous_solution > 0;
+           --i_previous_solution)
+        field_previous_solutions[i_previous_solution] =
+          field_previous_solutions[i_previous_solution - 1];
+      field_previous_solutions[0] = present_solutions[field];
+    }
 }
 
 template <int dim>
@@ -254,15 +295,14 @@ QMOM<dim>::postprocess(bool first_iteration)
       const std::vector<double> errors = calculate_L2_errors();
 
       error_table.add_value("time", simulation_control->get_current_time());
-      for (unsigned int component = 0; component < n_components; ++component)
-        error_table.add_value("error_" + field_names[component],
-                              errors[component]);
+      for (unsigned int field = 0; field < n_fields; ++field)
+        error_table.add_value("error_" + field_names[field], errors[field]);
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
-        for (unsigned int component = 0; component < n_components; ++component)
-          this->pcout << "L2 error " << field_names[component] << ": "
-                      << errors[component] << std::endl;
+        for (unsigned int field = 0; field < n_fields; ++field)
+          this->pcout << "L2 error " << field_names[field] << ": "
+                      << errors[field] << std::endl;
     }
 }
 
@@ -278,39 +318,70 @@ QMOM<dim>::output_per_iteration_timer()
 }
 
 template <int dim>
+std::vector<GlobalVectorType *>
+QMOM<dim>::gather_all_solutions()
+{
+  std::vector<GlobalVectorType *> all_solutions;
+  all_solutions.reserve(n_fields *
+                        (1 + maximum_number_of_previous_solutions()));
+
+  for (GlobalVectorType &present_solution : present_solutions)
+    all_solutions.push_back(&present_solution);
+  for (std::vector<GlobalVectorType> &field_previous_solutions :
+       previous_solutions)
+    for (GlobalVectorType &previous_solution : field_previous_solutions)
+      all_solutions.push_back(&previous_solution);
+
+  return all_solutions;
+}
+
+template <int dim>
+template <typename TransferFunction>
+void
+QMOM<dim>::transfer_all_solutions(const TransferFunction &transfer)
+{
+  const std::vector<GlobalVectorType *> all_solutions = gather_all_solutions();
+
+  // The solution transfer fills locally owned vectors, which are then copied
+  // to the ghosted solution vectors
+  std::vector<GlobalVectorType> transferred_solutions(
+    all_solutions.size(),
+    GlobalVectorType(locally_owned_dofs,
+                     triangulation->get_mpi_communicator()));
+  std::vector<GlobalVectorType *> transferred_solution_pointers;
+  transferred_solution_pointers.reserve(transferred_solutions.size());
+  for (GlobalVectorType &transferred_solution : transferred_solutions)
+    transferred_solution_pointers.push_back(&transferred_solution);
+
+  transfer(transferred_solution_pointers);
+
+  for (unsigned int i_solution = 0; i_solution < all_solutions.size();
+       ++i_solution)
+    *all_solutions[i_solution] = transferred_solutions[i_solution];
+}
+
+template <int dim>
 void
 QMOM<dim>::pre_mesh_adaptation()
 {
-  solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
-  for (unsigned int i_previous_solution = 0;
-       i_previous_solution < previous_solutions->size();
-       ++i_previous_solution)
-    previous_solutions_transfer[i_previous_solution]
-      .prepare_for_coarsening_and_refinement(
-        (*previous_solutions)[i_previous_solution]);
+  const std::vector<GlobalVectorType *> all_solutions = gather_all_solutions();
+  const std::vector<const GlobalVectorType *> solutions_to_transfer(
+    all_solutions.begin(), all_solutions.end());
+
+  solution_transfer =
+    std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
+  solution_transfer->prepare_for_coarsening_and_refinement(
+    solutions_to_transfer);
 }
 
 template <int dim>
 void
 QMOM<dim>::post_mesh_adaptation()
 {
-  const auto mpi_communicator = triangulation->get_mpi_communicator();
-
-  GlobalVectorType interpolated_solution(locally_owned_dofs, mpi_communicator);
-  solution_transfer->interpolate(interpolated_solution);
-  *present_solution = interpolated_solution;
-
-  for (unsigned int i_previous_solution = 0;
-       i_previous_solution < previous_solutions->size();
-       ++i_previous_solution)
-    {
-      GlobalVectorType interpolated_previous_solution(locally_owned_dofs,
-                                                      mpi_communicator);
-      previous_solutions_transfer[i_previous_solution].interpolate(
-        interpolated_previous_solution);
-      (*previous_solutions)[i_previous_solution] =
-        interpolated_previous_solution;
-    }
+  transfer_all_solutions(
+    [&](std::vector<GlobalVectorType *> &transferred_solutions) {
+      solution_transfer->interpolate(transferred_solutions);
+    });
 }
 
 template <int dim>
@@ -331,49 +402,27 @@ template <int dim>
 void
 QMOM<dim>::write_checkpoint()
 {
-  std::vector<const GlobalVectorType *> sol_set_transfer;
+  const std::vector<GlobalVectorType *> all_solutions = gather_all_solutions();
+  const std::vector<const GlobalVectorType *> solutions_to_serialize(
+    all_solutions.begin(), all_solutions.end());
 
   solution_transfer =
     std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
-
-  sol_set_transfer.emplace_back(&(*present_solution));
-  for (const auto &previous_solution : *previous_solutions)
-    sol_set_transfer.emplace_back(&previous_solution);
-
-  solution_transfer->prepare_for_serialization(sol_set_transfer);
+  solution_transfer->prepare_for_serialization(solutions_to_serialize);
 }
 
 template <int dim>
 void
 QMOM<dim>::read_checkpoint()
 {
-  const auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading QMOM checkpoint" << std::endl;
 
-  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions->size());
-  GlobalVectorType distributed_system(locally_owned_dofs, mpi_communicator);
-  input_vectors[0] = &distributed_system;
-
-  std::vector<GlobalVectorType> distributed_previous_solutions;
-  distributed_previous_solutions.reserve(previous_solutions->size());
-  for (unsigned int i_previous_solution = 0;
-       i_previous_solution < previous_solutions->size();
-       ++i_previous_solution)
-    {
-      distributed_previous_solutions.emplace_back(
-        GlobalVectorType(locally_owned_dofs, mpi_communicator));
-      input_vectors[i_previous_solution + 1] =
-        &distributed_previous_solutions[i_previous_solution];
-    }
-
-  solution_transfer->deserialize(input_vectors);
-
-  *present_solution = distributed_system;
-  for (unsigned int i_previous_solution = 0;
-       i_previous_solution < previous_solutions->size();
-       ++i_previous_solution)
-    (*previous_solutions)[i_previous_solution] =
-      distributed_previous_solutions[i_previous_solution];
+  solution_transfer =
+    std::make_unique<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
+  transfer_all_solutions(
+    [&](std::vector<GlobalVectorType *> &transferred_solutions) {
+      solution_transfer->deserialize(transferred_solutions);
+    });
 }
 
 template <int dim>
@@ -389,9 +438,9 @@ QMOM<dim>::define_constraints()
 {
   // The discontinuous Galerkin discretization has no hanging-node constraints
   // and imposes the boundary conditions weakly
-  nonzero_constraints.clear();
-  nonzero_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  nonzero_constraints.close();
+  constraints.clear();
+  constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
+  constraints.close();
 }
 
 template <int dim>
@@ -400,44 +449,48 @@ QMOM<dim>::setup_dofs()
 {
   dof_handler->distribute_dofs(*fe);
 
-  const auto mpi_communicator = triangulation->get_mpi_communicator();
+  const MPI_Comm mpi_communicator = triangulation->get_mpi_communicator();
 
   locally_owned_dofs    = dof_handler->locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
-  present_solution->reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
-                           mpi_communicator);
-  for (auto &solution : *previous_solutions)
-    solution.reinit(locally_owned_dofs,
-                    locally_relevant_dofs,
-                    mpi_communicator);
-
-  evaluation_point.reinit(locally_owned_dofs,
-                          locally_relevant_dofs,
-                          mpi_communicator);
-  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
-  newton_update.reinit(locally_owned_dofs, mpi_communicator);
-  local_evaluation_point.reinit(locally_owned_dofs, mpi_communicator);
-
-  ghosted_stage_solution.reinit(locally_owned_dofs,
-                                locally_relevant_dofs,
-                                mpi_communicator);
-  step_initial_solution.reinit(locally_owned_dofs, mpi_communicator);
-  stage_solution.reinit(locally_owned_dofs, mpi_communicator);
-  transport_residual.reinit(locally_owned_dofs, mpi_communicator);
-  transport_time_derivative.reinit(locally_owned_dofs, mpi_communicator);
+  for (unsigned int field = 0; field < n_fields; ++field)
+    {
+      present_solutions[field].reinit(locally_owned_dofs,
+                                      locally_relevant_dofs,
+                                      mpi_communicator);
+      for (GlobalVectorType &previous_solution : previous_solutions[field])
+        previous_solution.reinit(locally_owned_dofs,
+                                 locally_relevant_dofs,
+                                 mpi_communicator);
+      system_rhs[field].reinit(locally_owned_dofs, mpi_communicator);
+    }
 
   define_constraints();
 
-  this->pcout << "   Number of QMOM degrees of freedom: "
-              << dof_handler->n_dofs() << std::endl;
+  // The upwind fluxes couple the degrees of freedom of neighboring cells
+  DynamicSparsityPattern dsp(locally_relevant_dofs);
+  DoFTools::make_flux_sparsity_pattern(*dof_handler,
+                                       dsp,
+                                       constraints,
+                                       /*keep_constrained_dofs = */ true);
+  SparsityTools::distribute_sparsity_pattern(dsp,
+                                             locally_owned_dofs,
+                                             mpi_communicator,
+                                             locally_relevant_dofs);
+  system_matrix.reinit(locally_owned_dofs,
+                       locally_owned_dofs,
+                       dsp,
+                       mpi_communicator);
 
-  // Share the QMOM fields with the other physics
+  this->pcout << "   Number of QMOM degrees of freedom: "
+              << n_fields * dof_handler->n_dofs() << " (" << n_fields
+              << " fields of " << dof_handler->n_dofs() << ")" << std::endl;
+
+  // Only the DoFHandler and the mapping are shared with the other physics:
+  // the fields are stored in one vector each, and no other physics uses them
   multiphysics->set_dof_handler(PhysicsID::qmom, dof_handler);
   multiphysics->set_mapping(PhysicsID::qmom, mapping);
-  multiphysics->set_solution(PhysicsID::qmom, present_solution);
-  multiphysics->set_previous_solutions(PhysicsID::qmom, previous_solutions);
 }
 
 template <int dim>
@@ -446,85 +499,93 @@ QMOM<dim>::set_initial_conditions()
 {
   initial_conditions->set_time(simulation_control->get_current_time());
 
-  GlobalVectorType interpolated_solution(locally_owned_dofs,
-                                         triangulation->get_mpi_communicator());
-  VectorTools::interpolate(*mapping,
-                           *dof_handler,
-                           *initial_conditions,
-                           interpolated_solution);
-  *present_solution = interpolated_solution;
+  // The fields are interpolated at the support points of the scalar element.
+  // All the fields are evaluated at once at each support point, since the
+  // moments are computed together from the particle size distribution.
+  const Quadrature<dim> support_points_quadrature(
+    fe->get_unit_support_points());
+  FEValues<dim>                        fe_values(*mapping,
+                          *fe,
+                          support_points_quadrature,
+                          update_quadrature_points);
+  const unsigned int                   n_dofs = fe->n_dofs_per_cell();
+  std::vector<types::global_dof_index> dof_indices(n_dofs);
+  Vector<double>                       field_values(n_fields);
+
+  std::vector<GlobalVectorType> interpolated_solutions(
+    n_fields,
+    GlobalVectorType(locally_owned_dofs,
+                     triangulation->get_mpi_communicator()));
+
+  for (const auto &cell : dof_handler->active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      fe_values.reinit(cell);
+      cell->get_dof_indices(dof_indices);
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          initial_conditions->vector_value(fe_values.quadrature_point(i),
+                                           field_values);
+          for (unsigned int field = 0; field < n_fields; ++field)
+            interpolated_solutions[field](dof_indices[i]) = field_values[field];
+        }
+    }
+
+  for (unsigned int field = 0; field < n_fields; ++field)
+    {
+      interpolated_solutions[field].compress(VectorOperation::insert);
+      present_solutions[field] = interpolated_solutions[field];
+    }
 
   percolate_time_vectors();
 }
 
 template <int dim>
 void
+QMOM<dim>::update_boundary_conditions()
+{
+  if (!simulation_parameters.boundary_conditions_qmom.time_dependent)
+    return;
+
+  const double time = simulation_control->get_current_time();
+  for (const auto &[boundary_id, function] : dirichlet_functions)
+    function->set_time(time);
+}
+
+template <int dim>
+BoundaryConditions::BoundaryType
+QMOM<dim>::get_boundary_type(const types::boundary_id boundary_id) const
+{
+  const auto &boundary_types =
+    simulation_parameters.boundary_conditions_qmom.type;
+  const auto type_iterator = boundary_types.find(boundary_id);
+  return type_iterator == boundary_types.end() ?
+           BoundaryConditions::BoundaryType::none :
+           type_iterator->second;
+}
+
+template <int dim>
+void
 QMOM<dim>::assemble_system_matrix()
-{}
-
-template <int dim>
-void
-QMOM<dim>::assemble_system_rhs()
-{}
-
-template <int dim>
-void
-QMOM<dim>::solve_linear_system()
 {
-  advance_time_step();
-}
+  TimerOutput::Scope t(computing_timer, "Assemble matrix");
 
-template <int dim>
-void
-QMOM<dim>::advance_time_step()
-{
-  // The time of the simulation control is already at the end of the step
-  const double time_step = simulation_control->get_time_step();
-  const double time_step_start =
-    simulation_control->get_current_time() - time_step;
-
-  switch (simulation_parameters.multiphysics.qmom_parameters.splitting_scheme)
-    {
-      case Parameters::QMOMSplittingScheme::lie:
-        advance_transport(time_step_start, time_step);
-        apply_phase_space_step(time_step);
-        break;
-      case Parameters::QMOMSplittingScheme::strang:
-        apply_phase_space_step(0.5 * time_step);
-        advance_transport(time_step_start, time_step);
-        apply_phase_space_step(0.5 * time_step);
-        break;
-    }
-}
-
-template <int dim>
-void
-QMOM<dim>::advance_transport(const double time_step_start,
-                             const double time_step)
-{
-  TimerOutput::Scope t(computing_timer, "Transport");
-}
-
-template <int dim>
-void
-QMOM<dim>::apply_phase_space_step(const double time_step)
-{
-  TimerOutput::Scope t(computing_timer, "Phase-space step");
+  if (multiphysics->fluid_dynamics_is_block())
+    assemble_transport_matrix(
+      multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+  else
+    assemble_transport_matrix(
+      multiphysics->get_solution(PhysicsID::fluid_dynamics));
 }
 
 template <int dim>
 template <typename FluidVectorType>
 void
-QMOM<dim>::evaluate_transport_operator(
-  const GlobalVectorType &solution,
-  const double            time,
-  const double            interpolation_factor,
-  const FluidVectorType  &previous_fluid_solution,
-  const FluidVectorType  &present_fluid_solution,
-  GlobalVectorType       &time_derivative)
+QMOM<dim>::assemble_transport_matrix(const FluidVectorType &fluid_solution)
 {
-  for (const auto &[boundary_id, function] : dirichlet_functions)
-    function->set_time(time);
+  system_matrix = 0.;
 
   const DoFHandler<dim> &fluid_dof_handler =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -536,9 +597,13 @@ QMOM<dim>::evaluate_transport_operator(
                                                             &fluid_dof_handler);
     };
 
-  // 1. Residual R(u) of the upwind discontinuous Galerkin discretization of
-  // du/dt + div(u_fluid u) = 0 for every field: cell terms, interior face
-  // fluxes and boundary fluxes
+  // Coefficient of the present solution in the BDF time derivative, which
+  // includes the inverse of the time step. It is zero for steady simulations.
+  const bool transient =
+    time_stepping_is_bdf(simulation_control->get_assembly_method());
+  const double present_bdf_coefficient =
+    transient ? simulation_control->get_bdf_coefficients()[0] : 0.;
+
   QMOMScratchData<dim> scratch_data(*fe,
                                     *cell_quadrature,
                                     *face_quadrature,
@@ -551,29 +616,33 @@ QMOM<dim>::evaluate_transport_operator(
         QMOMScratchData<dim>                                 &scratch,
         QMOMCopyData                                         &copy) {
       // The copy data is reset for every cell, including ghost cells, whose
-      // faces may be assembled when they are finer than an owned neighbor
-      copy.local_rhs = 0.;
+      // faces are assembled when they are finer than an owned neighbor
+      copy.local_matrix = 0.;
       copy.face_data.clear();
       copy.cell_is_local = cell->is_locally_owned();
       if (!copy.cell_is_local)
         return;
 
       cell->get_dof_indices(copy.local_dof_indices);
-      scratch.reinit(cell, solution);
-      scratch.reinit_velocity(get_fluid_cell(cell),
-                              previous_fluid_solution,
-                              present_fluid_solution,
-                              interpolation_factor);
+      scratch.reinit(cell);
+      scratch.reinit_velocity(get_fluid_cell(cell), fluid_solution);
 
-      // Weak form of the advective flux: int_K c u . grad(phi)
-      const FEValues<dim> &fe_values = scratch.fe_values;
+      // Weak form of the time derivative and of the advection of a field c:
+      // int alpha_0 phi_i c - int (u . grad(phi_i)) c, where alpha_0 is the
+      // coefficient of the present solution in the BDF scheme
       for (unsigned int q = 0; q < scratch.n_q_points; ++q)
         {
-          const double JxW = fe_values.JxW(q);
+          const Tensor<1, dim> &velocity = scratch.velocity_values[q];
           for (unsigned int i = 0; i < scratch.n_dofs; ++i)
-            copy.local_rhs(i) +=
-              scratch.values[q](scratch.component_of_dof[i]) *
-              (scratch.velocity_values[q] * fe_values.shape_grad(i, q)) * JxW;
+            {
+              const double test_function_term =
+                (present_bdf_coefficient * scratch.phi[i][q] -
+                 velocity * scratch.grad_phi[i][q]) *
+                scratch.JxW[q];
+              for (unsigned int j = 0; j < scratch.n_dofs; ++j)
+                copy.local_matrix(i, j) +=
+                  test_function_term * scratch.phi[j][q];
+            }
         }
     };
 
@@ -582,16 +651,39 @@ QMOM<dim>::evaluate_transport_operator(
         const unsigned int                                    face_no,
         QMOMScratchData<dim>                                 &scratch,
         QMOMCopyData                                         &copy) {
-      scratch.reinit_boundary_face(cell, face_no, solution);
+      // No flux crosses a boundary without QMOM boundary condition
+      if (get_boundary_type(cell->face(face_no)->boundary_id()) ==
+          BoundaryConditions::BoundaryType::none)
+        return;
+
+      scratch.reinit_boundary_face(cell, face_no);
       scratch.reinit_face_velocity(get_fluid_cell(cell),
                                    face_no,
                                    numbers::invalid_unsigned_int,
-                                   previous_fluid_solution,
-                                   present_fluid_solution,
-                                   interpolation_factor);
-      assemble_boundary_face_flux(scratch,
-                                  cell->face(face_no)->boundary_id(),
-                                  copy.local_rhs);
+                                   fluid_solution);
+
+      // Outflow: the interior values leave the domain through outlet and
+      // Dirichlet boundaries. The inflow through Dirichlet boundaries is
+      // known and assembled in the right-hand side.
+      const FEFaceValuesBase<dim> &fe_face_values =
+        scratch.fe_interface_values.get_fe_face_values(0);
+      for (unsigned int q = 0; q < scratch.n_face_q_points; ++q)
+        {
+          const double normal_velocity =
+            scratch.face_velocity_values[q] * fe_face_values.normal_vector(q);
+          if (normal_velocity <= 0.)
+            continue;
+
+          for (unsigned int i = 0; i < scratch.n_dofs; ++i)
+            {
+              const double test_function_term =
+                normal_velocity * fe_face_values.shape_value(i, q) *
+                fe_face_values.JxW(q);
+              for (unsigned int j = 0; j < scratch.n_dofs; ++j)
+                copy.local_matrix(i, j) +=
+                  test_function_term * fe_face_values.shape_value(j, q);
+            }
+        }
     };
 
   const auto face_worker =
@@ -608,47 +700,78 @@ QMOM<dim>::evaluate_transport_operator(
                                    sub_face_no,
                                    neighbor_cell,
                                    neighbor_face_no,
-                                   neighbor_sub_face_no,
-                                   solution);
+                                   neighbor_sub_face_no);
       scratch.reinit_face_velocity(get_fluid_cell(cell),
                                    face_no,
                                    sub_face_no,
-                                   previous_fluid_solution,
-                                   present_fluid_solution,
-                                   interpolation_factor);
+                                   fluid_solution);
+
+      const FEInterfaceValues<dim> &fe_interface_values =
+        scratch.fe_interface_values;
+      const unsigned int n_interface_dofs =
+        fe_interface_values.n_current_interface_dofs();
 
       QMOMCopyData::FaceData &face_data = copy.face_data.emplace_back();
       face_data.joint_dof_indices =
-        scratch.fe_interface_values.get_interface_dof_indices();
-      face_data.face_rhs.reinit(scratch.n_interface_dofs);
-      assemble_interior_face_flux(scratch, face_data.face_rhs);
+        fe_interface_values.get_interface_dof_indices();
+      face_data.face_matrix.reinit(n_interface_dofs, n_interface_dofs);
+
+      // Upwind flux (u . n) c_upwind, with n pointing from the first to the
+      // second cell. The jump of the test function, phi_first - phi_second,
+      // gives the contributions of opposite signs to the two cells.
+      for (unsigned int q = 0; q < scratch.n_face_q_points; ++q)
+        {
+          const double normal_velocity = scratch.face_velocity_values[q] *
+                                         fe_interface_values.normal_vector(q);
+          const bool upwind_is_first_cell = normal_velocity > 0.;
+          for (unsigned int i = 0; i < n_interface_dofs; ++i)
+            {
+              const double test_function_term =
+                normal_velocity *
+                fe_interface_values.jump_in_shape_values(i, q) *
+                fe_interface_values.JxW(q);
+              for (unsigned int j = 0; j < n_interface_dofs; ++j)
+                face_data.face_matrix(i, j) +=
+                  test_function_term *
+                  fe_interface_values.shape_value(upwind_is_first_cell, j, q);
+            }
+        }
     };
 
-  // Each face is assembled once per process that owns one of its cells, with
-  // the contributions to both cells. Only the locally owned entries are
-  // added, so that every degree of freedom receives the flux of each of its
-  // faces exactly once and no off-process entry is written.
-  std::vector<types::global_dof_index> owned_face_indices;
-  std::vector<double>                  owned_face_values;
+  // A face between a locally owned and a ghost cell is assembled by the two
+  // processes that own its cells. Each process only adds the rows that it
+  // owns, so that every row receives the flux of each of its faces exactly
+  // once.
+  std::vector<types::global_dof_index> row_columns;
+  std::vector<double>                  row_values;
   const auto                           copier = [&](const QMOMCopyData &copy) {
     if (copy.cell_is_local)
-      transport_residual.add(copy.local_dof_indices, copy.local_rhs);
+      constraints.distribute_local_to_global(copy.local_matrix,
+                                             copy.local_dof_indices,
+                                             system_matrix);
 
     for (const QMOMCopyData::FaceData &face_data : copy.face_data)
       {
-        owned_face_indices.clear();
-        owned_face_values.clear();
-        for (unsigned int i = 0; i < face_data.joint_dof_indices.size(); ++i)
-          if (locally_owned_dofs.is_element(face_data.joint_dof_indices[i]))
-            {
-              owned_face_indices.push_back(face_data.joint_dof_indices[i]);
-              owned_face_values.push_back(face_data.face_rhs(i));
-            }
-        transport_residual.add(owned_face_indices, owned_face_values);
+        const unsigned int n_interface_dofs =
+          face_data.joint_dof_indices.size();
+        for (unsigned int i = 0; i < n_interface_dofs; ++i)
+          {
+            const types::global_dof_index row = face_data.joint_dof_indices[i];
+            if (!locally_owned_dofs.is_element(row))
+              continue;
+
+            row_columns.clear();
+            row_values.clear();
+            for (unsigned int j = 0; j < n_interface_dofs; ++j)
+              {
+                row_columns.push_back(face_data.joint_dof_indices[j]);
+                row_values.push_back(face_data.face_matrix(i, j));
+              }
+            system_matrix.add(row, row_columns, row_values);
+          }
       }
   };
 
-  transport_residual = 0.;
   MeshWorker::mesh_loop(dof_handler->begin_active(),
                         dof_handler->end(),
                         cell_worker,
@@ -662,136 +785,255 @@ QMOM<dim>::evaluate_transport_operator(
                           MeshWorker::assemble_ghost_faces_both,
                         boundary_worker,
                         face_worker);
-  transport_residual.compress(VectorOperation::add);
 
-  // 2. L(u) = M^{-1} R(u). The mass matrix is block diagonal: one block per
-  // cell, itself made of identical blocks for every component, since all the
-  // components share the same scalar element.
-  const unsigned int n_base_dofs = fe->base_element(0).n_dofs_per_cell();
-  FEValues<dim>      fe_values(*mapping,
-                               *fe,
-                               *cell_quadrature,
-                               update_values | update_JxW_values);
-  FullMatrix<double> inverse_mass_matrix(n_base_dofs, n_base_dofs);
-  Vector<double>     local_residual(n_base_dofs);
-  Vector<double>     local_time_derivative(n_base_dofs);
-  std::vector<types::global_dof_index> dof_indices(fe->n_dofs_per_cell());
+  system_matrix.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+QMOM<dim>::assemble_system_rhs()
+{
+  TimerOutput::Scope t(computing_timer, "Assemble RHS");
+
+  if (multiphysics->fluid_dynamics_is_block())
+    assemble_transport_rhs(
+      multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+  else
+    assemble_transport_rhs(
+      multiphysics->get_solution(PhysicsID::fluid_dynamics));
+}
+
+template <int dim>
+template <typename FluidVectorType>
+void
+QMOM<dim>::assemble_transport_rhs(const FluidVectorType &fluid_solution)
+{
+  for (GlobalVectorType &field_rhs : system_rhs)
+    field_rhs = 0.;
+
+  const DoFHandler<dim> &fluid_dof_handler =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  // Number of previous solutions of the BDF time derivative, zero for steady
+  // simulations
+  const auto         method = simulation_control->get_assembly_method();
+  const unsigned int n_previous_solutions =
+    time_stepping_is_bdf(method) ? number_of_previous_solutions(method) : 0;
+
+  QMOMScratchData<dim> scratch_data(*fe,
+                                    *cell_quadrature,
+                                    *face_quadrature,
+                                    *mapping,
+                                    fluid_dof_handler.get_fe());
+  const unsigned int   n_dofs = scratch_data.n_dofs;
+
+  // The mass matrix and the shape functions are the same for all the fields:
+  // they are evaluated once per cell and face, then applied to every field
+  FullMatrix<double>          mass_matrix(n_dofs, n_dofs);
+  Vector<double>              previous_values(n_dofs);
+  Vector<double>              previous_terms(n_dofs);
+  std::vector<Vector<double>> local_rhs(n_fields, Vector<double>(n_dofs));
+  std::vector<types::global_dof_index> dof_indices(n_dofs);
+  Vector<double>                       dirichlet_values(n_fields);
 
   for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (!cell->is_locally_owned())
         continue;
 
-      fe_values.reinit(cell);
       cell->get_dof_indices(dof_indices);
+      for (Vector<double> &field_rhs : local_rhs)
+        field_rhs = 0.;
 
-      inverse_mass_matrix = 0.;
-      for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
-        for (unsigned int i = 0; i < n_base_dofs; ++i)
-          {
-            const double phi_i =
-              fe_values.shape_value(fe->component_to_system_index(0, i), q);
-            for (unsigned int j = 0; j < n_base_dofs; ++j)
-              inverse_mass_matrix(i, j) +=
-                phi_i *
-                fe_values.shape_value(fe->component_to_system_index(0, j), q) *
-                fe_values.JxW(q);
-          }
-      inverse_mass_matrix.gauss_jordan();
-
-      for (unsigned int component = 0; component < n_components; ++component)
+      // Previous solutions of the BDF time derivative:
+      // - int phi_i sum_{p >= 1} alpha_p c_p
+      if (n_previous_solutions > 0)
         {
-          for (unsigned int i = 0; i < n_base_dofs; ++i)
-            local_residual(i) = transport_residual(
-              dof_indices[fe->component_to_system_index(component, i)]);
-          inverse_mass_matrix.vmult(local_time_derivative, local_residual);
-          for (unsigned int i = 0; i < n_base_dofs; ++i)
-            time_derivative(
-              dof_indices[fe->component_to_system_index(component, i)]) =
-              local_time_derivative(i);
+          const Vector<double> &bdf_coefficients =
+            simulation_control->get_bdf_coefficients();
+
+          scratch_data.reinit(cell);
+          mass_matrix = 0.;
+          for (unsigned int q = 0; q < scratch_data.n_q_points; ++q)
+            for (unsigned int i = 0; i < n_dofs; ++i)
+              {
+                const double phi_i_JxW =
+                  scratch_data.phi[i][q] * scratch_data.JxW[q];
+                for (unsigned int j = 0; j < n_dofs; ++j)
+                  mass_matrix(i, j) += phi_i_JxW * scratch_data.phi[j][q];
+              }
+
+          for (unsigned int field = 0; field < n_fields; ++field)
+            {
+              previous_terms = 0.;
+              for (unsigned int p = 0; p < n_previous_solutions; ++p)
+                {
+                  cell->get_dof_values(previous_solutions[field][p],
+                                       previous_values);
+                  previous_terms.add(-bdf_coefficients[p + 1], previous_values);
+                }
+              mass_matrix.vmult_add(local_rhs[field], previous_terms);
+            }
         }
+
+      // Inflow through the Dirichlet boundaries: - int phi_i (u . n) c_D
+      for (const unsigned int face_no : cell->face_indices())
+        {
+          if (!cell->at_boundary(face_no))
+            continue;
+          const types::boundary_id boundary_id =
+            cell->face(face_no)->boundary_id();
+          if (get_boundary_type(boundary_id) !=
+              BoundaryConditions::BoundaryType::qmom_dirichlet)
+            continue;
+
+          scratch_data.reinit_boundary_face(cell, face_no);
+          scratch_data.reinit_face_velocity(
+            typename DoFHandler<dim>::active_cell_iterator(&(*triangulation),
+                                                           cell->level(),
+                                                           cell->index(),
+                                                           &fluid_dof_handler),
+            face_no,
+            numbers::invalid_unsigned_int,
+            fluid_solution);
+
+          const FEFaceValuesBase<dim> &fe_face_values =
+            scratch_data.fe_interface_values.get_fe_face_values(0);
+          const QMOMFieldFunction<dim> &dirichlet_function =
+            *dirichlet_functions.at(boundary_id);
+          for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
+            {
+              const double normal_velocity =
+                scratch_data.face_velocity_values[q] *
+                fe_face_values.normal_vector(q);
+              if (normal_velocity >= 0.)
+                continue;
+
+              dirichlet_function.vector_value(
+                fe_face_values.quadrature_point(q), dirichlet_values);
+              for (unsigned int i = 0; i < n_dofs; ++i)
+                {
+                  const double test_function_term =
+                    -normal_velocity * fe_face_values.shape_value(i, q) *
+                    fe_face_values.JxW(q);
+                  for (unsigned int field = 0; field < n_fields; ++field)
+                    local_rhs[field](i) +=
+                      test_function_term * dirichlet_values[field];
+                }
+            }
+        }
+
+      for (unsigned int field = 0; field < n_fields; ++field)
+        constraints.distribute_local_to_global(local_rhs[field],
+                                               dof_indices,
+                                               system_rhs[field]);
     }
-  time_derivative.compress(VectorOperation::insert);
+
+  for (GlobalVectorType &field_rhs : system_rhs)
+    field_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>
 void
-QMOM<dim>::assemble_interior_face_flux(const QMOMScratchData<dim> &scratch_data,
-                                       Vector<double> &face_rhs) const
+QMOM<dim>::setup_preconditioner()
 {
-  const FEInterfaceValues<dim> &fe_interface_values =
-    scratch_data.fe_interface_values;
-  const std::vector<double>         &JxW = fe_interface_values.get_JxW_values();
-  const std::vector<Tensor<1, dim>> &normals =
-    fe_interface_values.get_normal_vectors();
+  TimerOutput::Scope t(computing_timer, "Setup ILU");
 
-  // Upwind flux (u . n) c^upwind, with n pointing from the first to the
-  // second cell. The jump of the test function, phi_here - phi_there, gives
-  // the contributions of opposite signs to the two cells.
-  for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
+  const Parameters::LinearSolver &linear_solver_parameters =
+    simulation_parameters.linear_solver.at(PhysicsID::qmom);
+  const TrilinosWrappers::PreconditionILU::AdditionalData
+    preconditioner_options(linear_solver_parameters.ilu_precond_fill,
+                           linear_solver_parameters.ilu_precond_atol,
+                           linear_solver_parameters.ilu_precond_rtol,
+                           0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+  ilu_preconditioner->initialize(system_matrix, preconditioner_options);
+}
+
+template <int dim>
+void
+QMOM<dim>::solve_linear_system()
+{
+  switch (simulation_parameters.multiphysics.qmom_parameters.splitting_scheme)
     {
-      const double velocity_dot_n =
-        scratch_data.face_velocity_values[q] * normals[q];
-      const Vector<double> &upwind_values = velocity_dot_n > 0. ?
-                                              scratch_data.values_here[q] :
-                                              scratch_data.values_there[q];
-
-      for (unsigned int i = 0; i < scratch_data.n_interface_dofs; ++i)
-        {
-          const unsigned int component =
-            scratch_data.component_of_interface_dof[i];
-          face_rhs(i) -=
-            velocity_dot_n * upwind_values(component) *
-            fe_interface_values.jump_in_shape_values(i, q, component) * JxW[q];
-        }
+      case Parameters::QMOMSplittingScheme::lie:
+        advance_physical_space();
+        advance_phase_space(simulation_control->get_time_step());
+        break;
+      case Parameters::QMOMSplittingScheme::strang:
+        AssertThrow(false,
+                    ExcMessage("The strang splitting scheme of the QMOM "
+                               "physics is not implemented yet."));
+        break;
     }
 }
 
 template <int dim>
 void
-QMOM<dim>::assemble_boundary_face_flux(QMOMScratchData<dim>    &scratch_data,
-                                       const types::boundary_id boundary_id,
-                                       Vector<double>          &local_rhs) const
+QMOM<dim>::advance_physical_space()
 {
-  // Boundaries without QMOM boundary condition are treated as none
-  const auto &boundary_types =
-    simulation_parameters.boundary_conditions_qmom.type;
-  const auto type_iterator = boundary_types.find(boundary_id);
-  if (type_iterator == boundary_types.end() ||
-      type_iterator->second == BoundaryConditions::BoundaryType::none)
-    return;
-  const BoundaryConditions::BoundaryType type = type_iterator->second;
-  AssertThrow(type == BoundaryConditions::BoundaryType::qmom_dirichlet ||
-                type == BoundaryConditions::BoundaryType::outlet,
-              ExcInternalError());
+  TimerOutput::Scope t(computing_timer, "Solve linear system");
 
-  const FEFaceValuesBase<dim> &fe_face =
-    scratch_data.fe_interface_values.get_fe_face_values(0);
-  const std::vector<double>         &JxW      = fe_face.get_JxW_values();
-  const std::vector<Tensor<1, dim>> &normals  = fe_face.get_normal_vectors();
-  const std::vector<Point<dim>>     &q_points = fe_face.get_quadrature_points();
-  Vector<double>                    &upwind_values = scratch_data.upwind_values;
+  const Parameters::LinearSolver &linear_solver_parameters =
+    simulation_parameters.linear_solver.at(PhysicsID::qmom);
+  const bool verbose =
+    linear_solver_parameters.verbosity != Parameters::Verbosity::quiet;
+  const double rescale_metric = this->get_residual_rescale_metric();
 
-  for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
+  GlobalVectorType completely_distributed_solution(
+    locally_owned_dofs, triangulation->get_mpi_communicator());
+
+  // All the fields share the matrix and the preconditioner: only the
+  // right-hand side changes
+  for (unsigned int field = 0; field < n_fields; ++field)
     {
-      const double velocity_dot_n =
-        scratch_data.face_velocity_values[q] * normals[q];
+      // The fields have very different magnitudes, so the tolerance is
+      // relative to the right-hand side of each field
+      const double current_residual =
+        system_rhs[field].l2_norm() / rescale_metric;
+      const double linear_solver_tolerance =
+        std::max(linear_solver_parameters.relative_residual * current_residual,
+                 linear_solver_parameters.minimum_residual);
+      if (verbose)
+        this->pcout << "  -Tolerance of iterative solver of "
+                    << field_names[field] << " is : " << linear_solver_tolerance
+                    << std::endl;
 
-      // Outflow: the interior values leave the domain. Inflow: the Dirichlet
-      // values enter it, and nothing enters through an outlet.
-      if (velocity_dot_n > 0.)
-        upwind_values = scratch_data.values_here[q];
-      else if (type == BoundaryConditions::BoundaryType::qmom_dirichlet)
-        dirichlet_functions.at(boundary_id)
-          ->vector_value(q_points[q], upwind_values);
-      else
-        upwind_values = 0.;
+      SolverControl solver_control(linear_solver_parameters.max_iterations,
+                                   linear_solver_tolerance * rescale_metric,
+                                   true,
+                                   true);
+      const TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+        false, linear_solver_parameters.max_krylov_vectors);
+      TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
-      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
-        local_rhs(i) -= velocity_dot_n *
-                        upwind_values(scratch_data.component_of_dof[i]) *
-                        fe_face.shape_value(i, q) * JxW[q];
+      // The solution at the beginning of the time step is the initial guess
+      completely_distributed_solution = present_solutions[field];
+      solver.solve(system_matrix,
+                   completely_distributed_solution,
+                   system_rhs[field],
+                   *ilu_preconditioner);
+
+      if (verbose)
+        this->pcout << "  -Iterative solver of " << field_names[field]
+                    << " took : " << solver_control.last_step()
+                    << " steps to reach a residual norm of "
+                    << solver_control.last_value() / rescale_metric
+                    << std::endl;
+
+      constraints.distribute(completely_distributed_solution);
+      present_solutions[field] = completely_distributed_solution;
     }
+}
+
+template <int dim>
+void
+QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
+{
+  // The evolution of the moments in phase space is not implemented yet: the
+  // constructor rejects nucleation, growth and coalescence, so the moments
+  // are constant in phase space.
 }
 
 template <int dim>
@@ -800,15 +1042,16 @@ QMOM<dim>::calculate_L2_errors()
 {
   analytical_solution->set_time(simulation_control->get_current_time());
 
-  FEValues<dim>      fe_values(*mapping,
-                               *fe,
-                               *cell_quadrature,
-                               update_values | update_quadrature_points |
-                                 update_JxW_values);
-  const unsigned int n_q_points = cell_quadrature->size();
-  std::vector<Vector<double>> values(n_q_points, Vector<double>(n_components));
-  Vector<double>              exact_values(n_components);
-  std::vector<double>         squared_errors(n_components, 0.);
+  FEValues<dim>                    fe_values(*mapping,
+                          *fe,
+                          *cell_quadrature,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
+  const unsigned int               n_q_points = cell_quadrature->size();
+  std::vector<std::vector<double>> values(n_fields,
+                                          std::vector<double>(n_q_points));
+  Vector<double>                   exact_values(n_fields);
+  std::vector<double>              squared_errors(n_fields, 0.);
 
   for (const auto &cell : dof_handler->active_cell_iterators())
     {
@@ -816,37 +1059,27 @@ QMOM<dim>::calculate_L2_errors()
         continue;
 
       fe_values.reinit(cell);
-      fe_values.get_function_values(*present_solution, values);
+      for (unsigned int field = 0; field < n_fields; ++field)
+        fe_values.get_function_values(present_solutions[field], values[field]);
+
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
           analytical_solution->vector_value(fe_values.quadrature_point(q),
                                             exact_values);
-          for (unsigned int component = 0; component < n_components;
-               ++component)
-            squared_errors[component] +=
-              Utilities::fixed_power<2>(values[q](component) -
-                                        exact_values(component)) *
-              fe_values.JxW(q);
+          for (unsigned int field = 0; field < n_fields; ++field)
+            squared_errors[field] += Utilities::fixed_power<2>(
+                                       values[field][q] - exact_values[field]) *
+                                     fe_values.JxW(q);
         }
     }
 
-  std::vector<double> errors(n_components);
+  std::vector<double> errors(n_fields);
   Utilities::MPI::sum(squared_errors,
                       triangulation->get_mpi_communicator(),
                       errors);
   for (double &error : errors)
     error = std::sqrt(error);
   return errors;
-}
-
-template <int dim>
-void
-QMOM<dim>::output_newton_update_norms()
-{
-  this->pcout << "\t  ||dx||_L2 = " << std::setw(6) << newton_update.l2_norm()
-              << std::setw(6)
-              << "\t  ||dx||_Linfty = " << newton_update.linfty_norm()
-              << std::endl;
 }
 
 template <int dim>

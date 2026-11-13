@@ -101,4 +101,4 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
 .. warning::
 
-  The QMOM physics is under development. Only its parameters are available: enabling it stops the simulation with an error, since its solver is not implemented yet.
+  The QMOM physics is under development. Only the transport of the moments in physical space is implemented: the scalars, the evolution of the moments in phase space and the source terms are not available yet (see :doc:`qmom`).
