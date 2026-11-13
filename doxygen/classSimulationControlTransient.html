@@ -89,6 +89,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="classSimulationControlTransient-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">SimulationControlTransient Class Reference</div></div>
 </div><!--header-->
@@ -115,8 +116,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa319da7751b899049697edecee141d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1951b02a3fe1c7a7a2536c0dc08d513" id="r_ac1951b02a3fe1c7a7a2536c0dc08d513"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#ac1951b02a3fe1c7a7a2536c0dc08d513">is_output_iteration</a> () override</td></tr>
 <tr class="separator:ac1951b02a3fe1c7a7a2536c0dc08d513"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b42c02f3ee3cb90a33b5609f5f7879e" id="r_a3b42c02f3ee3cb90a33b5609f5f7879e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#a3b42c02f3ee3cb90a33b5609f5f7879e">save</a> (const std::string &amp;prefix) override</td></tr>
-<tr class="separator:a3b42c02f3ee3cb90a33b5609f5f7879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a429eb8571bdd48e1a9579435318296f0" id="r_a429eb8571bdd48e1a9579435318296f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#a429eb8571bdd48e1a9579435318296f0">read</a> (const std::string &amp;prefix) override</td></tr>
 <tr class="separator:a429eb8571bdd48e1a9579435318296f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classSimulationControl"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classSimulationControl')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classSimulationControl.html">SimulationControl</a></td></tr>
@@ -198,6 +197,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad46ef6790aa229f6a684bda669b01052 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b58c3bbf0cfb16d0d427c78eadf03b8 inherit pub_methods_classSimulationControl" id="r_a9b58c3bbf0cfb16d0d427c78eadf03b8"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt; const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a9b58c3bbf0cfb16d0d427c78eadf03b8">get_bdf_coefficients</a> ()</td></tr>
 <tr class="separator:a9b58c3bbf0cfb16d0d427c78eadf03b8 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9711044f9d9cba8a344f640d55c0e1ff inherit pub_methods_classSimulationControl" id="r_a9711044f9d9cba8a344f640d55c0e1ff"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a9711044f9d9cba8a344f640d55c0e1ff">save</a> (const std::string &amp;prefix)</td></tr>
+<tr class="separator:a9711044f9d9cba8a344f640d55c0e1ff inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8dd1372ac8b9191ad892199298e09b1d inherit pub_methods_classSimulationControl" id="r_a8dd1372ac8b9191ad892199298e09b1d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a8dd1372ac8b9191ad892199298e09b1d">get_checkpointed_simulation_control_info</a> (const std::string &amp;prefix)</td></tr>
 <tr class="separator:a8dd1372ac8b9191ad892199298e09b1d inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -219,16 +220,10 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:ae5618d27fcd5e0eef634469aa6e42751"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5b6fef0f679729b1035d52014cd8f8f" id="r_ac5b6fef0f679729b1035d52014cd8f8f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#ac5b6fef0f679729b1035d52014cd8f8f">max_dt</a></td></tr>
 <tr class="separator:ac5b6fef0f679729b1035d52014cd8f8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcf147462d0c172cfca7257b0d3f67ac" id="r_abcf147462d0c172cfca7257b0d3f67ac"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#abcf147462d0c172cfca7257b0d3f67ac">time_last_output</a></td></tr>
-<tr class="separator:abcf147462d0c172cfca7257b0d3f67ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefd86904fd64cddfec7ccac8a0f3b1e5" id="r_aefd86904fd64cddfec7ccac8a0f3b1e5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#aefd86904fd64cddfec7ccac8a0f3b1e5">output_time_frequency</a></td></tr>
 <tr class="separator:aefd86904fd64cddfec7ccac8a0f3b1e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b4e9ec71ecb4d37cc6d18cb136fde04" id="r_a7b4e9ec71ecb4d37cc6d18cb136fde04"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#a7b4e9ec71ecb4d37cc6d18cb136fde04">output_times_vector</a></td></tr>
 <tr class="separator:a7b4e9ec71ecb4d37cc6d18cb136fde04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8265d680f30c6ef58e84ba3862e6036" id="r_aa8265d680f30c6ef58e84ba3862e6036"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#aa8265d680f30c6ef58e84ba3862e6036">output_times_counter</a></td></tr>
-<tr class="separator:aa8265d680f30c6ef58e84ba3862e6036"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8d9b7077bb7c38ef2c3fb22e4cc916a" id="r_ac8d9b7077bb7c38ef2c3fb22e4cc916a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#ac8d9b7077bb7c38ef2c3fb22e4cc916a">no_more_output_times</a></td></tr>
-<tr class="separator:ac8d9b7077bb7c38ef2c3fb22e4cc916a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20928086234ec81009e2323dcdcce55b" id="r_a20928086234ec81009e2323dcdcce55b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#a20928086234ec81009e2323dcdcce55b">override_time_step_on_restart</a></td></tr>
 <tr class="separator:a20928086234ec81009e2323dcdcce55b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64d86676ed3f106ca7a0f11ff08bf978" id="r_a64d86676ed3f106ca7a0f11ff08bf978"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#a64d86676ed3f106ca7a0f11ff08bf978">output_time_interval</a></td></tr>
@@ -303,14 +298,19 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a1f8fa7913f1e8572720ee37766433926 inherit pro_attribs_classSimulationControl" id="r_a1f8fa7913f1e8572720ee37766433926"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a1f8fa7913f1e8572720ee37766433926">bdf_coefs</a></td></tr>
 <tr class="separator:a1f8fa7913f1e8572720ee37766433926 inherit pro_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-attribs" name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:a7cddcd82195ecf72c7885b60e5904106" id="r_a7cddcd82195ecf72c7885b60e5904106"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControlTransient.html#a7cddcd82195ecf72c7885b60e5904106">output_time_tolerance</a> = 1e-6</td></tr>
+<tr class="separator:a7cddcd82195ecf72c7885b60e5904106"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_static_attribs_classSimulationControl"><td colspan="2" onclick="javascript:toggleInherit('pro_static_attribs_classSimulationControl')"><img src="closed.png" alt="-"/>&#160;Static Protected Attributes inherited from <a class="el" href="classSimulationControl.html">SimulationControl</a></td></tr>
+<tr class="memitem:ae9e9c4c00dd2b6dfb9de9e735a1b2b7f inherit pro_static_attribs_classSimulationControl" id="r_ae9e9c4c00dd2b6dfb9de9e735a1b2b7f"><td class="memItemLeft" align="right" valign="top">static constexpr unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#ae9e9c4c00dd2b6dfb9de9e735a1b2b7f">n_previous_time_steps</a> = 4</td></tr>
+<tr class="separator:ae9e9c4c00dd2b6dfb9de9e735a1b2b7f inherit pro_static_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classSimulationControl"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classSimulationControl')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classSimulationControl.html">SimulationControl</a></td></tr>
 <tr class="memitem:a50e751631a57502d8138f6687d0054b0 inherit pub_static_methods_classSimulationControl" id="r_a50e751631a57502d8138f6687d0054b0"><td class="memItemLeft" align="right" valign="top">static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a50e751631a57502d8138f6687d0054b0">get_number_of_stages</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a> &amp;<a class="el" href="classSimulationControl.html#af0240227f84942b381c1e3270ccded7f">method</a>)</td></tr>
 <tr class="separator:a50e751631a57502d8138f6687d0054b0 inherit pub_static_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_static_attribs_classSimulationControl"><td colspan="2" onclick="javascript:toggleInherit('pro_static_attribs_classSimulationControl')"><img src="closed.png" alt="-"/>&#160;Static Protected Attributes inherited from <a class="el" href="classSimulationControl.html">SimulationControl</a></td></tr>
-<tr class="memitem:ae9e9c4c00dd2b6dfb9de9e735a1b2b7f inherit pro_static_attribs_classSimulationControl" id="r_ae9e9c4c00dd2b6dfb9de9e735a1b2b7f"><td class="memItemLeft" align="right" valign="top">static constexpr unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#ae9e9c4c00dd2b6dfb9de9e735a1b2b7f">n_previous_time_steps</a> = 4</td></tr>
-<tr class="separator:ae9e9c4c00dd2b6dfb9de9e735a1b2b7f inherit pro_static_attribs_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Simulation control for transient simulations. </p>
@@ -348,7 +348,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00283">283</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00291">291</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00999">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00973">output_time_frequency</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a07cc694b9b3fc636710fa08b6922c42b">Parameters::SimulationControl::time</a>.</p>
 
 </div>
 </div>
@@ -382,9 +384,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classSimulationControl.html#a096e10bf3a464ae70f3e77c33e7f027d">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00393">393</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00404">404</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00187">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00944">adapt_with_cfl</a>, <a class="el" href="simulation__control_8h_source.html#l00952">adaptative_time_step_scaling</a>, <a class="el" href="simulation__control_8h_source.html#l00146">SimulationControl::capillary_time_step_constraint</a>, <a class="el" href="simulation__control_8h_source.html#l00112">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00995">end_control</a>, <a class="el" href="simulation__control_8h_source.html#l00071">SimulationControl::end_time</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a91a5545bc9f9d6ec7c9dbc4caf71c937a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00163">SimulationControl::max_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00120">SimulationControl::max_CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00955">max_dt</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00938">time_step_adaptation_required</a>, and <a class="el" href="simulation__control_8h_source.html#l00080">SimulationControl::time_step_independent_of_end_time</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00187">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00944">adapt_with_cfl</a>, <a class="el" href="simulation__control_8h_source.html#l00952">adaptative_time_step_scaling</a>, <a class="el" href="simulation__control_8h_source.html#l00146">SimulationControl::capillary_time_step_constraint</a>, <a class="el" href="simulation__control_8h_source.html#l00112">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00996">end_control</a>, <a class="el" href="simulation__control_8h_source.html#l00071">SimulationControl::end_time</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a91a5545bc9f9d6ec7c9dbc4caf71c937a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00163">SimulationControl::max_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00120">SimulationControl::max_CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00955">max_dt</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00938">time_step_adaptation_required</a>, and <a class="el" href="simulation__control_8h_source.html#l00080">SimulationControl::time_step_independent_of_end_time</a>.</p>
 
 </div>
 </div>
@@ -417,9 +419,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a67aa726e7105dd0af92f47dac688e001">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00342">342</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00353">353</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00187">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8cc_source.html#l00056">SimulationControl::add_time_step()</a>, <a class="el" href="simulation__control_8cc_source.html#l00393">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00255">SimulationControl::first_assembly</a>, <a class="el" href="simulation__control_8cc_source.html#l00383">is_at_end()</a>, <a class="el" href="simulation__control_8h_source.html#l00391">SimulationControl::is_bdf()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, <a class="el" href="simulation__control_8h_source.html#l00594">SimulationControl::set_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8cc_source.html#l00095">SimulationControl::update_assembly_method()</a>, and <a class="el" href="simulation__control_8h_source.html#l00282">SimulationControl::update_bdf_coefficients()</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00187">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8cc_source.html#l00059">SimulationControl::add_time_step()</a>, <a class="el" href="simulation__control_8cc_source.html#l00404">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00255">SimulationControl::first_assembly</a>, <a class="el" href="simulation__control_8cc_source.html#l00394">is_at_end()</a>, <a class="el" href="simulation__control_8h_source.html#l00391">SimulationControl::is_bdf()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, <a class="el" href="simulation__control_8h_source.html#l00594">SimulationControl::set_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8cc_source.html#l00098">SimulationControl::update_assembly_method()</a>, and <a class="el" href="simulation__control_8h_source.html#l00282">SimulationControl::update_bdf_coefficients()</a>.</p>
 
 </div>
 </div>
@@ -451,7 +453,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a08bd0100d59a88e4aaf607f70f803aba">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01041">1041</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01042">1042</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 <p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00938">time_step_adaptation_required</a>.</p>
 
@@ -487,9 +489,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classSimulationControlAdjointSteady.html#ac8534ba715f32012c81368600656323d">SimulationControlAdjointSteady</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00383">383</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00394">394</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00995">end_control</a>, <a class="el" href="simulation__control_8h_source.html#l00100">SimulationControl::end_iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00071">SimulationControl::end_time</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a91a5545bc9f9d6ec7c9dbc4caf71c937a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00996">end_control</a>, <a class="el" href="simulation__control_8h_source.html#l00100">SimulationControl::end_iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00071">SimulationControl::end_time</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a91a5545bc9f9d6ec7c9dbc4caf71c937a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
 
 </div>
 </div>
@@ -518,13 +520,16 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Check if the current iteration is an output iteration. </p>
 <p>Output iterations are determined based on the value of the output time, the output interval, and the output frequency within the interval.</p>
+<p>When an output time frequency is used, the output times are \(t_k = t_{\text{start}} + k \Delta t_{\text{output}}\), where \(t_{\text{start}}\) is the lower bound of the output time interval. An iteration is an output iteration if the time step that leads to it reaches or crosses one of these output times. The initial iteration and the last iteration are also output iterations. In all cases, the current time must lie within the output time interval. Both the output times and the bounds of the interval are considered as reached up to <a class="el" href="classSimulationControlTransient.html#a7cddcd82195ecf72c7885b60e5904106" title="Relative tolerance used to decide whether an output time has been reached.">SimulationControlTransient::output_time_tolerance</a> times the output time frequency.</p>
+<p>When specific output times are used, they may be given in any order. An iteration is an output iteration if the time step that leads to it, or the next time step, reaches or crosses one of these output times. Since the output times do not necessarily correspond to the time of an iteration, the iterations before and after each output time are thus written. At the initial iteration, only the output times equal to the current time are considered. Several output times may lie within the same time step.</p>
+<p>These criteria only depend on the current, previous and next times, so calling this function several times within the same iteration always returns the same result.</p>
 <dl class="section return"><dt>Returns</dt><dd>true if output should be written at this iteration, false otherwise </dd></dl>
 
 <p>Reimplemented from <a class="el" href="classSimulationControl.html#a037f676d4e45242bb481e0a4a71e2dc9">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00430">430</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00441">441</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8cc_source.html#l00393">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00693">SimulationControl::get_current_time()</a>, <a class="el" href="simulation__control_8h_source.html#l00638">SimulationControl::get_iteration_number()</a>, <a class="el" href="simulation__control_8cc_source.html#l00383">is_at_end()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00979">no_more_output_times</a>, <a class="el" href="simulation__control_8h_source.html#l00998">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00216">SimulationControl::output_iteration_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00961">output_time_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00992">output_time_interval</a>, <a class="el" href="simulation__control_8h_source.html#l00971">output_times_counter</a>, <a class="el" href="simulation__control_8h_source.html#l00968">output_times_vector</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, and <a class="el" href="simulation__control_8h_source.html#l00958">time_last_output</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8cc_source.html#l00404">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00693">SimulationControl::get_current_time()</a>, <a class="el" href="simulation__control_8h_source.html#l00638">SimulationControl::get_iteration_number()</a>, <a class="el" href="simulation__control_8cc_source.html#l00394">is_at_end()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00999">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00216">SimulationControl::output_iteration_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00973">output_time_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00993">output_time_interval</a>, <a class="el" href="simulation__control_8h_source.html#l00970">output_time_tolerance</a>, <a class="el" href="simulation__control_8h_source.html#l00980">output_times_vector</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
 
 </div>
 </div>
@@ -564,9 +569,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classSimulationControlTransientDEM.html#a6760db7b27f43507bc6727a855beb4a3">SimulationControlTransientDEM</a>, and <a class="el" href="classSimulationControlAdjointSteady.html#aebd269a2d8349f0a48a995d259002fe7">SimulationControlAdjointSteady</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00302">302</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00313">313</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00187">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00753">SimulationControl::get_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00764">SimulationControl::get_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8cc_source.html#l00204">SimulationControl::is_verbose_iteration()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00232">SimulationControl::log_precision</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00187">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00753">SimulationControl::get_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00764">SimulationControl::get_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8cc_source.html#l00207">SimulationControl::is_verbose_iteration()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00232">SimulationControl::log_precision</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
 
 </div>
 </div>
@@ -595,7 +600,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Read the simulation control information from a checkpoint file. </p>
-<p>Reads and updates the time step vector, the CFL value, the time, the iteration number and the index of the output times vector if time control is used. Allows changing the time step if adaptive time stepping is disabled.</p>
+<p>Reads and updates the time step vector, the CFL value, the time and the iteration number. Allows changing the time step if adaptive time stepping is disabled.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint file for the simulation </td></tr>
@@ -605,50 +610,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classSimulationControl.html#a414fd0b7da77e067991b56af939ee66f">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00554">554</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00557">557</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00112">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00068">SimulationControl::initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00998">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00971">output_times_counter</a>, <a class="el" href="simulation__control_8h_source.html#l00984">override_time_step_on_restart</a>, <a class="el" href="simulation__control_8cc_source.html#l00228">SimulationControl::read()</a>, <a class="el" href="simulation__control_8h_source.html#l00535">SimulationControl::set_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00567">SimulationControl::set_current_time_step()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a07cc694b9b3fc636710fa08b6922c42b">Parameters::SimulationControl::time</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
-
-</div>
-</div>
-<a id="a3b42c02f3ee3cb90a33b5609f5f7879e" name="a3b42c02f3ee3cb90a33b5609f5f7879e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b42c02f3ee3cb90a33b5609f5f7879e">&#9670;&#160;</a></span>save()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void SimulationControlTransient::save </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>prefix</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Save the simulation control information to a checkpoint file. </p>
-<p>Saves the time step vector, the CFL value, the time, the iteration number and the index of the output times vector if time control is used.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint file for the simulation </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classSimulationControl.html#a9711044f9d9cba8a344f640d55c0e1ff">SimulationControl</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00541">541</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00998">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00971">output_times_counter</a>, <a class="el" href="simulation__control_8cc_source.html#l00210">SimulationControl::save()</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a07cc694b9b3fc636710fa08b6922c42b">Parameters::SimulationControl::time</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00112">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00068">SimulationControl::initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00985">override_time_step_on_restart</a>, <a class="el" href="simulation__control_8cc_source.html#l00231">SimulationControl::read()</a>, <a class="el" href="simulation__control_8h_source.html#l00535">SimulationControl::set_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00567">SimulationControl::set_current_time_step()</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
 
 </div>
 </div>
@@ -727,7 +691,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>End control type: iteration-based or time-based. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00995">995</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00996">996</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -757,33 +721,6 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ac8d9b7077bb7c38ef2c3fb22e4cc916a" name="ac8d9b7077bb7c38ef2c3fb22e4cc916a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8d9b7077bb7c38ef2c3fb22e4cc916a">&#9670;&#160;</a></span>no_more_output_times</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool SimulationControlTransient::no_more_output_times</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Flag indicating whether there are more output times to check. </p>
-<p>Set to true when all specific output times in output_times_vector have been reached. </p>
-
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00979">979</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
-
-</div>
-</div>
 <a id="ae8d1e620dcf445c0a7e3dbbfb3085051" name="ae8d1e620dcf445c0a7e3dbbfb3085051"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae8d1e620dcf445c0a7e3dbbfb3085051">&#9670;&#160;</a></span>output_control</h2>
 
@@ -806,7 +743,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Output control type: iteration-based or time-based. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00998">998</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00999">999</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -832,7 +769,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Output frequency for time-based output control. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00961">961</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00973">973</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -859,12 +796,12 @@ Additional Inherited Members</h2></td></tr>
 <p>Time interval for output of transient iterations. </p>
 <p>Used with either time output control or iteration control to define intervals for output generation. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00992">992</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00993">993</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
-<a id="aa8265d680f30c6ef58e84ba3862e6036" name="aa8265d680f30c6ef58e84ba3862e6036"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8265d680f30c6ef58e84ba3862e6036">&#9670;&#160;</a></span>output_times_counter</h2>
+<a id="a7cddcd82195ecf72c7885b60e5904106" name="a7cddcd82195ecf72c7885b60e5904106"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cddcd82195ecf72c7885b60e5904106">&#9670;&#160;</a></span>output_time_tolerance</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -873,19 +810,20 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int SimulationControlTransient::output_times_counter</td>
+          <td class="memname">constexpr double SimulationControlTransient::output_time_tolerance = 1e-6</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Counter to move between output times given in output_times_vector. </p>
+<p>Relative tolerance used to decide whether an output time has been reached. </p>
+<p>An output time that lies within this tolerance after the current time is considered as reached. This prevents round-off errors accumulated in the current time from delaying or skipping an output. With an output time frequency, the tolerance is relative to the output time frequency, so that it does not change from one iteration to the next and every output time is attributed to exactly one iteration. It also applies to the bounds of the output time interval. With specific output times, the tolerance is relative to the time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00971">971</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00970">970</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -912,7 +850,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Specific output times for time output control. </p>
 <p>Vector containing specific times at which output should be generated. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00968">968</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00980">980</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -938,33 +876,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Flag to override the time step with the set value upon restart. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00984">984</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
-
-</div>
-</div>
-<a id="abcf147462d0c172cfca7257b0d3f67ac" name="abcf147462d0c172cfca7257b0d3f67ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcf147462d0c172cfca7257b0d3f67ac">&#9670;&#160;</a></span>time_last_output</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double SimulationControlTransient::time_last_output</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Time of the last output. </p>
-
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00958">958</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00985">985</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
