@@ -8,33 +8,34 @@
  * library.
  *
  * The unknowns are regular scalars and the first raw moments of the particle
- * size distribution, called the fields of the QMOM physics. All the fields
- * are discretized with the same scalar discontinuous Galerkin element, on a
- * single DoFHandler, and each field is stored in its own vector. Since all
- * the fields are advected by the same fluid velocity, the matrix of their
- * transport is the same: it is assembled and preconditioned once per time
- * step, then solved with one right-hand side per field.
+ * size distribution, called the components of the QMOM physics. All the
+ * components are discretized with the same scalar discontinuous Galerkin
+ * element, on a single DoFHandler, and each component is stored in its own
+ * vector. Since all the components are advected by the same fluid velocity,
+ * the matrix of their transport is the same: it is assembled and
+ * preconditioned once per time step, then solved with one right-hand side per
+ * component.
  *
  * Each time step of the fluid dynamics is split (Lie splitting) into:
- *  - the transport of all the fields in physical space by the fluid velocity,
- *    solved with an upwind discontinuous Galerkin discretization and an
- *    implicit BDF time integration (advance_physical_space());
+ *  - the transport of all the components in physical space by the fluid
+ *    velocity, with their source terms, solved with an upwind discontinuous
+ *    Galerkin discretization and an implicit BDF time integration
+ *    (advance_physical_space());
  *  - the evolution of the moments in phase space (nucleation, growth and
  *    coalescence), applied independently at every degree of freedom
  *    (advance_phase_space()).
  *
- * The transport is linear in the fields, since the fluid velocity is given.
- * The QMOM physics is therefore driven by the linear solver strategy:
+ * The transport is linear in the components, since the fluid velocity is
+ * given. The QMOM physics is therefore driven by the linear solver strategy:
  * assemble_system_matrix() assembles the transport matrix,
  * setup_preconditioner() builds its preconditioner, assemble_system_rhs()
- * assembles the right-hand side of every field and solve_linear_system()
- * advances the fields over the time step.
+ * assembles the right-hand side of every component and solve_linear_system()
+ * advances the components over the time step.
  */
 
 #ifndef lethe_qmom_h
 #define lethe_qmom_h
 
-#include <core/boundary_conditions.h>
 #include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/simulation_control.h>
@@ -91,10 +92,11 @@ DeclException1(
  * @brief Quadrature method of moments (QMOM), solved as an auxiliary physics
  * coupled to the fluid dynamics solver.
  *
- * Field layout: field i < n_scalars is the scalar i and field n_scalars + k is
- * the raw moment M_k of the particle size distribution, k < n_moments. This is
- * the ordering of the components of the QMOMFieldFunction of the initial
- * conditions, boundary conditions and analytical solution.
+ * Component layout: component i < n_scalars is the scalar i and component
+ * n_scalars + k is the raw moment M_k of the particle size distribution,
+ * k < n_moments. This is the ordering of the components of the
+ * QMOMFieldFunction of the initial conditions, boundary conditions, source
+ * term and analytical solution.
  *
  * @tparam dim Number of spatial dimensions.
  */
@@ -106,8 +108,8 @@ public:
    * @brief Constructor of the QMOM physics. It verifies that the QMOM
    * parameters are consistent with the features supported so far.
    *
-   * @param[in] multiphysics_interface Multiphysics interface through which the
-   * QMOM physics exchanges fields with the other physics.
+   * @param[in] multiphysics_interface Multiphysics interface, through which
+   * the QMOM physics gets the fluid velocity.
    * @param[in] p_simulation_parameters Simulation parameters.
    * @param[in] p_triangulation Distributed triangulation shared by all physics.
    * @param[in] p_simulation_control Simulation control (time stepping).
@@ -119,9 +121,10 @@ public:
        const std::shared_ptr<SimulationControl> &p_simulation_control);
 
   /**
-   * @brief Gather the fields for output, one output structure per field.
+   * @brief Gather the components for output, one output structure per
+   * component, since each component is stored in its own vector.
    *
-   * @return Vector of output structures holding the QMOM fields.
+   * @return Vector of output structures holding the QMOM components.
    */
   std::vector<OutputStruct<dim, GlobalVectorType>>
   gather_output_hook() override;
@@ -134,14 +137,14 @@ public:
   finish_simulation() override;
 
   /**
-   * @brief Shift the solution history of every field.
+   * @brief Shift the solution history of every component.
    */
   void
   percolate_time_vectors() override;
 
   /**
-   * @brief Post-process the QMOM fields: compute the L2 error of every field
-   * if the analytical solution is enabled.
+   * @brief Post-process the QMOM components: compute the L2 error of every
+   * component if the analytical solution is enabled.
    *
    * @param[in] first_iteration Whether this is the first iteration.
    */
@@ -155,15 +158,15 @@ public:
   output_per_iteration_timer() override;
 
   /**
-   * @brief Prepare the present and previous solutions of every field for mesh
-   * refinement/coarsening.
+   * @brief Prepare the present and previous solutions of every component for
+   * mesh refinement/coarsening.
    */
   void
   pre_mesh_adaptation() override;
 
   /**
-   * @brief Interpolate the present and previous solutions of every field onto
-   * the adapted mesh.
+   * @brief Interpolate the present and previous solutions of every component
+   * onto the adapted mesh.
    */
   void
   post_mesh_adaptation() override;
@@ -182,14 +185,15 @@ public:
     dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
-   * @brief Serialize the present and previous solutions of every field for
-   * restart.
+   * @brief Serialize the present and previous solutions of every component
+   * for restart.
    */
   void
   write_checkpoint() override;
 
   /**
-   * @brief Deserialize the present and previous solutions of every field.
+   * @brief Deserialize the present and previous solutions of every
+   * component.
    */
   void
   read_checkpoint() override;
@@ -205,35 +209,37 @@ public:
   /**
    * @brief Distribute the DoFs, allocate the vectors and the transport
    * matrix, and register the DoFHandler and the mapping of the QMOM physics
-   * in the multiphysics interface. The fields themselves are not shared with
-   * the other physics.
+   * in the multiphysics interface. The solution vectors are not registered.
    */
   void
   setup_dofs() override;
 
   /**
    * @brief Interpolate the initial conditions of the "QMOM" subsection of the
-   * "initial conditions".
+   * "initial conditions" at the support points of the element, component by
+   * component.
    */
   void
   set_initial_conditions() override;
 
   /**
    * @brief Update the time of the Dirichlet boundary conditions if they are
-   * time-dependent.
+   * time-dependent. The boundary conditions are imposed weakly, through the
+   * upwind fluxes, so there are no constraints to rebuild.
    */
   void
   update_boundary_conditions() override;
 
   /**
-   * @brief Build the ILU preconditioner of the transport matrix, shared by
-   * all the fields.
+   * @brief Build the preconditioner (ILU or AMG) of the transport matrix,
+   * shared by all the components.
    */
   void
   setup_preconditioner() override;
 
   /**
-   * @brief Advance the fields over the current time step with Lie splitting:
+   * @brief Advance the components over the current time step with Lie
+   * splitting:
    * transport in physical space, then evolution in phase space. This is the
    * last function called by the linear solver strategy.
    */
@@ -241,7 +247,7 @@ public:
   solve_linear_system() override;
 
   /**
-   * @brief Get the DoFHandler shared by all the QMOM fields.
+   * @brief Get the DoFHandler shared by all the QMOM components.
    *
    * @return Reference to the DoFHandler.
    */
@@ -289,7 +295,7 @@ public:
 
   /**
    * @brief Not available: the QMOM physics stores one solution vector per
-   * field.
+   * component.
    *
    * @return Never returns.
    */
@@ -300,7 +306,8 @@ public:
   }
 
   /**
-   * @brief Not available: the QMOM physics has one right-hand side per field.
+   * @brief Not available: the QMOM physics has one right-hand side per
+   * component.
    *
    * @return Never returns.
    */
@@ -344,51 +351,49 @@ public:
 
 private:
   /**
-   * @brief Assemble the transport matrix shared by all the fields, with the
-   * velocity of the fluid dynamics solution.
+   * @brief Assemble the transport matrix shared by all the components: BDF
+   * time derivative, upwind discontinuous Galerkin advection and outflow
+   * through the boundaries, with the present velocity of the fluid dynamics.
    */
   void
   assemble_system_matrix() override;
 
   /**
-   * @brief Assemble the right-hand side of every field, with the velocity of
-   * the fluid dynamics solution.
+   * @brief Assemble the right-hand side of every component: previous
+   * solutions of the BDF time derivative, source term and inflow through the
+   * Dirichlet boundaries.
    */
   void
   assemble_system_rhs() override;
 
   /**
-   * @brief Assemble the transport matrix: BDF time derivative, upwind
-   * discontinuous Galerkin advection and outflow through the boundaries.
+   * @brief Gather the present fluid velocity at the quadrature points of a
+   * cell, from the block or non-block fluid dynamics solution.
    *
-   * @tparam FluidVectorType Vector type of the fluid dynamics solution.
-   * @param[in] fluid_solution Ghosted fluid dynamics solution.
+   * @param[in] velocity_cell Cell of the fluid dynamics DoFHandler.
+   * @param[in,out] scratch_data Scratch data in which the velocity is stored.
    */
-  template <typename FluidVectorType>
   void
-  assemble_transport_matrix(const FluidVectorType &fluid_solution);
+  reinit_velocity_with_adequate_solution(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    QMOMScratchData<dim>                                 &scratch_data);
 
   /**
-   * @brief Assemble the right-hand side of every field: previous solutions of
-   * the BDF time derivative and inflow through the Dirichlet boundaries.
+   * @brief Gather the present fluid velocity at the quadrature points of a
+   * face, from the block or non-block fluid dynamics solution.
    *
-   * @tparam FluidVectorType Vector type of the fluid dynamics solution.
-   * @param[in] fluid_solution Ghosted fluid dynamics solution.
+   * @param[in] velocity_cell Cell of the fluid dynamics DoFHandler.
+   * @param[in] face_no Face number in velocity_cell.
+   * @param[in] sub_face_no Subface number in velocity_cell, or
+   * numbers::invalid_unsigned_int if the face is not refined from this side.
+   * @param[in,out] scratch_data Scratch data in which the velocity is stored.
    */
-  template <typename FluidVectorType>
   void
-  assemble_transport_rhs(const FluidVectorType &fluid_solution);
-
-  /**
-   * @brief Get the type of the QMOM boundary condition of a boundary.
-   *
-   * @param[in] boundary_id Boundary id.
-   *
-   * @return Type of the boundary condition, none if the boundary has no QMOM
-   * boundary condition.
-   */
-  BoundaryConditions::BoundaryType
-  get_boundary_type(const types::boundary_id boundary_id) const;
+  reinit_face_velocity_with_adequate_solution(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const unsigned int                                    face_no,
+    const unsigned int                                    sub_face_no,
+    QMOMScratchData<dim>                                 &scratch_data);
 
   /**
    * @brief Define the (empty) constraints of the discontinuous Galerkin
@@ -398,9 +403,21 @@ private:
   define_constraints();
 
   /**
-   * @brief Transport all the fields in physical space over the time step:
-   * solve the transport system of every field, with the matrix and the
-   * right-hand sides assembled by the linear solver strategy.
+   * @brief Set up the ILU preconditioner stored in ilu_preconditioner.
+   */
+  void
+  setup_ilu();
+
+  /**
+   * @brief Set up the AMG preconditioner stored in amg_preconditioner.
+   */
+  void
+  setup_amg();
+
+  /**
+   * @brief Transport all the components in physical space over the time
+   * step: solve the transport system of every component, with the matrix and
+   * the right-hand sides assembled by the linear solver strategy.
    */
   void
   advance_physical_space();
@@ -416,42 +433,19 @@ private:
   advance_phase_space(const double time_step);
 
   /**
-   * @brief Compute the L2 error of every field with respect to the analytical
-   * solution at the current time.
+   * @brief Compute the L2 error of every component with respect to the
+   * analytical solution at the current time.
    *
-   * @return L2 errors, ordered as the fields.
+   * @return L2 errors, ordered as the components.
    */
   std::vector<double>
   calculate_L2_errors();
 
-  /**
-   * @brief Gather pointers to the present solutions of all the fields,
-   * followed by their previous solutions, in the order used by the
-   * checkpoints and the mesh adaptation.
-   *
-   * @return Pointers to all the solution vectors.
-   */
-  std::vector<GlobalVectorType *>
-  gather_all_solutions();
-
-  /**
-   * @brief Transfer all the solution vectors, ordered as in
-   * gather_all_solutions(), after a mesh adaptation or from a checkpoint.
-   *
-   * @tparam TransferFunction Callable taking a std::vector<GlobalVectorType *>
-   * of locally owned vectors and filling them (with
-   * SolutionTransfer::interpolate() or SolutionTransfer::deserialize()).
-   * @param[in] transfer Function that fills the locally owned vectors.
-   */
-  template <typename TransferFunction>
-  void
-  transfer_all_solutions(const TransferFunction &transfer);
-
   /// Error message of the PhysicsSolver functions that require a single
   /// solution vector
   static constexpr const char *single_vector_error_message =
-    "The QMOM physics stores one solution vector per field and is solved with "
-    "the linear solver strategy: this function should not be called.";
+    "The QMOM physics stores one solution vector per component and is solved "
+    "with the linear solver strategy: this function should not be called.";
 
   /// Number of regular scalars
   const unsigned int n_scalars;
@@ -459,10 +453,10 @@ private:
   /// Number of transported moments
   const unsigned int n_moments;
 
-  /// Total number of fields: n_scalars + n_moments
-  const unsigned int n_fields;
+  /// Total number of components: n_scalars + n_moments
+  const unsigned int n_components;
 
-  /// Multiphysics interface used to exchange fields with other physics
+  /// Multiphysics interface, used to get the fluid velocity
   MultiphysicsInterface<dim> *multiphysics;
 
   /// Timer of the QMOM physics
@@ -477,10 +471,10 @@ private:
   /// Simulation control
   std::shared_ptr<SimulationControl> simulation_control;
 
-  /// DoFHandler shared by all the fields
+  /// DoFHandler shared by all the components
   std::shared_ptr<DoFHandler<dim>> dof_handler;
 
-  /// Scalar discontinuous element shared by all the fields
+  /// Scalar discontinuous element shared by all the components
   std::unique_ptr<FiniteElement<dim>> fe;
 
   /// Mapping, cell and face quadratures
@@ -488,17 +482,21 @@ private:
   std::unique_ptr<Quadrature<dim>>     cell_quadrature;
   std::unique_ptr<Quadrature<dim - 1>> face_quadrature;
 
-  /// Names of the fields
-  std::vector<std::string> field_names;
+  /// Names of the components, used for the output and the error table
+  std::vector<std::string> component_names;
 
-  /// Initial conditions of all the fields
+  /// Initial conditions of all the components
   std::shared_ptr<QMOMFieldFunction<dim>> initial_conditions;
 
   /// Values imposed by the Dirichlet boundary conditions, by boundary id
   std::map<types::boundary_id, std::shared_ptr<QMOMFieldFunction<dim>>>
     dirichlet_functions;
 
-  /// Analytical solution of all the fields, used to compute the L2 errors
+  /// Source term of all the components
+  std::shared_ptr<QMOMFieldFunction<dim>> source_term;
+
+  /// Analytical solution of all the components, used to compute the L2
+  /// errors
   std::shared_ptr<QMOMFieldFunction<dim>> analytical_solution;
 
   /// Locally owned and locally relevant DoFs
@@ -508,27 +506,31 @@ private:
   /// Empty constraints of the discontinuous Galerkin discretization
   AffineConstraints<double> constraints;
 
-  /// Transport matrix, shared by all the fields
+  /// Transport matrix, shared by all the components
   TrilinosWrappers::SparseMatrix system_matrix;
 
   /// ILU preconditioner of the transport matrix
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
-  /// Ghosted present solution of each field: present_solutions[field]
+  /// AMG preconditioner of the transport matrix
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+
+  /// Ghosted present solution of each component:
+  /// present_solutions[component]
   std::vector<GlobalVectorType> present_solutions;
 
-  /// Ghosted previous solutions of each field, used by the BDF schemes:
-  /// previous_solutions[field][p] is the solution p + 1 time steps ago
+  /// Ghosted previous solutions of each component, used by the BDF schemes:
+  /// previous_solutions[component][p] is the solution p + 1 time steps ago
   std::vector<std::vector<GlobalVectorType>> previous_solutions;
 
-  /// Right-hand side of each field: system_rhs[field]
+  /// Right-hand side of each component: system_rhs[component]
   std::vector<GlobalVectorType> system_rhs;
 
-  /// Solution transfer of all the solution vectors, for mesh adaptation and
-  /// checkpointing
-  std::unique_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
+  /// Solution transfer of the present and previous solutions of all the
+  /// components, for mesh adaptation and checkpointing
+  std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
-  /// L2 errors of the fields with respect to the analytical solution
+  /// L2 errors of the components with respect to the analytical solution
   ConvergenceTable error_table;
 };
 
