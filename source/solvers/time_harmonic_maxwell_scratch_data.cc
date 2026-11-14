@@ -288,11 +288,11 @@ TimeHarmonicMaxwellScratchData<dim>::build_local_dof_index_map(
             field_index = candidate_field;
             ++n_owner_fields;
           }
-      AssertThrow(n_owner_fields == 1,
-                  ExcMessage("The shape function " + std::to_string(k) +
-                             " of the finite element " + fe.get_name() +
-                             " does not belong to exactly one of the E_real, "
-                             "E_imag, H_real and H_imag fields."));
+      Assert(n_owner_fields == 1,
+             ExcMessage("The shape function " + std::to_string(k) +
+                        " of the finite element " + fe.get_name() +
+                        " does not belong to exactly one of the E_real, "
+                        "E_imag, H_real and H_imag fields."));
 
       // Base function of the shape function k. The function
       // system_to_base_index identifies k by three indices:

@@ -152,7 +152,8 @@ public:
    * @brief Constructor.
    *
    * @param[in] time_harmonic_maxwell_parameters Parameters of the
-   * time-harmonic Maxwell physics, used to get the angular frequency.
+   * time-harmonic Maxwell physics. They are not used for now, but they will be
+   * needed by the volume source terms.
    */
   TimeHarmonicMaxwellAssemblerCore(const Parameters::TimeHarmonicMaxwell<dim>
                                      &time_harmonic_maxwell_parameters);
@@ -179,12 +180,6 @@ public:
   void
   assemble_rhs(const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
                DPGCopyData                               &copy_data) override;
-
-private:
-  /**
-   * Angular frequency of the electromagnetic fields.
-   */
-  const double omega;
 };
 
 

@@ -269,7 +269,7 @@ namespace
 
   /**
    * @brief Add a real value to a 2x2 block of a local matrix of the real DPG
-   * system. This is a special case of the add_complex_block function where to
+   * system. This is a special case of the add_complex_block function to
    * avoid the overhead of adding close to zero imaginary parts.
    *
    * @param[in,out] matrix Local matrix.
@@ -303,9 +303,8 @@ namespace
 
 template <int dim>
 TimeHarmonicMaxwellAssemblerCore<dim>::TimeHarmonicMaxwellAssemblerCore(
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters)
-  : omega(2.0 * numbers::PI *
-          time_harmonic_maxwell_parameters.electromagnetic_frequency)
+  const Parameters::TimeHarmonicMaxwell<dim>
+    & /*time_harmonic_maxwell_parameters*/)
 {}
 
 template <int dim>
