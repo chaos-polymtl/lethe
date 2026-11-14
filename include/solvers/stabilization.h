@@ -277,11 +277,12 @@ calculate_rbvms_dynamic_tau(const Number tau_static, const double alpha)
  * +τ_M u_i r_M[j] and -τ_M^2 r_M[i] r_M[j] of eq. 72. Note the u factor sits
  * on the component (test) index i and u' on the derivative index j, which is
  * the transpose of the SUPG term -( u·∇v, u' ) = -u_j u'_i (u' on the
- * component index, u on the derivative index).
+ * component index, u on the derivative index). For ALE, only that SUPG
+ * factor uses u - u_mesh; the cross-stress here still uses physical u.
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
- * @param[in] velocity The advecting velocity u.
+ * @param[in] velocity The physical velocity u (not relative to the mesh).
  * @param[in] fine_scale_velocity The fine-scale velocity u'.
  * @return The gradient-residual contribution T[i][j].
  */
@@ -313,7 +314,7 @@ rbvms_fine_scale_terms(const Tensor<1, dim, Number> &velocity,
  *
  * @tparam dim Number of spatial dimensions.
  * @tparam Number Number type (e.g. double or VectorizedArray<double>).
- * @param[in] velocity Frozen advecting velocity u at the linearization point.
+ * @param[in] velocity Frozen physical velocity u at the linearization point.
  * @param[in] delta_velocity Trial velocity increment δu.
  * @param[in] fine_scale_velocity Fine-scale velocity u' at the linearization
  *   point.

@@ -2483,18 +2483,18 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
         }
 
       // RBVMS cross-stress and Reynolds-stress Jacobian (Bazilevs et al. 2007,
-      // eq. 72): linearization of -(∇v, u_adv ⊗ u') - (∇v, u' ⊗ u') with the
+      // eq. 72): linearization of -(∇v, u ⊗ u') - (∇v, u' ⊗ u') with the
       // fine-scale velocity u'_lin and its increment δu' computed above with
       // the SUPG/PSPG Jacobian.
       if (is_rbvms)
         {
-          // Velocity components of the frozen advection (u^n) and of the trial
-          // increment (δu); the stored tensors also carry the pressure slot.
+          // Physical velocity at the linearization point and trial increment.
+          // Only the SUPG weight uses the velocity relative to the mesh.
           Tensor<1, dim, VectorizedArray<number>> velocity;
           Tensor<1, dim, VectorizedArray<number>> delta_velocity;
           for (int d = 0; d < dim; ++d)
             {
-              velocity[d]       = previous_advective_values[d];
+              velocity[d]       = previous_values[d];
               delta_velocity[d] = value[d];
             }
 
@@ -2850,16 +2850,16 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
             }
 
           // RBVMS cross-stress and Reynolds-stress terms (Bazilevs et al. 2007,
-          // eq. 72), -(∇v, u_adv ⊗ u') - (∇v, u' ⊗ u'). These fine-scale terms
+          // eq. 72), -(∇v, u ⊗ u') - (∇v, u' ⊗ u'). These fine-scale terms
           // are what distinguish RBVMS from SUPG/PSPG. The fine-scale velocity
           // u' was computed above with the SUPG/PSPG terms.
           if (is_rbvms)
             {
-              // Velocity components (the stored advective tensor also carries
-              // the pressure slot, component dim).
+              // The cross-stress uses physical velocity, including for ALE.
+              // Only the SUPG weight uses the velocity relative to the mesh.
               Tensor<1, dim, VectorizedArray<number>> velocity;
               for (int d = 0; d < dim; ++d)
-                velocity[d] = advective_value[d];
+                velocity[d] = value[d];
 
               const auto fine_scale =
                 rbvms_fine_scale_terms<dim>(velocity, fine_scale_velocity);

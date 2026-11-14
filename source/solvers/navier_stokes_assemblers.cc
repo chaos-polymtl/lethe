@@ -448,7 +448,7 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
           // function.
           delta_fine_scale_velocity[j] = -tau * strong_jacobian_vec[q][j];
           fine_scale_terms_linearization[j] =
-            rbvms_fine_scale_terms_linearization(advective_velocity,
+            rbvms_fine_scale_terms_linearization(velocity,
                                                  phi_u_j,
                                                  fine_scale_velocity,
                                                  delta_fine_scale_velocity[j]);
@@ -636,7 +636,7 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
       // are contracted with the test-function gradients below.
       const Tensor<1, dim> fine_scale_velocity = -tau * strong_residual;
       const Tensor<2, dim> fine_scale_terms =
-        rbvms_fine_scale_terms(advective_velocity, fine_scale_velocity);
+        rbvms_fine_scale_terms(velocity, fine_scale_velocity);
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -669,8 +669,10 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
           local_rhs_i +=
             (fine_scale_velocity * (grad_phi_u_i * advective_velocity)) * JxW;
 
-          // LSIC / grad-div term (uses tau_C)
-          local_rhs_i += -tau_lsic * (div_phi_u_i * velocity_divergence) * JxW;
+          // LSIC / grad-div term uses the continuity residual, including
+          // the prescribed mass source.
+          local_rhs_i +=
+            -tau_lsic * div_phi_u_i * (velocity_divergence - mass_source) * JxW;
 
           // RBVMS cross-stress and Reynolds-stress terms (eq. 72)
           local_rhs_i += -scalar_product(fine_scale_terms, grad_phi_u_i) * JxW;

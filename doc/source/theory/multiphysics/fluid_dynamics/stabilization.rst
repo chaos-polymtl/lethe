@@ -16,7 +16,7 @@ SUPG (Streamline-Upwind/ Petrov-Galerkin) formulation and it is in charge of sta
 
   &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_K  = 0
   \\
-  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega
   \\
   & + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_l \partial_l v_k \right) \mathrm{d}\Omega_K =0
 
@@ -26,19 +26,19 @@ This formulation is consistent as the added terms involve the residual and if we
 
    \tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + 9 \left( \frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
 
-where :math:`\Delta t` is the time step, and :math:`h_{conv}` and :math:`h_{diff}` are the size of the element related to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere having a volume equivalent to that of the cell. In the case of stationary problems, the following expression is used: 
+where :math:`\Delta t` is the time step, and :math:`h_{conv}` and :math:`h_{diff}` are the size of the element related to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere having a volume equivalent to that of the cell. In the case of stationary problems, the following expression is used:
 
 .. math::
 
    \tau = \left[ \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + 9 \left(\frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
 
-To solve the non-linear problem, Lethe uses again the Newton-Raphson method, however, the Jacobian and the residual are now of the following form: 
+To solve the non-linear problem, Lethe uses again the Newton-Raphson method, however, the Jacobian and the residual are now of the following form:
 
 .. math::
-    
+
   \mathbf{\mathcal{J}} &= \left[ \begin{matrix} 	A^* & B^{*T}  \\[0.3em]	B^* & S^* \end{matrix} \right] \\
   \mathbf{\mathcal{R}} &=  \left[ \begin{matrix} \mathbf{\mathcal{R}}_{v}^*   \\[0.3em]		\mathbf{\mathcal{R}}_{q}^*  \end{matrix} \right]
-  
+
 As it can be seen, there is an additional matrix :math:`S^*` that appears in the linear system and eliminates the zero block on the diagonal of the Jacobian matrix.
 
 
@@ -46,13 +46,13 @@ As it can be seen, there is an additional matrix :math:`S^*` that appears in the
 Grad-Div Block Formulation
 ------------------------------------
 
-This approach builds on the work of `Heister et al. (2012) <https://onlinelibrary.wiley.com/doi/10.1002/fld.3654>`_. and can be seen as a natural parallel extension of the `Step-57 of deal.ii <https://www.dealii.org/current/doxygen/deal.II/step_57.html>`_. An additional term is added to the classic weak form of the Navier-Stokes equations: 
+This approach builds on the work of `Heister et al. (2012) <https://onlinelibrary.wiley.com/doi/10.1002/fld.3654>`_. and can be seen as a natural parallel extension of the `Step-57 of deal.ii <https://www.dealii.org/current/doxygen/deal.II/step_57.html>`_. An additional term is added to the classic weak form of the Navier-Stokes equations:
 
 .. math::
 
-  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega =0 
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega =0
   \\
-  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega  - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega  - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega
   \\
   &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_K} \partial_l u_l \partial_k v_k \mathrm{d}\Omega_K = 0
 
@@ -69,7 +69,7 @@ The GLS formulation is built as a generalization of the stabilization procedure 
 
   &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_K  = 0
   \\
-  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega
   \\
   & + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_l \partial_l v_k \right) \mathrm{d}\Omega_K
   \\
@@ -290,7 +290,17 @@ As in the SUPG/PSPG and GLS formulations, the Jacobian of the Newton-Raphson met
 Fine-Scale Velocity: Quasi-Static and Dynamic Subscales
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The closure :math:`\mathbf{u}' = -\tau_M \boldsymbol{\mathcal{R}}` can be understood as the solution of a model equation for the fine scales. Following Codina *et al.* [#codina2007]_, the fine-scale momentum equation is approximated, in each element, by
+All the RBVMS terms can be written in terms of the fine-scale (subgrid) velocity :math:`\mathbf{u}'`. With :math:`\mathbf{u}' = -\tau_M \boldsymbol{\mathcal{R}}`, the PSPG, SUPG, cross-stress and Reynolds-stress terms of the weak form above are
+
+.. math::
+
+   -\left(\nabla q, \mathbf{u}'\right), \qquad -\left(\mathbf{u} \cdot \nabla \mathbf{v}, \mathbf{u}'\right), \qquad -\left(\nabla \mathbf{v}, \mathbf{u} \otimes \mathbf{u}'\right), \qquad -\left(\nabla \mathbf{v}, \mathbf{u}' \otimes \mathbf{u}'\right)
+
+and this is how Lethe assembles them. The ``velocity subscale`` parameter of the ``stabilization`` subsection selects how :math:`\mathbf{u}'` is computed.
+
+With the default ``quasi_static`` subscale, :math:`\mathbf{u}' = -\tau_M \boldsymbol{\mathcal{R}}` is computed from the current residual only, and the time step enters through the :math:`4/\Delta t^2` term of :math:`\tau_M`. This has two consequences. First, a steady state reached by time stepping depends on the time step, since :math:`\tau_M` does. Second, when :math:`\Delta t` becomes small, :math:`\tau_M \rightarrow \Delta t / 2`, so the fine-scale velocity contributions, including the PSPG term that stabilizes the pressure of equal-order elements, vanish for a bounded momentum residual. In contrast, the continuity stabilization parameter :math:`\tau_C = 1/(\tau_M g_i g_i)` grows as :math:`1/\Delta t`.
+
+With the ``dynamic`` subscale, following Codina, Principe, Guasch and Badia, "Time dependent subscales in the stabilized finite element approximation of incompressible flow problems", Computer Methods in Applied Mechanics and Engineering 196 (2007) 2413-2430, the fine-scale velocity has its own evolution equation
 
 .. math::
 
@@ -311,7 +321,7 @@ where the advection and diffusion of the fine scales inside the element are repl
 
 The memory :math:`\mathbf{m}'` requires the fine-scale velocity of the previous time steps, which Lethe stores at the quadrature points of the cells. The fine-scale velocity thus becomes a history variable, like the internal variables of inelastic constitutive laws in solid mechanics. The continuity stabilization parameter is built from :math:`\tau_s`, :math:`\tau_C = 1/(\tau_s\, g_i g_i)`, so it does not depend on the time step either.
 
-The memory changes the behaviour of the stabilization in both regimes:
+The memory changes the behaviour of the stabilization in both regimes. At a steady state, :math:`\mathbf{u}'` no longer changes and, since the BDF coefficients sum to zero, :math:`\beta_0 \mathbf{u}' + \mathbf{m}' = 0`, so that :math:`\mathbf{u}' = -\tau_s \boldsymbol{\mathcal{R}}`: the steady solution no longer depends on the time step. When the time step is small, :math:`\tau_t` also behaves like :math:`\Delta t`, but the memory compensates for it (for BDF1, :math:`\mathbf{u}'_{n+1} \approx \mathbf{u}'_n - \Delta t\left(\boldsymbol{\mathcal{R}} + \mathbf{u}'_n/\tau_s\right)`), so :math:`\mathbf{u}'` keeps its magnitude and relaxes towards :math:`-\tau_s \boldsymbol{\mathcal{R}}` on the time scale :math:`\tau_s`.
 
 * At a steady state, :math:`\mathbf{u}'` no longer changes. Since the BDF coefficients sum to zero, :math:`\beta_0 \mathbf{u}' + \mathbf{m}' = 0`, so that :math:`\mathbf{u}' = -\tau_s \boldsymbol{\mathcal{R}}`: the steady solution no longer depends on the time step.
 * When the time step is small, :math:`\tau_t` is also of the order of :math:`\Delta t`, but the memory compensates for it. For BDF1, :math:`\mathbf{u}'_{n+1} \approx \mathbf{u}'_n - \Delta t\, \boldsymbol{\mathcal{R}}`, so :math:`\mathbf{u}'` keeps its magnitude and relaxes towards :math:`-\tau_s \boldsymbol{\mathcal{R}}` over the time scale :math:`\tau_s`.
