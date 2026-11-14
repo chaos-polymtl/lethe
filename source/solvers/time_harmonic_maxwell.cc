@@ -11,6 +11,7 @@
 
 #include <deal.II/fe/fe_system.h>
 
+#include <deal.II/lac/lapack_support.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
@@ -2119,8 +2120,16 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
 
   setup_assemblers();
 
+  // Angular frequency of the electromagnetic fields, used by the scratch data
+  // to compute the coefficients of the cell terms
+  const double omega =
+    2.0 * numbers::PI *
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
+      .electromagnetic_frequency;
+
   auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
+    omega,
     *this->fe_trial_interior,
     *this->fe_trial_skeleton,
     *this->fe_test,
@@ -2212,6 +2221,7 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
                                         *void_fraction_solution);
     }
   scratch_data.calculate_physical_properties();
+  scratch_data.calculate_cell_coefficients();
 
   // We reset the local matrices and vector where we are aggregating the
   // information of the current cell.
@@ -2229,15 +2239,21 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
   for (const unsigned int face_no : cell->face_indices())
     {
       scratch_data.reinit_face(cell_skeleton, cell_test, face_no);
-      if (scratch_data.cell_material_needs_temperature)
-        scratch_data.reinit_face_temperature(cell_temperature,
-                                             face_no,
-                                             *temperature_solution);
-      if (scratch_data.cell_material_needs_void_fraction)
-        scratch_data.reinit_face_void_fraction(cell_void_fraction,
-                                               face_no,
-                                               *void_fraction_solution);
-      scratch_data.calculate_face_physical_properties();
+
+      // The physical properties on the faces are only used by the Robin
+      // boundary condition, so they are only computed on the boundary faces.
+      if (scratch_data.face_at_boundary)
+        {
+          if (scratch_data.cell_material_needs_temperature)
+            scratch_data.reinit_face_temperature(cell_temperature,
+                                                 face_no,
+                                                 *temperature_solution);
+          if (scratch_data.cell_material_needs_void_fraction)
+            scratch_data.reinit_face_void_fraction(cell_void_fraction,
+                                                   face_no,
+                                                   *void_fraction_solution);
+          scratch_data.calculate_face_physical_properties();
+        }
 
       for (auto &assembler : this->face_assemblers)
         {
@@ -2250,19 +2266,26 @@ TimeHarmonicMaxwell<dim>::assemble_local_dpg_system(
   // condensation operators that are required both for the assembly of the
   // skeleton system and for the reconstruction of the interior solution.
 
-  // We only need the inverse of the Gram matrix $G$, so we invert it.
-  copy_data.G_matrix.invert();
+  // The Gram matrix $G$ is symmetric positive definite, so we compute its
+  // Cholesky factorization. Its inverse is never formed: it is only applied
+  // through solves with the Cholesky factors, which overwrite their argument.
+  // The symmetric property has to be set on every cell, because WorkStream
+  // copies the copy data and the copy constructor of LAPACKFullMatrix resets
+  // the property to general.
+  copy_data.G_matrix.set_property(LAPACKSupport::symmetric);
+  copy_data.G_matrix.compute_cholesky_factorization();
 
-  // We construct $M_4 = B^\dagger G^{-1}$ with it.
-  copy_data.B_matrix.Tmmult(copy_data.M4_matrix, copy_data.G_matrix);
+  // We compute $G^{-1} B$ by solving with a copy of $B$.
+  copy_data.G_inverse_B = copy_data.B_matrix;
+  copy_data.G_matrix.solve(copy_data.G_inverse_B);
 
-  // Then using $M_4$ we compute the condensed matrices $M_1 = B^\dagger G^{-1}
-  // B$ and $M_2 = B^\dagger G^{-1} \hat{B}$.
-  copy_data.M4_matrix.mmult(copy_data.M1_matrix, copy_data.B_matrix);
-  copy_data.M4_matrix.mmult(copy_data.M2_matrix, copy_data.B_hat_matrix);
+  // Then we compute $M_1 = B^\dagger G^{-1} B$.
+  copy_data.B_matrix.Tmmult(copy_data.M1_matrix, copy_data.G_inverse_B);
 
-  // Finally, as for the $G$ matrix, we invert the $M_1$ matrix.
-  copy_data.M1_matrix.invert();
+  // Finally, $M_1$ is also symmetric positive definite, so we compute its
+  // Cholesky factorization in the same way.
+  copy_data.M1_matrix.set_property(LAPACKSupport::symmetric);
+  copy_data.M1_matrix.compute_cholesky_factorization();
 }
 
 template <int dim>
@@ -2278,30 +2301,43 @@ TimeHarmonicMaxwell<dim>::assemble_local_system_matrix(
 
   assemble_local_dpg_system(cell, scratch_data, copy_data);
 
-  // We construct $M_5 = \hat{B}^\dagger G^{-1}$ and the matrix
-  // $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$.
-  copy_data.B_hat_matrix.Tmmult(copy_data.M5_matrix, copy_data.G_matrix);
-  copy_data.M5_matrix.mmult(copy_data.M3_matrix, copy_data.B_hat_matrix);
+  // Since $G$ is symmetric, we compute $M_2 = B^\dagger G^{-1} \hat{B} =
+  // (G^{-1} B)^\dagger \hat{B}$ and the vector $M_4 l = B^\dagger G^{-1} l =
+  // (G^{-1} B)^\dagger l$.
+  copy_data.G_inverse_B.Tmmult(copy_data.M2_matrix, copy_data.B_hat_matrix);
+  copy_data.G_inverse_B.Tvmult(copy_data.M4_l, copy_data.l_vector);
+
+  // The matrix $G^{-1} \hat{B}$ is used to construct the matrix $M_3 =
+  // \hat{B}^\dagger G^{-1} \hat{B}$ and, since $G$ is symmetric, the vector
+  // $M_5 l = \hat{B}^\dagger G^{-1} l = (G^{-1} \hat{B})^\dagger l$.
+  copy_data.G_inverse_B_hat = copy_data.B_hat_matrix;
+  copy_data.G_matrix.solve(copy_data.G_inverse_B_hat);
+  copy_data.B_hat_matrix.Tmmult(copy_data.M3_matrix, copy_data.G_inverse_B_hat);
+  copy_data.G_inverse_B_hat.Tvmult(copy_data.M5_l, copy_data.l_vector);
+
+  // We compute the matrix $M_1^{-1} M_2$
+  copy_data.M1_inverse_M2 = copy_data.M2_matrix;
+  copy_data.M1_matrix.solve(copy_data.M1_inverse_M2);
 
   // Now, we have to compute the local matrix and the local RHS for the
   // condensed system.
 
-  // The cell matrix is obtained with the formula $(M_3 -
-  // M_2^\dagger M_1^{-1} M_2)$:
-  copy_data.M2_matrix.Tmmult(copy_data.tmp_matrix_M2M1, copy_data.M1_matrix);
-  copy_data.tmp_matrix_M2M1.mmult(copy_data.tmp_matrix_M2M1M2,
-                                  copy_data.M2_matrix);
-  copy_data.tmp_matrix_M2M1M2.add(-1.0, copy_data.M3_matrix);
-  copy_data.tmp_matrix_M2M1M2 *= -1.0;
+  // The cell matrix is obtained with the formula
+  // $M_3 - M_2^\dagger (M_1^{-1} M_2)$.
+  copy_data.M2_matrix.Tmmult(copy_data.tmp_matrix_M2M1M2,
+                             copy_data.M1_inverse_M2);
+  copy_data.M3_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M2);
+
   // This line is used to convert the LAPACK matrix to a full matrix so we can
   // perform the distribution to the global system.
-  copy_data.local_matrix = copy_data.tmp_matrix_M2M1M2;
+  copy_data.local_matrix = copy_data.M3_matrix;
 
-  // Then we compute the cell RHS using $(M_5 - M_2^\dagger M_1^{-1} M_4)l$.
-  copy_data.tmp_matrix_M2M1.mmult(copy_data.tmp_matrix_M2M1M4,
-                                  copy_data.M4_matrix);
-  copy_data.M5_matrix.add(-1.0, copy_data.tmp_matrix_M2M1M4);
-  copy_data.M5_matrix.vmult(copy_data.local_rhs, copy_data.l_vector);
+  // Then we compute the cell RHS using $M_5 l - M_2^\dagger M_1^{-1} M_4 l$.
+  // Since $M_1$ is symmetric, $M_2^\dagger M_1^{-1} M_4 l =
+  // (M_1^{-1} M_2)^\dagger M_4 l$.
+  copy_data.M1_inverse_M2.Tvmult(copy_data.local_rhs, copy_data.M4_l);
+  // The sadd function computes local_rhs = -1 * local_rhs + 1 * M5_l.
+  copy_data.local_rhs.sadd(-1.0, 1.0, copy_data.M5_l);
 
   // Get the local dof indices for the skeleton trial space to be able to
   // distribute the local matrix and RHS to the global system. Cannot use
@@ -2352,7 +2388,10 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
   assemble_local_dpg_system(cell, scratch_data, copy_data);
 
   // Now, we already have the solution on the skeleton and only need to
-  // perform $u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)$ on each cell. When this
+  // compute $u_h = M_1^{-1} (M_4 l - M_2 \hat{u}_h)$ on each cell. Since $G$
+  // is symmetric, $M_4 l - M_2 \hat{u}_h = (G^{-1} B)^\dagger (l -
+  // \hat{B}\hat{u}_h)$, so the interior right-hand side is obtained with two
+  // matrix-vector products and the matrix $M_2$ is never computed. When $u_h$
   // is obtained, we can compute at the same time the error indicator
   // $\Psi = G^{-1}(l - B u_h - \hat{B}\hat{u}_h)$ if the dpg error estimator
   // is activated.
@@ -2362,27 +2401,34 @@ TimeHarmonicMaxwell<dim>::reconstruct_local_interior_solution(
     ->get_dof_values(*this->present_solution_skeleton,
                      copy_data.local_skeleton_solution);
 
-  // Then we do the matrix-vector products to obtain the interior unknowns.
-  copy_data.M2_matrix.vmult(copy_data.tmp_vector_interior,
-                            copy_data.local_skeleton_solution);
-  copy_data.M4_matrix.vmult(copy_data.local_interior_rhs, copy_data.l_vector);
-  copy_data.local_interior_rhs -= copy_data.tmp_vector_interior;
-  copy_data.M1_matrix.vmult(copy_data.local_interior_solution,
-                            copy_data.local_interior_rhs);
+  // Then we compute $l - \hat{B}\hat{u}_h$, which is stored in l_vector, and
+  // the interior right-hand side $(G^{-1} B)^\dagger (l - \hat{B}\hat{u}_h)$.
+  // The interior unknowns are obtained with a single solve with the Cholesky
+  // factorization of $M_1$. The solve overwrites its argument, so it is done on
+  // a copy of the right-hand side.
+  copy_data.B_hat_matrix.vmult(copy_data.tmp_vector_reconstruction,
+                               copy_data.local_skeleton_solution);
+  copy_data.l_vector -= copy_data.tmp_vector_reconstruction;
+  copy_data.G_inverse_B.Tvmult(copy_data.local_interior_rhs,
+                               copy_data.l_vector);
+  copy_data.local_interior_solution = copy_data.local_interior_rhs;
+  copy_data.M1_matrix.solve(copy_data.local_interior_solution);
 
   // We can also compute the error indicator on this cell if the dpg error
   // estimator is activated. The residual R = l - B u_h - \hat{B}\hat{u}_h is
-  // stored in l_vector, its Riesz representation Psi = G^{-1} R in
+  // obtained by subtracting B u_h from l_vector, which already contains
+  // l - \hat{B}\hat{u}_h. Its Riesz representation Psi = G^{-1} R is stored in
   // local_residual, and the squared energy norm of the residual is
   // ||R||^2_V = R^T G^-1 R = R^T Psi.
   if (needs_dpg_error_estimator)
     {
-      copy_data.B_matrix.vmult(copy_data.tmp_vector_error_indicator,
+      copy_data.B_matrix.vmult(copy_data.tmp_vector_reconstruction,
                                copy_data.local_interior_solution);
-      copy_data.B_hat_matrix.vmult_add(copy_data.tmp_vector_error_indicator,
-                                       copy_data.local_skeleton_solution);
-      copy_data.l_vector -= copy_data.tmp_vector_error_indicator;
-      copy_data.G_matrix.vmult(copy_data.local_residual, copy_data.l_vector);
+      copy_data.l_vector -= copy_data.tmp_vector_reconstruction;
+      // G_matrix holds the Cholesky factorization of G, so Psi is obtained by
+      // solving with a copy of R, since the solve overwrites its argument.
+      copy_data.local_residual = copy_data.l_vector;
+      copy_data.G_matrix.solve(copy_data.local_residual);
 
       copy_data.local_residual_norm_squared =
         copy_data.l_vector * copy_data.local_residual;
@@ -2446,8 +2492,16 @@ TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
   // over the locally owned cells
   this->squared_residual_L2_norm = 0.0;
 
+  // Angular frequency of the electromagnetic fields, used by the scratch data
+  // to compute the coefficients of the cell terms
+  const double omega =
+    2.0 * numbers::PI *
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
+      .electromagnetic_frequency;
+
   auto scratch_data = TimeHarmonicMaxwellScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
+    omega,
     *this->fe_trial_interior,
     *this->fe_trial_skeleton,
     *this->fe_test,

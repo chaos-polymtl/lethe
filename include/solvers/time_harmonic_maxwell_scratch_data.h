@@ -22,6 +22,7 @@
 #include <deal.II/fe/fe_values_extractors.h>
 #include <deal.II/fe/mapping.h>
 
+#include <array>
 #include <complex>
 #include <map>
 #include <memory>
@@ -90,16 +91,17 @@ electromagnetic_properties_depend_on(
 /**
  * @brief Class that stores the information required by the assembly of the
  * Discontinuous Petrov-Galerkin (DPG) ultraweak formulation of the
- * time-harmonic Maxwell equations. For each cell, it evaluates the complex
- * shape functions of the test space (\f$\mathbf{F}\f$ for the electric test
- * functions and \f$\mathbf{I}\f$ for the magnetic ones, with their curls and
- * complex conjugates) and of the interior trial space (\f$\mathbf{E}\f$ and
- * \f$\mathbf{H}\f$) and the effective material properties at the quadrature
- * points. For each face of the cell, it evaluates the test functions and the
- * tangential traces of the skeleton trial space (\f$\hat{\mathbf{E}}\f$ and
- * \f$\hat{\mathbf{H}}\f$) at the face quadrature points. The complex values are
- * stored with their complex conjugates because the conjugate of a complex
- * tensor is not implemented in deal.II.
+ * time-harmonic Maxwell equations. For each cell, it evaluates the base
+ * functions of the test space (\f$\mathbf{F}\f$ and \f$\mathbf{I}\f$) with
+ * their curls, the base functions of the interior trial space (\f$\mathbf{E}\f$
+ * and \f$\mathbf{H}\f$) and the effective material properties at the quadrature
+ * points. Additionally, for each face of the cell, it evaluates the base
+ * functions of the tangential traces of the test space and the base functions
+ * of the skeleton trial space (\f$\hat{\mathbf{E}}\f$ and
+ * \f$\hat{\mathbf{H}}\f$), with their cross products with the normal. Since the
+ * Nedelec base functions whose degrees of freedom are not located on a face
+ * have a zero tangential trace on this face, only the base functions associated
+ * with the face are evaluated.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions. Only
  * dim = 3 is supported.
@@ -111,22 +113,20 @@ class TimeHarmonicMaxwellScratchData : public PhysicsScratchDataBase
 {
 public:
   /**
-   * @brief Bit flags identifying to which field a shape function of the
-   * [E_real, E_imag, H_real, H_imag] finite element systems belongs. The
-   * composite flags is_electric and is_magnetic allow to check whether a shape
-   * function belongs to the electric or magnetic field, regardless of whether
-   * it is the real or imaginary part.
+   * @brief Fields of the finite element systems, numbered in the order in which
+   * they appear in the systems following the convention: [E_real, E_imag,
+   * H_real, H_imag].
    */
-  enum ShapeFunctionType : unsigned char
+  enum ElectromagneticFieldComponents : unsigned int
   {
-    electric_real = 1u << 0,
-    electric_imag = 1u << 1,
-    magnetic_real = 1u << 2,
-    magnetic_imag = 1u << 3,
-
-    is_electric = electric_real | electric_imag,
-    is_magnetic = magnetic_real | magnetic_imag
+    E_real = 0,
+    E_imag = 1,
+    H_real = 2,
+    H_imag = 3
   };
+
+  // Number of fields of the finite element systems
+  static constexpr unsigned int n_electromagnetic_fields = 4;
 
   /**
    * @brief Constructor. Creates the FEValues and FEFaceValues objects of the
@@ -135,6 +135,8 @@ public:
    * level.
    *
    * @param[in] properties_manager Manager of the physical property models.
+   *
+   * @param[in] omega Angular frequency of the electromagnetic fields.
    *
    * @param[in] fe_trial_interior Finite element of the interior trial space.
    *
@@ -150,6 +152,7 @@ public:
    */
   TimeHarmonicMaxwellScratchData(
     const PhysicalPropertiesManager &properties_manager,
+    const double                     omega,
     const FiniteElement<dim>        &fe_trial_interior,
     const FiniteElement<dim>        &fe_trial_skeleton,
     const FiniteElement<dim>        &fe_test,
@@ -157,6 +160,7 @@ public:
     const Quadrature<dim - 1>       &face_quadrature,
     const Mapping<dim>              &mapping)
     : properties_manager(properties_manager)
+    , omega(omega)
     , fe_values_trial_interior(mapping,
                                fe_trial_interior,
                                cell_quadrature,
@@ -188,6 +192,7 @@ public:
    */
   TimeHarmonicMaxwellScratchData(const TimeHarmonicMaxwellScratchData<dim> &sd)
     : properties_manager(sd.properties_manager)
+    , omega(sd.omega)
     , fe_values_trial_interior(sd.fe_values_trial_interior.get_mapping(),
                                sd.fe_values_trial_interior.get_fe(),
                                sd.fe_values_trial_interior.get_quadrature(),
@@ -227,40 +232,56 @@ public:
   }
 
   /**
-   * @brief Allocate the memory of all the members of the scratch. It also
-   * classifies the shape functions of the three finite element spaces with the
-   * ShapeFunctionType flags and builds the lists of local dof indices of each
-   * field.
+   * @brief Allocate the memory of all the members of the scratch. It builds the lists
+   * of the local dof index of each base function for each of the four
+   * fields of the three finite element spaces for the reference cell. It also
+   * builds the lists of the base functions of the test and skeleton trial
+   * spaces whose tangential trace does not vanish on each face of the
+   * reference cell.
    */
   void
   allocate() override;
 
   /**
-   * @brief Classify the shape functions of a finite element space of the
-   * time-harmonic Maxwell equations according to the field they belong to.
-   * Each shape function of the [E_real, E_imag, H_real, H_imag] finite element
-   * system receives the ShapeFunctionType flag of its field, which is
-   * determined with FiniteElement::shape_function_belongs_to(). Since every
-   * shape function belongs to exactly one field, the local indices of the
-   * electric and magnetic shape functions are then gathered in two lists.
+   * @brief Build the local dof index list of each base function for each field of
+   * a finite element space of the time-harmonic Maxwell equations [E_real,
+   * E_imag, H_real, H_imag].
    *
    * @param[in] fe Finite element system of the [E_real, E_imag, H_real,
    * H_imag] fields (interior trial, skeleton trial or test space).
    *
-   * @param[out] shape_function_type ShapeFunctionType flag of each shape
-   * function of the finite element.
-   *
-   * @param[out] electric_dofs Local indices of the shape functions that belong
-   * to the electric field (E_real or E_imag).
-   *
-   * @param[out] magnetic_dofs Local indices of the shape functions that belong
-   * to the magnetic field (H_real or H_imag).
+   * @param[out] local_dof_index_map Local dof index of each base function for
+   * each field: local_dof_index_map[field][i].
    */
   void
-  classify_shape_functions(const FiniteElement<dim>   &fe,
-                           std::vector<unsigned char> &shape_function_type,
-                           std::vector<unsigned int>  &electric_dofs,
-                           std::vector<unsigned int>  &magnetic_dofs) const;
+  build_local_dof_index_map(
+    const FiniteElement<dim> &fe,
+    std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+      &local_dof_index_map) const;
+
+  /**
+   * @brief Identify, for each face of the reference cell, the base functions of
+   * a finite element space whose tangential trace does not vanish on the face
+   * (the relevant ones for the face integrals, this would not be needed if the
+   * FE_FaceNedelec existed). For Nedelec elements, these are the base functions
+   * whose degrees of freedom are located on the edges or the interior of the
+   * face.
+   *
+   * @param[in] fe Finite element system of the [E_real, E_imag, H_real,
+   * H_imag] fields.
+   *
+   * @param[in] local_dof_index_map Local dof index of each base function for
+   * each field (see build_local_dof_index_map()).
+   *
+   * @param[out] tangential_base_functions Base functions whose tangential
+   * trace does not vanish on each face: tangential_base_functions[face_no].
+   */
+  void
+  identify_tangential_base_functions(
+    const FiniteElement<dim> &fe,
+    const std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+                                           &local_dof_index_map,
+    std::vector<std::vector<unsigned int>> &tangential_base_functions) const;
 
   /**
    * @brief Enable the evaluation of the temperature field, on which the
@@ -441,6 +462,13 @@ public:
   calculate_physical_properties();
 
   /**
+   * @brief Compute the coefficients of the time-harmonic Maxwell equations of
+   * the cell at the quadrature points.
+   */
+  void
+  calculate_cell_coefficients();
+
+  /**
    * @brief Compute the effective electromagnetic properties at the face
    * quadrature points from the fields gathered by the scratch.
    */
@@ -449,6 +477,8 @@ public:
 
   // Physical properties
   const PhysicalPropertiesManager properties_manager;
+  // Angular frequency of the electromagnetic fields
+  const double omega;
   // ID of the material of the current cell, used to determine the appropriate
   // material properties from the input parameters.
   unsigned int material_id;
@@ -469,53 +499,59 @@ public:
   FEFaceValues<dim> fe_face_values_test;
 
   // Extractor for the FESystem of the real component of the electric field
-  const FEValuesExtractors::Vector extractor_E_real{0};
+  const FEValuesExtractors::Vector extractor_E_real{E_real * dim};
   // Extractor for the FESystem of the imaginary component of the electric field
-  const FEValuesExtractors::Vector extractor_E_imag{dim};
+  const FEValuesExtractors::Vector extractor_E_imag{E_imag * dim};
   // Extractor for the FESystem of the real component of the magnetic field
-  const FEValuesExtractors::Vector extractor_H_real{2 * dim};
+  const FEValuesExtractors::Vector extractor_H_real{H_real * dim};
   // Extractor for the FESystem of the imaginary component of the magnetic field
-  const FEValuesExtractors::Vector extractor_H_imag{3 * dim};
+  const FEValuesExtractors::Vector extractor_H_imag{H_imag * dim};
 
   // Number of quadrature points
   unsigned int n_q_points;
   // Number of face quadrature points
   unsigned int n_face_q_points;
-  // Number of dofs of the test space
-  unsigned int n_dofs_test;
-  // Number of dofs of the interior trial space
-  unsigned int n_dofs_trial_interior;
-  // Number of dofs of the skeleton trial space
-  unsigned int n_dofs_trial_skeleton;
+  // Number of base functions of the test space
+  unsigned int n_base_functions_test;
+  // Number of base functions of the interior trial space
+  unsigned int n_base_functions_trial_interior;
+  // Number of base functions of the skeleton trial space
+  unsigned int n_base_functions_trial_skeleton;
 
-  // Classification of the shape functions of the test space
-  std::vector<unsigned char> shape_function_type_test;
-  // Classification of the shape functions of the interior trial space
-  std::vector<unsigned char> shape_function_type_trial_interior;
-  // Classification of the shape functions of the skeleton trial space
-  std::vector<unsigned char> shape_function_type_trial_skeleton;
+  // Local dof index of each base function of the test space for each field:
+  // test_local_dof_index_map[field][i]. The electric test functions (F) are
+  // the E_real and E_imag fields of the test space and the magnetic ones (I)
+  // are the H_real and H_imag fields.
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+    test_local_dof_index_map;
+  // Local dof index of each base function of the interior trial space for each
+  // field: trial_interior_local_dof_index_map[field][i]
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+    trial_interior_local_dof_index_map;
+  // Local dof index of each base function of the skeleton trial space for each
+  // field: trial_skeleton_local_dof_index_map[field][i]
+  std::array<std::vector<unsigned int>, n_electromagnetic_fields>
+    trial_skeleton_local_dof_index_map;
 
-  // Local dof indices of the test functions associated with the electric field
-  // (F)
-  std::vector<unsigned int> test_dofs_electric;
-  // Local dof indices of the test functions associated with the magnetic field
-  // (I)
-  std::vector<unsigned int> test_dofs_magnetic;
-  // Local dof indices of the interior trial functions associated with the
-  // electric field (E)
-  std::vector<unsigned int> trial_interior_dofs_electric;
-  // Local dof indices of the interior trial functions associated with the
-  // magnetic field (H)
-  std::vector<unsigned int> trial_interior_dofs_magnetic;
-  // Local dof indices of the skeleton trial functions associated with the
-  // electric field (E_hat)
-  std::vector<unsigned int> trial_skeleton_dofs_electric;
-  // Local dof indices of the skeleton trial functions associated with the
-  // magnetic field (H_hat)
-  std::vector<unsigned int> trial_skeleton_dofs_magnetic;
+  // Base functions of the test space whose tangential trace does not vanish on
+  // each face of the reference cell: test_tangential_base_functions[face_no]
+  std::vector<std::vector<unsigned int>> test_tangential_base_functions;
+  // Base functions of the skeleton trial space whose tangential trace does not
+  // vanish on each face of the reference cell:
+  // trial_skeleton_tangential_base_functions[face_no]
+  std::vector<std::vector<unsigned int>>
+    trial_skeleton_tangential_base_functions;
 
   // Cell container for the volume integrals weights
   std::vector<double> JxW;
+  // (1 + |iweps|^2) JxW, weight of (phi_i, phi_j) in the FF block of G
+  std::vector<double> JxW_FF_container;
+  // (1 + |iwmu|^2) JxW, weight of (phi_i, phi_j) in the II block of G
+  std::vector<double> JxW_II_container;
+  // iweps JxW
+  std::vector<std::complex<double>> iweps_JxW_container;
+  // iwmu JxW
+  std::vector<std::complex<double>> iwmu_JxW_container;
   // Cell container for the quadrature points
   std::vector<Point<dim>> quadrature_points;
 
@@ -530,28 +566,15 @@ public:
   // Effective magnetic permeabilities at the cell quadrature points
   std::vector<std::complex<double>> effective_magnetic_permeabilities;
 
-  // Cell electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_F;
-  // Cell complex conjugate of the electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_F_conj;
-  // Cell curl of the electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_F;
-  // Cell complex conjugate of the curl of the electric test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_F_conj;
-  // Cell magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_I;
-  // Cell complex conjugate of the magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_I_conj;
-  // Cell curl of the magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_I;
-  // Cell complex conjugate of the curl of the magnetic test functions
-  Table<2, Tensor<1, dim, std::complex<double>>> curl_phi_I_conj;
+  // Cell base functions of the test space
+  Table<2, Tensor<1, dim>> phi_test;
+  // Cell curl of the base functions of the test space
+  Table<2, Tensor<1, dim>> curl_phi_test;
+  // Cell base functions of the interior trial space
+  Table<2, Tensor<1, dim>> phi_trial_interior;
 
-  // Cell interior trial electric functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_E;
-  // Cell interior trial magnetic functions
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_H;
-
+  // Index of the current face within the cell
+  unsigned int face_no;
   // Flag to indicate whether the current face is at the boundary of the domain
   bool face_at_boundary;
   // Boundary ID of the current face, used to determine the appropriate boundary
@@ -576,28 +599,15 @@ public:
   // Effective magnetic permeabilities at the face quadrature points
   std::vector<std::complex<double>> face_effective_magnetic_permeabilities;
 
-  // Face electric test functions at the face quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_F_face;
-  // Face complex conjugate of the electric test functions at the face
-  // quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_F_face_conj;
-  // Face magnetic test functions at the face quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_I_face_conj;
-  // Face normal cross product of the magnetic test functions at the face
-  // quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_I_face;
-  // Face complex conjugate of the normal cross product of the magnetic test
-  // functions at the face quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_I_face_conj;
-
-  // Face skeleton trial electric functions at the face quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> phi_E_hat;
-  // Face normal cross product of the skeleton trial electric functions at the
-  // face quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_E_hat;
-  // Face normal cross product of the complex conjugate of the skeleton trial
-  // magnetic functions at the face quadrature points
-  Table<2, Tensor<1, dim, std::complex<double>>> n_cross_phi_H_hat;
+  // Face base functions of the test space: phi_test_face[i][q]
+  Table<2, Tensor<1, dim>> phi_test_face;
+  // Face cross product of the normal with the base functions of the test space
+  Table<2, Tensor<1, dim>> n_cross_phi_test_face;
+  // Face tangential traces of the base functions of the skeleton trial space
+  Table<2, Tensor<1, dim>> tangential_phi_trial_skeleton;
+  // Face cross product of the normal with the tangential traces of the base
+  // functions of the skeleton trial space
+  Table<2, Tensor<1, dim>> n_cross_tangential_phi_trial_skeleton;
 
   // Flag to indicate whether the temperature field needs to be gathered and
   // evaluated at the quadrature points
