@@ -1,11 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/set_particle_wall_contact_force_model.h" name="/home/runner/work/lethe/lethe/include/dem/set_particle_wall_contact_force_model.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="323,5,505,75"/>
-<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,137,196,177"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="311,82,153,140,151,135,309,77"/>
-<area shape="rect" id="Node000003" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="220,123,403,192"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="377,87,343,124,339,121,373,83"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="427,130,609,185"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="456,83,496,128,492,132,452,87"/>
-<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="634,123,829,192"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="519,77,640,120,638,125,517,82"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="321,5,503,84"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,149,195,194"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="307,90,155,151,154,146,307,85"/>
+<area shape="rect" id="Node000003" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="219,132,400,211"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="373,95,343,134,340,129,368,97"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="424,140,605,202"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="455,94,493,141,487,139,453,99"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="630,132,823,211"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="518,85,632,132,627,132,517,90"/>
 </map>

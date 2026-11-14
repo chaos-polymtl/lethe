@@ -1,23 +1,23 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/stabilization.h" name="/home/runner/work/lethe/lethe/include/solvers/stabilization.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="915,5,1098,60"/>
-<area shape="rect" id="Node000002" href="$tracer_8h.html" title=" " alt="" coords="115,115,298,170"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="902,41,781,49,633,62,471,82,311,111,282,118,281,113,310,105,471,77,632,57,780,44,902,36"/>
-<area shape="rect" id="Node000005" href="$vans__assemblers_8cc.html" title=" " alt="" coords="322,115,505,170"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="902,48,721,72,619,89,518,111,491,118,490,113,517,105,618,84,721,67,901,42"/>
-<area shape="rect" id="Node000006" href="$isothermal__compressible__navier__stokes__assembler_8cc.html" title=" " alt="" coords="529,108,740,177"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="904,67,741,113,739,108,902,61"/>
-<area shape="rect" id="Node000007" href="$isothermal__compressible__navier__stokes__cls__assembler_8cc.html" title=" " alt="" coords="763,108,999,177"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="967,71,922,110,919,106,964,67"/>
-<area shape="rect" id="Node000008" href="$navier__stokes__assemblers_8cc.html" title=" " alt="" coords="1024,115,1240,170"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1050,67,1103,113,1100,117,1046,72"/>
-<area shape="rect" id="Node000009" href="$navier__stokes__cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="1265,108,1471,177"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1108,61,1265,108,1263,113,1107,66"/>
-<area shape="rect" id="Node000010" href="$navier__stokes__cls__assemblers_8cc.html" title=" " alt="" coords="1495,115,1737,170"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1112,45,1287,70,1485,105,1518,113,1517,118,1483,111,1286,76,1111,50"/>
-<area shape="rect" id="Node000011" href="$stabilization_8cc.html" title=" " alt="" coords="1761,115,1943,170"/>
-<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1112,35,1242,42,1401,55,1576,75,1750,105,1779,113,1777,118,1749,111,1575,81,1401,60,1241,47,1112,40"/>
-<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,225,197,280"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="173,182,129,227,125,223,169,178"/>
-<area shape="rect" id="Node000004" href="$tracer_8cc.html" title=" " alt="" coords="222,225,405,280"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="245,178,289,223,285,227,241,182"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="912,5,1093,67"/>
+<area shape="rect" id="Node000002" href="$tracer_8h.html" title=" " alt="" coords="116,124,297,185"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="894,42,776,52,628,65,468,87,310,118,282,125,280,120,308,112,467,81,628,60,775,46,899,41"/>
+<area shape="rect" id="Node000005" href="$vans__assemblers_8cc.html" title=" " alt="" coords="321,124,502,185"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="894,49,717,76,615,95,515,118,489,125,487,120,514,112,614,89,716,71,899,48"/>
+<area shape="rect" id="Node000006" href="$isothermal__compressible__navier__stokes__assembler_8cc.html" title=" " alt="" coords="526,115,737,194"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="899,69,750,118,738,121,736,116,748,112,894,70"/>
+<area shape="rect" id="Node000007" href="$isothermal__compressible__navier__stokes__cls__assembler_8cc.html" title=" " alt="" coords="761,115,996,194"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="962,76,921,117,918,112,957,79"/>
+<area shape="rect" id="Node000008" href="$navier__stokes__assemblers_8cc.html" title=" " alt="" coords="1020,124,1235,185"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1046,75,1098,124,1092,122,1045,80"/>
+<area shape="rect" id="Node000009" href="$navier__stokes__cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="1260,115,1465,194"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1108,68,1248,112,1262,119,1257,119,1247,118,1107,73"/>
+<area shape="rect" id="Node000010" href="$navier__stokes__cls__assemblers_8cc.html" title=" " alt="" coords="1489,124,1729,185"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1109,49,1282,75,1478,112,1512,123,1506,123,1476,118,1282,80,1109,54"/>
+<area shape="rect" id="Node000011" href="$stabilization_8cc.html" title=" " alt="" coords="1753,124,1934,185"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1109,38,1238,45,1397,58,1570,80,1742,112,1772,123,1767,123,1740,118,1569,85,1396,63,1237,50,1109,43"/>
+<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,242,197,303"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="171,195,130,243,127,239,167,198"/>
+<area shape="rect" id="Node000004" href="$tracer_8cc.html" title=" " alt="" coords="221,242,402,303"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="245,194,287,241,282,241,243,199"/>
 </map>

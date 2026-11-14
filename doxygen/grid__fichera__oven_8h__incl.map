@@ -1,9 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/core/grid_fichera_oven.h" name="/home/runner/work/lethe/lethe/include/core/grid_fichera_oven.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="186,5,369,60"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,168,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,63,126,105,124,100,218,58"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="192,108,363,133"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="280,60,280,94,275,94,275,60"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="387,108,461,133"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="323,58,394,99,391,103,321,62"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="185,5,366,67"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,115,167,143"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,67,128,110,126,106,210,68"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="190,115,360,143"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="277,66,278,101,273,98,273,69"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="385,115,459,143"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="325,65,391,107,385,106,323,70"/>
 </map>

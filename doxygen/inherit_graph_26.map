@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classCopyData.html" title="Class responsible for storing the information calculated using the assembly of regular (meaning non&#45;s..." alt="" coords="5,5,92,31"/>
+<area shape="rect" id="Node000000" href="$classCouplingEvaluationBase.html" title="Base class for coupling evaluation routines." alt="" coords="5,44,185,89"/>
+<area shape="rect" id="Node000001" href="$classNavierStokesCouplingEvaluationSIPG.html" title=" " alt="" coords="233,5,466,50"/>
+<area shape="poly" id="edge32_Node000000_Node000001" title=" " alt="" coords="199,48,235,45,230,46,201,53"/>
+<area shape="rect" id="Node000002" href="$classScalarCouplingEvaluationSIPG.html" title=" " alt="" coords="250,74,448,136"/>
+<area shape="poly" id="edge33_Node000000_Node000002" title=" " alt="" coords="200,80,252,90,247,90,200,85"/>
 </map>

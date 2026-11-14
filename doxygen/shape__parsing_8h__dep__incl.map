@@ -1,9 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/core/shape_parsing.h" name="/home/runner/work/lethe/lethe/include/core/shape_parsing.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="237,5,423,60"/>
-<area shape="rect" id="Node000002" href="$ib__particle_8cc.html" title=" " alt="" coords="5,108,188,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="258,68,159,110,156,105,256,63"/>
-<area shape="rect" id="Node000003" href="$parameters_8cc.html" title=" " alt="" coords="213,115,447,155"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="333,74,333,115,327,115,327,74"/>
-<area shape="rect" id="Node000004" href="$shape__parsing_8cc.html" title=" " alt="" coords="472,108,655,163"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="404,63,504,105,501,110,402,68"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="236,5,420,67"/>
+<area shape="rect" id="Node000002" href="$ib__particle_8cc.html" title=" " alt="" coords="5,115,187,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="252,73,162,117,160,112,247,75"/>
+<area shape="rect" id="Node000003" href="$parameters_8cc.html" title=" " alt="" coords="211,124,445,168"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="330,81,330,124,326,122,326,84"/>
+<area shape="rect" id="Node000004" href="$shape__parsing_8cc.html" title=" " alt="" coords="469,115,651,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="408,71,498,114,492,114,406,77"/>
 </map>

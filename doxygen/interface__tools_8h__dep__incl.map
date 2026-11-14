@@ -1,13 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/include/core/interface_tools.h" name="/home/runner/work/lethe/lethe/include/core/interface_tools.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="321,5,525,60"/>
-<area shape="rect" id="Node000002" href="$cls_8h.html" title=" " alt="" coords="105,115,299,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="354,68,245,118,242,113,352,63"/>
-<area shape="rect" id="Node000005" href="$interface__tools_8cc.html" title=" " alt="" coords="323,108,523,163"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="426,74,426,108,421,108,421,74"/>
-<area shape="rect" id="Node000006" href="$heat__transfer_8cc.html" title=" " alt="" coords="548,108,731,163"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="493,63,584,106,582,110,491,68"/>
-<area shape="rect" id="Node000003" href="$cls_8cc.html" title=" " alt="" coords="5,211,188,265"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="174,167,126,212,123,208,171,163"/>
-<area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="213,211,405,265"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="234,163,282,208,279,212,230,167"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="321,5,524,67"/>
+<area shape="rect" id="Node000002" href="$cls_8h.html" title=" " alt="" coords="104,124,298,168"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="345,76,247,125,245,121,349,73"/>
+<area shape="rect" id="Node000005" href="$interface__tools_8cc.html" title=" " alt="" coords="323,115,522,177"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="424,80,425,116,420,113,421,85"/>
+<area shape="rect" id="Node000006" href="$heat__transfer_8cc.html" title=" " alt="" coords="547,115,728,177"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="497,72,580,114,574,115,496,77"/>
+<area shape="rect" id="Node000003" href="$cls_8cc.html" title=" " alt="" coords="5,225,187,286"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="172,178,127,226,124,222,167,181"/>
+<area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="211,225,402,286"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="234,177,280,224,274,224,232,182"/>
 </map>

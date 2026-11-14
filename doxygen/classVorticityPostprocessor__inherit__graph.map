@@ -1,5 +1,5 @@
 <map id="VorticityPostprocessor&lt; dim &gt;" name="VorticityPostprocessor&lt; dim &gt;">
-<area shape="rect" id="Node000001" title="Compute the vorticity vector field within a domain." alt="" coords="15,93,181,133"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,191,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,59,101,93,95,93,95,59"/>
+<area shape="rect" id="Node000001" title="Compute the vorticity vector field within a domain." alt="" coords="14,98,181,143"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,190,50"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,64,100,99,95,97,96,68"/>
 </map>

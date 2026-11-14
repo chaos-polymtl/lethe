@@ -12,7 +12,7 @@ var searchData=
   ['signeddistancetransformationbase_9',['SignedDistanceTransformationBase',['../classSignedDistanceTransformationBase.html',1,'']]],
   ['signeddistancetransformationpiecewisepolynomial_10',['SignedDistanceTransformationPiecewisePolynomial',['../classSignedDistanceTransformationPiecewisePolynomial.html',1,'']]],
   ['signeddistancetransformationtanh_11',['SignedDistanceTransformationTanh',['../classSignedDistanceTransformationTanh.html',1,'']]],
-  ['simulationcontrol_12',['simulationcontrol',['../structParameters_1_1SimulationControl.html',1,'Parameters::SimulationControl'],['../classSimulationControl.html',1,'SimulationControl']]],
+  ['simulationcontrol_12',['SimulationControl',['../structParameters_1_1SimulationControl.html',1,'Parameters::SimulationControl'],['../classSimulationControl.html',1,'SimulationControl']]],
   ['simulationcontroladjointsteady_13',['SimulationControlAdjointSteady',['../classSimulationControlAdjointSteady.html',1,'']]],
   ['simulationcontrolraytracing_14',['SimulationControlRayTracing',['../classSimulationControlRayTracing.html',1,'']]],
   ['simulationcontrolsteady_15',['SimulationControlSteady',['../classSimulationControlSteady.html',1,'']]],

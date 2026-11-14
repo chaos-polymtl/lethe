@@ -1,17 +1,17 @@
 <map id="/home/runner/work/lethe/lethe/source/core/grid_birmingham_fluidized_bed.cc" name="/home/runner/work/lethe/lethe/source/core/grid_birmingham_fluidized_bed.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="432,5,651,60"/>
-<area shape="rect" id="Node000002" href="$grid__birmingham__fluidized__bed_8h.html" title=" " alt="" coords="251,108,416,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="484,62,389,105,387,100,482,58"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="441,115,642,141"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="544,60,544,101,539,101,539,60"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="667,115,837,141"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="602,58,715,107,713,112,600,63"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="5,203,168,229"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="280,151,133,201,131,196,278,146"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="193,196,346,236"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="321,150,294,186,290,183,317,147"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="371,203,427,229"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="350,147,383,190,379,194,346,150"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="451,203,525,229"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="369,146,457,194,454,199,366,150"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="429,5,647,67"/>
+<area shape="rect" id="Node000002" href="$grid__birmingham__fluidized__bed_8h.html" title=" " alt="" coords="249,115,414,160"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="477,67,391,110,389,106,472,69"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="438,124,638,151"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="540,66,540,109,536,106,536,70"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="662,124,832,151"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="602,65,709,117,703,117,602,70"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,216,167,244"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="274,162,137,213,135,208,271,158"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="191,208,344,252"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="318,159,293,197,289,193,314,161"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="368,216,423,244"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="348,158,380,204,375,202,345,162"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="448,216,522,244"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="369,158,452,208,447,208,367,163"/>
 </map>

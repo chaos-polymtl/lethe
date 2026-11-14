@@ -1,3 +1,13 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classIBStencil.html" title="Define where the sharp immersed&#45;boundaries are imposed on Eulerian grid." alt="" coords="5,5,140,31"/>
+<area shape="rect" id="Node000000" href="$classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,144,198,189"/>
+<area shape="rect" id="Node000001" href="$classInsertionFile.html" title=" " alt="" coords="259,5,404,50"/>
+<area shape="poly" id="edge76_Node000000_Node000001" title=" " alt="" coords="140,132,189,95,244,60,271,49,267,52,247,65,192,100,144,136"/>
+<area shape="rect" id="Node000002" href="$classInsertionList.html" title=" " alt="" coords="259,75,404,119"/>
+<area shape="poly" id="edge77_Node000000_Node000002" title=" " alt="" coords="191,137,260,117,256,120,193,141"/>
+<area shape="rect" id="Node000003" href="$classInsertionPacked.html" title=" " alt="" coords="248,144,415,189"/>
+<area shape="poly" id="edge78_Node000000_Node000003" title=" " alt="" coords="212,164,250,165,245,167,214,169"/>
+<area shape="rect" id="Node000004" href="$classInsertionPlane.html" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="252,213,410,258"/>
+<area shape="poly" id="edge79_Node000000_Node000004" title=" " alt="" coords="192,191,257,212,252,213,192,196"/>
+<area shape="rect" id="Node000005" href="$classInsertionVolume.html" title=" " alt="" coords="246,283,417,327"/>
+<area shape="poly" id="edge80_Node000000_Node000005" title=" " alt="" coords="142,196,192,233,247,268,272,282,267,282,244,273,189,237,141,201"/>
 </map>

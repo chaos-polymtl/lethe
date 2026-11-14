@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structLetheGridTools_1_1TriangleProjectionData.html" title="Particle&#45;independent geometric data of a triangle (its first vertex, edge vectors,..." alt="" coords="5,5,183,45"/>
+<area shape="rect" id="Node000000" href="$classMFNavierStokesPreconditionGMGBase.html" title="A geometric multigrid preconditioner compatible with the matrix&#45;free solver." alt="" coords="5,5,214,50"/>
+<area shape="rect" id="Node000001" href="$classMFNavierStokesPreconditionGMG.html" title="A geometric multigrid preconditioner implementation for incompressible flow." alt="" coords="262,5,470,50"/>
+<area shape="poly" id="edge90_Node000000_Node000001" title=" " alt="" coords="229,25,264,28,258,28,229,30"/>
+<area shape="rect" id="Node000002" href="$classMFNavierStokesVANSPreconditionGMG.html" title="A geometric multigrid preconditioner implementation for incompressible VANS equations." alt="" coords="518,5,761,50"/>
+<area shape="poly" id="edge91_Node000001_Node000002" title=" " alt="" coords="486,25,520,28,515,28,486,30"/>
 </map>

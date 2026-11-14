@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['edge_5fcontact_0',['edge_contact',['../namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364a875320c330c016a8b0c1f9428a60808a',1,'LetheGridTools']]],
-  ['electric_5ffield_1',['electric_field',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2',1,'BoundaryConditions::electric_field'],['../multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2',1,'electric_field:&#160;multiphysics.h'],['../namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2aa79864cf485f38be6b1076d4b73e51b2',1,'Parameters::electric_field']]],
-  ['electric_5fimag_2',['electric_imag',['../classTimeHarmonicMaxwellScratchData.html#af252bfdb1743828b05de279be1a0f0e3af3a711a6cdf642fec3f4f0cf20a5a864',1,'TimeHarmonicMaxwellScratchData']]],
-  ['electric_5fpermittivity_3',['electric_permittivity',['../effective__medium__model_8h.html#a563090b19d13f740726ba9b778196e63a37e852a8892c4985254002f6e2129575',1,'effective_medium_model.h']]],
-  ['electric_5freal_4',['electric_real',['../classTimeHarmonicMaxwellScratchData.html#af252bfdb1743828b05de279be1a0f0e3ab5cbde2ed9e8bc4c1c6d54f4db983e29',1,'TimeHarmonicMaxwellScratchData']]],
+  ['e_5fimag_0',['E_imag',['../classTimeHarmonicMaxwellScratchData.html#a6ccc4aa47545de92c9eb9e146f9d9739a0c5467cc5e4964cc3a59d7942b81fe9a',1,'TimeHarmonicMaxwellScratchData']]],
+  ['e_5freal_1',['E_real',['../classTimeHarmonicMaxwellScratchData.html#a6ccc4aa47545de92c9eb9e146f9d9739ad678f8543b2c970950e227189c628ca2',1,'TimeHarmonicMaxwellScratchData']]],
+  ['edge_5fcontact_2',['edge_contact',['../namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364a875320c330c016a8b0c1f9428a60808a',1,'LetheGridTools']]],
+  ['electric_5ffield_3',['electric_field',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2',1,'BoundaryConditions::electric_field'],['../multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2',1,'electric_field:&#160;multiphysics.h'],['../namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2aa79864cf485f38be6b1076d4b73e51b2',1,'Parameters::electric_field']]],
+  ['electric_5fpermittivity_4',['electric_permittivity',['../effective__medium__model_8h.html#a563090b19d13f740726ba9b778196e63a37e852a8892c4985254002f6e2129575',1,'effective_medium_model.h']]],
   ['electromagnetic_5ffields_5',['electromagnetic_fields',['../multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176',1,'multiphysics.h']]],
   ['electromagnetics_6',['electromagnetics',['../multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a9ef5b8e8c97fff3ce7f675ca8d82ef3a',1,'multiphysics.h']]],
   ['ellipsoid_7',['ellipsoid',['../classShape.html#a394819ce751267dc955abe4ad18ebdeba4f5231223a520c685d8bc27811a4415f',1,'Shape']]],

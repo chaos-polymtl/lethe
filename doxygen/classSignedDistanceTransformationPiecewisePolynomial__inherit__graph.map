@@ -1,5 +1,5 @@
 <map id="SignedDistanceTransformationPiecewisePolynomial" name="SignedDistanceTransformationPiecewisePolynomial">
-<area shape="rect" id="Node000001" title="Transforms the signed distance to the phase indicator with a piecewise polynomial function (degree 4)..." alt="" coords="21,79,243,119"/>
-<area shape="rect" id="Node000002" href="$classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase indicator for the CLS solve..." alt="" coords="5,5,259,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="135,44,135,79,129,79,129,44"/>
+<area shape="rect" id="Node000001" title="Transforms the signed distance to the phase indicator with a piecewise polynomial function (degree 4)..." alt="" coords="21,81,242,126"/>
+<area shape="rect" id="Node000002" href="$classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase indicator for the CLS solve..." alt="" coords="5,5,258,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="133,47,134,81,129,79,130,51"/>
 </map>

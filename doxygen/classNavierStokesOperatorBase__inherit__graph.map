@@ -1,11 +1,11 @@
 <map id="NavierStokesOperatorBase&lt; dim, number &gt;" name="NavierStokesOperatorBase&lt; dim, number &gt;">
-<area shape="rect" id="Node000001" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="224,85,421,125"/>
-<area shape="rect" id="Node000003" href="$classNavierStokesNonNewtonianStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient non&#45;Newtonian Navier&#45;Stokes equations u..." alt="" coords="482,5,686,60"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="408,78,484,57,485,63,410,84"/>
-<area shape="rect" id="Node000004" href="$classNavierStokesStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="469,85,699,125"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="435,102,469,102,469,107,435,107"/>
-<area shape="rect" id="Node000005" href="$classVANSOperator.html" title="Implements the matrix&#45;free operator for the VANS equations." alt="" coords="505,149,663,189"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="419,125,505,147,504,152,418,131"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,92,176,117"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,102,224,102,224,107,190,107"/>
+<area shape="rect" id="Node000001" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="224,91,420,136"/>
+<area shape="rect" id="Node000003" href="$classNavierStokesNonNewtonianStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient non&#45;Newtonian Navier&#45;Stokes equations u..." alt="" coords="480,5,684,67"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="414,84,478,67,483,66,415,89"/>
+<area shape="rect" id="Node000004" href="$classNavierStokesStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="468,91,696,136"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="436,111,470,113,465,114,436,116"/>
+<area shape="rect" id="Node000005" href="$classVANSOperator.html" title="Implements the matrix&#45;free operator for the VANS equations." alt="" coords="504,160,661,205"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="423,138,506,162,500,162,423,143"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,100,176,127"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,111,226,113,221,114,192,116"/>
 </map>

@@ -1,9 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/heat_transfer.h" name="/home/runner/work/lethe/lethe/include/solvers/heat_transfer.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="228,5,411,60"/>
-<area shape="rect" id="Node000002" href="$heat__transfer_8cc.html" title=" " alt="" coords="5,108,188,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="250,68,156,110,154,106,248,63"/>
-<area shape="rect" id="Node000003" href="$heat__transfer__assemblers_8cc.html" title=" " alt="" coords="213,108,426,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="322,74,322,108,317,108,317,74"/>
-<area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="450,108,642,163"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="392,63,488,106,486,110,390,68"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="227,5,408,67"/>
+<area shape="rect" id="Node000002" href="$heat__transfer_8cc.html" title=" " alt="" coords="5,115,187,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="244,73,159,117,157,112,239,75"/>
+<area shape="rect" id="Node000003" href="$heat__transfer__assemblers_8cc.html" title=" " alt="" coords="211,115,424,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="319,81,320,116,315,113,316,85"/>
+<area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="447,115,638,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="395,71,482,114,477,114,394,77"/>
 </map>

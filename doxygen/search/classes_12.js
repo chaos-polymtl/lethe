@@ -10,7 +10,7 @@ var searchData=
   ['thermalconductivityphasechange_7',['ThermalConductivityPhaseChange',['../classThermalConductivityPhaseChange.html',1,'']]],
   ['thermalexpansionmodel_8',['ThermalExpansionModel',['../classThermalExpansionModel.html',1,'']]],
   ['thermalexpansionphasechange_9',['ThermalExpansionPhaseChange',['../classThermalExpansionPhaseChange.html',1,'']]],
-  ['timeharmonicmaxwell_10',['timeharmonicmaxwell',['../structParameters_1_1TimeHarmonicMaxwell.html',1,'Parameters::TimeHarmonicMaxwell&lt; dim &gt;'],['../classTimeHarmonicMaxwell.html',1,'TimeHarmonicMaxwell&lt; dim &gt;']]],
+  ['timeharmonicmaxwell_10',['TimeHarmonicMaxwell',['../structParameters_1_1TimeHarmonicMaxwell.html',1,'Parameters::TimeHarmonicMaxwell&lt; dim &gt;'],['../classTimeHarmonicMaxwell.html',1,'TimeHarmonicMaxwell&lt; dim &gt;']]],
   ['timeharmonicmaxwellassemblercore_11',['TimeHarmonicMaxwellAssemblerCore',['../classTimeHarmonicMaxwellAssemblerCore.html',1,'']]],
   ['timeharmonicmaxwellassemblerrobinbc_12',['TimeHarmonicMaxwellAssemblerRobinBC',['../classTimeHarmonicMaxwellAssemblerRobinBC.html',1,'']]],
   ['timeharmonicmaxwellassemblerskeleton_13',['TimeHarmonicMaxwellAssemblerSkeleton',['../classTimeHarmonicMaxwellAssemblerSkeleton.html',1,'']]],

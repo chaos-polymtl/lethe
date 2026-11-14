@@ -1,21 +1,21 @@
 <map id="/home/runner/work/lethe/lethe/source/fem&#45;dem/quadrature_points_data_out.cc" name="/home/runner/work/lethe/lethe/source/fem&#45;dem/quadrature_points_data_out.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="661,5,887,60"/>
-<area shape="rect" id="Node000002" href="$quadrature__points__data__out_8h.html" title=" " alt="" coords="605,108,762,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="750,62,713,100,709,96,746,58"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="787,115,945,141"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="802,58,847,103,843,107,798,62"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="5,196,164,236"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="605,141,415,164,178,199,177,193,414,159,604,135"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="189,203,373,229"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="605,149,348,203,347,198,604,143"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="397,203,583,229"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="642,150,529,200,527,195,640,146"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="607,203,759,229"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="686,148,686,189,681,189,681,148"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="784,203,871,229"/>
-<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="716,146,798,194,795,199,714,150"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="895,203,954,229"/>
-<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="746,145,884,194,889,195,887,200,882,198,744,151"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="979,203,1041,229"/>
-<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="763,144,877,170,967,193,973,196,972,201,965,199,876,175,762,149"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="657,5,882,67"/>
+<area shape="rect" id="Node000002" href="$quadrature__points__data__out_8h.html" title=" " alt="" coords="600,115,757,160"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="744,66,710,106,707,101,739,69"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="781,124,939,151"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="798,65,840,113,835,111,796,70"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,208,163,252"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="598,148,412,173,178,210,177,205,411,168,603,147"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="187,216,370,244"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="603,156,352,215,351,210,597,156"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="394,216,579,244"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="635,160,529,212,527,207,630,161"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="603,216,754,244"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="681,158,681,202,677,199,677,162"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="778,216,864,244"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="714,158,791,208,786,207,712,163"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="888,216,946,244"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="748,158,877,205,882,210,877,209,875,210,747,163"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="970,216,1032,244"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="758,154,959,205,966,210,961,209,958,210,757,160"/>
 </map>

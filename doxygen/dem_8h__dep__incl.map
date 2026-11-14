@@ -1,18 +1,18 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/dem.h" name="/home/runner/work/lethe/lethe/include/dem/dem.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="271,5,459,45"/>
-<area shape="rect" id="Node000002" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="225,203,407,258"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="346,58,329,94,319,152,317,203,312,203,313,151,324,93,342,56"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="11,93,250,148"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="306,53,198,96,196,91,304,48"/>
-<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="339,93,522,148"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="389,55,414,92,410,95,384,58"/>
-<area shape="rect" id="Node000008" href="$dem_8cc.html" title=" " alt="" coords="546,101,737,141"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="435,47,586,98,585,103,433,52"/>
-<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="225,313,407,368"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="319,272,319,313,313,313,313,272"/>
-<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="5,196,200,265"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="123,162,114,196,109,195,118,161"/>
-<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="394,160,346,205,342,201,390,156"/>
-<area shape="rect" id="Node000007" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="431,203,614,258"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="464,157,502,201,498,205,460,160"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="270,5,457,50"/>
+<area shape="rect" id="Node000002" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="223,216,405,278"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="342,61,327,99,316,160,315,217,310,214,311,160,322,97,339,65"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="11,98,249,160"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="296,58,203,100,200,95,300,55"/>
+<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="337,98,518,160"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="386,60,411,98,405,97,385,65"/>
+<area shape="rect" id="Node000008" href="$dem_8cc.html" title=" " alt="" coords="542,106,731,151"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="438,53,579,105,574,107,438,58"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="223,334,405,396"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="316,291,316,335,312,332,312,295"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="5,208,199,286"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="120,172,114,208,109,206,118,177"/>
+<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="390,169,345,218,342,214,385,172"/>
+<area shape="rect" id="Node000007" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="429,216,610,278"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="461,169,498,216,493,215,460,174"/>
 </map>

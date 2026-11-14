@@ -1,129 +1,129 @@
 <map id="/home/runner/work/lethe/lethe/include/core/physical_property_model.h" name="/home/runner/work/lethe/lethe/include/core/physical_property_model.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="2065,5,2265,60"/>
-<area shape="rect" id="Node000002" href="$density__model_8h.html" title=" " alt="" coords="2402,108,2597,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2265,61,2413,105,2411,110,2264,66"/>
-<area shape="rect" id="Node000015" href="$navier__stokes__scratch__data_8h.html" title=" " alt="" coords="1802,423,2021,478"/>
-<area shape="poly" id="edge76_Node000001_Node000015" title=" " alt="" coords="2051,38,1628,46,1064,61,539,82,348,96,236,111,166,125,109,137,85,147,62,162,40,183,19,212,11,226,8,239,10,251,19,264,33,275,53,287,113,308,194,328,293,346,533,376,810,400,1099,418,1377,431,1802,444,1802,450,1377,436,1099,423,810,405,532,381,292,351,192,333,111,313,51,292,30,280,15,267,5,253,3,239,6,224,14,209,36,180,59,158,82,143,108,132,165,119,235,105,348,90,538,77,1063,55,1628,41,2050,33"/>
-<area shape="rect" id="Node000094" href="$time__harmonic__maxwell__scratch__data_8h.html" title=" " alt="" coords="4146,416,4333,485"/>
-<area shape="poly" id="edge77_Node000001_Node000094" title=" " alt="" coords="2279,31,2779,33,3458,43,3787,52,4068,65,4272,82,4335,93,4367,106,4395,135,4412,166,4420,199,4419,232,4411,265,4396,300,4352,370,4328,396,4300,418,4297,414,4324,392,4348,366,4391,297,4406,264,4414,231,4415,199,4407,168,4391,139,4364,110,4333,98,4271,88,4068,70,3786,57,3457,48,2779,39,2279,37"/>
-<area shape="rect" id="Node000100" href="$effective__medium__model_8h.html" title=" " alt="" coords="2175,108,2378,163"/>
-<area shape="poly" id="edge27_Node000001_Node000100" title=" " alt="" coords="2206,67,2249,106,2246,110,2202,71"/>
-<area shape="rect" id="Node000102" href="$electric__conductivity__model_8h.html" title=" " alt="" coords="1454,108,1649,163"/>
-<area shape="poly" id="edge30_Node000001_Node000102" title=" " alt="" coords="2051,55,1710,111,1649,121,1648,115,1709,105,2051,50"/>
-<area shape="rect" id="Node000104" href="$electric__permittivity__model_8h.html" title=" " alt="" coords="1187,108,1382,163"/>
-<area shape="poly" id="edge34_Node000001_Node000104" title=" " alt="" coords="2051,46,1774,72,1442,111,1383,120,1382,114,1442,105,1773,67,2051,41"/>
-<area shape="rect" id="Node000106" href="$evaporation__model_8h.html" title=" " alt="" coords="3819,108,4043,163"/>
-<area shape="poly" id="edge38_Node000001_Node000106" title=" " alt="" coords="2278,38,3819,125,3819,130,2278,43"/>
-<area shape="rect" id="Node000108" href="$interface__property__model_8h.html" title=" " alt="" coords="248,108,452,163"/>
-<area shape="poly" id="edge43_Node000001_Node000108" title=" " alt="" coords="2051,39,1422,61,1001,81,574,111,453,123,452,118,574,105,1001,76,1421,55,2051,34"/>
-<area shape="rect" id="Node000113" href="$magnetic__permeability__model_8h.html" title=" " alt="" coords="1723,108,1929,163"/>
-<area shape="poly" id="edge48_Node000001_Node000113" title=" " alt="" coords="2064,66,1915,111,1913,105,2063,61"/>
-<area shape="rect" id="Node000115" href="$rheological__model_8h.html" title=" " alt="" coords="3193,108,3411,163"/>
-<area shape="poly" id="edge52_Node000001_Node000115" title=" " alt="" coords="2279,41,3025,105,3192,121,3192,126,3024,111,2279,46"/>
-<area shape="rect" id="Node000118" href="$specific__heat__model_8h.html" title=" " alt="" coords="586,108,781,163"/>
-<area shape="poly" id="edge58_Node000001_Node000118" title=" " alt="" coords="2051,36,1820,38,1507,48,1152,71,970,88,793,111,781,113,780,107,792,105,970,83,1151,65,1507,43,1820,33,2051,31"/>
-<area shape="rect" id="Node000120" href="$thermal__conductivity__model_8h.html" title=" " alt="" coords="805,108,1002,163"/>
-<area shape="poly" id="edge61_Node000001_Node000120" title=" " alt="" coords="2051,44,1663,72,1175,111,1002,127,1002,121,1175,105,1663,67,2051,39"/>
-<area shape="rect" id="Node000122" href="$thermal__expansion__model_8h.html" title=" " alt="" coords="1954,108,2151,163"/>
-<area shape="poly" id="edge64_Node000001_Node000122" title=" " alt="" coords="2127,71,2084,110,2080,106,2123,67"/>
-<area shape="rect" id="Node000124" href="$tracer__diffusivity__model_8h.html" title=" " alt="" coords="2621,108,2805,163"/>
-<area shape="poly" id="edge67_Node000001_Node000124" title=" " alt="" coords="2279,48,2436,73,2609,105,2621,108,2620,113,2608,111,2435,78,2278,53"/>
-<area shape="rect" id="Node000126" href="$tracer__reaction__model_8h.html" title=" " alt="" coords="2829,108,3013,163"/>
-<area shape="poly" id="edge70_Node000001_Node000126" title=" " alt="" coords="2278,40,2526,64,2672,82,2817,105,2829,108,2828,113,2816,111,2671,88,2526,69,2278,45"/>
-<area shape="rect" id="Node000080" href="$heat__transfer__scratch__data_8h.html" title=" " alt="" coords="4139,108,4353,163"/>
-<area shape="poly" id="edge73_Node000001_Node000080" title=" " alt="" coords="2278,32,2586,36,3025,48,3536,69,3798,85,4055,105,4138,115,4138,120,4055,111,3798,91,3535,75,3025,53,2586,42,2278,37"/>
-<area shape="rect" id="Node000003" href="$physical__properties__manager_8h.html" title=" " alt="" coords="1913,313,2142,368"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="2540,171,2557,194,2570,218,2574,243,2571,256,2564,267,2536,288,2494,305,2443,318,2385,328,2260,339,2142,343,2142,338,2259,334,2384,323,2442,313,2493,300,2533,284,2560,264,2566,254,2569,243,2565,220,2553,196,2535,174"/>
-<area shape="rect" id="Node000099" href="$density__model_8cc.html" title=" " alt="" coords="2360,211,2551,265"/>
-<area shape="poly" id="edge26_Node000002_Node000099" title=" " alt="" coords="2485,176,2469,212,2464,209,2480,174"/>
-<area shape="rect" id="Node000004" href="$postprocessing__cfd__dem_8h.html" title=" " alt="" coords="2045,423,2244,478"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="2068,376,2118,421,2114,425,2065,380"/>
-<area shape="poly" id="edge4_Node000003_Node000015" title=" " alt="" coords="1990,380,1941,425,1938,421,1987,376"/>
-<area shape="poly" id="edge20_Node000003_Node000094" title=" " alt="" coords="2156,346,4146,442,4145,447,2156,351"/>
-<area shape="rect" id="Node000016" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="2413,541,2596,595"/>
-<area shape="poly" id="edge5_Node000015_Node000016" title=" " alt="" coords="2015,479,2033,483,2136,499,2217,505,2298,513,2401,531,2429,538,2428,543,2400,536,2298,518,2217,511,2135,504,2032,488,2014,484"/>
-<area shape="rect" id="Node000017" href="$particle__projector_8h.html" title=" " alt="" coords="2620,541,2803,595"/>
-<area shape="poly" id="edge6_Node000015_Node000017" title=" " alt="" coords="2013,479,2033,483,2120,496,2194,502,2320,505,2447,508,2521,516,2608,531,2637,538,2636,543,2607,536,2520,521,2447,514,2320,510,2193,507,2119,501,2032,488,2012,484"/>
-<area shape="rect" id="Node000026" href="$vans__assemblers_8h.html" title="Assemblers for the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations." alt="" coords="1945,658,2128,713"/>
-<area shape="poly" id="edge7_Node000015_Node000026" title=" " alt="" coords="1915,492,1924,546,1933,575,1945,601,1969,631,1998,656,1994,660,1966,635,1941,604,1928,576,1919,547,1910,492"/>
-<area shape="rect" id="Node000028" href="$fluid__dynamics__matrix__based_8h.html" title=" " alt="" coords="2000,533,2183,603"/>
-<area shape="poly" id="edge8_Node000015_Node000028" title=" " alt="" coords="1965,483,2040,531,2037,535,1962,488"/>
-<area shape="rect" id="Node000034" href="$isothermal__compressible__navier__stokes__assembler_8h.html" title=" " alt="" coords="1230,651,1435,720"/>
-<area shape="poly" id="edge9_Node000015_Node000034" title=" " alt="" coords="1789,473,1681,498,1624,515,1570,536,1515,562,1463,593,1377,653,1374,648,1460,588,1513,557,1567,531,1622,510,1679,493,1788,468"/>
-<area shape="rect" id="Node000036" href="$isothermal__compressible__navier__stokes__cls__assembler_8h.html" title=" " alt="" coords="1460,651,1691,720"/>
-<area shape="poly" id="edge10_Node000015_Node000036" title=" " alt="" coords="1789,473,1677,499,1631,516,1602,535,1586,561,1577,591,1574,622,1574,650,1569,650,1568,622,1572,590,1581,559,1599,531,1629,511,1675,494,1788,468"/>
-<area shape="rect" id="Node000039" href="$navier__stokes__assemblers_8h.html" title=" " alt="" coords="1613,541,1823,595"/>
-<area shape="poly" id="edge11_Node000015_Node000039" title=" " alt="" coords="1857,487,1763,543,1761,538,1854,483"/>
-<area shape="rect" id="Node000045" href="$navier__stokes__cahn__hilliard__assemblers_8h.html" title=" " alt="" coords="1715,651,1921,720"/>
-<area shape="poly" id="edge17_Node000015_Node000045" title=" " alt="" coords="1898,492,1834,651,1829,649,1893,490"/>
-<area shape="rect" id="Node000047" href="$navier__stokes__cls__assemblers_8h.html" title=" " alt="" coords="2153,658,2387,713"/>
-<area shape="poly" id="edge18_Node000015_Node000047" title=" " alt="" coords="1929,490,1958,555,1974,583,1989,600,2054,622,2173,655,2172,660,2052,627,1986,605,1970,586,1954,557,1924,492"/>
-<area shape="rect" id="Node000050" href="$navier__stokes__scratch__data_8cc.html" title=" " alt="" coords="2207,533,2389,603"/>
-<area shape="poly" id="edge19_Node000015_Node000050" title=" " alt="" coords="2018,479,2195,531,2207,535,2205,540,2193,536,2016,484"/>
-<area shape="poly" id="edge12_Node000039_Node000026" title=" " alt="" coords="1804,598,1965,655,1963,660,1802,603"/>
-<area shape="poly" id="edge13_Node000039_Node000034" title=" " alt="" coords="1618,602,1436,656,1435,651,1617,597"/>
-<area shape="poly" id="edge14_Node000039_Node000036" title=" " alt="" coords="1677,606,1619,652,1616,648,1673,602"/>
-<area shape="poly" id="edge15_Node000039_Node000045" title=" " alt="" coords="1752,604,1790,648,1786,652,1748,608"/>
-<area shape="poly" id="edge16_Node000039_Node000047" title=" " alt="" coords="1837,588,2140,648,2171,655,2170,661,2139,653,1836,593"/>
-<area shape="rect" id="Node000082" href="$time__harmonic__maxwell_8h.html" title=" " alt="" coords="4145,658,4344,713"/>
-<area shape="poly" id="edge21_Node000094_Node000082" title=" " alt="" coords="4314,492,4333,510,4347,532,4355,551,4357,568,4355,585,4347,604,4324,636,4294,660,4291,656,4320,632,4342,601,4349,583,4352,568,4350,553,4342,535,4328,514,4310,496"/>
-<area shape="rect" id="Node000085" href="$time__harmonic__maxwell__scratch__data_8cc.html" title=" " alt="" coords="4083,768,4270,837"/>
-<area shape="poly" id="edge25_Node000094_Node000085" title=" " alt="" coords="4168,496,4150,514,4136,535,4118,583,4115,624,4123,667,4136,719,4145,744,4157,767,4152,769,4140,746,4131,721,4118,668,4110,625,4113,582,4132,532,4146,510,4164,492"/>
-<area shape="rect" id="Node000095" href="$time__harmonic__maxwell__assemblers_8h.html" title=" " alt="" coords="4146,533,4333,603"/>
-<area shape="poly" id="edge23_Node000094_Node000095" title=" " alt="" coords="4242,499,4242,533,4237,533,4237,499"/>
-<area shape="poly" id="edge22_Node000082_Node000085" title=" " alt="" coords="4224,726,4199,769,4194,766,4220,723"/>
-<area shape="poly" id="edge24_Node000095_Node000082" title=" " alt="" coords="4244,617,4246,658,4241,658,4239,617"/>
-<area shape="poly" id="edge28_Node000100_Node000003" title=" " alt="" coords="2299,175,2306,197,2310,221,2308,245,2297,267,2273,285,2236,301,2143,324,2141,319,2234,296,2271,281,2293,264,2302,244,2304,221,2301,198,2293,176"/>
-<area shape="rect" id="Node000101" href="$effective__medium__model_8cc.html" title=" " alt="" coords="1539,211,1737,265"/>
-<area shape="poly" id="edge29_Node000100_Node000101" title=" " alt="" coords="2162,166,2045,182,1954,189,1864,197,1750,213,1738,216,1737,210,1749,208,1863,192,1954,184,2045,176,2161,160"/>
-<area shape="poly" id="edge31_Node000102_Node000003" title=" " alt="" coords="1531,176,1522,199,1517,222,1518,244,1528,264,1552,282,1589,298,1635,310,1688,320,1803,332,1912,336,1912,342,1803,337,1687,325,1634,315,1587,303,1550,287,1524,267,1513,246,1511,221,1517,197,1526,174"/>
-<area shape="poly" id="edge32_Node000102_Node000101" title=" " alt="" coords="1585,171,1617,209,1613,212,1581,175"/>
-<area shape="rect" id="Node000103" href="$electric__conductivity__model_8cc.html" title=" " alt="" coords="1273,211,1464,265"/>
-<area shape="poly" id="edge33_Node000102_Node000103" title=" " alt="" coords="1493,172,1418,213,1415,208,1490,167"/>
-<area shape="poly" id="edge35_Node000104_Node000003" title=" " alt="" coords="1265,176,1256,199,1251,222,1252,244,1263,264,1274,272,1293,279,1352,293,1432,304,1527,314,1731,327,1912,334,1912,339,1731,332,1526,319,1432,310,1351,298,1292,284,1271,276,1259,267,1247,246,1245,222,1251,197,1260,174"/>
-<area shape="poly" id="edge36_Node000104_Node000101" title=" " alt="" coords="1390,164,1547,208,1545,213,1389,169"/>
-<area shape="rect" id="Node000105" href="$electric__permittivity__model_8cc.html" title=" " alt="" coords="1007,211,1197,265"/>
-<area shape="poly" id="edge37_Node000104_Node000105" title=" " alt="" coords="1226,172,1151,213,1149,208,1224,167"/>
-<area shape="poly" id="edge41_Node000106_Node000047" title=" " alt="" coords="3908,176,3890,212,3869,274,3863,339,3863,452,3860,467,3850,481,3814,506,3757,529,3683,551,3594,570,3492,588,3262,618,3016,642,2773,660,2388,682,2387,677,2773,655,3015,637,3262,613,3491,582,3593,565,3681,545,3755,524,3811,501,3846,477,3855,465,3858,452,3858,339,3863,273,3885,210,3903,173"/>
-<area shape="rect" id="Node000079" href="$heat__transfer__assemblers_8h.html" title=" " alt="" coords="4143,211,4349,265"/>
-<area shape="poly" id="edge39_Node000106_Node000079" title=" " alt="" coords="4027,164,4165,208,4163,213,4025,169"/>
-<area shape="rect" id="Node000107" href="$evaporation__model_8cc.html" title=" " alt="" coords="3899,211,4119,265"/>
-<area shape="poly" id="edge42_Node000106_Node000107" title=" " alt="" coords="3962,172,3990,209,3986,212,3958,175"/>
-<area shape="rect" id="Node000061" href="$heat__transfer_8h.html" title=" " alt="" coords="4155,313,4337,368"/>
-<area shape="poly" id="edge40_Node000079_Node000061" title=" " alt="" coords="4249,279,4249,313,4243,313,4243,279"/>
-<area shape="rect" id="Node000109" href="$mobility__cahn__hilliard__model_8h.html" title=" " alt="" coords="29,211,229,265"/>
-<area shape="poly" id="edge44_Node000108_Node000109" title=" " alt="" coords="281,171,187,213,185,208,279,166"/>
-<area shape="rect" id="Node000111" href="$surface__tension__model_8h.html" title=" " alt="" coords="253,211,447,265"/>
-<area shape="poly" id="edge46_Node000108_Node000111" title=" " alt="" coords="353,176,353,211,347,211,347,176"/>
-<area shape="poly" id="edge45_Node000109_Node000003" title=" " alt="" coords="243,263,401,278,604,292,1082,313,1558,327,1912,335,1912,340,1558,332,1082,318,603,297,401,284,243,268"/>
-<area shape="poly" id="edge47_Node000111_Node000003" title=" " alt="" coords="461,263,598,277,773,290,1185,311,1912,334,1912,339,1185,316,772,295,598,282,460,268"/>
-<area shape="poly" id="edge49_Node000113_Node000003" title=" " alt="" coords="1920,166,1951,185,1979,209,1997,234,2010,261,2025,312,2020,314,2005,263,1992,236,1975,212,1948,189,1917,171"/>
-<area shape="poly" id="edge50_Node000113_Node000101" title=" " alt="" coords="1766,171,1688,213,1686,208,1764,167"/>
-<area shape="rect" id="Node000114" href="$magnetic__permeability__model_8cc.html" title=" " alt="" coords="1762,211,1965,265"/>
-<area shape="poly" id="edge51_Node000113_Node000114" title=" " alt="" coords="1843,175,1856,210,1851,212,1838,177"/>
-<area shape="poly" id="edge53_Node000115_Node000003" title=" " alt="" coords="3243,172,3185,213,3170,228,3161,242,3150,256,3132,268,3075,283,2977,295,2703,316,2396,331,2142,339,2142,334,2396,325,2703,311,2977,290,3074,277,3130,263,3147,252,3157,239,3166,224,3181,209,3240,168"/>
-<area shape="rect" id="Node000116" href="$postprocessors_8h.html" title=" " alt="" coords="3640,211,3823,265"/>
-<area shape="poly" id="edge54_Node000115_Node000116" title=" " alt="" coords="3425,161,3629,208,3640,211,3639,216,3628,213,3424,166"/>
-<area shape="rect" id="Node000117" href="$rheological__model_8cc.html" title=" " alt="" coords="3195,211,3409,265"/>
-<area shape="poly" id="edge56_Node000115_Node000117" title=" " alt="" coords="3305,176,3305,211,3299,211,3299,176"/>
-<area shape="rect" id="Node000052" href="$postprocessing__cfd_8cc.html" title=" " alt="" coords="3433,211,3616,265"/>
-<area shape="poly" id="edge57_Node000115_Node000052" title=" " alt="" coords="3373,166,3468,208,3465,213,3371,171"/>
-<area shape="poly" id="edge55_Node000116_Node000061" title=" " alt="" coords="3837,257,4155,319,4154,324,3836,262"/>
-<area shape="poly" id="edge59_Node000118_Node000003" title=" " alt="" coords="698,174,722,223,740,245,762,263,787,273,826,283,940,299,1090,311,1263,320,1622,332,1912,336,1912,341,1622,337,1263,326,1090,316,940,304,825,288,785,278,759,268,736,249,718,226,693,177"/>
-<area shape="rect" id="Node000119" href="$specific__heat__model_8cc.html" title=" " alt="" coords="472,211,663,265"/>
-<area shape="poly" id="edge60_Node000118_Node000119" title=" " alt="" coords="644,174,599,213,596,209,641,170"/>
-<area shape="poly" id="edge62_Node000120_Node000003" title=" " alt="" coords="820,172,797,190,779,212,768,240,770,251,778,263,793,270,824,277,928,290,1246,311,1613,326,1912,334,1912,339,1613,331,1245,316,928,295,824,282,791,275,775,267,765,253,763,239,774,209,793,186,817,167"/>
-<area shape="rect" id="Node000121" href="$thermal__conductivity__model_8cc.html" title=" " alt="" coords="789,211,983,265"/>
-<area shape="poly" id="edge63_Node000120_Node000121" title=" " alt="" coords="899,177,893,211,888,210,894,176"/>
-<area shape="poly" id="edge65_Node000122_Node000003" title=" " alt="" coords="2050,176,2033,313,2028,312,2045,176"/>
-<area shape="rect" id="Node000123" href="$thermal__expansion__model_8cc.html" title=" " alt="" coords="2091,211,2284,265"/>
-<area shape="poly" id="edge66_Node000122_Node000123" title=" " alt="" coords="2100,169,2153,208,2150,213,2097,173"/>
-<area shape="poly" id="edge68_Node000124_Node000003" title=" " alt="" coords="2689,176,2646,225,2618,249,2587,268,2552,281,2505,293,2389,312,2260,326,2142,336,2142,330,2260,321,2388,307,2504,288,2550,276,2585,263,2615,244,2642,221,2685,172"/>
-<area shape="rect" id="Node000125" href="$tracer__diffusivity__model_8cc.html" title=" " alt="" coords="2677,211,2860,265"/>
-<area shape="poly" id="edge69_Node000124_Node000125" title=" " alt="" coords="2736,174,2756,209,2752,212,2732,176"/>
-<area shape="poly" id="edge71_Node000126_Node000003" title=" " alt="" coords="2919,177,2905,225,2891,248,2873,268,2833,283,2764,296,2567,317,2340,331,2142,339,2142,333,2340,325,2567,311,2763,291,2832,278,2870,263,2887,245,2900,223,2914,175"/>
-<area shape="rect" id="Node000127" href="$tracer__reaction__model_8cc.html" title=" " alt="" coords="2936,211,3119,265"/>
-<area shape="poly" id="edge72_Node000126_Node000127" title=" " alt="" coords="2960,170,3001,209,2998,213,2957,174"/>
-<area shape="poly" id="edge75_Node000080_Node000079" title=" " alt="" coords="4249,176,4249,211,4243,211,4243,176"/>
-<area shape="poly" id="edge74_Node000080_Node000061" title=" " alt="" coords="4324,168,4347,186,4364,209,4373,238,4364,267,4342,295,4313,315,4309,311,4338,291,4360,264,4368,238,4360,212,4343,190,4321,172"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="2054,5,2254,67"/>
+<area shape="rect" id="Node000002" href="$density__model_8h.html" title=" " alt="" coords="2391,115,2584,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2262,69,2396,114,2391,115,2262,75"/>
+<area shape="rect" id="Node000015" href="$navier__stokes__scratch__data_8h.html" title=" " alt="" coords="1792,452,2009,514"/>
+<area shape="poly" id="edge76_Node000001_Node000015" title=" " alt="" coords="2036,40,1618,50,1058,65,537,88,348,102,237,118,167,133,110,148,86,159,63,174,41,196,20,226,12,242,8,257,11,270,20,285,34,296,54,308,113,330,194,350,292,368,531,400,806,425,1094,445,1370,460,1794,478,1789,480,1370,465,1093,451,806,431,530,405,291,373,192,355,112,335,52,313,31,301,16,288,6,272,3,257,7,240,16,223,37,193,60,170,83,154,108,143,165,128,236,112,348,96,537,82,1058,60,1618,45,2041,38"/>
+<area shape="rect" id="Node000094" href="$time__harmonic__maxwell__scratch__data_8h.html" title=" " alt="" coords="4118,444,4304,523"/>
+<area shape="poly" id="edge77_Node000001_Node000094" title=" " alt="" coords="2269,35,2766,38,3438,48,3764,58,4042,72,4243,90,4306,100,4338,113,4368,145,4387,178,4395,213,4394,248,4385,284,4369,322,4323,398,4300,424,4274,446,4272,441,4296,420,4318,394,4364,319,4380,283,4388,247,4389,213,4382,180,4364,148,4335,117,4304,105,4243,95,4042,77,3763,64,3438,54,2766,43,2269,40"/>
+<area shape="rect" id="Node000100" href="$effective__medium__model_8h.html" title=" " alt="" coords="2165,115,2367,177"/>
+<area shape="poly" id="edge27_Node000001_Node000100" title=" " alt="" coords="2197,75,2237,115,2232,114,2195,80"/>
+<area shape="rect" id="Node000102" href="$electric__conductivity__model_8h.html" title=" " alt="" coords="1460,115,1653,177"/>
+<area shape="poly" id="edge30_Node000001_Node000102" title=" " alt="" coords="2036,57,1702,118,1655,127,1653,122,1701,112,2041,55"/>
+<area shape="rect" id="Node000104" href="$electric__permittivity__model_8h.html" title=" " alt="" coords="1169,115,1363,177"/>
+<area shape="poly" id="edge34_Node000001_Node000104" title=" " alt="" coords="2036,49,1769,79,1449,118,1364,130,1362,125,1448,112,1769,74,2041,48"/>
+<area shape="rect" id="Node000106" href="$evaporation__model_8h.html" title=" " alt="" coords="3793,115,4016,177"/>
+<area shape="poly" id="edge38_Node000001_Node000106" title=" " alt="" coords="2269,42,3795,137,3790,139,2269,47"/>
+<area shape="rect" id="Node000108" href="$interface__property__model_8h.html" title=" " alt="" coords="248,115,452,177"/>
+<area shape="poly" id="edge43_Node000001_Node000108" title=" " alt="" coords="2036,41,1776,50,1412,64,994,86,570,118,453,131,451,127,570,112,994,80,1412,58,1776,44,2041,39"/>
+<area shape="rect" id="Node000113" href="$magnetic__permeability__model_8h.html" title=" " alt="" coords="1713,115,1920,177"/>
+<area shape="poly" id="edge48_Node000001_Node000113" title=" " alt="" coords="2042,73,1912,117,1910,112,2047,71"/>
+<area shape="rect" id="Node000115" href="$rheological__model_8h.html" title=" " alt="" coords="3171,115,3388,177"/>
+<area shape="poly" id="edge52_Node000001_Node000115" title=" " alt="" coords="2268,44,3011,112,3173,132,3168,132,3011,118,2269,50"/>
+<area shape="rect" id="Node000118" href="$specific__heat__model_8h.html" title=" " alt="" coords="582,115,776,177"/>
+<area shape="poly" id="edge58_Node000001_Node000118" title=" " alt="" coords="2036,42,1397,70,1045,91,900,104,789,118,778,119,776,115,788,112,899,98,1045,86,1397,64,2041,40"/>
+<area shape="rect" id="Node000120" href="$thermal__conductivity__model_8h.html" title=" " alt="" coords="801,115,997,177"/>
+<area shape="poly" id="edge61_Node000001_Node000120" title=" " alt="" coords="2036,46,1648,76,1158,118,999,135,997,130,1158,112,1648,71,2041,44"/>
+<area shape="rect" id="Node000122" href="$thermal__expansion__model_8h.html" title=" " alt="" coords="1944,115,2140,177"/>
+<area shape="poly" id="edge64_Node000001_Node000122" title=" " alt="" coords="2114,76,2075,117,2072,112,2110,79"/>
+<area shape="rect" id="Node000124" href="$tracer__diffusivity__model_8h.html" title=" " alt="" coords="2608,115,2791,177"/>
+<area shape="poly" id="edge67_Node000001_Node000124" title=" " alt="" coords="2268,51,2425,78,2597,112,2610,117,2604,118,2596,118,2424,83,2269,57"/>
+<area shape="rect" id="Node000126" href="$tracer__reaction__model_8h.html" title=" " alt="" coords="2816,115,2999,177"/>
+<area shape="poly" id="edge70_Node000001_Node000126" title=" " alt="" coords="2269,43,2516,68,2660,87,2804,112,2818,117,2812,118,2803,118,2660,93,2515,73,2270,48"/>
+<area shape="rect" id="Node000080" href="$heat__transfer__scratch__data_8h.html" title=" " alt="" coords="4111,115,4325,177"/>
+<area shape="poly" id="edge73_Node000001_Node000080" title=" " alt="" coords="2269,35,2575,39,3010,50,3515,73,3775,90,4029,112,4113,126,4108,126,4028,118,3774,96,3515,78,3010,55,2574,44,2269,40"/>
+<area shape="rect" id="Node000003" href="$physical__properties__manager_8h.html" title=" " alt="" coords="1902,334,2131,396"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="2528,186,2546,211,2558,238,2560,264,2549,288,2521,309,2480,326,2430,340,2372,350,2248,362,2131,367,2131,361,2247,357,2371,344,2429,334,2479,321,2519,305,2545,285,2555,263,2553,239,2541,214,2526,191"/>
+<area shape="rect" id="Node000099" href="$density__model_8cc.html" title=" " alt="" coords="2346,225,2535,286"/>
+<area shape="poly" id="edge26_Node000002_Node000099" title=" " alt="" coords="2470,189,2455,226,2452,222,2466,192"/>
+<area shape="rect" id="Node000004" href="$postprocessing__cfd__dem_8h.html" title=" " alt="" coords="2033,452,2232,514"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="2058,404,2105,453,2100,451,2056,409"/>
+<area shape="poly" id="edge4_Node000003_Node000015" title=" " alt="" coords="1978,405,1932,454,1929,450,1974,408"/>
+<area shape="poly" id="edge20_Node000003_Node000094" title=" " alt="" coords="2146,371,4120,476,4115,479,2146,376"/>
+<area shape="rect" id="Node000016" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="2399,579,2581,641"/>
+<area shape="poly" id="edge5_Node000015_Node000016" title=" " alt="" coords="2006,516,2022,520,2124,537,2205,542,2286,549,2388,568,2417,579,2412,578,2387,573,2285,554,2205,548,2124,542,2021,525,2005,521"/>
+<area shape="rect" id="Node000017" href="$particle__projector_8h.html" title=" " alt="" coords="2605,579,2786,641"/>
+<area shape="poly" id="edge6_Node000015_Node000017" title=" " alt="" coords="2003,516,2022,520,2108,534,2182,540,2308,542,2434,544,2507,552,2593,568,2624,579,2619,578,2592,573,2507,557,2434,549,2308,547,2181,546,2108,539,2021,525,2003,521"/>
+<area shape="rect" id="Node000026" href="$vans__assemblers_8h.html" title="Assemblers for the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations." alt="" coords="1933,706,2114,768"/>
+<area shape="poly" id="edge7_Node000015_Node000026" title=" " alt="" coords="1903,527,1913,588,1922,619,1935,648,1957,678,1984,706,1979,704,1953,682,1930,651,1917,621,1908,589,1900,531"/>
+<area shape="rect" id="Node000028" href="$fluid__dynamics__matrix__based_8h.html" title=" " alt="" coords="1989,571,2170,649"/>
+<area shape="poly" id="edge8_Node000015_Node000028" title=" " alt="" coords="1957,521,2026,571,2021,569,1955,526"/>
+<area shape="rect" id="Node000034" href="$isothermal__compressible__navier__stokes__assembler_8h.html" title=" " alt="" coords="1221,697,1425,776"/>
+<area shape="poly" id="edge9_Node000015_Node000034" title=" " alt="" coords="1779,503,1667,533,1611,551,1556,573,1503,601,1452,634,1368,699,1366,694,1449,630,1500,597,1554,568,1609,546,1666,528,1774,505"/>
+<area shape="rect" id="Node000036" href="$isothermal__compressible__navier__stokes__cls__assembler_8h.html" title=" " alt="" coords="1450,697,1679,776"/>
+<area shape="poly" id="edge10_Node000015_Node000036" title=" " alt="" coords="1779,505,1666,535,1622,553,1593,573,1576,601,1566,633,1562,666,1562,698,1558,695,1557,666,1561,632,1571,599,1589,569,1619,548,1664,530,1774,506"/>
+<area shape="rect" id="Node000039" href="$navier__stokes__assemblers_8h.html" title=" " alt="" coords="1603,579,1812,641"/>
+<area shape="poly" id="edge11_Node000015_Node000039" title=" " alt="" coords="1843,522,1755,581,1753,576,1838,524"/>
+<area shape="rect" id="Node000045" href="$navier__stokes__cahn__hilliard__assemblers_8h.html" title=" " alt="" coords="1703,697,1909,776"/>
+<area shape="poly" id="edge17_Node000015_Node000045" title=" " alt="" coords="1886,527,1822,699,1819,695,1882,530"/>
+<area shape="rect" id="Node000047" href="$navier__stokes__cls__assemblers_8h.html" title=" " alt="" coords="2138,706,2372,768"/>
+<area shape="poly" id="edge18_Node000015_Node000047" title=" " alt="" coords="1918,527,1948,598,1964,628,1978,647,2157,705,2152,705,1975,652,1959,631,1943,600,1915,531"/>
+<area shape="rect" id="Node000050" href="$navier__stokes__scratch__data_8cc.html" title=" " alt="" coords="2194,571,2375,649"/>
+<area shape="poly" id="edge19_Node000015_Node000050" title=" " alt="" coords="2010,516,2023,520,2183,568,2196,575,2191,574,2181,573,2021,525,2010,522"/>
+<area shape="poly" id="edge12_Node000039_Node000026" title=" " alt="" coords="1798,644,1950,706,1944,705,1798,650"/>
+<area shape="poly" id="edge13_Node000039_Node000034" title=" " alt="" coords="1601,645,1439,700,1426,704,1425,699,1437,695,1596,646"/>
+<area shape="poly" id="edge14_Node000039_Node000036" title=" " alt="" coords="1664,650,1610,699,1608,694,1659,652"/>
+<area shape="poly" id="edge15_Node000039_Node000045" title=" " alt="" coords="1742,651,1778,698,1773,696,1739,656"/>
+<area shape="poly" id="edge16_Node000039_Node000047" title=" " alt="" coords="1827,631,1971,659,2126,695,2159,705,2153,705,2125,700,1970,665,1827,636"/>
+<area shape="rect" id="Node000082" href="$time__harmonic__maxwell_8h.html" title=" " alt="" coords="4117,706,4316,768"/>
+<area shape="poly" id="edge21_Node000094_Node000082" title=" " alt="" coords="4289,530,4306,549,4319,569,4327,591,4330,610,4327,629,4319,651,4297,682,4268,708,4266,703,4293,679,4314,648,4322,627,4325,610,4322,593,4314,572,4302,552,4287,535"/>
+<area shape="rect" id="Node000085" href="$time__harmonic__maxwell__scratch__data_8cc.html" title=" " alt="" coords="4055,824,4242,903"/>
+<area shape="poly" id="edge25_Node000094_Node000085" title=" " alt="" coords="4137,532,4121,552,4108,572,4089,626,4086,671,4094,717,4108,775,4127,825,4123,822,4103,777,4089,719,4081,671,4084,624,4103,570,4116,549,4132,534"/>
+<area shape="rect" id="Node000095" href="$time__harmonic__maxwell__assemblers_8h.html" title=" " alt="" coords="4118,571,4304,649"/>
+<area shape="poly" id="edge23_Node000094_Node000095" title=" " alt="" coords="4213,537,4213,572,4209,568,4209,540"/>
+<area shape="poly" id="edge22_Node000082_Node000085" title=" " alt="" coords="4195,780,4171,826,4168,821,4191,783"/>
+<area shape="poly" id="edge24_Node000095_Node000082" title=" " alt="" coords="4215,663,4217,707,4213,704,4212,667"/>
+<area shape="poly" id="edge28_Node000100_Node000003" title=" " alt="" coords="2288,189,2296,214,2299,240,2296,265,2285,288,2262,307,2225,323,2132,347,2131,342,2223,317,2259,302,2281,285,2291,264,2294,240,2290,215,2285,193"/>
+<area shape="rect" id="Node000101" href="$effective__medium__model_8cc.html" title=" " alt="" coords="1529,225,1728,286"/>
+<area shape="poly" id="edge29_Node000100_Node000101" title=" " alt="" coords="2146,178,2034,196,1943,203,1853,210,1740,227,1729,230,1727,224,1739,222,1852,205,1942,198,2033,191,2152,176"/>
+<area shape="poly" id="edge31_Node000102_Node000003" title=" " alt="" coords="1528,188,1517,215,1510,240,1510,264,1520,285,1544,303,1581,319,1627,332,1679,342,1793,354,1905,362,1899,363,1793,360,1678,347,1625,337,1579,324,1542,308,1516,288,1504,265,1504,239,1512,213,1524,192"/>
+<area shape="poly" id="edge32_Node000102_Node000101" title=" " alt="" coords="1586,187,1611,225,1606,223,1584,192"/>
+<area shape="rect" id="Node000103" href="$electric__conductivity__model_8cc.html" title=" " alt="" coords="1266,225,1455,286"/>
+<area shape="poly" id="edge33_Node000102_Node000103" title=" " alt="" coords="1491,183,1417,226,1414,222,1486,186"/>
+<area shape="poly" id="edge35_Node000104_Node000003" title=" " alt="" coords="1248,189,1243,216,1241,241,1244,264,1256,285,1267,293,1286,300,1345,314,1425,326,1518,336,1721,350,1904,360,1899,361,1721,355,1518,341,1424,331,1344,319,1285,305,1265,297,1252,288,1239,266,1235,241,1238,215,1245,194"/>
+<area shape="poly" id="edge36_Node000104_Node000101" title=" " alt="" coords="1377,177,1532,224,1527,225,1377,183"/>
+<area shape="rect" id="Node000105" href="$electric__permittivity__model_8cc.html" title=" " alt="" coords="1002,225,1191,286"/>
+<area shape="poly" id="edge37_Node000104_Node000105" title=" " alt="" coords="1208,184,1145,227,1142,222,1203,187"/>
+<area shape="poly" id="edge41_Node000106_Node000047" title=" " alt="" coords="3878,189,3862,226,3841,293,3837,364,3837,485,3833,499,3823,513,3787,539,3731,563,3658,585,3569,605,3468,624,3241,657,2996,684,2755,705,2373,732,2372,726,2755,700,2995,679,3240,652,3468,619,3568,600,3656,580,3729,558,3785,534,3820,510,3828,497,3831,484,3831,364,3836,292,3857,224,3874,192"/>
+<area shape="rect" id="Node000079" href="$heat__transfer__assemblers_8h.html" title=" " alt="" coords="4115,225,4321,286"/>
+<area shape="poly" id="edge39_Node000106_Node000079" title=" " alt="" coords="4007,180,4133,224,4127,224,4007,185"/>
+<area shape="rect" id="Node000107" href="$evaporation__model_8cc.html" title=" " alt="" coords="3871,225,4090,286"/>
+<area shape="poly" id="edge42_Node000106_Node000107" title=" " alt="" coords="3935,187,3962,225,3957,223,3933,192"/>
+<area shape="rect" id="Node000061" href="$heat__transfer_8h.html" title=" " alt="" coords="4127,334,4309,396"/>
+<area shape="poly" id="edge40_Node000079_Node000061" title=" " alt="" coords="4220,300,4220,336,4216,332,4216,304"/>
+<area shape="rect" id="Node000109" href="$mobility__cahn__hilliard__model_8h.html" title=" " alt="" coords="30,225,230,286"/>
+<area shape="poly" id="edge44_Node000108_Node000109" title=" " alt="" coords="273,186,194,226,190,222,276,182"/>
+<area shape="rect" id="Node000111" href="$surface__tension__model_8h.html" title=" " alt="" coords="253,225,447,286"/>
+<area shape="poly" id="edge46_Node000108_Node000111" title=" " alt="" coords="351,190,352,225,347,224,349,195"/>
+<area shape="poly" id="edge45_Node000109_Node000003" title=" " alt="" coords="244,284,402,301,603,316,1078,338,1551,352,1905,362,1900,363,1551,358,1078,344,603,321,402,307,246,289"/>
+<area shape="poly" id="edge47_Node000111_Node000003" title=" " alt="" coords="461,284,599,299,772,313,1181,335,1591,350,1905,361,1900,362,1591,356,1181,341,772,319,598,305,462,289"/>
+<area shape="poly" id="edge49_Node000113_Node000003" title=" " alt="" coords="1914,182,1943,200,1968,223,1986,249,2000,279,2015,335,2010,333,1995,280,1982,252,1964,226,1940,204,1913,187"/>
+<area shape="poly" id="edge50_Node000113_Node000101" title=" " alt="" coords="1753,184,1682,227,1680,222,1748,186"/>
+<area shape="rect" id="Node000114" href="$magnetic__permeability__model_8cc.html" title=" " alt="" coords="1751,225,1954,286"/>
+<area shape="poly" id="edge51_Node000113_Node000114" title=" " alt="" coords="1833,189,1845,225,1840,223,1830,194"/>
+<area shape="poly" id="edge53_Node000115_Node000003" title=" " alt="" coords="3216,184,3162,227,3148,244,3139,260,3129,275,3111,289,3055,304,2958,318,2687,340,2383,355,2131,363,2131,358,2383,349,2687,335,2958,313,3054,299,3109,284,3125,271,3135,257,3144,240,3159,223,3211,186"/>
+<area shape="rect" id="Node000116" href="$postprocessors_8h.html" title=" " alt="" coords="3615,225,3797,286"/>
+<area shape="poly" id="edge54_Node000115_Node000116" title=" " alt="" coords="3403,173,3604,222,3617,228,3612,228,3603,227,3403,178"/>
+<area shape="rect" id="Node000117" href="$rheological__model_8cc.html" title=" " alt="" coords="3173,225,3386,286"/>
+<area shape="poly" id="edge56_Node000115_Node000117" title=" " alt="" coords="3281,190,3281,226,3277,222,3278,194"/>
+<area shape="rect" id="Node000052" href="$postprocessing__cfd_8cc.html" title=" " alt="" coords="3410,225,3591,286"/>
+<area shape="poly" id="edge57_Node000115_Node000052" title=" " alt="" coords="3355,181,3441,224,3436,224,3355,186"/>
+<area shape="poly" id="edge55_Node000116_Node000061" title=" " alt="" coords="3811,276,4130,345,4124,345,3811,282"/>
+<area shape="poly" id="edge59_Node000118_Node000003" title=" " alt="" coords="692,189,718,242,736,265,758,284,783,295,822,304,935,321,1084,334,1256,343,1613,356,1905,363,1899,364,1613,361,1255,349,1084,339,934,326,821,309,781,300,755,289,732,269,713,244,691,194"/>
+<area shape="rect" id="Node000119" href="$specific__heat__model_8cc.html" title=" " alt="" coords="471,225,661,286"/>
+<area shape="poly" id="edge60_Node000118_Node000119" title=" " alt="" coords="635,189,600,226,596,222,638,185"/>
+<area shape="poly" id="edge62_Node000120_Node000003" title=" " alt="" coords="809,187,792,205,776,226,768,243,764,257,767,271,776,284,790,291,821,298,924,311,1240,333,1605,349,1905,360,1900,361,1604,354,1240,338,924,317,821,304,789,296,772,288,762,273,759,257,763,241,772,223,788,201,813,184"/>
+<area shape="rect" id="Node000121" href="$thermal__conductivity__model_8cc.html" title=" " alt="" coords="786,225,978,286"/>
+<area shape="poly" id="edge63_Node000120_Node000121" title=" " alt="" coords="893,190,889,225,884,223,891,194"/>
+<area shape="poly" id="edge65_Node000122_Node000003" title=" " alt="" coords="2038,191,2022,336,2018,332,2035,194"/>
+<area shape="rect" id="Node000123" href="$thermal__expansion__model_8cc.html" title=" " alt="" coords="2079,225,2271,286"/>
+<area shape="poly" id="edge66_Node000122_Node000123" title=" " alt="" coords="2091,184,2141,225,2135,224,2090,189"/>
+<area shape="poly" id="edge68_Node000124_Node000003" title=" " alt="" coords="2674,189,2631,244,2603,269,2572,289,2538,303,2491,315,2376,335,2249,350,2132,360,2131,354,2248,344,2375,330,2490,310,2536,298,2570,284,2600,264,2627,240,2670,191"/>
+<area shape="rect" id="Node000125" href="$tracer__diffusivity__model_8cc.html" title=" " alt="" coords="2661,225,2842,286"/>
+<area shape="poly" id="edge69_Node000124_Node000125" title=" " alt="" coords="2722,188,2739,225,2734,223,2719,193"/>
+<area shape="poly" id="edge71_Node000126_Node000003" title=" " alt="" coords="2904,190,2889,244,2875,268,2855,289,2816,304,2748,317,2552,339,2327,354,2131,363,2131,357,2327,348,2552,333,2747,312,2815,299,2852,284,2871,265,2884,242,2900,194"/>
+<area shape="rect" id="Node000127" href="$tracer__reaction__model_8cc.html" title=" " alt="" coords="2917,225,3098,286"/>
+<area shape="poly" id="edge72_Node000126_Node000127" title=" " alt="" coords="2946,186,2982,225,2977,223,2945,191"/>
+<area shape="poly" id="edge75_Node000080_Node000079" title=" " alt="" coords="4220,190,4220,226,4216,222,4216,194"/>
+<area shape="poly" id="edge74_Node000080_Node000061" title=" " alt="" coords="4298,183,4319,201,4335,223,4342,240,4345,256,4342,271,4335,288,4314,315,4286,336,4284,332,4310,311,4330,285,4337,269,4340,256,4337,242,4330,226,4315,205,4296,188"/>
 </map>

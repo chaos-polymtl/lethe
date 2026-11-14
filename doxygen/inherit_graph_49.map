@@ -1,3 +1,15 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classFlowControl.html" title="Dynamic flow controller that drives the average velocity of the flow towards a target value." alt="" coords="5,5,160,31"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,191,82,219"/>
+<area shape="rect" id="Node000001" href="$classCahnHilliardFunctionDefined.html" title="Class that implements a boundary conditions for the Cahn&#45;Hilliard equation where the phase and chemic..." alt="" coords="143,5,349,50"/>
+<area shape="poly" id="edge70_Node000000_Node000001" title=" " alt="" coords="52,176,80,117,101,87,128,60,150,48,147,53,131,64,106,90,85,120,57,178"/>
+<area shape="rect" id="Node000002" href="$classFluidDynamicsPressureFunctionDefined.html" title="This class implements a pressure boundary condition for the Navier&#45;Stokes equations." alt="" coords="131,75,360,119"/>
+<area shape="poly" id="edge71_Node000000_Node000002" title=" " alt="" coords="66,178,95,153,128,129,157,118,153,122,131,134,98,157,70,181"/>
+<area shape="rect" id="Node000003" href="$classFluidDynamicsVelocityFunctionDefined.html" title="This class implements a boundary conditions for the fluid dynamics solver where the velocity componen..." alt="" coords="133,144,358,189"/>
+<area shape="poly" id="edge72_Node000000_Node000003" title=" " alt="" coords="95,193,134,186,131,190,98,197"/>
+<area shape="rect" id="Node000004" href="$classInterfaceTools_1_1CellWiseFunction.html" title="Scalar function defined by the DOF values of a single cell. Based on the CellWiseFunction and RefSpac..." alt="" coords="146,213,346,274"/>
+<area shape="poly" id="edge73_Node000000_Node000004" title=" " alt="" coords="96,213,148,223,143,226,98,218"/>
+<area shape="rect" id="Node000005" href="$classTimeHarmonicMaxwellElectricFieldDefined.html" title="This class implements a boundary condition type for the Time Harmonic Maxwell equation where the elec..." alt="" coords="136,299,356,343"/>
+<area shape="poly" id="edge74_Node000000_Node000005" title=" " alt="" coords="66,228,96,258,131,284,156,297,151,299,128,289,93,262,66,233"/>
+<area shape="rect" id="Node000006" href="$classTimeHarmonicMaxwellMagneticFieldDefined.html" title="This class implements a boundary condition type for the Time Harmonic Maxwell equation where the magn..." alt="" coords="130,368,362,413"/>
+<area shape="poly" id="edge75_Node000000_Node000006" title=" " alt="" coords="54,231,83,294,105,326,131,354,151,368,146,368,128,358,101,330,79,297,53,236"/>
 </map>

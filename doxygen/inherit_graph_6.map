@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structAverageVelocities_1_1SupportPointDoFs.html" title="Global indices of the degrees of freedom located at one velocity support point." alt="" coords="5,5,204,60"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,65,94,93"/>
+<area shape="rect" id="Node000001" href="$structRayTracingSolver_1_1neighbor__list__types_1_1ghost.html" title=" " alt="" coords="142,5,315,67"/>
+<area shape="poly" id="edge19_Node000000_Node000001" title=" " alt="" coords="108,62,144,56,139,58,110,67"/>
+<area shape="rect" id="Node000002" href="$structRayTracingSolver_1_1neighbor__list__types_1_1local.html" title=" " alt="" coords="142,91,315,152"/>
+<area shape="poly" id="edge20_Node000000_Node000002" title=" " alt="" coords="109,90,144,100,139,101,109,96"/>
 </map>

@@ -1,9 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/core/multiphysics.h" name="/home/runner/work/lethe/lethe/include/core/multiphysics.h">
-<area shape="rect" id="Node000001" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="135,5,377,45"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,189,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="219,48,134,90,132,85,217,43"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="213,93,299,119"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="259,46,259,79,253,79,253,46"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="323,93,381,119"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="281,43,329,82,326,87,278,48"/>
+<area shape="rect" id="Node000001" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="134,5,374,50"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,98,189,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,50,137,93,135,88,210,51"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="212,98,296,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="256,48,257,84,252,81,252,52"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="321,98,380,126"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="280,48,326,88,321,87,279,53"/>
 </map>

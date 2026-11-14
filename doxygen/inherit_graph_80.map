@@ -1,5 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,13,133,38"/>
-<area shape="rect" id="Node000001" href="$classMGTransferMatrixFreeWrapper.html" title=" " alt="" coords="181,5,403,45"/>
-<area shape="poly" id="edge91_Node000000_Node000001" title=" " alt="" coords="147,23,181,23,181,28,147,28"/>
+<area shape="rect" id="Node000000" href="$classMortarManagerBase.html" title="Base class for the mortar manager." alt="" coords="5,40,170,85"/>
+<area shape="rect" id="Node000001" href="$classMortarManagerCircle.html" title="Mortar manager class for circular interface." alt="" coords="219,5,378,50"/>
+<area shape="poly" id="edge95_Node000000_Node000001" title=" " alt="" coords="184,44,221,40,216,42,185,49"/>
+<area shape="rect" id="Node000002" href="$classMortarManagerLinear.html" title="Mortar manager class for linear interface." alt="" coords="218,75,379,119"/>
+<area shape="poly" id="edge96_Node000000_Node000002" title=" " alt="" coords="185,76,220,84,215,84,185,81"/>
 </map>

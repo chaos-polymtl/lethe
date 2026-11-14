@@ -1,9 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/find_cell_neighbors.h" name="/home/runner/work/lethe/lethe/include/dem/find_cell_neighbors.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="212,5,395,60"/>
-<area shape="rect" id="Node000002" href="$dem__contact__manager_8cc.html" title=" " alt="" coords="5,108,188,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="239,68,152,110,149,106,236,63"/>
-<area shape="rect" id="Node000003" href="$find__cell__neighbors_8cc.html" title=" " alt="" coords="212,108,395,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="306,74,306,108,301,108,301,74"/>
-<area shape="rect" id="Node000004" href="$ray__tracing_8cc.html" title=" " alt="" coords="419,108,601,163"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="370,63,457,106,455,110,368,68"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="211,5,392,67"/>
+<area shape="rect" id="Node000002" href="$dem__contact__manager_8cc.html" title=" " alt="" coords="5,115,187,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="233,74,155,117,152,112,228,76"/>
+<area shape="rect" id="Node000003" href="$find__cell__neighbors_8cc.html" title=" " alt="" coords="211,115,392,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="303,81,304,116,299,113,300,85"/>
+<area shape="rect" id="Node000004" href="$ray__tracing_8cc.html" title=" " alt="" coords="416,115,597,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="373,72,452,114,446,114,372,77"/>
 </map>

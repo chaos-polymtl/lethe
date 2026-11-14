@@ -1,7 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/particle_particle_contact_force.templates.h" name="/home/runner/work/lethe/lethe/include/dem/particle_particle_contact_force.templates.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="104,5,359,60"/>
-<area shape="rect" id="Node000002" href="$particle__particle__contact__force__2d_8cc.html" title=" " alt="" coords="5,108,220,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,71,145,110,142,106,188,67"/>
-<area shape="rect" id="Node000003" href="$particle__particle__contact__force__3d_8cc.html" title=" " alt="" coords="244,108,459,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="275,67,322,106,318,110,271,71"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="104,5,358,67"/>
+<area shape="rect" id="Node000002" href="$particle__particle__contact__force__2d_8cc.html" title=" " alt="" coords="5,115,219,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,76,147,117,144,112,184,79"/>
+<area shape="rect" id="Node000003" href="$particle__particle__contact__force__3d_8cc.html" title=" " alt="" coords="243,115,456,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="276,75,319,115,313,114,274,80"/>
 </map>

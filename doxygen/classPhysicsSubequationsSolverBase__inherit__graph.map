@@ -1,19 +1,19 @@
 <map id="PhysicsSubequationsSolverBase" name="PhysicsSubequationsSolverBase">
-<area shape="rect" id="Node000001" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,77,237,102"/>
-<area shape="rect" id="Node000002" href="$classPhysicsNonlinearSubequationsSolver.html" title=" " alt="" coords="285,5,524,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,71,315,43,316,48,192,76"/>
-<area shape="rect" id="Node000004" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="305,69,504,109"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="251,87,305,87,305,92,251,92"/>
-<area shape="rect" id="Node000009" href="$classPhysicsNonlinearSubequationsSolver.html" title="Non&#45;linear subequations solved inside a physics (or auxiliary physics) that are not part of the main ..." alt="" coords="293,133,516,173"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="192,102,316,131,315,136,191,108"/>
-<area shape="rect" id="Node000003" href="$classCLSPDEBasedInterfaceReinitialization.html" title="CLS PDE&#45;based reinitialization solver." alt="" coords="572,5,840,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="538,23,572,23,572,28,538,28"/>
-<area shape="rect" id="Node000005" href="$classCLSLinearSubequationsSolver.html" title="Generalized solver for CLS linear subequations." alt="" coords="599,69,813,109"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="518,87,598,87,598,92,518,92"/>
-<area shape="rect" id="Node000008" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="618,133,794,173"/>
-<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="513,110,618,132,617,137,512,115"/>
-<area shape="rect" id="Node000006" href="$classCLSCurvatureProjection.html" title="CLS curvature L2 projection solver." alt="" coords="904,37,1079,77"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="826,73,903,64,904,70,827,78"/>
-<area shape="rect" id="Node000007" href="$classCLSPhaseGradientProjection.html" title="CLS phase indicator gradient L2 projection solver." alt="" coords="888,101,1095,141"/>
-<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="827,100,888,107,887,112,827,106"/>
+<area shape="rect" id="Node000001" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,83,237,111"/>
+<area shape="rect" id="Node000002" href="$classPhysicsNonlinearSubequationsSolver.html" title=" " alt="" coords="285,5,523,50"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,76,312,49,308,52,196,81"/>
+<area shape="rect" id="Node000004" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="305,75,503,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="252,94,307,96,301,98,253,100"/>
+<area shape="rect" id="Node000009" href="$classPhysicsNonlinearSubequationsSolver.html" title="Non&#45;linear subequations solved inside a physics (or auxiliary physics) that are not part of the main ..." alt="" coords="293,144,514,189"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="196,112,313,143,307,144,195,118"/>
+<area shape="rect" id="Node000003" href="$classCLSPDEBasedInterfaceReinitialization.html" title="CLS PDE&#45;based reinitialization solver." alt="" coords="571,5,838,50"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="538,25,573,27,568,28,539,30"/>
+<area shape="rect" id="Node000005" href="$classCLSLinearSubequationsSolver.html" title="Generalized solver for CLS linear subequations." alt="" coords="598,75,812,119"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="518,94,600,97,595,97,519,100"/>
+<area shape="rect" id="Node000008" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="617,144,792,189"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="519,121,619,146,614,146,518,126"/>
+<area shape="rect" id="Node000006" href="$classCLSCurvatureProjection.html" title="CLS curvature L2 projection solver." alt="" coords="902,40,1076,85"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="827,79,904,73,899,73,828,85"/>
+<area shape="rect" id="Node000007" href="$classCLSPhaseGradientProjection.html" title="CLS phase indicator gradient L2 projection solver." alt="" coords="886,109,1092,154"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="827,109,888,119,883,119,827,115"/>
 </map>

@@ -1,3 +1,39 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classAnalyticalSolutions_1_1AnalyticalSolution.html" title="Implements analytical solutions for the Navier&#45;Stokes equations and the other physics supported by le..." alt="" coords="5,5,153,60"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,309,180,337"/>
+<area shape="rect" id="Node000001" href="$classPeriodicHillsPullBack.html" title=" " alt="" coords="241,232,400,276"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="153,302,246,275,243,279,156,307"/>
+<area shape="rect" id="Node000002" href="$classPeriodicHillsPushForward.html" title="The push_forward &amp; the pull_back classes create the vector_value functions gradient function and beca..." alt="" coords="228,301,413,346"/>
+<area shape="poly" id="edge2_Node000000_Node000002" title=" " alt="" coords="194,321,229,322,225,325,197,325"/>
+<area shape="rect" id="Node000003" href="$classShape.html" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="262,369,378,397"/>
+<area shape="poly" id="edge3_Node000000_Node000003" title=" " alt="" coords="162,339,267,367,263,370,163,344"/>
+<area shape="rect" id="Node000004" href="$classCompositeShape.html" title="This class was designed so that specific composite shapes could be defined through the parameter file..." alt="" coords="470,5,657,33"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="391,370,411,356,426,337,435,318,444,279,442,241,434,202,426,163,424,124,433,84,444,64,459,44,478,32,474,36,463,48,448,67,438,86,430,124,432,162,439,201,447,240,449,280,440,319,430,340,415,360,395,374"/>
+<area shape="rect" id="Node000005" href="$classCone.html" title=" " alt="" coords="509,57,618,85"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="391,370,411,356,432,324,440,292,439,260,434,228,429,195,428,162,437,129,459,96,482,80,511,72,506,76,484,85,463,100,442,131,434,163,434,195,439,227,445,260,445,293,437,326,415,360,395,374"/>
+<area shape="rect" id="Node000006" href="$classCutHollowSphere.html" title=" " alt="" coords="470,109,658,137"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="391,370,411,356,429,331,436,306,437,280,434,254,431,228,432,201,440,174,459,148,479,136,476,139,463,152,445,177,437,202,437,227,439,253,442,280,442,306,434,333,415,360,395,374"/>
+<area shape="rect" id="Node000007" href="$classCylinder.html" title=" " alt="" coords="498,161,629,189"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="391,369,411,356,426,337,432,319,434,280,436,240,444,220,459,200,477,187,500,180,496,183,480,192,463,204,448,222,441,241,440,280,438,320,430,340,415,360,394,373"/>
+<area shape="rect" id="Node000008" href="$classCylindricalHelix.html" title=" " alt="" coords="474,213,653,241"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="392,368,411,356,422,344,429,331,434,305,440,278,447,265,459,252,483,240,479,243,463,256,452,268,445,280,440,306,434,333,427,347,415,360,395,372"/>
+<area shape="rect" id="Node000009" href="$classCylindricalTube.html" title=" " alt="" coords="476,265,651,293"/>
+<area shape="poly" id="edge9_Node000003_Node000009" title=" " alt="" coords="392,365,412,356,426,343,435,330,444,317,460,304,490,292,486,295,462,308,448,320,439,333,430,347,414,360,395,370"/>
+<area shape="rect" id="Node000010" href="$classDeathStar.html" title=" " alt="" coords="493,317,634,345"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="392,365,498,344,493,347,395,370"/>
+<area shape="rect" id="Node000011" href="$classEllipsoid.html" title=" " alt="" coords="498,369,629,397"/>
+<area shape="poly" id="edge11_Node000003_Node000011" title=" " alt="" coords="393,381,500,382,495,384,395,386"/>
+<area shape="rect" id="Node000012" href="$classHyperRectangle.html" title=" " alt="" coords="474,421,654,449"/>
+<area shape="poly" id="edge12_Node000003_Node000012" title=" " alt="" coords="393,396,498,420,493,422,394,401"/>
+<area shape="rect" id="Node000013" href="$classOpenCascadeShape.html" title=" " alt="" coords="461,473,666,501"/>
+<area shape="poly" id="edge13_Node000003_Node000013" title=" " alt="" coords="356,403,406,431,462,458,500,472,495,473,460,463,404,436,356,408"/>
+<area shape="rect" id="Node000014" href="$classPlane.html" title=" " alt="" coords="508,525,620,553"/>
+<area shape="poly" id="edge14_Node000003_Node000014" title=" " alt="" coords="343,407,395,460,427,487,462,510,510,530,505,530,460,515,424,491,391,464,342,412"/>
+<area shape="rect" id="Node000015" href="$classRBFShape.html" title="RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB..." alt="" coords="493,577,634,605"/>
+<area shape="poly" id="edge15_Node000003_Node000015" title=" " alt="" coords="336,409,358,445,386,486,421,528,462,562,495,579,490,579,460,567,417,531,382,490,353,448,335,414"/>
+<area shape="rect" id="Node000016" href="$classSphere.html" title=" " alt="" coords="503,629,624,657"/>
+<area shape="poly" id="edge16_Node000003_Node000016" title=" " alt="" coords="331,409,350,456,378,511,415,567,437,592,463,614,482,626,505,636,500,635,480,630,459,619,434,596,411,570,373,514,346,458,330,414"/>
+<area shape="rect" id="Node000017" href="$classSuperquadric.html" title="This class defines superquadric shapes. Their signed distance function is: &#160;." alt="" coords="483,681,644,709"/>
+<area shape="poly" id="edge17_Node000003_Node000017" title=" " alt="" coords="328,410,345,467,370,536,409,607,434,639,463,666,485,682,480,681,459,671,430,642,405,609,366,538,340,468,327,415"/>
+<area shape="rect" id="Node000018" href="$classTorus.html" title=" " alt="" coords="508,733,619,761"/>
+<area shape="poly" id="edge18_Node000003_Node000018" title=" " alt="" coords="326,410,339,476,363,559,381,603,403,645,430,684,463,718,484,732,511,743,505,742,482,737,459,723,426,688,398,648,376,605,358,561,334,477,324,415"/>
 </map>

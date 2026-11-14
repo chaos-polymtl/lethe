@@ -1,15 +1,15 @@
 <map id="PhysicsScratchDataBase" name="PhysicsScratchDataBase">
-<area shape="rect" id="Node000001" title="Base class for scratch data objects of physics and subequations." alt="" coords="5,159,188,184"/>
-<area shape="rect" id="Node000002" href="$classCLSScratchData.html" title="Store the information required by the assembly procedure for a CLS free surface equation...." alt="" coords="257,5,437,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="114,146,165,93,198,65,235,41,267,28,269,33,237,46,201,69,168,97,118,150"/>
-<area shape="rect" id="Node000003" href="$classCahnHilliardScratchData.html" title="Class that stores the information required by the assembly procedure for the Cahn&#45;Hilliard equations...." alt="" coords="256,55,437,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="133,150,235,105,270,93,272,98,237,110,136,155"/>
-<area shape="rect" id="Node000004" href="$classHeatTransferScratchData.html" title="Class that stores the information required by the assembly procedure for a heat transfer advection&#45;di..." alt="" coords="255,119,439,159"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="201,155,254,148,255,154,202,161"/>
-<area shape="rect" id="Node000005" href="$classNavierStokesScratchData.html" title="Class that stores the information required by the assembly procedure for a Navier&#45;Stokes equation...." alt="" coords="253,183,440,223"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="202,182,254,189,253,194,202,187"/>
-<area shape="rect" id="Node000006" href="$classTimeHarmonicMaxwellScratchData.html" title="Class that stores the information required by the assembly of the Discontinuous Petrov&#45;Galerkin (DPG)..." alt="" coords="236,247,457,287"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="136,188,237,233,272,245,270,250,235,238,133,193"/>
-<area shape="rect" id="Node000007" href="$classTracerScratchData.html" title="Class that stores the information required by the assembly procedure for a Tracer advection&#45;diffusion..." alt="" coords="271,311,422,351"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="119,193,169,245,202,273,237,297,272,312,270,317,235,302,199,277,166,249,115,196"/>
+<area shape="rect" id="Node000001" title="Base class for scratch data objects of physics and subequations." alt="" coords="5,169,187,197"/>
+<area shape="rect" id="Node000002" href="$classCLSScratchData.html" title="Store the information required by the assembly procedure for a CLS free surface equation...." alt="" coords="255,5,434,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="114,155,164,97,197,67,233,42,262,32,258,35,236,47,200,72,167,101,118,158"/>
+<area shape="rect" id="Node000003" href="$classCahnHilliardScratchData.html" title="Class that stores the information required by the assembly procedure for the Cahn&#45;Hilliard equations...." alt="" coords="255,57,435,102"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="134,160,234,111,268,101,264,104,236,116,137,164"/>
+<area shape="rect" id="Node000004" href="$classHeatTransferScratchData.html" title="Class that stores the information required by the assembly procedure for a heat transfer advection&#45;di..." alt="" coords="253,126,436,171"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="201,166,255,160,250,163,203,171"/>
+<area shape="rect" id="Node000005" href="$classNavierStokesScratchData.html" title="Class that stores the information required by the assembly procedure for a Navier&#45;Stokes equation...." alt="" coords="252,196,438,240"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="202,195,254,204,249,206,203,201"/>
+<area shape="rect" id="Node000006" href="$classTimeHarmonicMaxwellScratchData.html" title="Class that stores the information required by the assembly of the Discontinuous Petrov&#45;Galerkin (DPG)..." alt="" coords="235,265,455,310"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="136,202,236,250,269,264,264,265,234,255,135,207"/>
+<area shape="rect" id="Node000007" href="$classTracerScratchData.html" title="Class that stores the information required by the assembly procedure for a Tracer advection&#45;diffusion..." alt="" coords="270,334,420,379"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="118,207,168,264,201,294,236,320,272,338,267,338,233,324,197,298,165,268,116,212"/>
 </map>

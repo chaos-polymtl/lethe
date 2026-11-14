@@ -1,13 +1,13 @@
 <map id="Insertion&lt; dim, PropertiesIndex &gt;" name="Insertion&lt; dim, PropertiesIndex &gt;">
-<area shape="rect" id="Node000001" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,133,199,173"/>
-<area shape="rect" id="Node000002" href="$classInsertionFile.html" title=" " alt="" coords="259,5,406,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="139,123,189,88,245,55,272,43,274,48,248,60,191,93,142,127"/>
-<area shape="rect" id="Node000003" href="$classInsertionList.html" title=" " alt="" coords="259,69,406,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,127,259,107,261,112,189,132"/>
-<area shape="rect" id="Node000004" href="$classInsertionPacked.html" title=" " alt="" coords="249,133,417,173"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="212,151,249,151,249,156,212,156"/>
-<area shape="rect" id="Node000005" href="$classInsertionPlane.html" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="253,197,412,237"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="189,174,261,195,259,200,187,180"/>
-<area shape="rect" id="Node000006" href="$classInsertionVolume.html" title=" " alt="" coords="247,261,419,301"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="142,180,191,214,248,247,274,259,272,264,245,252,189,218,139,184"/>
+<area shape="rect" id="Node000001" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,144,198,189"/>
+<area shape="rect" id="Node000002" href="$classInsertionFile.html" title=" " alt="" coords="259,5,404,50"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="140,132,189,95,244,60,271,49,267,52,247,65,192,100,144,136"/>
+<area shape="rect" id="Node000003" href="$classInsertionList.html" title=" " alt="" coords="259,75,404,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="191,137,260,117,256,120,193,141"/>
+<area shape="rect" id="Node000004" href="$classInsertionPacked.html" title=" " alt="" coords="248,144,415,189"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="212,164,250,165,245,167,214,169"/>
+<area shape="rect" id="Node000005" href="$classInsertionPlane.html" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="252,213,410,258"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="192,191,257,212,252,213,192,196"/>
+<area shape="rect" id="Node000006" href="$classInsertionVolume.html" title=" " alt="" coords="246,283,417,327"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="142,196,192,233,247,268,272,282,267,282,244,273,189,237,141,201"/>
 </map>

@@ -1,7 +1,17 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classIntegrator.html" title="Base interface for classes that carry out the integration of the velocity and position of particles w..." alt="" coords="5,37,205,77"/>
-<area shape="rect" id="Node000001" href="$classExplicitEulerIntegrator.html" title="Implementation of a classical explicit euler scheme for the integration of the particle motion...." alt="" coords="253,5,440,45"/>
-<area shape="poly" id="edge79_Node000000_Node000001" title=" " alt="" coords="219,40,253,35,253,40,219,45"/>
-<area shape="rect" id="Node000002" href="$classVelocityVerletIntegrator.html" title="Implementation of a classical velocity verlet scheme for the integration of the particle motion...." alt="" coords="253,69,440,109"/>
-<area shape="poly" id="edge80_Node000000_Node000002" title=" " alt="" coords="219,70,253,74,253,80,219,75"/>
+<area shape="rect" id="Node000000" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="5,114,180,142"/>
+<area shape="rect" id="Node000001" href="$classMobilityCahnHilliardModel.html" title="Implementation of the computation of the mobility for Cahn&#45;Hilliard equations." alt="" coords="228,83,422,111"/>
+<area shape="poly" id="edge83_Node000000_Node000001" title=" " alt="" coords="194,112,230,109,225,111,196,117"/>
+<area shape="rect" id="Node000004" href="$classSurfaceTensionModel.html" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="245,143,404,171"/>
+<area shape="poly" id="edge86_Node000000_Node000004" title=" " alt="" coords="195,138,247,146,242,148,195,143"/>
+<area shape="rect" id="Node000002" href="$classMobilityCahnHilliardModelConstant.html" title="Constant mobility model." alt="" coords="470,5,664,50"/>
+<area shape="poly" id="edge84_Node000001_Node000002" title=" " alt="" coords="389,76,489,50,484,51,391,81"/>
+<area shape="rect" id="Node000003" href="$classMobilityCahnHilliardModelQuartic.html" title="Quartic mobility model." alt="" coords="470,75,664,119"/>
+<area shape="poly" id="edge85_Node000001_Node000003" title=" " alt="" coords="437,94,472,97,467,97,438,100"/>
+<area shape="rect" id="Node000005" href="$classSurfaceTensionConstant.html" title="Constant surface tension." alt="" coords="478,143,656,171"/>
+<area shape="poly" id="edge87_Node000004_Node000005" title=" " alt="" coords="420,154,481,157,475,157,420,160"/>
+<area shape="rect" id="Node000006" href="$classSurfaceTensionLinear.html" title="Linear surface tension. The surface tension is given by: sigma_0 + dsimga/dT * (T&#45;T_0)." alt="" coords="488,195,647,223"/>
+<area shape="poly" id="edge88_Node000004_Node000006" title=" " alt="" coords="408,172,502,195,496,195,407,177"/>
+<area shape="rect" id="Node000007" href="$classSurfaceTensionPhaseChange.html" title="Linear surface tension with phase change. The surface tension is given by: alpha_l*(sigma_0 + dsigma/..." alt="" coords="712,195,920,223"/>
+<area shape="poly" id="edge89_Node000006_Node000007" title=" " alt="" coords="663,206,715,209,709,209,663,212"/>
 </map>

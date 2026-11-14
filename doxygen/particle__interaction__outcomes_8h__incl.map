@@ -1,14 +1,14 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/particle_interaction_outcomes.h" name="/home/runner/work/lethe/lethe/include/dem/particle_interaction_outcomes.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="153,5,349,60"/>
-<area shape="rect" id="Node000002" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="45,108,213,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,62,159,102,156,98,212,58"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="214,181,277,207"/>
-<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="252,60,249,168,244,168,247,60"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="289,108,442,133"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="287,58,340,97,337,102,284,62"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="5,181,64,207"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="116,135,63,175,60,171,113,131"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="89,181,181,207"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="133,133,135,168,130,168,128,134"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="149,131,216,172,213,176,147,136"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="152,5,347,67"/>
+<area shape="rect" id="Node000002" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="44,115,212,143"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,66,159,108,156,103,207,69"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="213,191,275,218"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="250,66,247,176,242,174,246,69"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="286,115,439,143"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="288,65,337,105,332,105,286,70"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,191,64,218"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="114,142,64,183,61,179,109,144"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="88,191,179,218"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="131,141,134,176,129,174,127,145"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="149,141,213,182,208,183,148,146"/>
 </map>

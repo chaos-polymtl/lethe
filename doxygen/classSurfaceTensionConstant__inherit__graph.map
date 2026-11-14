@@ -1,7 +1,7 @@
 <map id="SurfaceTensionConstant" name="SurfaceTensionConstant">
-<area shape="rect" id="Node000001" title="Constant surface tension." alt="" coords="5,152,184,177"/>
-<area shape="rect" id="Node000002" href="$classSurfaceTensionModel.html" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="15,79,175,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,118,97,152,92,152,92,118"/>
-<area shape="rect" id="Node000003" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="7,5,182,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="97,44,97,79,92,79,92,44"/>
+<area shape="rect" id="Node000001" title="Constant surface tension." alt="" coords="5,157,183,184"/>
+<area shape="rect" id="Node000002" href="$classSurfaceTensionModel.html" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="14,81,174,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,123,96,157,92,155,92,126"/>
+<area shape="rect" id="Node000003" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="7,5,181,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="95,46,97,81,91,80,93,51"/>
 </map>

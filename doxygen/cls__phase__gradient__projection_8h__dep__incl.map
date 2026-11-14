@@ -1,7 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/cls_phase_gradient_projection.h" name="/home/runner/work/lethe/lethe/include/solvers/cls_phase_gradient_projection.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="137,5,371,60"/>
-<area shape="rect" id="Node000002" href="$cls__phase__gradient__projection_8cc.html" title=" " alt="" coords="5,108,247,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,70,161,110,158,106,209,66"/>
-<area shape="rect" id="Node000003" href="$cls__subequations__interface_8cc.html" title=" " alt="" coords="271,108,493,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="299,66,350,106,347,110,296,70"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="135,5,369,67"/>
+<area shape="rect" id="Node000002" href="$cls__phase__gradient__projection_8cc.html" title=" " alt="" coords="5,115,246,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,76,162,117,159,112,203,78"/>
+<area shape="rect" id="Node000003" href="$cls__subequations__interface_8cc.html" title=" " alt="" coords="270,115,490,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="301,75,347,115,342,114,299,80"/>
 </map>

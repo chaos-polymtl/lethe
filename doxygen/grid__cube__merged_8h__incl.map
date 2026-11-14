@@ -1,9 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/core/grid_cube_merged.h" name="/home/runner/work/lethe/lethe/include/core/grid_cube_merged.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="178,5,361,60"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,115,168,141"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="219,62,122,112,120,107,217,58"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="193,108,346,148"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="272,60,272,94,267,94,267,60"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="371,115,445,141"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="310,58,381,106,378,110,307,62"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="177,5,358,67"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,124,167,151"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,67,124,118,122,113,209,68"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="191,115,344,160"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="269,66,270,101,265,98,266,70"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="368,124,442,151"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="310,65,377,114,372,114,308,70"/>
 </map>

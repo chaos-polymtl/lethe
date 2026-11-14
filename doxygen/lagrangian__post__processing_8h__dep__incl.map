@@ -1,15 +1,15 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/lagrangian_post_processing.h" name="/home/runner/work/lethe/lethe/include/dem/lagrangian_post_processing.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="342,5,558,60"/>
-<area shape="rect" id="Node000002" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,108,188,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="346,66,189,111,187,106,344,61"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="212,108,451,163"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="410,71,364,110,361,106,407,67"/>
-<area shape="rect" id="Node000006" href="$dem_8cc.html" title=" " alt="" coords="475,115,665,155"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="494,67,549,113,546,117,490,71"/>
-<area shape="rect" id="Node000007" href="$lagrangian__post__processing_8cc.html" title=" " alt="" coords="689,108,901,163"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="554,61,706,105,705,111,552,66"/>
-<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,218,188,273"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,177,99,218,94,218,94,177"/>
-<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="234,211,429,280"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="334,177,334,210,329,210,329,177"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="340,5,556,67"/>
+<area shape="rect" id="Node000002" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,115,187,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="333,74,188,119,186,114,336,70"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="210,115,448,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="406,76,364,117,361,112,402,79"/>
+<area shape="rect" id="Node000006" href="$dem_8cc.html" title=" " alt="" coords="472,124,661,168"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="493,75,545,123,540,123,491,80"/>
+<area shape="rect" id="Node000007" href="$lagrangian__post__processing_8cc.html" title=" " alt="" coords="685,115,896,177"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="559,69,697,114,692,115,559,75"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,233,187,295"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="98,190,99,233,93,232,94,194"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="233,225,426,303"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="331,190,332,226,327,223,328,194"/>
 </map>

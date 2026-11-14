@@ -1,11 +1,11 @@
 <map id="TracerDiffusivityModel" name="TracerDiffusivityModel">
-<area shape="rect" id="Node000001" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="224,55,392,80"/>
-<area shape="rect" id="Node000003" href="$classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="468,5,655,31"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="387,49,495,28,496,33,388,55"/>
-<area shape="rect" id="Node000004" href="$classGaussianLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the Gaussian of the level set." alt="" coords="440,55,683,80"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="406,65,440,65,440,70,406,70"/>
-<area shape="rect" id="Node000005" href="$classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the tanh of the level set." alt="" coords="455,104,668,129"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="388,80,496,101,495,107,387,85"/>
-<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,55,176,80"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,65,224,65,224,70,190,70"/>
+<area shape="rect" id="Node000001" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="224,57,391,85"/>
+<area shape="rect" id="Node000003" href="$classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="468,5,653,33"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="393,51,492,33,486,34,394,56"/>
+<area shape="rect" id="Node000004" href="$classGaussianLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the Gaussian of the level set." alt="" coords="439,57,681,85"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="407,69,441,71,436,71,407,74"/>
+<area shape="rect" id="Node000005" href="$classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the tanh of the level set." alt="" coords="454,109,666,137"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="394,86,492,109,486,109,393,91"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,57,176,85"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,69,226,71,221,72,191,74"/>
 </map>

@@ -1,7 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/output_force_torque_calculation.h" name="/home/runner/work/lethe/lethe/include/dem/output_force_torque_calculation.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="111,5,312,60"/>
-<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,115,196,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,72,123,117,120,113,170,68"/>
-<area shape="rect" id="Node000003" href="$output__force__torque__calculation_8cc.html" title=" " alt="" coords="220,108,427,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="253,67,296,106,292,110,249,71"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="110,5,311,67"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,124,195,168"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,76,124,125,121,121,167,79"/>
+<area shape="rect" id="Node000003" href="$output__force__torque__calculation_8cc.html" title=" " alt="" coords="218,115,424,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="253,75,293,115,288,114,251,80"/>
 </map>

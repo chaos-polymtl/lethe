@@ -1,5 +1,5 @@
 <map id="TracerAssemblerSIPG&lt; dim &gt;" name="TracerAssemblerSIPG&lt; dim &gt;">
-<area shape="rect" id="Node000001" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="21,93,181,133"/>
-<area shape="rect" id="Node000002" href="$classPhysicsFaceAssemblerBase.html" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,5,196,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,59,103,93,98,93,98,59"/>
+<area shape="rect" id="Node000001" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="21,98,180,143"/>
+<area shape="rect" id="Node000002" href="$classPhysicsFaceAssemblerBase.html" title=" " alt="" coords="5,5,196,50"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,64,103,99,98,97,99,68"/>
 </map>

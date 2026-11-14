@@ -1,3 +1,29 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structparticle__point__contact__info.html" title="Handle information related to the calculation of the particle&#45;point contact forces." alt="" coords="5,5,172,45"/>
+<area shape="rect" id="Node000000" href="$classParticleFluidAssemblerBase.html" title="Interface for all assemblers of particle&#45;fluid interactions in the VANS equations." alt="" coords="5,421,208,466"/>
+<area shape="rect" id="Node000001" href="$classVANSAssemblerBeetstra.html" title="Assembler for the drag force using the Beetstra model." alt="" coords="272,5,458,50"/>
+<area shape="poly" id="edge98_Node000000_Node000001" title=" " alt="" coords="109,405,122,333,147,241,166,192,190,144,219,100,254,60,273,48,270,52,257,64,223,103,194,147,171,194,152,242,127,334,114,406"/>
+<area shape="rect" id="Node000002" href="$classVANSAssemblerBuoyancy.html" title="Assembler for the buoyancy force on particles in the VANS equations." alt="" coords="270,75,460,119"/>
+<area shape="poly" id="edge99_Node000000_Node000002" title=" " alt="" coords="113,405,129,345,157,271,198,195,224,160,254,130,274,118,271,122,257,134,228,164,202,198,162,273,134,347,118,407"/>
+<area shape="rect" id="Node000003" href="$classVANSAssemblerDallavalle.html" title="Assembler for the drag force using the Dallavalle model." alt="" coords="269,144,462,189"/>
+<area shape="poly" id="edge100_Node000000_Node000003" title=" " alt="" coords="118,406,138,359,167,303,206,247,254,199,276,187,273,191,257,203,210,250,172,306,143,361,123,407"/>
+<area shape="rect" id="Node000004" href="$classVANSAssemblerDiFelice.html" title="Assembler for the drag force using the Di Felice model." alt="" coords="272,213,458,258"/>
+<area shape="poly" id="edge101_Node000000_Node000004" title=" " alt="" coords="127,407,179,337,215,300,254,268,279,256,276,260,257,273,218,304,184,340,132,409"/>
+<area shape="rect" id="Node000005" href="$classVANSAssemblerGidaspow.html" title="Assembler for the drag force using the Gidaspow model." alt="" coords="270,283,460,327"/>
+<area shape="poly" id="edge102_Node000000_Node000005" title=" " alt="" coords="144,410,195,372,254,337,285,326,281,330,257,342,198,377,149,413"/>
+<area shape="rect" id="Node000006" href="$classVANSAssemblerKochHill.html" title="Assembler for the drag force using the Koch and Hill drag model." alt="" coords="272,352,458,397"/>
+<area shape="poly" id="edge103_Node000000_Node000006" title=" " alt="" coords="206,415,281,395,277,399,209,419"/>
+<area shape="rect" id="Node000007" href="$classVANSAssemblerMagnus.html" title="Assembler for the lift force using the Magnus model." alt="" coords="272,421,458,466"/>
+<area shape="poly" id="edge104_Node000000_Node000007" title=" " alt="" coords="222,441,274,442,270,445,224,446"/>
+<area shape="rect" id="Node000008" href="$classVANSAssemblerPressureForce.html" title="Assembler for the pressure force on particles." alt="" coords="257,491,474,535"/>
+<area shape="poly" id="edge105_Node000000_Node000008" title=" " alt="" coords="207,468,282,489,277,491,208,473"/>
+<area shape="rect" id="Node000009" href="$classVANSAssemblerRong.html" title="Assembler for the drag force using the Rong model." alt="" coords="278,560,453,605"/>
+<area shape="poly" id="edge106_Node000000_Node000009" title=" " alt="" coords="146,473,198,511,257,545,286,559,280,560,254,550,195,515,147,478"/>
+<area shape="rect" id="Node000010" href="$classVANSAssemblerSaffmanMei.html" title="Assembler for the lift force using the Saffman&#45;Mei model." alt="" coords="263,629,468,674"/>
+<area shape="poly" id="edge107_Node000000_Node000010" title=" " alt="" coords="129,476,184,547,218,584,257,615,280,628,275,629,254,619,215,588,179,551,129,482"/>
+<area shape="rect" id="Node000011" href="$classVANSAssemblerShearForce.html" title="Assembler for the shear force on particles." alt="" coords="266,699,464,743"/>
+<area shape="poly" id="edge108_Node000000_Node000011" title=" " alt="" coords="121,478,143,527,172,582,210,637,257,684,277,698,272,698,254,688,206,640,167,584,138,529,121,483"/>
+<area shape="rect" id="Node000012" href="$classVANSAssemblerViscousTorque.html" title="Assembler for the viscous dissipative torque due to particle rotation as defined by Derksen (2004)." alt="" coords="256,768,475,813"/>
+<area shape="poly" id="edge109_Node000000_Node000012" title=" " alt="" coords="116,479,134,540,162,614,202,689,228,723,257,754,275,768,270,768,254,758,224,727,198,692,157,616,129,542,115,484"/>
+<area shape="rect" id="Node000013" href="$classVANSAssemblerVorticalTorque.html" title="Assembler for the viscous dissipative torque due to fluid vorticity as defined by Derksen (2004)." alt="" coords="256,837,474,882"/>
+<area shape="poly" id="edge110_Node000000_Node000013" title=" " alt="" coords="112,479,127,553,152,645,171,693,194,740,223,784,257,823,274,837,269,836,254,827,219,788,190,743,166,696,147,647,122,554,111,484"/>
 </map>

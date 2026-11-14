@@ -1,12 +1,12 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/cahn_hilliard_assemblers.h" name="/home/runner/work/lethe/lethe/include/solvers/cahn_hilliard_assemblers.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="125,5,327,60"/>
-<area shape="rect" id="Node000002" href="$cahn__hilliard_8h.html" title=" " alt="" coords="135,108,317,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,74,229,108,223,108,223,74"/>
-<area shape="rect" id="Node000003" href="$cahn__hilliard_8cc.html" title=" " alt="" coords="5,211,188,265"/>
-<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="164,70,142,88,124,109,112,134,105,161,99,211,94,210,99,160,107,132,120,107,139,84,161,66"/>
-<area shape="rect" id="Node000005" href="$cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="341,108,551,163"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="297,63,390,106,388,110,295,68"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="183,173,132,213,129,208,180,169"/>
-<area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="213,211,405,265"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="258,172,289,209,285,212,254,175"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="123,5,325,67"/>
+<area shape="rect" id="Node000002" href="$cahn__hilliard_8h.html" title=" " alt="" coords="133,115,315,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,80,226,115,222,114,223,85"/>
+<area shape="rect" id="Node000003" href="$cahn__hilliard_8cc.html" title=" " alt="" coords="5,225,187,286"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="155,79,139,96,124,116,111,143,103,171,98,225,93,223,98,171,106,141,119,114,135,93,159,75"/>
+<area shape="rect" id="Node000005" href="$cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="338,115,547,177"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="299,72,384,114,379,115,299,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="179,186,133,226,130,222,174,188"/>
+<area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="211,225,402,286"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="257,186,286,225,281,224,255,191"/>
 </map>

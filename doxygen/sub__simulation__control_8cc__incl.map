@@ -1,9 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/source/core/sub_simulation_control.cc" name="/home/runner/work/lethe/lethe/source/core/sub_simulation_control.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="71,5,254,60"/>
-<area shape="rect" id="Node000002" href="$sub__simulation__control_8h.html" title="Controls smaller simulation blocks within simulations." alt="" coords="21,108,174,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,62,121,98,116,95,142,59"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="198,115,261,141"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="184,59,215,102,211,106,179,62"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="5,196,189,221"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="100,148,100,182,95,182,95,148"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="72,5,253,67"/>
+<area shape="rect" id="Node000002" href="$sub__simulation__control_8h.html" title="Controls smaller simulation blocks within simulations." alt="" coords="21,115,173,160"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,65,122,104,117,101,141,70"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="198,124,260,151"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="184,65,215,111,209,111,182,70"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,208,189,235"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,158,100,193,94,191,95,162"/>
 </map>

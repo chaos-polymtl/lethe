@@ -1,19 +1,19 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/postprocessing_cfd.h" name="/home/runner/work/lethe/lethe/include/solvers/postprocessing_cfd.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="536,5,719,60"/>
-<area shape="rect" id="Node000002" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="108,115,291,170"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="523,58,304,111,279,118,277,113,303,105,522,53"/>
-<area shape="rect" id="Node000006" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="315,108,510,177"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="564,69,481,110,478,105,561,64"/>
-<area shape="rect" id="Node000007" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="535,115,720,170"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="630,74,630,115,625,115,625,74"/>
-<area shape="rect" id="Node000008" href="$navier__stokes__base_8cc.html" title=" " alt="" coords="744,115,927,170"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="692,64,786,113,783,118,689,69"/>
-<area shape="rect" id="Node000009" href="$postprocessing__cfd_8cc.html" title=" " alt="" coords="951,115,1133,170"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="733,54,940,105,964,113,963,118,939,111,731,59"/>
-<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,225,188,280"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="167,182,124,227,120,223,163,178"/>
-<area shape="rect" id="Node000005" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,225,395,280"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="236,178,280,223,276,227,233,182"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,328,188,383"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="99,294,99,328,94,328,94,294"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="533,5,715,67"/>
+<area shape="rect" id="Node000002" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="108,124,289,185"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="516,61,414,87,303,118,279,125,276,121,302,112,413,82,520,59"/>
+<area shape="rect" id="Node000006" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="314,115,507,194"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="553,76,483,117,481,112,557,73"/>
+<area shape="rect" id="Node000007" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="532,124,716,185"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="625,80,626,124,622,122,623,85"/>
+<area shape="rect" id="Node000008" href="$navier__stokes__base_8cc.html" title=" " alt="" coords="740,124,921,185"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="691,72,779,123,774,123,691,78"/>
+<area shape="rect" id="Node000009" href="$postprocessing__cfd_8cc.html" title=" " alt="" coords="945,124,1127,185"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="730,58,830,83,934,112,960,123,955,123,933,118,828,88,730,64"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,242,187,303"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="161,199,125,243,121,239,164,195"/>
+<area shape="rect" id="Node000005" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="211,242,392,303"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="236,194,277,241,272,241,235,199"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,351,187,413"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="98,317,99,352,93,350,94,321"/>
 </map>

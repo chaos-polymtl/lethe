@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['cahnhilliard_0',['cahnhilliard',['../structParameters_1_1CahnHilliard.html',1,'Parameters::CahnHilliard'],['../classCahnHilliard.html',1,'CahnHilliard&lt; dim &gt;']]],
+  ['cahnhilliard_0',['CahnHilliard',['../classCahnHilliard.html',1,'CahnHilliard&lt; dim &gt;'],['../structParameters_1_1CahnHilliard.html',1,'Parameters::CahnHilliard']]],
   ['cahnhilliard_5fphasefilter_1',['CahnHilliard_PhaseFilter',['../structParameters_1_1CahnHilliard__PhaseFilter.html',1,'Parameters']]],
   ['cahnhilliardassemblerangleofcontact_2',['CahnHilliardAssemblerAngleOfContact',['../classCahnHilliardAssemblerAngleOfContact.html',1,'']]],
   ['cahnhilliardassemblerbdf_3',['CahnHilliardAssemblerBDF',['../classCahnHilliardAssemblerBDF.html',1,'']]],
