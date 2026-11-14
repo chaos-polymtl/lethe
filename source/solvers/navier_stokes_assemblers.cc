@@ -3,6 +3,7 @@
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_assemblers.h>
@@ -350,6 +351,35 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double rbvms_reference_scaling =
     calculate_rbvms_reference_scaling(scratch_data.fe_values.get_fe().degree);
 
+  // Dynamic velocity subscale: the steady parameter tau_s is
+  // calculate_rbvms_tau without the 4/dt^2 term, the continuity parameter
+  // tau_C is built from tau_s, and the momentum parameter is
+  // tau_t = (alpha + 1/tau_s)^(-1), where alpha is the coefficient of the
+  // current fine-scale velocity in its time derivative (beta_0 for BDF, 0 for
+  // steady problems). The memory m' of the fine-scale velocity is calculated
+  // from its history, which is empty when there is no memory.
+  const auto assembly_method = this->simulation_control->get_assembly_method();
+  const bool is_dynamic_subscale =
+    this->velocity_subscale ==
+    Parameters::Stabilization::VelocitySubscale::dynamic;
+  const double rbvms_transient_term =
+    is_dynamic_subscale ? 0. : four_over_dt_squared;
+  const bool subscale_is_transient =
+    is_dynamic_subscale && time_stepping_is_bdf(assembly_method);
+  const double fine_scale_alpha =
+    subscale_is_transient ?
+      this->simulation_control->get_bdf_coefficients()[0] :
+      0.;
+  const bool has_fine_scale_memory =
+    subscale_is_transient && this->fine_scale_velocity_history != nullptr &&
+    this->fine_scale_velocity_history->n_values_per_cell() > 0;
+  const Vector<double> &bdf_coefficients =
+    this->simulation_control->get_bdf_coefficients();
+  const unsigned int n_previous_solutions =
+    number_of_previous_solutions(assembly_method);
+  const unsigned int active_cell_index =
+    scratch_data.fe_values.get_cell()->active_cell_index();
+
   // Pressure scaling factor
   const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
@@ -405,10 +435,12 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
                                        metric_vector,
                                        advective_velocity,
                                        viscosity_for_stabilization_vector[q],
-                                       four_over_dt_squared,
+                                       rbvms_transient_term,
                                        rbvms_inverse_estimate_constant,
                                        tau,
                                        tau_lsic);
+      if (is_dynamic_subscale)
+        tau = calculate_rbvms_dynamic_tau(tau, fine_scale_alpha);
 
       // Calculate the strong residual r_M (eq. 62)
       auto strong_residual = velocity_gradient * advective_velocity +
@@ -421,7 +453,14 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
       // parameters tau (frozen-tau linearization, consistently with the
       // SUPG/PSPG and GLS assemblers), so the increment of u' is
       // δu' = -tau_M δr_M.
-      const Tensor<1, dim> fine_scale_velocity = -tau * strong_residual;
+      // With the dynamic subscale, u' = -tau_t (r_M + m').
+      const Tensor<1, dim> fine_scale_velocity =
+        has_fine_scale_memory ?
+          -tau *
+            (strong_residual +
+             this->fine_scale_velocity_history->calculate_memory(
+               active_cell_index, q, bdf_coefficients, n_previous_solutions)) :
+          -tau * strong_residual;
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -574,6 +613,35 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
   const double rbvms_reference_scaling =
     calculate_rbvms_reference_scaling(scratch_data.fe_values.get_fe().degree);
 
+  // Dynamic velocity subscale: the steady parameter tau_s is
+  // calculate_rbvms_tau without the 4/dt^2 term, the continuity parameter
+  // tau_C is built from tau_s, and the momentum parameter is
+  // tau_t = (alpha + 1/tau_s)^(-1), where alpha is the coefficient of the
+  // current fine-scale velocity in its time derivative (beta_0 for BDF, 0 for
+  // steady problems). The memory m' of the fine-scale velocity is calculated
+  // from its history, which is empty when there is no memory.
+  const auto assembly_method = this->simulation_control->get_assembly_method();
+  const bool is_dynamic_subscale =
+    this->velocity_subscale ==
+    Parameters::Stabilization::VelocitySubscale::dynamic;
+  const double rbvms_transient_term =
+    is_dynamic_subscale ? 0. : four_over_dt_squared;
+  const bool subscale_is_transient =
+    is_dynamic_subscale && time_stepping_is_bdf(assembly_method);
+  const double fine_scale_alpha =
+    subscale_is_transient ?
+      this->simulation_control->get_bdf_coefficients()[0] :
+      0.;
+  const bool has_fine_scale_memory =
+    subscale_is_transient && this->fine_scale_velocity_history != nullptr &&
+    this->fine_scale_velocity_history->n_values_per_cell() > 0;
+  const Vector<double> &bdf_coefficients =
+    this->simulation_control->get_bdf_coefficients();
+  const unsigned int n_previous_solutions =
+    number_of_previous_solutions(assembly_method);
+  const unsigned int active_cell_index =
+    scratch_data.fe_values.get_cell()->active_cell_index();
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -620,10 +688,12 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
                                        metric_vector,
                                        advective_velocity,
                                        viscosity_for_stabilization_vector[q],
-                                       four_over_dt_squared,
+                                       rbvms_transient_term,
                                        rbvms_inverse_estimate_constant,
                                        tau,
                                        tau_lsic);
+      if (is_dynamic_subscale)
+        tau = calculate_rbvms_dynamic_tau(tau, fine_scale_alpha);
 
       // Calculate the strong residual r_M (eq. 62)
       auto strong_residual = velocity_gradient * advective_velocity +
@@ -634,7 +704,23 @@ RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Fine-scale velocity u' = -tau_M r_M, and cross-stress and
       // Reynolds-stress terms -(∇v, u ⊗ u') - (∇v, u' ⊗ u') (eq. 72), which
       // are contracted with the test-function gradients below.
-      const Tensor<1, dim> fine_scale_velocity = -tau * strong_residual;
+      // With the dynamic subscale, u' = -tau_t (r_M + m').
+      const Tensor<1, dim> fine_scale_velocity =
+        has_fine_scale_memory ?
+          -tau *
+            (strong_residual +
+             this->fine_scale_velocity_history->calculate_memory(
+               active_cell_index, q, bdf_coefficients, n_previous_solutions)) :
+          -tau * strong_residual;
+
+      // Fine-scale velocity of the converged time step, which enters the
+      // history of the dynamic subscale.
+      if (this->fine_scale_velocity_history != nullptr &&
+          this->fine_scale_velocity_history->is_recording())
+        this->fine_scale_velocity_history->store_new_value(active_cell_index,
+                                                           q,
+                                                           fine_scale_velocity);
+
       const Tensor<2, dim> fine_scale_terms =
         rbvms_fine_scale_terms(velocity, fine_scale_velocity);
 

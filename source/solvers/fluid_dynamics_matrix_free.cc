@@ -14,9 +14,6 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/mpi.h>
 
-#include <deal.II/distributed/cell_data_transfer.h>
-#include <deal.II/distributed/tria.h>
-
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
@@ -51,8 +48,6 @@
 
 #include <cmath>
 #include <exception>
-#include <filesystem>
-#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -2813,11 +2808,13 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
 
   // The dynamic RBVMS velocity subscale stores the history of the fine-scale
   // velocity at the quadrature points of the cells. This history is advanced
-  // with BDF schemes only, and it is not transferred when the mesh is adapted.
-  // It is written to the checkpoint files with the triangulation (see
-  // attach_cell_data_to_checkpoint()). It is also attached to the reference
-  // quadrature points, which ignores the motion of a rotating mesh.
-  // For steady simulations, the dynamic and quasi-static subscales coincide.
+  // with BDF schemes only. It is written to the checkpoint files with the
+  // triangulation (see attach_cell_data_to_checkpoint()) and transferred when
+  // the mesh is adapted (see transfer_cell_data_after_mesh_adaptation()). It
+  // follows the quadrature points of a rotating mesh, as the solution follows
+  // its nodes, so that its time derivative is taken along the motion of the
+  // mesh. For steady simulations, the dynamic and quasi-static subscales
+  // coincide.
   if (nsparam.stabilization.velocity_subscale ==
       Parameters::Stabilization::VelocitySubscale::dynamic)
     {
@@ -2835,15 +2832,6 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
           method == Method::bdf3,
         dealii::ExcMessage(
           "The dynamic velocity subscale is only available with the steady and BDF time-stepping methods."));
-      AssertThrow(
-        method == Method::steady || nsparam.mesh_adaptation.type ==
-                                      Parameters::MeshAdaptation::Type::none,
-        dealii::ExcMessage(
-          "The dynamic velocity subscale does not support mesh adaptation in transient simulations."));
-      AssertThrow(
-        !nsparam.mortar_parameters.enable,
-        dealii::ExcMessage(
-          "The dynamic velocity subscale does not support the mortar method."));
     }
 
   this->fe = std::make_shared<FESystem<dim>>(
@@ -2987,9 +2975,7 @@ FluidDynamicsMatrixFree<dim>::write_checkpoint()
 
   // The triangulation has been saved with the history of the fine-scale
   // velocity attached to its cells, so the cell-wise copy is released.
-  this->fine_scale_velocity_checkpoint_transfer.reset();
-  this->fine_scale_velocity_checkpoint_data.clear();
-  this->fine_scale_velocity_checkpoint_data.shrink_to_fit();
+  this->fine_scale_velocity_transfer.reset();
 }
 
 template <int dim>
@@ -2997,45 +2983,17 @@ void
 FluidDynamicsMatrixFree<dim>::attach_cell_data_to_checkpoint(
   const std::string &checkpoint_file_prefix)
 {
-  const unsigned int n_values_per_cell =
-    this->system_operator->n_fine_scale_velocity_history_values_per_cell();
-
-  // The number of values per cell is always written, also when it is zero, so
-  // that the file of a previous checkpoint with the same prefix is overwritten
-  // and the restart never looks for a history that is not attached.
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    {
-      std::ofstream output(checkpoint_file_prefix + ".fine_scale_velocity");
-      output << n_values_per_cell << std::endl;
-    }
-
-  if (n_values_per_cell == 0)
-    return;
-
-  const auto *triangulation =
-    dynamic_cast<const parallel::distributed::Triangulation<dim> *>(
-      this->triangulation.get());
-  AssertThrow(triangulation != nullptr,
-              ExcMessage("The history of the dynamic RBVMS fine-scale "
-                         "velocity can only be written to the checkpoint of a "
-                         "parallel::distributed::Triangulation."));
-
-  // The cell-wise copy and the object attaching it must stay alive until the
-  // triangulation is saved, so they are members released by
-  // write_checkpoint().
-  this->fine_scale_velocity_checkpoint_data =
-    this->system_operator->get_fine_scale_velocity_history_cell_data();
-
-  std::vector<const Vector<double> *> cell_data_to_attach;
-  cell_data_to_attach.reserve(this->fine_scale_velocity_checkpoint_data.size());
-  for (const auto &cell_data : this->fine_scale_velocity_checkpoint_data)
-    cell_data_to_attach.emplace_back(&cell_data);
-
-  this->fine_scale_velocity_checkpoint_transfer = std::make_unique<
-    parallel::distributed::CellDataTransfer<dim, dim, Vector<double>>>(
-    *triangulation);
-  this->fine_scale_velocity_checkpoint_transfer->prepare_for_serialization(
-    cell_data_to_attach);
+  // The object must stay alive until the triangulation is saved, so it is a
+  // member released by write_checkpoint().
+  this->fine_scale_velocity_transfer =
+    std::make_unique<FineScaleVelocityTransfer<dim>>(
+      *this->triangulation,
+      this->mpi_communicator,
+      this->number_quadrature_points);
+  this->fine_scale_velocity_transfer->attach_to_checkpoint(
+    checkpoint_file_prefix,
+    this->system_operator->n_fine_scale_velocity_history_values_per_cell(),
+    this->system_operator->get_fine_scale_velocity_history_cell_data());
 }
 
 template <int dim>
@@ -3043,88 +3001,54 @@ void
 FluidDynamicsMatrixFree<dim>::read_cell_data_from_checkpoint(
   const std::string &checkpoint_file_prefix)
 {
-  // Number of values per cell of the history attached to the checkpoint. It is
-  // read by the first process and broadcast, so that every process takes the
-  // same decisions below. A checkpoint written without this file holds no
-  // history.
-  const std::string filename = checkpoint_file_prefix + ".fine_scale_velocity";
-  unsigned int      n_values_per_cell_in_checkpoint = 0;
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0 &&
-      std::filesystem::exists(filename))
-    {
-      std::ifstream input(filename);
-      if (!(input >> n_values_per_cell_in_checkpoint))
-        n_values_per_cell_in_checkpoint = numbers::invalid_unsigned_int;
-    }
-  n_values_per_cell_in_checkpoint =
-    Utilities::MPI::broadcast(this->mpi_communicator,
-                              n_values_per_cell_in_checkpoint);
-  AssertThrow(n_values_per_cell_in_checkpoint != numbers::invalid_unsigned_int,
-              ExcMessage("The number of values per cell of the history of the "
-                         "dynamic RBVMS fine-scale velocity could not be read "
-                         "from the checkpoint file " +
-                         filename + "."));
+  FineScaleVelocityTransfer<dim> transfer(*this->triangulation,
+                                          this->mpi_communicator,
+                                          this->number_quadrature_points);
+  const auto                     cell_data = transfer.read_from_checkpoint(
+    checkpoint_file_prefix,
+    this->system_operator->n_fine_scale_velocity_history_values_per_cell(),
+    this->pcout);
 
-  const unsigned int n_values_per_cell =
-    this->system_operator->n_fine_scale_velocity_history_values_per_cell();
+  // The data is empty if the checkpoint holds no history or if the simulation
+  // does not use it.
+  if (!cell_data.empty())
+    this->system_operator->set_fine_scale_velocity_history_from_cell_data(
+      cell_data);
+}
 
-  if (n_values_per_cell_in_checkpoint == 0)
-    {
-      if (n_values_per_cell > 0)
-        this->pcout << "The checkpoint holds no history of the dynamic RBVMS "
-                       "fine-scale velocity, which restarts from zero."
-                    << std::endl;
-      return;
-    }
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::prepare_cell_data_for_mesh_adaptation()
+{
+  if (this->system_operator->n_fine_scale_velocity_history_values_per_cell() ==
+      0)
+    return;
 
-  // The history attached to the triangulation is read even if the simulation
-  // does not use it, since all the data attached to a triangulation must be
-  // read before it is saved again.
-  auto *triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      this->triangulation.get());
-  AssertThrow(triangulation != nullptr,
-              ExcMessage("The history of the dynamic RBVMS fine-scale "
-                         "velocity can only be read from the checkpoint of a "
-                         "parallel::distributed::Triangulation."));
+  // The object must stay alive until the history is transferred to the
+  // adapted mesh, so it is a member released by
+  // transfer_cell_data_after_mesh_adaptation().
+  this->fine_scale_velocity_transfer =
+    std::make_unique<FineScaleVelocityTransfer<dim>>(
+      *this->triangulation,
+      this->mpi_communicator,
+      this->number_quadrature_points);
+  this->fine_scale_velocity_transfer->prepare_for_coarsening_and_refinement(
+    this->system_operator->get_fine_scale_velocity_history_cell_data());
+}
 
-  std::vector<Vector<double>>   cell_data(n_values_per_cell_in_checkpoint,
-                                        Vector<double>(
-                                          triangulation->n_active_cells()));
-  std::vector<Vector<double> *> cell_data_to_read;
-  cell_data_to_read.reserve(cell_data.size());
-  for (auto &values : cell_data)
-    cell_data_to_read.emplace_back(&values);
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::transfer_cell_data_after_mesh_adaptation()
+{
+  if (this->fine_scale_velocity_transfer == nullptr)
+    return;
 
-  parallel::distributed::CellDataTransfer<dim, dim, Vector<double>>
-    cell_data_transfer(*triangulation);
-  cell_data_transfer.deserialize(cell_data_to_read);
-
-  if (n_values_per_cell == 0)
-    {
-      this->pcout << "The history of the dynamic RBVMS fine-scale velocity "
-                     "held by the checkpoint is not used, since the "
-                     "simulation does not use the dynamic velocity subscale "
-                     "in a transient simulation."
-                  << std::endl;
-      return;
-    }
-
-  AssertThrow(
-    n_values_per_cell_in_checkpoint == n_values_per_cell,
-    ExcMessage(
-      "The checkpoint holds " +
-      std::to_string(n_values_per_cell_in_checkpoint) +
-      " values per cell of the history of the dynamic RBVMS fine-scale "
-      "velocity, whereas the simulation expects " +
-      std::to_string(n_values_per_cell) +
-      " (number of previous solutions of the time-stepping method times "
-      "number of quadrature points times dimension). Restart with the "
-      "time-stepping method and the velocity degree of the simulation that "
-      "wrote the checkpoint."));
-
+  // The history of the system operator has been allocated again, and set to
+  // zero, when the degrees of freedom were set up on the adapted mesh.
   this->system_operator->set_fine_scale_velocity_history_from_cell_data(
-    cell_data);
+    this->fine_scale_velocity_transfer
+      ->unpack_after_coarsening_and_refinement());
+  this->fine_scale_velocity_transfer.reset();
 }
 
 template <int dim>

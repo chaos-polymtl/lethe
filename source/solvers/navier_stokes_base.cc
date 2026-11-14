@@ -1174,6 +1174,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
   multiphysics->prepare_for_mesh_adaptation();
   if (this->average_velocities_are_enabled())
     average_velocities->prepare_for_mesh_adaptation();
+  this->prepare_cell_data_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
 
@@ -1236,6 +1237,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   multiphysics->prepare_for_mesh_adaptation();
   if (this->average_velocities_are_enabled())
     average_velocities->prepare_for_mesh_adaptation();
+  this->prepare_cell_data_for_mesh_adaptation();
 
   // Refine
   this->triangulation->refine_global(1);
@@ -1256,6 +1258,9 @@ NavierStokesBase<dim, VectorType, DofsType>::transfer_solution(
   SolutionTransfer<dim, VectorType>              &solution_transfer,
   std::vector<SolutionTransfer<dim, VectorType>> &previous_solutions_transfer)
 {
+  // Transfer the solver-specific data attached to the cells
+  this->transfer_cell_data_after_mesh_adaptation();
+
   // Set up the vectors for the transfer
   VectorType tmp = init_temporary_vector();
 
@@ -3141,6 +3146,18 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::read_cell_data_from_checkpoint(
   const std::string & /*checkpoint_file_prefix*/)
+{}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  prepare_cell_data_for_mesh_adaptation()
+{}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  transfer_cell_data_after_mesh_adaptation()
 {}
 
 template <int dim, typename VectorType, typename DofsType>

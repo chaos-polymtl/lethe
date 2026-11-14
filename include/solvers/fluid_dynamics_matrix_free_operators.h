@@ -519,30 +519,33 @@ public:
 
   /**
    * @brief Copy the history of the dynamic RBVMS fine-scale velocity to
-   * cell-wise vectors, for instance to write it to a checkpoint. There is one
-   * vector per history entry, quadrature point and velocity component, in this
-   * order. Entry cell->active_cell_index() of each vector holds the value of a
-   * locally owned cell, and the entries of the other cells are zero.
+   * cell-wise data, for instance to write it to a checkpoint or to transfer it
+   * across mesh adaptation. Entry cell->active_cell_index() holds the values
+   * of a locally owned cell, ordered by history entry, quadrature point and
+   * velocity component. The entries of the other cells are empty.
    *
-   * @return The n_fine_scale_velocity_history_values_per_cell() cell-wise
-   * vectors, of size Triangulation::n_active_cells().
+   * @return Cell-wise data of size Triangulation::n_active_cells(), with
+   * n_fine_scale_velocity_history_values_per_cell() values per locally owned
+   * cell.
    */
-  std::vector<Vector<double>>
+  std::vector<std::vector<double>>
   get_fine_scale_velocity_history_cell_data() const;
 
   /**
    * @brief Set the history of the dynamic RBVMS fine-scale velocity from the
-   * cell-wise vectors of get_fine_scale_velocity_history_cell_data(), for
+   * cell-wise data of get_fine_scale_velocity_history_cell_data(), for
    * instance when a simulation is restarted from a checkpoint. The history
    * must have been allocated by initialize_fine_scale_velocity_history() for
    * the same number of values per cell.
    *
-   * @param[in] cell_data The n_fine_scale_velocity_history_values_per_cell()
-   * cell-wise vectors, of size Triangulation::n_active_cells().
+   * @param[in] cell_data Cell-wise data of size
+   * Triangulation::n_active_cells(), with
+   * n_fine_scale_velocity_history_values_per_cell() values per locally owned
+   * cell.
    */
   void
   set_fine_scale_velocity_history_from_cell_data(
-    const std::vector<Vector<double>> &cell_data);
+    const std::vector<std::vector<double>> &cell_data);
 
   /**
    * @brief Store the values of the vector containing the ALE velocity to use

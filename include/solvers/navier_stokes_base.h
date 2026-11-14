@@ -831,6 +831,25 @@ protected:
   read_cell_data_from_checkpoint(const std::string &checkpoint_file_prefix);
 
   /**
+   * @brief Prepare solver-specific data attached to the cells of the
+   * triangulation for the mesh adaptation that is about to be executed. It is
+   * called by refine_mesh_adaptive() and refine_mesh_uniform() before the
+   * triangulation is adapted, once the solutions have been prepared for the
+   * transfer. By default, nothing is prepared.
+   */
+  virtual void
+  prepare_cell_data_for_mesh_adaptation();
+
+  /**
+   * @brief Transfer the solver-specific data prepared by
+   * prepare_cell_data_for_mesh_adaptation() to the adapted mesh. It is called
+   * by transfer_solution() once the degrees of freedom have been set up on the
+   * adapted mesh. By default, nothing is transferred.
+   */
+  virtual void
+  transfer_cell_data_after_mesh_adaptation();
+
+  /**
    * @brief Gather and return vector of output structs that are particular to some applications.
    *
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.

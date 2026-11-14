@@ -5,12 +5,15 @@
 #define lethe_navier_stokes_assemblers_h
 
 #include <core/fluid_dynamics_boundary_conditions.h>
+#include <core/parameters.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/fine_scale_velocity_history.h>
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_assemblers.h>
 
+#include <memory>
 #include <utility>
 
 /*
@@ -152,9 +155,32 @@ template <int dim>
 class RBVMSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
+  /**
+   * @brief Constructor.
+   *
+   * @param[in] simulation_control Simulation control, which provides the time
+   * step and the coefficients of the time-stepping scheme.
+   *
+   * @param[in] velocity_subscale Model of the fine-scale velocity. With the
+   * dynamic subscale, u' = -tau_t (r_M + m') with
+   * tau_t = (beta_0 + 1/tau_s)^(-1), where tau_s is the stabilization
+   * parameter tau_M without its transient term and m' is the memory of the
+   * fine-scale velocity.
+   *
+   * @param[in] fine_scale_velocity_history History of the fine-scale velocity
+   * of the dynamic subscale, from which the memory is calculated. It is a
+   * null pointer, or it holds no value, when there is no memory
+   * (quasi-static subscale and steady simulations).
+   */
   RBVMSNavierStokesAssemblerCore(
-    const std::shared_ptr<SimulationControl> &simulation_control)
+    const std::shared_ptr<SimulationControl>         &simulation_control,
+    const Parameters::Stabilization::VelocitySubscale velocity_subscale =
+      Parameters::Stabilization::VelocitySubscale::quasi_static,
+    const std::shared_ptr<FineScaleVelocityHistory<dim>>
+      &fine_scale_velocity_history = nullptr)
     : simulation_control(simulation_control)
+    , velocity_subscale(velocity_subscale)
+    , fine_scale_velocity_history(fine_scale_velocity_history)
   {}
 
   /**
@@ -176,6 +202,13 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
+
+  /// Model of the fine-scale velocity.
+  const Parameters::Stabilization::VelocitySubscale velocity_subscale;
+
+  /// History of the fine-scale velocity of the dynamic subscale.
+  const std::shared_ptr<FineScaleVelocityHistory<dim>>
+    fine_scale_velocity_history;
 };
 
 

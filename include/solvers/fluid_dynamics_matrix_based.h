@@ -9,6 +9,8 @@
 #include <core/vector.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/fine_scale_velocity_history.h>
+#include <solvers/fine_scale_velocity_transfer.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/navier_stokes_scratch_data.h>
 
@@ -17,6 +19,9 @@
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <memory>
+#include <string>
 
 using namespace dealii;
 
@@ -240,7 +245,83 @@ protected:
   void
   solve_linear_system() override;
 
+  /**
+   * @brief Percolate the time vectors of the fluid dynamics. With the dynamic
+   * RBVMS velocity subscale and a BDF scheme, the fine-scale velocity of the
+   * time step that just converged is first stored in its history.
+   */
+  void
+  percolate_time_vectors_fd() override;
+
+  /**
+   * @brief Write the checkpoint of the fluid dynamics. The cell-wise copy of
+   * the history of the dynamic RBVMS fine-scale velocity, attached to the
+   * triangulation by attach_cell_data_to_checkpoint(), is released once the
+   * triangulation has been saved.
+   */
+  void
+  write_checkpoint() override;
+
+  /**
+   * @brief Attach the history of the dynamic RBVMS fine-scale velocity to the
+   * cells of the triangulation, so that it is saved in the checkpoint. Nothing
+   * is done if the solver cannot use the dynamic velocity subscale.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  void
+  attach_cell_data_to_checkpoint(
+    const std::string &checkpoint_file_prefix) override;
+
+  /**
+   * @brief Read the history of the dynamic RBVMS fine-scale velocity attached
+   * to the triangulation by attach_cell_data_to_checkpoint(). If the
+   * checkpoint holds no history, the fine-scale velocity restarts from zero.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  void
+  read_cell_data_from_checkpoint(
+    const std::string &checkpoint_file_prefix) override;
+
+  /**
+   * @brief Prepare the history of the dynamic RBVMS fine-scale velocity for
+   * the mesh adaptation that is about to be executed. Nothing is done if the
+   * simulation stores no history.
+   */
+  void
+  prepare_cell_data_for_mesh_adaptation() override;
+
+  /**
+   * @brief Transfer the history of the dynamic RBVMS fine-scale velocity to
+   * the adapted mesh. The history of a refined cell is interpolated to its
+   * children, and the history of coarsened cells is projected to their parent.
+   */
+  void
+  transfer_cell_data_after_mesh_adaptation() override;
+
 private:
+  /**
+   * @brief Create the scratch data used to assemble the right-hand side, with
+   * the auxiliary physics and the mortar method enabled as required by the
+   * simulation.
+   *
+   * @return Scratch data for the assembly of the right-hand side.
+   */
+  NavierStokesScratchData<dim>
+  create_rhs_scratch_data();
+
+  /**
+   * @brief Store the fine-scale velocity of the time step that just converged
+   * in the history of the dynamic RBVMS velocity subscale. The local
+   * right-hand side is assembled once more at the converged solution, so that
+   * the fine-scale velocity is calculated by the RBVMS assembler from the
+   * same strong residual as in the time step, with the contributions of all
+   * the assemblers.
+   */
+  void
+  update_fine_scale_velocity_history();
+
   /**
    * @brief Assembles an L2_projection matrix for the velocity and the pressure.
    * This L2 projection matrix can be used to set the initial condition for
@@ -318,6 +399,22 @@ private:
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
   int current_preconditioner_fill_level;
   int initial_preconditioner_fill_level;
+
+  /**
+   * @brief History of the fine-scale velocity of the dynamic RBVMS velocity
+   * subscale. It holds no value for the quasi-static subscale and for steady
+   * simulations, and it is not allocated (nullptr) by the solvers that do not
+   * support the dynamic subscale.
+   */
+  std::shared_ptr<FineScaleVelocityHistory<dim>> fine_scale_velocity_history;
+
+  /**
+   * @brief Object transferring the history of the dynamic RBVMS fine-scale
+   * velocity to a checkpoint or across mesh adaptation. It keeps a cell-wise
+   * copy of the history while the checkpoint is written or the mesh is
+   * adapted.
+   */
+  std::unique_ptr<FineScaleVelocityTransfer<dim>> fine_scale_velocity_transfer;
 };
 
 

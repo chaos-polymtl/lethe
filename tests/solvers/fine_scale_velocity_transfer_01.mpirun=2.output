@@ -1,0 +1,21 @@
+
+DEAL::2D, degree 1
+DEAL::  Number of cells before and after adaptation: 64 103
+DEAL::  Number of cells with a wrong number of values: 0
+DEAL::  Transfer is exact: true
+DEAL::2D, degree 2
+DEAL::  Number of cells before and after adaptation: 64 103
+DEAL::  Number of cells with a wrong number of values: 0
+DEAL::  Transfer is exact: true
+DEAL::2D, degree 3
+DEAL::  Number of cells before and after adaptation: 64 103
+DEAL::  Number of cells with a wrong number of values: 0
+DEAL::  Transfer is exact: true
+DEAL::3D, degree 1
+DEAL::  Number of cells before and after adaptation: 64 120
+DEAL::  Number of cells with a wrong number of values: 0
+DEAL::  Transfer is exact: true
+DEAL::3D, degree 2
+DEAL::  Number of cells before and after adaptation: 64 120
+DEAL::  Number of cells with a wrong number of values: 0
+DEAL::  Transfer is exact: true

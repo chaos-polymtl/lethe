@@ -1606,7 +1606,7 @@ NavierStokesOperatorBase<dim, number>::
 }
 
 template <int dim, typename number>
-std::vector<Vector<double>>
+std::vector<std::vector<double>>
 NavierStokesOperatorBase<dim,
                          number>::get_fine_scale_velocity_history_cell_data()
   const
@@ -1614,8 +1614,7 @@ NavierStokesOperatorBase<dim,
   const unsigned int n_values = n_fine_scale_velocity_history_values_per_cell();
   const unsigned int n_active_cells =
     this->matrix_free.get_dof_handler().get_triangulation().n_active_cells();
-  std::vector<Vector<double>> cell_data(n_values,
-                                        Vector<double>(n_active_cells));
+  std::vector<std::vector<double>> cell_data(n_active_cells);
   if (n_values == 0)
     return cell_data;
 
@@ -1631,12 +1630,13 @@ NavierStokesOperatorBase<dim,
           this->matrix_free.get_cell_iterator(cell, lane)->active_cell_index();
 
         // Values ordered by history entry, quadrature point and component.
-        unsigned int value = 0;
+        std::vector<double> &values = cell_data[active_cell_index];
+        values.reserve(n_values);
         for (const auto &history : this->fine_scale_velocity_history)
           for (unsigned int q = 0; q < n_q_points; ++q)
             for (int d = 0; d < dim; ++d)
-              cell_data[value++][active_cell_index] =
-                static_cast<double>(history(cell, q)[d][lane]);
+              values.emplace_back(
+                static_cast<double>(history(cell, q)[d][lane]));
       }
 
   return cell_data;
@@ -1646,15 +1646,18 @@ template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::
   set_fine_scale_velocity_history_from_cell_data(
-    const std::vector<Vector<double>> &cell_data)
+    const std::vector<std::vector<double>> &cell_data)
 {
   const unsigned int n_values = n_fine_scale_velocity_history_values_per_cell();
-  AssertThrow(cell_data.size() == n_values,
+  const unsigned int n_active_cells =
+    this->matrix_free.get_dof_handler().get_triangulation().n_active_cells();
+  AssertThrow(cell_data.size() == n_active_cells,
               ExcMessage(
-                "The history of the dynamic RBVMS fine-scale velocity holds " +
-                std::to_string(n_values) +
-                " values per cell, but the cell-wise data provides " +
-                std::to_string(cell_data.size()) + "."));
+                "The cell-wise data of the history of the dynamic RBVMS "
+                "fine-scale velocity holds " +
+                std::to_string(cell_data.size()) +
+                " cells, but the triangulation has " +
+                std::to_string(n_active_cells) + " active cells."));
 
   const FECellIntegrator integrator(this->matrix_free);
   const unsigned int     n_q_points = integrator.n_q_points;
@@ -1669,15 +1672,13 @@ NavierStokesOperatorBase<dim, number>::
 
         // Values ordered by history entry, quadrature point and component, as
         // in get_fine_scale_velocity_history_cell_data().
+        const std::vector<double> &values = cell_data[active_cell_index];
+        AssertDimension(values.size(), n_values);
         unsigned int value = 0;
         for (auto &history : this->fine_scale_velocity_history)
           for (unsigned int q = 0; q < n_q_points; ++q)
             for (int d = 0; d < dim; ++d)
-              {
-                AssertIndexRange(active_cell_index, cell_data[value].size());
-                history(cell, q)[d][lane] =
-                  static_cast<number>(cell_data[value++][active_cell_index]);
-              }
+              history(cell, q)[d][lane] = static_cast<number>(values[value++]);
       }
 }
 

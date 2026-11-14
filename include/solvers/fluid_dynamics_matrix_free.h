@@ -7,15 +7,13 @@
 #include <core/exceptions.h>
 #include <core/multiphysics.h>
 
+#include <solvers/fine_scale_velocity_transfer.h>
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
 #include <solvers/navier_stokes_base.h>
-
-#include <deal.II/distributed/cell_data_transfer.h>
 
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/vector.h>
 
 #include <deal.II/multigrid/mg_coarse.h>
 #include <deal.II/multigrid/mg_constrained_dofs.h>
@@ -549,6 +547,22 @@ protected:
     const std::string &checkpoint_file_prefix) override;
 
   /**
+   * @brief Prepare the history of the dynamic RBVMS fine-scale velocity for
+   * the mesh adaptation that is about to be executed. Nothing is done if the
+   * simulation stores no history.
+   */
+  void
+  prepare_cell_data_for_mesh_adaptation() override;
+
+  /**
+   * @brief Transfer the history of the dynamic RBVMS fine-scale velocity to
+   * the adapted mesh. The history of a refined cell is interpolated to its
+   * children, and the history of coarsened cells is projected to their parent.
+   */
+  void
+  transfer_cell_data_after_mesh_adaptation() override;
+
+  /**
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *
@@ -722,20 +736,13 @@ protected:
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
 
   /**
-   * @brief Cell-wise copy of the history of the dynamic RBVMS fine-scale
-   * velocity, attached to the triangulation while a checkpoint is written.
+   * @brief Object transferring the history of the dynamic RBVMS fine-scale
+   * velocity to a checkpoint or across mesh adaptation. It keeps a cell-wise
+   * copy of the history while the checkpoint is written or the mesh is
+   * adapted.
    *
    */
-  std::vector<Vector<double>> fine_scale_velocity_checkpoint_data;
-
-  /**
-   * @brief Object attaching fine_scale_velocity_checkpoint_data to the
-   * triangulation while a checkpoint is written.
-   *
-   */
-  std::unique_ptr<
-    parallel::distributed::CellDataTransfer<dim, dim, Vector<double>>>
-    fine_scale_velocity_checkpoint_transfer;
+  std::unique_ptr<FineScaleVelocityTransfer<dim>> fine_scale_velocity_transfer;
 
   /**
    * @brief Geometric multigrid preconditioner.
