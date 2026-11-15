@@ -94,7 +94,7 @@ public:
     const std::vector<double> &values = cell_data[active_cell_index];
     Tensor<1, dim>             memory;
     for (unsigned int p = 0; p < n_previous_solutions; ++p)
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         memory[d] +=
           bdf_coefficients[p + 1] * values[(p * n_q_points + q) * dim + d];
     return memory;
@@ -117,7 +117,7 @@ public:
                   const Tensor<1, dim> &fine_scale_velocity)
   {
     AssertIndexRange(active_cell_index, new_values.size());
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       new_values[active_cell_index][q * dim + d] = fine_scale_velocity[d];
   }
 

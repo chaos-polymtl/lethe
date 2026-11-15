@@ -36,7 +36,7 @@ refine_fine_scale_velocity_cell_data(const FiniteElement<dim>  &fe,
       for (unsigned int history = 0; history < n_history_entries; ++history)
         for (unsigned int i = 0; i < n_q_points; ++i)
           for (unsigned int j = 0; j < n_q_points; ++j)
-            for (unsigned int d = 0; d < dim; ++d)
+            for (int d = 0; d < dim; ++d)
               children_values[child][(history * n_q_points + i) * dim + d] +=
                 prolongation(i, j) *
                 parent_values[(history * n_q_points + j) * dim + d];
@@ -67,7 +67,7 @@ coarsen_fine_scale_velocity_cell_data(
       for (unsigned int history = 0; history < n_history_entries; ++history)
         for (unsigned int i = 0; i < n_q_points; ++i)
           for (unsigned int j = 0; j < n_q_points; ++j)
-            for (unsigned int d = 0; d < dim; ++d)
+            for (int d = 0; d < dim; ++d)
               parent_values[(history * n_q_points + i) * dim + d] +=
                 restriction(i, j) *
                 children_values[child][(history * n_q_points + j) * dim + d];
@@ -121,7 +121,7 @@ FineScaleVelocityTransfer<dim>::create_cell_data_transfer() const
     *this->triangulation,
     false,
     [this](const typename Triangulation<dim>::cell_iterator &,
-           const std::vector<double> parent_values) {
+           const std::vector<double> &parent_values) {
       return refine_fine_scale_velocity_cell_data(this->fe, parent_values);
     },
     [this](const typename Triangulation<dim>::cell_iterator &,

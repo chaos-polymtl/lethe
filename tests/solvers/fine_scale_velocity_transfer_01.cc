@@ -57,7 +57,7 @@ namespace
                   const unsigned int component)
   {
     double value = 1. + history;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       value *= 0.5 * (component + 1) + std::pow(point[d], degree) -
                0.3 * (d + 1) * point[d];
     return value;
@@ -90,7 +90,7 @@ namespace
           auto &values = cell_data[cell->active_cell_index()];
           for (unsigned int history = 0; history < n_history_entries; ++history)
             for (unsigned int q = 0; q < n_q_points; ++q)
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 values.emplace_back(reference_value(
                   fe_values.quadrature_point(q), degree, history, d));
         }
@@ -137,7 +137,7 @@ namespace
           unsigned int value = 0;
           for (unsigned int history = 0; history < n_history_entries; ++history)
             for (unsigned int q = 0; q < n_q_points; ++q)
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 max_error =
                   std::max(max_error,
                            std::abs(
