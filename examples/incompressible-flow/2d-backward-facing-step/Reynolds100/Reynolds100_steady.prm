@@ -24,7 +24,25 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity = 0.02 # Re_h=2/nu
+    set kinematic viscosity = 0.02 # Re = 2/nu = 100
+  end
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+# The steady solution is obtained by a continuation on the kinematic viscosity,
+# starting from Re = 100, so that every Reynolds number is solved in the same way
+
+subsection initial conditions
+  set type = ramp
+  subsection ramp
+    subsection kinematic viscosity
+      set initial kinematic viscosity = 0.02
+      set iterations                  = 8
+      set alpha                       = 0.5
+    end
   end
 end
 
@@ -33,8 +51,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type      = gmsh
-  set file name = ../backward-facing-step.msh
+  set type               = gmsh
+  set file name          = ../backward-facing-step.msh
+  set initial refinement = 1
 end
 
 #---------------------------------------------------
@@ -42,10 +61,12 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set variable            = velocity
-  set type                = adaptive
-  set error estimator     = kelly
-  set fraction refinement = 0.2
+  set variable             = velocity
+  set type                 = adaptive
+  set error estimator      = kelly
+  set min refinement level = 1
+  set fraction refinement  = 0.1
+  set fraction coarsening  = 0
 end
 
 #---------------------------------------------------
@@ -79,7 +100,7 @@ subsection boundary conditions
     set id   = 1
     set type = function
     subsection u
-      set Function expression = 1
+      set Function expression = 6*(y-1)*(2-y)
     end
     subsection v
       set Function expression = 0
@@ -100,8 +121,9 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity = verbose
-    set tolerance = 1e-6
+    set verbosity      = verbose
+    set tolerance      = 1e-6
+    set max iterations = 20
   end
 end
 
@@ -111,15 +133,13 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
-    set method                                = gmres
-    set max iters                             = 300
-    set max krylov vectors                    = 300
-    set relative residual                     = 1e-4
-    set minimum residual                      = 1e-9
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 2
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                   = verbose
+    set method                      = gmres
+    set max iters                   = 500
+    set max krylov vectors          = 500
+    set relative residual           = 1e-4
+    set minimum residual            = 1e-9
+    set preconditioner              = amg
+    set amg preconditioner ilu fill = 1
   end
 end
