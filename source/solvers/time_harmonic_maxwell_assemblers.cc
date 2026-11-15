@@ -1236,10 +1236,18 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
     n_face_q_points);
   for (unsigned int q = 0; q < n_face_q_points; ++q)
     g_inc_JxW_container[q] =
-      tangential_component(compute_robin_boundary_data(
-                             scratch_data, q, bc_type, waveguide_port_index)
-                             .first,
-                           scratch_data.face_normals[q]) *
+      tangential_component(
+        compute_robin_boundary_data(
+          time_harmonic_maxwell_parameters,
+          boundary_conditions,
+          waveguide_ports_relative_amplitudes,
+          scratch_data.face_boundary_id,
+          scratch_data.face_quadrature_points[q],
+          scratch_data.face_normals[q],
+          scratch_data.face_effective_electric_permittivities[q],
+          scratch_data.face_effective_magnetic_permeabilities[q])
+          .first,
+        scratch_data.face_normals[q]) *
       scratch_data.face_JxW[q];
 
   // Excitation term -<F,g>. For the test base function i, the entries of the
