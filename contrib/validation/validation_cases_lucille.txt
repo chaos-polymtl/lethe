@@ -40,5 +40,8 @@ examples/multiphysics/cooling_fin 128
 examples/multiphysics/waveguide 128
 examples/incompressible-flow/3d-turbulent-taylor-couette 128
 examples/sharp-immersed-boundary/sedimentation-1-particle 128
+examples/incompressible-flow/3d-ribbon-mixer-srf 128
+examples/incompressible-flow/3d-flow-around-sphere 128
+examples/incompressible-flow/2d-backward-facing-step 128
 
 

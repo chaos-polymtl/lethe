@@ -266,7 +266,15 @@ It is possible to notice a lot of diffusion past the step. This phenomenon is co
 .. math::
 	\left[ \frac{du}{dy} \right]_{y=0} = 0
 
-which can be resolved with a bisection algorithm or with any other appropriate numerical approach. The postprocessing script provided can be used to compute this reattachment length by using the following command: 
+To evaluate this condition directly, the parameter files ask Lethe to output the velocity gradient in the ``post-processing`` subsection:
+
+.. code-block:: text
+
+  subsection post-processing
+    set output velocity gradient = true
+  end
+
+The ``velocity_gradient`` field is then written in the ``.vtu`` files, and its :math:`xy` component is :math:`\frac{du}{dy}`. The postprocessing script samples this component along the bottom wall downstream of the step, for every mesh adaptation step. The wall shear is negative under the recirculation zone, and :math:`x_r` is the point where it becomes positive again at the end of this zone, found by linear interpolation between the sampling points. The script can be used with the following command: 
 
 .. code-block:: text
   :class: copy-button

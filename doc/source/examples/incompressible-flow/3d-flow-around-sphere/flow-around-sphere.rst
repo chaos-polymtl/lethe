@@ -10,7 +10,7 @@ In this example, a fluid flows past a sphere.
 Features
 ----------------------------------
 
-- Solvers: ``lethe-fluid`` (with Q1-Q1) or  ``lethe-fluid-block`` (with Q2-Q1)
+- Solvers: ``lethe-fluid`` (with Q1-Q1), ``lethe-fluid-block`` (with Q2-Q1) or ``lethe-fluid-matrix-free`` (with Q2-Q2)
 - Steady-state problem
 - Displays the importance of adaptive mesh refinement
 - Displays the effect of the Reynolds number on the convergence
@@ -25,6 +25,8 @@ All files mentioned below are located in the example's folder (``examples/incomp
 - Parameter file for :math:`\mathrm{Re}=0.1`: ``sphere-0.1.prm``
 - Parameter file for :math:`\mathrm{Re}=150`: ``sphere-150.prm``
 - Parameter file for :math:`\mathrm{Re}=150` using adaptive mesh refinement: ``sphere-adapt.prm``
+- Parameter files for the matrix-free solver: ``sphere-0.1-matrix-free.prm`` and ``sphere-150-matrix-free.prm``
+- Postprocessing Python script for computing the drag coefficients: ``postprocess_drag.py``
 
 
 -----------------------
@@ -267,6 +269,16 @@ or
 
   lethe-fluid sphere-adapt.prm
 
+The two static mesh cases can also be simulated with the matrix-free solver:
+
+.. code-block:: text
+  :class: copy-button
+
+  lethe-fluid-matrix-free sphere-0.1-matrix-free.prm
+  lethe-fluid-matrix-free sphere-150-matrix-free.prm
+
+These parameter files differ from the matrix-based ones in three ways: they use Q2-Q2 elements, the mesh is refined once (``initial refinement = 1``) and the linear system is preconditioned by a global coarsening hp-multigrid (``preconditioner = gcmg`` with ``mg coarsening type = hp``). The multigrid levels are first obtained by coarsening the mesh down to the Gmsh mesh, and then by decreasing the polynomial degree from 2 to 1. The results are written in the ``sphere-0.1-matrix-free`` and ``sphere-150-matrix-free`` folders.
+
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
 
@@ -298,6 +310,8 @@ We can appreciate the axisymmetrical behavior of the flow. The drag on the spher
   5823 98.3705224612 -0.0000000785 0.0000001119 62.270588  0.000000  0.000000   36.099934 -0.000000  0.000000
 
 Given the flow parameters, the calculated drag coefficient is 250.50, using around 6000 cells. At Re = 0.1, an analytical solution of the drag coefficient is known: :math:`C_D = 240` (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_). The deviation from the analytical solution is primarily due to the size of the domain (height of the domain compared to the size of the sphere). The coarseness of the mesh can also have an impact on the result. It would be relevant to carry out a mesh refinement analysis.
+
+The drag coefficients of all the static mesh simulations (matrix-based and matrix-free, at both Reynolds numbers) can be computed from the ``force.00.dat`` files and compared with the reference values by running ``python3 postprocess_drag.py`` from the example folder.
 
 Second Case Results (:math:`\mathrm{Re}=150`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
