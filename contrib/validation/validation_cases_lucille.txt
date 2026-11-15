@@ -35,6 +35,7 @@ examples/dem/2d-sandpile-formation 128
 # The given number of cores is the number of serial simulations launched at the same time
 examples/dem/3d-oblique-wall-impact 34
 examples/incompressible-flow/2d-sudden-expansion-flow 128
+examples/incompressible-flow/2d-backward-facing-step 128
 examples/multiphysics/warming-up-viscous-fluid 1
 examples/multiphysics/cooling_fin 128
 examples/multiphysics/waveguide 128
