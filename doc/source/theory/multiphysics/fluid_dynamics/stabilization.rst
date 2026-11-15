@@ -357,6 +357,10 @@ In steady simulations, there is no time derivative and the two models are identi
 Implementation Notes and Limitations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning::
+
+  The dynamic subscale is an experimental feature. It has only been validated on the Taylor-Green vortex at :math:`Re = 1600` and on a turbulent Taylor-Couette flow at :math:`Re = 4000`. In these two cases, its results were less sensitive to the time step than those of the quasi-static subscale, but it overpredicted the peak of the dissipation rate of the Taylor-Green vortex by 5 to 7 % and underpredicted the peak of the enstrophy of the Taylor-Couette flow by 6 %, whereas the quasi-static subscale stayed within 3 % and 5 % of the reference, respectively. It may change or be removed in a future version.
+
 * The RBVMS stabilization is currently available for constant-density (incompressible) Newtonian flows with the monolithic solvers (``lethe-fluid`` and ``lethe-fluid-matrix-free``).
 * The dynamic subscale is available with the monolithic solvers (``lethe-fluid`` and ``lethe-fluid-matrix-free``), for steady simulations and BDF time-stepping methods. It does not support simplex meshes.
 * With the dynamic subscale, the fine-scale velocity starts from zero, and the term :math:`\left(\mathbf{v}, \partial_t \mathbf{u}'\right)` is neglected in the momentum equation. The Jacobian is assembled with :math:`\tau_t` and :math:`\mathbf{m}'` frozen, so that :math:`\delta \mathbf{u}' = -\tau_t\, \delta \boldsymbol{\mathcal{R}}`. On the levels of the geometric multigrid preconditioner of the matrix-free solver, the memory is neglected, which only affects the preconditioner.
