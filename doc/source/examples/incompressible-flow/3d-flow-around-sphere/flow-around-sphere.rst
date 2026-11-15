@@ -26,6 +26,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 - Parameter file for :math:`\mathrm{Re}=150`: ``sphere-150.prm``
 - Parameter file for :math:`\mathrm{Re}=150` using adaptive mesh refinement: ``sphere-adapt.prm``
 - Parameter files for the matrix-free solver: ``sphere-0.1-matrix-free.prm`` and ``sphere-150-matrix-free.prm``
+- Parameter files for the matrix-free solver at :math:`\mathrm{Re}=0.1` on domains enlarged twice and four times: ``sphere-0.1-matrix-free-x2.prm`` and ``sphere-0.1-matrix-free-x4.prm``
 - Postprocessing Python script for computing the drag coefficients: ``postprocess_drag.py``
 
 
@@ -63,27 +64,34 @@ The structured mesh is built using `gmsh <https://gmsh.info/#Download>`_. Geomet
   around=10;        // Refinement around the sphere
   trail=8;          // Refinement of trail of sphere
   near_sphere=1.20; // Progression of cell refinement to sphere surface
-  downstream=16;    // Length of domain downstream of sphere
-  upstream=-6;      // Length of domain upstream of sphere (must be negative)
-  cross_section=10; // Half the cross-sectional width/height
-  radius=0.5;       // Radius of sphere
+  // Scaling factor of the size of the domain (the size of the sphere and the
+  // number of cells do not change). It can be changed from the command line:
+  //   gmsh -setnumber domain_scale 2 -3 sphere.geo -o sphere-x2.msh
+  If (!Exists(domain_scale))
+    domain_scale=1;
+  EndIf
+  downstream=16*domain_scale;    // Length of domain downstream of sphere
+  upstream=-6*domain_scale;      // Length of domain upstream of sphere (must be negative)
+  cross_section=10*domain_scale; // Cross-sectional width/height
+  radius=0.5;                    // Radius of sphere
 
 .. note::
 
-  The domain is constructed so that the wake has sufficient distance to develop downstream and there is a sufficient cross-sectional area to avoid any effects from the wall boundary conditions in the flow.
+  The domain is constructed so that the wake has sufficient distance to develop downstream and there is a sufficient cross-sectional area to limit the effects of the boundary conditions on the flow at :math:`\mathrm{Re}=150`. At :math:`\mathrm{Re}=0.1`, the disturbance of the flow by the sphere decays much more slowly and the size of the domain has a significant impact on the drag coefficient. This is why the ``domain_scale`` variable can be used to enlarge the domain, as discussed in the results section.
 
 In the parameter file, the mesh is read by specifying its type and file name:
 
 .. code-block:: text
 
     subsection mesh
-      set type      = gmsh
-      set file name = sphere.msh
+      set type               = gmsh
+      set file name          = sphere.msh
+      set initial refinement = 1
     end
 
 .. note::
   
-  The mesh is no further refined for the first static mesh case (:math:`\mathrm{Re}=0.1`) and it has a total of 5823 cells. For the second static mesh case (:math:`\mathrm{Re}=150`), the ``initial refinement`` parameter is used and set to 1, so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains 46,584 cells.
+  The Gmsh mesh contains 5823 cells. For both static mesh cases (:math:`\mathrm{Re}=0.1` and :math:`\mathrm{Re}=150`), the ``initial refinement`` parameter is used and set to 1, so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains 46,584 cells.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -277,7 +285,23 @@ The two static mesh cases can also be simulated with the matrix-free solver:
   lethe-fluid-matrix-free sphere-0.1-matrix-free.prm
   lethe-fluid-matrix-free sphere-150-matrix-free.prm
 
-These parameter files differ from the matrix-based ones in three ways: they use Q2-Q2 elements, the mesh is refined once (``initial refinement = 1``) and the linear system is preconditioned by a global coarsening hp-multigrid (``preconditioner = gcmg`` with ``mg coarsening type = hp``). The multigrid levels are first obtained by coarsening the mesh down to the Gmsh mesh, and then by decreasing the polynomial degree from 2 to 1. The results are written in the ``sphere-0.1-matrix-free`` and ``sphere-150-matrix-free`` folders.
+These parameter files differ from the matrix-based ones in three ways: they use Q2-Q2 elements, the mesh is refined once (``initial refinement = 1``) and the linear system is preconditioned by a global coarsening hp-multigrid (``preconditioner = gcmg`` with ``mg coarsening type = hp``). The multigrid levels are first obtained by coarsening the mesh down to the Gmsh mesh, and then by decreasing the polynomial degree from 2 to 1. The coarse-grid problem is solved with an algebraic multigrid (``mg coarse grid solver = amg``). The results are written in the ``sphere-0.1-matrix-free`` and ``sphere-150-matrix-free`` folders.
+
+To study the effect of the size of the domain at :math:`\mathrm{Re}=0.1`, the meshes of the domains enlarged twice and four times are generated with:
+
+.. code-block:: text
+  :class: copy-button
+
+  gmsh -setnumber domain_scale 2 -3 sphere.geo -o sphere-x2.msh
+  gmsh -setnumber domain_scale 4 -3 sphere.geo -o sphere-x4.msh
+
+and the corresponding simulations are launched with:
+
+.. code-block:: text
+  :class: copy-button
+
+  lethe-fluid-matrix-free sphere-0.1-matrix-free-x2.prm
+  lethe-fluid-matrix-free sphere-0.1-matrix-free-x4.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -306,10 +330,41 @@ We can appreciate the axisymmetrical behavior of the flow. The drag on the spher
 
 .. code-block:: text
 
-  cells      f_x           f_y          f_z        f_xv      f_yv      f_zv       f_xp       f_yp      f_zp  
-  5823 98.3705224612 -0.0000000785 0.0000001119 62.270588  0.000000  0.000000   36.099934 -0.000000  0.000000
+  cells      f_x            f_y           f_z          f_xv          f_yv          f_zv          f_xp          f_yp          f_zp
+  46584 105.1156249119 -0.0000000602 -0.0000000392 67.6640027070 -0.0000000531 -0.0000000329 37.4516222050 -0.0000000071 -0.0000000063
 
-Given the flow parameters, the calculated drag coefficient is 250.50, using around 6000 cells. At Re = 0.1, an analytical solution of the drag coefficient is known: :math:`C_D = 240` (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_). The deviation from the analytical solution is primarily due to the size of the domain (height of the domain compared to the size of the sphere). The coarseness of the mesh can also have an impact on the result. It would be relevant to carry out a mesh refinement analysis.
+The drag coefficient is :math:`C_D = \frac{2 F_x}{\rho u_{\infty}^2 A}`, where :math:`A = \pi D^2/4` is the frontal area of the sphere. Given the flow parameters, the calculated drag coefficient is 267.7. At :math:`\mathrm{Re}=0.1`, the flow is very close to a Stokes flow, for which the drag coefficient of a sphere in an infinite domain is given by Stokes law, :math:`C_D = 24/\mathrm{Re} = 240` (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_). Oseen's correction, :math:`C_D = \frac{24}{\mathrm{Re}} \left(1 + \frac{3}{16}\mathrm{Re}\right) = 244.5`, accounts for the first effect of inertia.
+
+The deviation from Stokes law has two sources: the discretization error and the size of the domain. The following table gives the drag coefficient for several discretizations and sizes of the domain. A domain scale of 2 means that the upstream length, the downstream length and the width of the domain are twice those of the original domain.
+
++-----------------------------+--------------+--------+-------------+------------------+
+| Solver                      | Domain scale | Cells  | :math:`C_D` | Deviation        |
++=============================+==============+========+=============+==================+
+| Matrix-based, Q1-Q1,        | 1            | 5823   | 250.5       | +4.4%            |
+| no refinement               |              |        |             |                  |
++-----------------------------+--------------+--------+-------------+------------------+
+| Matrix-based, Q1-Q1         | 1            | 46584  | 267.7       | +11.5%           |
++-----------------------------+--------------+--------+-------------+------------------+
+| Matrix-free, Q2-Q2,         | 1            | 5823   | 280.5       | +16.9%           |
+| no refinement               |              |        |             |                  |
++-----------------------------+--------------+--------+-------------+------------------+
+| Matrix-free, Q2-Q2          | 1            | 46584  | 282.1       | +17.5%           |
++-----------------------------+--------------+--------+-------------+------------------+
+| Matrix-free, Q2-Q2          | 2            | 56200  | 259.7       | +8.2%            |
++-----------------------------+--------------+--------+-------------+------------------+
+| Matrix-free, Q2-Q2          | 4            | 106776 | 250.2       | +4.2%            |
++-----------------------------+--------------+--------+-------------+------------------+
+| Extrapolation to an         | ∞            | —      | 240.6       | +0.25%           |
+| infinite domain             |              |        |             |                  |
++-----------------------------+--------------+--------+-------------+------------------+
+
+On the original domain, the drag coefficient converges to approximately 282 when the mesh is refined or the degree of the interpolation is increased. The result of 250.5 obtained with Q1-Q1 elements on the Gmsh mesh is closer to Stokes law only because two errors compensate each other: the coarse mesh underestimates the viscous drag, while the size of the domain increases the drag. This is why the mesh is refined once in ``sphere-0.1.prm``.
+
+The deviation of the converged result is due to the size of the domain. In a Stokes flow, the disturbance of the velocity by the sphere decays like :math:`D/r`, where :math:`r` is the distance to the sphere. Upstream of the sphere, the velocity of an unbounded flow is :math:`u = u_{\infty} \left(1 - \frac{3D}{4r} + \frac{D^3}{16 r^3}\right)` on the axis, which is still 12.5% lower than :math:`u_{\infty}` at the inlet of the original domain (:math:`r = 6D`). Imposing :math:`u = u_{\infty}` at the inlet, as well as the slip condition on the lateral walls, confines the flow and increases the drag. Consequently, the deviation decreases like the inverse of the size of the domain: it is approximately halved every time the domain is enlarged twice. The drag coefficient can therefore be extrapolated linearly in :math:`1/\mathrm{domain\ scale}` to an infinite domain from the two largest domains, :math:`C_D(\infty) \approx 2 C_D(4) - C_D(2) = 240.6`, which agrees with Stokes law within 0.25%. Since the domain scale of 4 places the boundaries beyond the distance :math:`D/\mathrm{Re} = 10D` at which inertia becomes as important as viscosity, this extrapolation does not allow to distinguish Stokes law from Oseen's correction.
+
+.. image:: images/lethe-sphere-drag-domain-size.png
+    :alt: Drag coefficient as a function of the size of the domain
+    :align: center
 
 The drag coefficients of all the static mesh simulations (matrix-based and matrix-free, at both Reynolds numbers) can be computed from the ``force.00.dat`` files and compared with the reference values by running ``python3 postprocess_drag.py`` from the example folder.
 
@@ -354,6 +409,6 @@ Possibilities for Extension
 
 - **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 
 
-- **Mesh size** It would be interesting to increase the height-sphere diameter ratio and see if the drag coefficient obtained is closer to the analytical one for Re = 0.1 A mesh refinement analysis could also be carried out.
+- **Domain size:** The domain size study carried out at :math:`\mathrm{Re}=0.1` could be repeated at :math:`\mathrm{Re}=150`, where the disturbance of the flow decays faster and the size of the domain is expected to have a smaller impact.
 
 - **Dynamic mesh adaptation:** To increase accuracy further, the ``max number elements`` and ``max refinement level`` parameters of the mesh adaption can be increased.

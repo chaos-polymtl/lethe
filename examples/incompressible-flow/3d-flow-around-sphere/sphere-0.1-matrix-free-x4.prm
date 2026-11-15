@@ -1,0 +1,163 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 0
+  set output path       = sphere-0.1-matrix-free-x4/
+  set output frequency  = 1
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 2
+  set pressure degree = 2
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+subsection forces
+  set verbosity             = verbose
+  set calculate force       = true
+  set calculate torque      = false
+  set force name            = force
+  set output precision      = 10
+  set calculation frequency = 1
+  set output frequency      = 1
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 10
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = gmsh
+  set file name          = sphere-x4.msh
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set type = noslip
+  end
+  subsection bc 1
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set type = slip
+  end
+  subsection bc 3
+    set type = outlet
+  end
+end
+
+#---------------------------------------------------
+# Manifolds
+#---------------------------------------------------
+
+subsection manifolds
+  set number = 1
+  subsection manifold 0
+    set id                = 0
+    set type              = spherical
+    set point coordinates = 0,0,0
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = verbose
+    set tolerance      = 1e-4
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity          = verbose
+    set method             = gmres
+    set max iters          = 200
+    set max krylov vectors = 200
+    set relative residual  = 1e-4
+    set minimum residual   = 1e-9
+    set preconditioner     = gcmg
+
+    # Multigrid: h-coarsening down to the gmsh mesh, then p-coarsening from Q2 to Q1
+    set mg verbosity               = verbose
+    set mg coarsening type         = hp
+    set mg p coarsening type       = decrease_by_one
+    set mg p min coarsening degree = 1
+
+    # Smoother
+    set mg smoother iterations         = 10
+    set mg smoother eig estimation     = true
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+
+    # Coarse-grid solver
+    set mg coarse grid solver = amg
+  end
+end

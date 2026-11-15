@@ -145,7 +145,7 @@ subsection linear solver
     set preconditioner     = gcmg
 
     # Multigrid: h-coarsening down to the gmsh mesh, then p-coarsening from Q2 to Q1
-    set mg verbosity               = quiet
+    set mg verbosity               = verbose
     set mg coarsening type         = hp
     set mg p coarsening type       = decrease_by_one
     set mg p min coarsening degree = 1
@@ -158,6 +158,6 @@ subsection linear solver
     set eig estimation verbosity       = quiet
 
     # Coarse-grid solver
-    set mg coarse grid solver = direct
+    set mg coarse grid solver = amg
   end
 end
