@@ -484,10 +484,11 @@
 <ul class="simple">
 <li><p>Bash script for gathering torques: <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/gather-torques.sh</span></code></p></li>
 <li><p>Bash script for running simulations on a cluster (job script): <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/template/launch-mixer.sh</span></code></p></li>
-<li><p>Experimental data file: <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/experimental.dat</span></code></p></li>
+<li><p>Experimental data file: <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/experimental-data.dat</span></code></p></li>
 <li><p>Geometry file: <code class="docutils literal notranslate"><span class="pre">diff-step-mesh.geo</span></code></p></li>
 <li><p>Parameter file for <span class="math notranslate nohighlight">\(Re = 1\)</span>: <code class="docutils literal notranslate"><span class="pre">Re1/ribbon-gls-Re1.prm</span></code></p></li>
 <li><p>Parameter file for generating multiple cases: <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/ribbon-gls.prm</span></code></p></li>
+<li><p>Postprocessing Python script for computing <span class="math notranslate nohighlight">\(N_p\)</span> at <span class="math notranslate nohighlight">\(Re = 1\)</span>: <code class="docutils literal notranslate"><span class="pre">Re1/postprocess_power_number.py</span></code></p></li>
 <li><p>Postprocessing Python script for generating the <span class="math notranslate nohighlight">\(N_p\)</span> vs <span class="math notranslate nohighlight">\(Re\)</span> curves: <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/plot_Np_vs_Re.py</span></code></p></li>
 <li><p>Python script for generating different cases: <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/template/lethe_case_generator.py</span></code></p></li>
 <li><p>Python script for launching all the simulations on the cluster: <code class="docutils literal notranslate"><span class="pre">Np_vs_Re/launch_all_mixers.py</span></code></p></li>
@@ -564,7 +565,7 @@ end
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
     set type      = gmsh
-    set file name = ../diff-step-mesh.msh
+    set file name = diff-step-mesh.msh
     set simplex   = true
 end
 </pre></div>
@@ -704,6 +705,10 @@ Using Gmsh, with the <code class="docutils literal notranslate"><span class="pre
 <h3>Simulating for a Specific Flow Condition <span class="math notranslate nohighlight">\((Re=1)\)</span><a class="headerlink" href="#simulating-for-a-specific-flow-condition-re-1" title="Link to this heading">#</a></h3>
 <p>Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> executable is within your path, the simulation can be launched by typing:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>  mpirun -np $number_of_CPUs lethe-fluid ribbon-gls-Re1.prm
+</pre></div>
+</div>
+<p>Once the simulation is over, the power number is computed from the torque on the rotating vessel wall (<code class="docutils literal notranslate"><span class="pre">output/torque.01.dat</span></code>) and compared with the experimental data by running, from the <code class="docutils literal notranslate"><span class="pre">Re1</span></code> folder:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>  python3 postprocess_power_number.py
 </pre></div>
 </div>
 </section>

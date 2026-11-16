@@ -36,10 +36,11 @@ All files mentioned below are located in the example's folder (``examples/incomp
 
 - Bash script for gathering torques: ``Np_vs_Re/gather-torques.sh``
 - Bash script for running simulations on a cluster (job script): ``Np_vs_Re/template/launch-mixer.sh``
-- Experimental data file: ``Np_vs_Re/experimental.dat``
+- Experimental data file: ``Np_vs_Re/experimental-data.dat``
 - Geometry file: ``diff-step-mesh.geo``
 - Parameter file for :math:`Re = 1`: ``Re1/ribbon-gls-Re1.prm``
 - Parameter file for generating multiple cases: ``Np_vs_Re/ribbon-gls.prm``
+- Postprocessing Python script for computing :math:`N_p` at :math:`Re = 1`: ``Re1/postprocess_power_number.py``
 - Postprocessing Python script for generating the :math:`N_p` vs :math:`Re` curves: ``Np_vs_Re/plot_Np_vs_Re.py``
 - Python script for generating different cases: ``Np_vs_Re/template/lethe_case_generator.py``
 - Python script for launching all the simulations on the cluster: ``Np_vs_Re/launch_all_mixers.py``
@@ -126,7 +127,7 @@ Mesh
 
     subsection mesh
         set type      = gmsh
-        set file name = ../diff-step-mesh.msh
+        set file name = diff-step-mesh.msh
         set simplex   = true
     end
 
@@ -291,6 +292,13 @@ Launching the simulation is as simple as specifying the executable name and the 
   :class: copy-button
 
     mpirun -np $number_of_CPUs lethe-fluid ribbon-gls-Re1.prm
+
+Once the simulation is over, the power number is computed from the torque on the rotating vessel wall (``output/torque.01.dat``) and compared with the experimental data by running, from the ``Re1`` folder:
+
+.. code-block:: text
+  :class: copy-button
+
+    python3 postprocess_power_number.py
 
 Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
