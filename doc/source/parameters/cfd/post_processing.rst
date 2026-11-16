@@ -364,7 +364,7 @@ Multiphysics Post-processing
 
       P_\text{abs} = \frac{\omega}{2}\int_{\Omega_m} \left((\varepsilon_r'' + \sigma_r)|\mathbf{E}|^2 + \mu_r''|\mathbf{H}|^2\right)
 
-  where :math:`\omega` is the non-dimensional angular frequency, :math:`\varepsilon_r''` and :math:`\mu_r''` are the imaginary parts of the relative electric permittivity and magnetic permeability, and :math:`\sigma_r` is the dimensionless electric conductivity (see :doc:`physical properties <physical_properties>`). The output table is appended with one column per material, named ``absorbed_power_material_i``, where ``i`` is the material id (``0`` for the fluid and ``i`` for the i-th solid).
+  where :math:`\omega` is the non-dimensional angular frequency, :math:`\varepsilon_r''` and :math:`\mu_r''` are the imaginary parts of the relative electric permittivity and magnetic permeability, and :math:`\sigma_r` is the dimensionless electric conductivity (see :doc:`physical properties <physical_properties>`). The output table is appended with one column per material, named ``absorbed_power_material_i``, where ``i`` is the material id (``0`` for the fluid and ``i`` for the i-th solid). With an effective medium (e.g., the ``bruggeman`` model of the unresolved CFD-DEM solvers), the fluid and the unresolved dispersed phase form a single mixture, so the power absorbed by the particles is included in the power of the fluid (material ``0``).
 
   If ``verbosity = verbose``, a summary is also printed in the terminal. It lists the powers of all the boundaries, the power absorbed in each material and the power balance, with the labels of the summary:
 
@@ -379,7 +379,7 @@ Multiphysics Post-processing
         \text{absorbed} &= \sum_{\Omega_m} P_\text{abs},
       \end{align}
 
-  where the sums are over the boundaries of the indicated type and over the materials, and the imbalance:
+  where the sums are over the boundaries of the indicated type and over the materials. The reflected power is the outgoing power of the excited Robin boundaries. If several boundaries are excited (e.g., several waveguide ports), the outgoing power of each of them also contains the power transmitted from the other excited boundaries, which cannot be distinguished from the reflected power. The imbalance is:
 
   .. math::
 

@@ -100,7 +100,9 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
           simulation_parameters.fem_parameters.electromagnetics_test_degree),
         FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_test_degree));
-      // When using DG p=0, we still need a mapping of degree 1 to compute the quadrature points in the cells, so we use the maximum of the trial degree and 1 for the mapping.
+      // When using DG p=0, we still need a mapping of degree 1 to compute the
+      // quadrature points in the cells, so we use the maximum of the trial
+      // degree and 1 for the mapping.
       mapping = std::make_shared<MappingQ<dim>>(
         std::max(fe_trial_interior->degree, uint(1)));
       cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
@@ -1317,8 +1319,8 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
   // net power must vanish, as a sanity check. The incident, outgoing and cross
   // powers are only defined on the Robin boundaries.
   summary << "Boundaries:\n"
-          << std::left << std::setw(10) << "boundary" << std::setw(20)
-          << "type" << std::right << std::setw(power_width) << "incident"
+          << std::left << std::setw(10) << "boundary" << std::setw(20) << "type"
+          << std::right << std::setw(power_width) << "incident"
           << std::setw(power_width) << "outgoing" << std::setw(power_width)
           << "cross" << std::setw(power_width) << "net entering" << '\n';
   for (const auto &[boundary_id, type] : boundary_conditions.type)
@@ -2353,9 +2355,9 @@ TimeHarmonicMaxwell<dim>::define_constraints()
 
   // Type of the boundary condition of each boundary id, used to find the Robin
   // faces
-  const auto &boundary_types = this->simulation_parameters
-                                 .boundary_conditions_time_harmonic_electromagnetics
-                                 .type;
+  const auto &boundary_types =
+    this->simulation_parameters
+      .boundary_conditions_time_harmonic_electromagnetics.type;
 
   // Count, for each skeleton dof, the faces containing it where the magnetic
   // trace is tested (the non-Robin faces). The faces containing a dof can
