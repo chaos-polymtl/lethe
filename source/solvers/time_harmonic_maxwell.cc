@@ -1281,7 +1281,7 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
         }
       else
         {
-          non_robin_net_power += powers.net;
+          imposed_power += powers.net;
         }
     }
   double absorbed_power = 0.;
@@ -1365,7 +1365,7 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
     {"reflected (outgoing, excited Robin boundaries)", reflected_power},
     {"transmitted (outgoing, other Robin boundaries)", transmitted_power},
     {"cross power (lossy Robin boundaries)", cross_power},
-    {"imposed (non-Robin boundaries)", non_robin_net_power},
+    {"imposed (non-Robin boundaries)", imposed_power},
     {"absorbed", absorbed_power},
     {"imbalance", total_net_power - absorbed_power}};
 
