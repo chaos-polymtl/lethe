@@ -166,7 +166,7 @@ hermitian_product(const Tensor<1, dim, std::complex<Number>> &a,
                   const Tensor<1, dim, std::complex<Number>> &b)
 {
   std::complex<Number> product = 0.;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     product += a[d] * std::conj(b[d]);
   return product;
 }
