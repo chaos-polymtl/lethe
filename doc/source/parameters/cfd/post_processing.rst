@@ -337,7 +337,7 @@ Multiphysics Post-processing
   * ``geometric melt volume name``: name of the output file containing the time evolution of the geometric melt volume.
   * ``melting temperature``: temperature above which the fluid is considered melted.
 
-* ``calculate electromagnetic power``: controls if the calculation of the electromagnetic powers is enabled for the time-harmonic Maxwell equations. The powers are computed after each solve of the time-harmonic Maxwell equations and written in the file ``<electromagnetic power name>.dat`` of the output folder. They are defined below with the non-dimensional fields :math:`\mathbf{E}` and :math:`\mathbf{H}` of the time-harmonic Maxwell equations. If the ``electromagnetic scaling type`` is not ``none``, they are converted to W, regardless of the ``dimensionality`` of the problem, by the factor :math:`E_0^2 L^2 / Z_0`, where :math:`E_0` is the electric field amplitude used to scale the solution (in V/m), :math:`L` is the length unit of the mesh (in m) and :math:`Z_0` is the impedance of free space. Otherwise, they are non-dimensional. The following powers are computed:
+* ``calculate electromagnetic power``: controls if the calculation of the electromagnetic powers is enabled for the time-harmonic Maxwell equations. The powers are computed after each solve of the time-harmonic Maxwell equations and written in the file ``<electromagnetic power name>.dat`` of the output folder. They are defined below with the non-dimensional fields :math:`\mathbf{E}` and :math:`\mathbf{H}` of the time-harmonic Maxwell equations. If the ``electromagnetic scaling type`` is not ``none``, they are converted to W by the factor :math:`E_0^2 L^2 / Z_0`, where :math:`E_0` is the electric field amplitude used to scale the solution (in V/m), :math:`L` is the length unit of the mesh (in m) and :math:`Z_0` is the impedance of free space. Otherwise, they are non-dimensional. The following powers are computed:
 
   1. The net power entering the domain through each boundary :math:`\Gamma`, i.e. the flux of the time-averaged Poynting vector through :math:`\Gamma`, where :math:`\mathbf{n}` is the outward normal and :math:`\mathbf{E}_T` is the tangential electric field:
 
@@ -350,7 +350,7 @@ Multiphysics Post-processing
   .. Tip::
     The net power through the ``pec`` and ``pmc`` boundaries must vanish, which provides a sanity check.
 
-  2. The incident power :math:`P_\text{in}`, the outgoing power :math:`P_\text{out}` and the cross power :math:`P_\text{cross}` (the Poynting flux due to the interaction between the incident and outgoing waves) for each Robin boundary, i.e. each boundary with a ``silver_muller``, ``impedance_boundary`` or ``waveguide_port`` boundary condition, which all follow the same boundary condition :math:`\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}`. The total tangential electric field on the boundary :math:`\mathbf{E}_T` is split into an incident wave entering the domain, :math:`\mathbf{n}\times\mathbf{H}_\text{in} = Y\mathbf{E}_\text{in}`, and an outgoing wave, :math:`\mathbf{n}\times\mathbf{H}_\text{out} = -Y\mathbf{E}_\text{out}`. The boundary condition then gives :math:`\mathbf{E}_\text{in} = \mathbf{g}/(2Y)` and :math:`\mathbf{E}_\text{out} = \mathbf{E}_T - \mathbf{E}_\text{in}`. Consequentally, the powers are defined from the Poynting flux of each wave as:
+  2. The incident power :math:`P_\text{in}`, the outgoing power :math:`P_\text{out}` and the cross power :math:`P_\text{cross}` (the Poynting flux due to the interaction between the incident and outgoing waves) for each Robin boundary, i.e. each boundary with a ``silver_muller``, ``impedance_boundary`` or ``waveguide_port`` boundary condition, which all follow the same boundary condition :math:`\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}`. The total tangential electric field on the boundary :math:`\mathbf{E}_T` is split into an incident wave entering the domain, :math:`\mathbf{n}\times\mathbf{H}_\text{in} = Y\mathbf{E}_\text{in}`, and an outgoing wave, :math:`\mathbf{n}\times\mathbf{H}_\text{out} = -Y\mathbf{E}_\text{out}`. The boundary condition then gives :math:`\mathbf{E}_\text{in} = \mathbf{g}/(2Y)` and :math:`\mathbf{E}_\text{out} = \mathbf{E}_T - \mathbf{E}_\text{in}`. Consequently, the powers are defined from the Poynting flux of each wave as:
 
   .. math::
 
@@ -375,20 +375,20 @@ Multiphysics Post-processing
         \text{reflected} &= \sum_{\text{Robin},\, P_\text{in} > 0} P_\text{out}, &
         \text{transmitted} &= \sum_{\text{Robin},\, P_\text{in} = 0} P_\text{out}, \\
         \text{cross} &= \sum_{\text{Robin}} P_\text{cross}, &
-        \text{net entering} &= \sum_{\text{non-Robin}} P_\text{net}, &
-        \text{absorbed} &= \sum_{m} P_\text{abs},
+        \text{imposed} &= \sum_{\text{non-Robin}} P_\text{net}, &
+        \text{absorbed} &= \sum_{\Omega_m} P_\text{abs},
       \end{align}
 
   where the sums are over the boundaries of the indicated type and over the materials, and the imbalance:
 
   .. math::
 
-      \text{imbalance} = \text{incident} - \text{reflected} - \text{transmitted} + \text{cross} + \text{net entering} - \text{absorbed}
+      \text{imbalance} = \text{incident} - \text{reflected} - \text{transmitted} + \text{cross} + \text{imposed} - \text{absorbed}
 
-  The percentages are relative to the incident power.
+  The percentages are relative to the incident power. If no Robin boundary is excited, for instance when the excitation is imposed with an ``electric_field`` boundary condition, there is no incident power and the percentages are relative to the power entering the domain, i.e. the sum of the positive net powers of the boundaries. If this power is also zero, the percentages are not defined and are written as ``-``.
 
   .. Tip::
-    The power imbalance, which vanishes for the exact solution by the Poynting theorem, can be used as a proxy to measure the discretization error.
+    The power imbalance, which vanishes for the exact solution by the Poynting theorem, can be used as a proxy to measure the numerical error. It includes both the discretization error and the error of the linear solver, since the linear system is only solved up to the ``relative residual`` of the ``electromagnetics`` linear solver. If the imbalance does not decrease when the mesh is refined, the tolerance of the linear solver is likely too loose.
 
   * ``electromagnetic power name``: output filename for the electromagnetic power calculations.
 

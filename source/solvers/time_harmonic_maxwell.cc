@@ -100,6 +100,7 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
           simulation_parameters.fem_parameters.electromagnetics_test_degree),
         FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_test_degree));
+      // When using DG p=0, we still need a mapping of degree 1 to compute the quadrature points in the cells, so we use the maximum of the trial degree and 1 for the mapping.
       mapping = std::make_shared<MappingQ<dim>>(
         std::max(fe_trial_interior->degree, uint(1)));
       cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
@@ -871,46 +872,31 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
         &this->multiphysics->get_solution(PhysicsID::heat_transfer);
     }
 
-  // Compute the effective electromagnetic properties at the quadrature points
-  // of a cell, or of one of its faces if a face number is given. The
-  // temperature is only evaluated if the properties of the material of the
-  // cell depend on it, and is set to zero otherwise. The number of quadrature
-  // points is given by the size of the property vectors.
-  const auto compute_properties =
-    [&](const auto                        &cell,
-        const bool                         material_needs_temperature,
-        const unsigned int                 face_no,
-        std::vector<std::complex<double>> &electric_permittivities,
-        std::vector<std::complex<double>> &magnetic_permeabilities) {
-      std::vector<double> &temperature_values =
-        field_values[field::temperature];
-      temperature_values.resize(electric_permittivities.size());
+  // Likewise, the void fraction field is only needed when at least one
+  // electromagnetic property depends on the void fraction (effective medium of
+  // the unresolved CFD-DEM simulations).
+  std::unique_ptr<FEValues<dim>>     fe_values_void_fraction;
+  std::unique_ptr<FEFaceValues<dim>> fe_face_values_void_fraction;
+  const DoFHandler<dim>             *dof_handler_void_fraction = nullptr;
+  const GlobalVectorType            *void_fraction_solution    = nullptr;
 
-      if (!material_needs_temperature)
-        {
-          std::ranges::fill(temperature_values, 0.);
-        }
-      else if (face_no == numbers::invalid_unsigned_int)
-        {
-          fe_values_temperature->reinit(
-            cell->as_dof_handler_iterator(*dof_handler_temperature));
-          fe_values_temperature->get_function_values(*temperature_solution,
-                                                     temperature_values);
-        }
-      else
-        {
-          fe_face_values_temperature->reinit(
-            cell->as_dof_handler_iterator(*dof_handler_temperature), face_no);
-          fe_face_values_temperature->get_function_values(*temperature_solution,
-                                                          temperature_values);
-        }
-
-      compute_effective_electromagnetic_properties(physical_properties_manager,
-                                                   field_values,
-                                                   cell->material_id(),
-                                                   electric_permittivities,
-                                                   magnetic_permeabilities);
-    };
+  if (needs_void_fraction)
+    {
+      dof_handler_void_fraction =
+        &this->multiphysics->get_dof_handler(PhysicsID::void_fraction);
+      fe_values_void_fraction =
+        std::make_unique<FEValues<dim>>(*this->mapping,
+                                        dof_handler_void_fraction->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values);
+      fe_face_values_void_fraction =
+        std::make_unique<FEFaceValues<dim>>(*this->mapping,
+                                            dof_handler_void_fraction->get_fe(),
+                                            *this->face_quadrature,
+                                            update_values);
+      void_fraction_solution =
+        &this->multiphysics->get_solution(PhysicsID::void_fraction);
+    }
 
   for (const auto &cell : this->triangulation->active_cell_iterators())
     {
@@ -919,24 +905,17 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
 
       const unsigned int material_id = cell->material_id();
 
-      // We check if the physical properties depend on the temperature field. If
-      // so, we will need to evaluate the temperature field at the quadrature
-      // points.
+      // We check if the physical properties depend on the temperature and void
+      // fraction fields. If so, we will need to evaluate them at the
+      // quadrature points.
       const bool cell_material_needs_temperature =
-        physical_properties_manager.get_electric_conductivity(0, material_id)
-          ->depends_on(field::temperature) ||
-        physical_properties_manager
-          .get_electric_permittivity_real(0, material_id)
-          ->depends_on(field::temperature) ||
-        physical_properties_manager
-          .get_electric_permittivity_imag(0, material_id)
-          ->depends_on(field::temperature) ||
-        physical_properties_manager
-          .get_magnetic_permeability_real(0, material_id)
-          ->depends_on(field::temperature) ||
-        physical_properties_manager
-          .get_magnetic_permeability_imag(0, material_id)
-          ->depends_on(field::temperature);
+        electromagnetic_properties_depend_on(physical_properties_manager,
+                                             material_id,
+                                             field::temperature);
+      const bool cell_material_needs_void_fraction =
+        electromagnetic_properties_depend_on(physical_properties_manager,
+                                             material_id,
+                                             field::void_fraction);
 
       // Power absorbed in the cell, 0.5 * omega * (Im(eps) |E|^2 + Im(mu)
       // |H|^2), which is the electromagnetic heat source of the heat transfer
@@ -952,11 +931,47 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
         *this->present_solution, H_real_values);
       fe_values_trial_interior[this->extractor_H_imag].get_function_values(
         *this->present_solution, H_imag_values);
-      compute_properties(cell,
-                         cell_material_needs_temperature,
-                         numbers::invalid_unsigned_int,
-                         effective_electric_permittivities,
-                         effective_magnetic_permeabilities);
+
+      // Effective electromagnetic properties at the quadrature points of the
+      // cell. The temperature and the void fraction are only evaluated if the
+      // properties of the material of the cell depend on them, and are set to
+      // zero and one otherwise.
+      std::vector<double> &temperature_values =
+        field_values[field::temperature];
+      temperature_values.resize(n_q_points);
+      if (cell_material_needs_temperature)
+        {
+          fe_values_temperature->reinit(
+            cell->as_dof_handler_iterator(*dof_handler_temperature));
+          fe_values_temperature->get_function_values(*temperature_solution,
+                                                     temperature_values);
+        }
+      else
+        {
+          std::ranges::fill(temperature_values, 0.);
+        }
+
+      std::vector<double> &void_fraction_values =
+        field_values[field::void_fraction];
+      void_fraction_values.resize(n_q_points);
+      if (cell_material_needs_void_fraction)
+        {
+          fe_values_void_fraction->reinit(
+            cell->as_dof_handler_iterator(*dof_handler_void_fraction));
+          fe_values_void_fraction->get_function_values(*void_fraction_solution,
+                                                       void_fraction_values);
+        }
+      else
+        {
+          std::ranges::fill(void_fraction_values, 1.);
+        }
+
+      compute_effective_electromagnetic_properties(
+        physical_properties_manager,
+        field_values,
+        material_id,
+        effective_electric_permittivities,
+        effective_magnetic_permeabilities);
 
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
@@ -1004,11 +1019,47 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
           // solution.
           if (robin_face)
             {
-              compute_properties(cell,
-                                 cell_material_needs_temperature,
-                                 face_no,
-                                 face_effective_electric_permittivities,
-                                 face_effective_magnetic_permeabilities);
+              // Effective electromagnetic properties at the quadrature points
+              // of the face, with the same treatment of the temperature and
+              // void fraction as for the cell
+              std::vector<double> &face_temperature_values =
+                field_values[field::temperature];
+              face_temperature_values.resize(n_face_q_points);
+              if (cell_material_needs_temperature)
+                {
+                  fe_face_values_temperature->reinit(
+                    cell->as_dof_handler_iterator(*dof_handler_temperature),
+                    face_no);
+                  fe_face_values_temperature->get_function_values(
+                    *temperature_solution, face_temperature_values);
+                }
+              else
+                {
+                  std::ranges::fill(face_temperature_values, 0.);
+                }
+
+              std::vector<double> &face_void_fraction_values =
+                field_values[field::void_fraction];
+              face_void_fraction_values.resize(n_face_q_points);
+              if (cell_material_needs_void_fraction)
+                {
+                  fe_face_values_void_fraction->reinit(
+                    cell->as_dof_handler_iterator(*dof_handler_void_fraction),
+                    face_no);
+                  fe_face_values_void_fraction->get_function_values(
+                    *void_fraction_solution, face_void_fraction_values);
+                }
+              else
+                {
+                  std::ranges::fill(face_void_fraction_values, 1.);
+                }
+
+              compute_effective_electromagnetic_properties(
+                physical_properties_manager,
+                field_values,
+                material_id,
+                face_effective_electric_permittivities,
+                face_effective_magnetic_permeabilities);
             }
           else
             {
@@ -1020,7 +1071,6 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                                      H_hat_imag_values);
             }
 
-          BoundaryPowerTypes &powers = boundary_powers[boundary_id];
           for (unsigned int q = 0; q < n_face_q_points; ++q)
             {
               const auto &normal =
@@ -1067,10 +1117,10 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                   densities.net = 0.5 * std::real(E_hat * n_cross_conj_H);
                 }
 
-              powers.net += densities.net * JxW;
-              powers.incident += densities.incident * JxW;
-              powers.outgoing += densities.outgoing * JxW;
-              powers.cross += densities.cross * JxW;
+              boundary_powers[boundary_id].net += densities.net * JxW;
+              boundary_powers[boundary_id].incident += densities.incident * JxW;
+              boundary_powers[boundary_id].outgoing += densities.outgoing * JxW;
+              boundary_powers[boundary_id].cross += densities.cross * JxW;
             }
         }
     }
@@ -1138,36 +1188,40 @@ TimeHarmonicMaxwell<dim>::write_electromagnetic_power_table(
       this->electromagnetic_power_table.set_precision("time", precision);
     }
 
-  const auto add_power_to_table = [&](const std::string &column,
-                                      const double       power) {
-    this->electromagnetic_power_table.add_value(column, power);
-    this->electromagnetic_power_table.set_scientific(column, true);
-    this->electromagnetic_power_table.set_precision(column, precision);
-  };
-
-  // The incident, outgoing and cross powers are only defined on the Robin
-  // boundaries. On the other boundaries, the net power is added. The net power
-  // through the PEC and PMC boundaries must vanish and is kept as a sanity
-  // check.
+  // Name and value of the power columns of the table. The incident, outgoing
+  // and cross powers are only defined on the Robin boundaries. On the other
+  // boundaries, the net power is added. The net power through the PEC and PMC
+  // boundaries must vanish and is kept as a sanity check.
+  std::vector<std::pair<std::string, double>> power_columns;
   for (const auto &[boundary_id, type] : boundary_conditions.type)
     {
       const BoundaryPowerTypes &powers = boundary_powers.at(boundary_id);
       const std::string         id     = std::to_string(boundary_id);
       if (is_robin_boundary_type(type))
         {
-          add_power_to_table("incident_power_bc_" + id, powers.incident);
-          add_power_to_table("outgoing_power_bc_" + id, powers.outgoing);
-          add_power_to_table("cross_power_bc_" + id, powers.cross);
+          power_columns.emplace_back("incident_power_bc_" + id,
+                                     powers.incident);
+          power_columns.emplace_back("outgoing_power_bc_" + id,
+                                     powers.outgoing);
+          power_columns.emplace_back("cross_power_bc_" + id, powers.cross);
         }
       else
         {
-          add_power_to_table("net_power_bc_" + id, powers.net);
+          power_columns.emplace_back("net_power_bc_" + id, powers.net);
         }
     }
   for (unsigned int material_id = 0; material_id < absorbed_powers.size();
        ++material_id)
-    add_power_to_table("absorbed_power_material_" + std::to_string(material_id),
-                       absorbed_powers[material_id]);
+    power_columns.emplace_back("absorbed_power_material_" +
+                                 std::to_string(material_id),
+                               absorbed_powers[material_id]);
+
+  for (const auto &[column, power] : power_columns)
+    {
+      this->electromagnetic_power_table.add_value(column, power);
+      this->electromagnetic_power_table.set_scientific(column, true);
+      this->electromagnetic_power_table.set_precision(column, precision);
+    }
 
   if (Utilities::MPI::this_mpi_process(
         this->triangulation->get_mpi_communicator()) == 0)
@@ -1232,87 +1286,100 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
   for (const double power : absorbed_powers)
     absorbed_power += power;
 
+  // Reference power of the percentages of the summary. It is the incident
+  // power, i.e. the power injected by the excitation of the Robin boundaries
+  // (e.g., a waveguide port). Without incident power, the excitation is imposed
+  // by a non-Robin boundary condition (e.g., electric_field), so there is no
+  // incident wave and the reference is the power entering the domain, i.e. the
+  // sum of the net powers of the boundaries through which the power flows in.
+  // If this power is also zero, the percentages are not defined and are
+  // printed as "-". The name of the reference power is written in the summary.
   const bool   reference_is_incident = incident_power > 0.;
   const double reference_power =
     reference_is_incident ? incident_power : entering_power;
   const std::string reference_name =
     reference_is_incident ? "incident" : "entering";
 
-  const auto format_power = [precision](const double power) {
-    std::ostringstream stream;
-    stream << std::scientific << std::setprecision(precision) << power;
-    return stream.str();
-  };
-  const auto format_percentage = [&](const double power) -> std::string {
-    if (reference_power <= 0.)
-      return "-";
-    std::ostringstream stream;
-    stream << std::defaultfloat << std::setprecision(precision)
-           << 100. * power / reference_power << " %";
-    return stream.str();
-  };
-
-  // All the boundaries are listed, including the PEC and PMC boundaries, whose
-  // net power must vanish, as a sanity check. The incident, outgoing and cross
-  // powers are only defined on the Robin boundaries.
-  TableHandler boundary_table;
-  for (const auto &[boundary_id, type] : boundary_conditions.type)
-    {
-      const BoundaryPowerTypes &powers = boundary_powers.at(boundary_id);
-      const bool                robin_boundary = is_robin_boundary_type(type);
-      boundary_table.add_value("boundary", boundary_id);
-      boundary_table.add_value("type", enum_to_string(type));
-      boundary_table.add_value("incident",
-                               robin_boundary ? format_power(powers.incident) :
-                                                "-");
-      boundary_table.add_value("outgoing",
-                               robin_boundary ? format_power(powers.outgoing) :
-                                                "-");
-      boundary_table.add_value("cross",
-                               robin_boundary ? format_power(powers.cross) :
-                                                "-");
-      boundary_table.add_value("net entering", format_power(powers.net));
-    }
-
-  TableHandler material_table;
-  for (unsigned int material_id = 0; material_id < absorbed_powers.size();
-       ++material_id)
-    {
-      material_table.add_value("material", material_id);
-      material_table.add_value("absorbed",
-                               format_power(absorbed_powers[material_id]));
-      material_table.add_value("% of " + reference_name,
-                               format_percentage(absorbed_powers[material_id]));
-    }
+  // The summary is written with fixed column widths. The powers are written in
+  // scientific notation and the percentages in the default notation, both with
+  // the log precision. The percentages are not defined, and "-" is written, if
+  // the reference power is not positive.
+  const unsigned int power_width = precision + 10;
 
   std::ostringstream summary;
-  const auto         add_balance_line = [&](const std::string &label,
-                                    const double       power) {
-    summary << "  " << std::left << std::setw(48) << label << std::right
-            << std::setw(precision + 8) << format_power(power) << "  "
-            << format_percentage(power) << '\n';
-  };
-
   summary << "+------------------------------------------+\n"
           << "|  Electromagnetic power summary           |\n"
           << "+------------------------------------------+\n"
           << (solution_is_scaled ? "Powers in W" : "Non-dimensional powers")
-          << ", positive net powers enter the domain.\n\n"
-          << "Boundaries:\n";
-  boundary_table.write_text(summary);
-  summary << "\nMaterials:\n";
-  material_table.write_text(summary);
+          << ", positive net powers enter the domain.\n\n";
+
+  // All the boundaries are listed, including the PEC and PMC boundaries, whose
+  // net power must vanish, as a sanity check. The incident, outgoing and cross
+  // powers are only defined on the Robin boundaries.
+  summary << "Boundaries:\n"
+          << std::left << std::setw(10) << "boundary" << std::setw(20)
+          << "type" << std::right << std::setw(power_width) << "incident"
+          << std::setw(power_width) << "outgoing" << std::setw(power_width)
+          << "cross" << std::setw(power_width) << "net entering" << '\n';
+  for (const auto &[boundary_id, type] : boundary_conditions.type)
+    {
+      const BoundaryPowerTypes &powers = boundary_powers.at(boundary_id);
+      summary << std::left << std::setw(10) << boundary_id << std::setw(20)
+              << enum_to_string(type) << std::right << std::scientific
+              << std::setprecision(precision);
+      if (is_robin_boundary_type(type))
+        summary << std::setw(power_width) << powers.incident
+                << std::setw(power_width) << powers.outgoing
+                << std::setw(power_width) << powers.cross;
+      else
+        summary << std::setw(power_width) << "-" << std::setw(power_width)
+                << "-" << std::setw(power_width) << "-";
+      summary << std::setw(power_width) << powers.net << '\n';
+    }
+
+  summary << "\nMaterials:\n"
+          << std::left << std::setw(10) << "material" << std::right
+          << std::setw(power_width) << "absorbed" << std::setw(power_width)
+          << "% of " + reference_name << '\n';
+  for (unsigned int material_id = 0; material_id < absorbed_powers.size();
+       ++material_id)
+    {
+      summary << std::left << std::setw(10) << material_id << std::right
+              << std::scientific << std::setprecision(precision)
+              << std::setw(power_width) << absorbed_powers[material_id];
+      if (reference_power > 0.)
+        summary << std::defaultfloat << std::setprecision(precision)
+                << std::setw(power_width)
+                << 100. * absorbed_powers[material_id] / reference_power
+                << " %";
+      else
+        summary << std::setw(power_width) << "-";
+      summary << '\n';
+    }
+
+  // Label and value of the lines of the power balance
+  const std::vector<std::pair<std::string, double>> balance_lines = {
+    {"incident", incident_power},
+    {"reflected (outgoing, excited Robin boundaries)", reflected_power},
+    {"transmitted (outgoing, other Robin boundaries)", transmitted_power},
+    {"cross power (lossy Robin boundaries)", cross_power},
+    {"imposed (non-Robin boundaries)", non_robin_net_power},
+    {"absorbed", absorbed_power},
+    {"imbalance", total_net_power - absorbed_power}};
+
   summary << "\nBalance (percentages of the " << reference_name << " power):\n";
-  add_balance_line("incident", incident_power);
-  add_balance_line("reflected (outgoing, excited Robin boundaries)",
-                   reflected_power);
-  add_balance_line("transmitted (outgoing, other Robin boundaries)",
-                   transmitted_power);
-  add_balance_line("cross power (lossy Robin boundaries)", cross_power);
-  add_balance_line("net entering, non-Robin boundaries", non_robin_net_power);
-  add_balance_line("absorbed", absorbed_power);
-  add_balance_line("imbalance (net entering - absorbed)",
-                   total_net_power - absorbed_power);
+  for (const auto &[label, power] : balance_lines)
+    {
+      summary << "  " << std::left << std::setw(48) << label << std::right
+              << std::scientific << std::setprecision(precision)
+              << std::setw(power_width) << power << "  ";
+      if (reference_power > 0.)
+        summary << std::defaultfloat << std::setprecision(precision)
+                << 100. * power / reference_power << " %";
+      else
+        summary << "-";
+      summary << '\n';
+    }
   summary << std::endl;
 
   this->pcout << summary.str();
@@ -2284,13 +2351,11 @@ TimeHarmonicMaxwell<dim>::define_constraints()
     fe_skeleton.n_dofs_per_face());
   std::vector<bool> is_dof_on_face(fe_skeleton.n_dofs_per_cell(), false);
 
-  const auto is_robin_face = [&](const auto &face) {
-    return face->at_boundary() &&
-           is_robin_boundary_type(
-             this->simulation_parameters
-               .boundary_conditions_time_harmonic_electromagnetics.type.at(
-                 face->boundary_id()));
-  };
+  // Type of the boundary condition of each boundary id, used to find the Robin
+  // faces
+  const auto &boundary_types = this->simulation_parameters
+                                 .boundary_conditions_time_harmonic_electromagnetics
+                                 .type;
 
   // Count, for each skeleton dof, the faces containing it where the magnetic
   // trace is tested (the non-Robin faces). The faces containing a dof can
@@ -2310,7 +2375,8 @@ TimeHarmonicMaxwell<dim>::define_constraints()
 
       for (const auto &face : cell->face_iterators())
         {
-          if (is_robin_face(face))
+          if (face->at_boundary() &&
+              is_robin_boundary_type(boundary_types.at(face->boundary_id())))
             continue;
 
           face->get_dof_indices(face_dof_indices);
@@ -2335,7 +2401,9 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             {
               face->get_dof_indices(face_dof_indices);
 
-              const bool robin_face = is_robin_face(face);
+              const bool robin_face =
+                face->at_boundary() &&
+                is_robin_boundary_type(boundary_types.at(face->boundary_id()));
 
               // Loop on all dofs on the face
               for (const auto &face_dof : face_dof_indices)
