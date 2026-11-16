@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 import numpy as np
@@ -13,8 +13,17 @@ Re = np.logspace(-1,np.log10(100),25)
 Np = 2 * np.pi * np.abs(Tz) / 1 / N**2 / D**5
 
 
-# Experimental data
-Re_1,Np_1, Re_2,Np_2, Re_3,Np_3 = np.loadtxt("experimental.dat",unpack=True,skiprows=1)
+# Experimental data: three (Re, Np) series in a tab-separated file that uses
+# decimal commas and in which some values are missing
+experimental = [([], []) for _ in range(3)]
+with open("experimental-data.dat", encoding="utf-8") as f:
+    for line in f.read().splitlines()[1:]:
+        columns = line.replace(",", ".").split("\t")
+        for i in range(3):
+            if 2*i+1 < len(columns) and columns[2*i].strip() and columns[2*i+1].strip():
+                experimental[i][0].append(float(columns[2*i]))
+                experimental[i][1].append(float(columns[2*i+1]))
+(Re_1,Np_1), (Re_2,Np_2), (Re_3,Np_3) = experimental
 
 
 # Plot data
