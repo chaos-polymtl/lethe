@@ -1258,13 +1258,13 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
   // boundaries, it is the transmitted power. The power entering the domain,
   // i.e. the sum over the boundaries with a net inflow, is the reference power
   // when there is no incident power.
-  double incident_power      = 0.;
-  double reflected_power     = 0.;
-  double transmitted_power   = 0.;
-  double cross_power         = 0.;
-  double non_robin_net_power = 0.;
-  double total_net_power     = 0.;
-  double entering_power      = 0.;
+  double incident_power    = 0.;
+  double reflected_power   = 0.;
+  double transmitted_power = 0.;
+  double cross_power       = 0.;
+  double imposed_power     = 0.;
+  double total_net_power   = 0.;
+  double entering_power    = 0.;
   for (const auto &[boundary_id, type] : boundary_conditions.type)
     {
       const BoundaryPowerTypes &powers = boundary_powers.at(boundary_id);
