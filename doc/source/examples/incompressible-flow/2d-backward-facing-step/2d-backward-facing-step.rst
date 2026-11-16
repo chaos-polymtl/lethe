@@ -78,7 +78,7 @@ In addition, unit values of :math:`u` and :math:`h` are chosen in the goal of ob
 .. math::
 	Re_{D_h} = f(\nu) = \frac{2}{\nu}
 
-Consequently, the physical properties are defined as follows :
+Consequently, the physical properties are defined as follows:
 
 .. code-block:: text
 
