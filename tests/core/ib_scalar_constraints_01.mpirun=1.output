@@ -1,0 +1,7 @@
+
+DEAL::Degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.0296
+DEAL::Degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.00993
+DEAL::Degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.00285
+DEAL::Degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.00790
+DEAL::Degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.00193
+DEAL::Degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.000332

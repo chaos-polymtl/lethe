@@ -8,6 +8,12 @@
 # coordinates around the center, the manufactured solution is
 # c = ln(r/R) (1 + 0.5 sin(theta)), and the source term is
 # f = 0.5 ln(r/R) (cos(theta) + D sin(theta) / r^2).
+#
+# The velocity is not solved (fluid dynamics = false) and the analytical
+# velocity is left at zero, so the printed velocity error is the norm of the
+# prescribed velocity, not an error. With the rotation as analytical velocity,
+# this error would be at round-off level, and its convergence rates would
+# change from one machine to another.
 
 set dimension = 2
 

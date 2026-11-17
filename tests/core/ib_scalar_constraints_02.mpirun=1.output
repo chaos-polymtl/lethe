@@ -1,0 +1,19 @@
+
+DEAL::Neumann, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.292
+DEAL::Neumann, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.150
+DEAL::Neumann, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0755
+DEAL::Neumann, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0997
+DEAL::Neumann, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0396
+DEAL::Neumann, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.0129
+DEAL::Robin of order 1, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.206
+DEAL::Robin of order 1, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.108
+DEAL::Robin of order 1, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0550
+DEAL::Robin of order 1, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0726
+DEAL::Robin of order 1, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0291
+DEAL::Robin of order 1, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.00948
+DEAL::Robin of order 2, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.120
+DEAL::Robin of order 2, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.0624
+DEAL::Robin of order 2, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0313
+DEAL::Robin of order 2, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0423
+DEAL::Robin of order 2, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0168
+DEAL::Robin of order 2, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.00538
