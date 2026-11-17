@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ib_particle_h
@@ -72,8 +72,9 @@ public:
    * @return Signed distance function at evaluation point.
    */
   inline double
-  get_levelset(const Point<dim>                                     &p,
-               const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
+  get_levelset(
+    const Point<dim>                                     &p,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess) const
   {
     return shape->value_with_cell_guess(p, cell_guess);
   }
@@ -82,7 +83,7 @@ public:
    * @brief See overloaded function.
    */
   inline double
-  get_levelset(const Point<dim> &p)
+  get_levelset(const Point<dim> &p) const
   {
     return shape->value(p);
   }
@@ -104,13 +105,13 @@ public:
   closest_surface_point(
     const Point<dim>                                     &p,
     Point<dim>                                           &closest_point,
-    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess) const;
 
   /**
    * @brief See overloaded function.
    */
   void
-  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
+  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point) const;
 
   /**
    * @brief Determine if the given point is inside the crown for which the limits

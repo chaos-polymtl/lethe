@@ -81,7 +81,8 @@ public:
     , local_rhs(n_dofs)
     , local_dof_indices(n_dofs)
     , strong_residual(n_q_points)
-    , strong_jacobian(n_q_points, Vector<double>(n_dofs)){};
+    , strong_jacobian(n_q_points, Vector<double>(n_dofs))
+    , cell_is_skipped(false){};
 
 
   /**
@@ -111,6 +112,12 @@ public:
   // This information is used to indicate to the copy_local_to_global function
   // if it should indeed copy or not.
   bool cell_is_local;
+
+  // Boolean used to indicate that a locally owned cell is not assembled by the
+  // regular assemblers, for example a cell cut by or inside the particles of
+  // the sharp-interface immersed boundary method. The copy_local_to_global
+  // function then does not copy it.
+  bool cell_is_skipped;
 };
 
 

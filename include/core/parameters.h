@@ -2349,12 +2349,63 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Type of the tracer boundary condition imposed on the surface of the
+   * particles of the sharp-interface immersed boundary method.
+   */
+  enum class IBTracerBoundaryType : std::uint8_t
+  {
+    /// No boundary condition: the tracer is also solved inside the particles.
+    none,
+    /// Tracer concentration imposed on the surface of the particles.
+    dirichlet
+  };
+
+  /**
+   * @brief Tracer boundary condition imposed on the surface of every particle
+   * of the sharp-interface immersed boundary method. It is declared in the
+   * subsection "tracer boundary condition" of the subsection "particles".
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
+  template <int dim>
+  struct IBTracerBoundaryCondition
+  {
+    /// Type of the boundary condition.
+    IBTracerBoundaryType type = IBTracerBoundaryType::none;
+
+    /// Tracer concentration imposed on the surface of the particles by the
+    /// dirichlet type. It is evaluated at the point of the surface that is
+    /// the closest to each constrained degree of freedom.
+    std::shared_ptr<Functions::ParsedFunction<dim>> dirichlet =
+      std::make_shared<Functions::ParsedFunction<dim>>();
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   template <int dim>
   class IBParticles
   {
   public:
     // Vector of particles
     std::vector<IBParticle<dim>> particles;
+
+    // Tracer boundary condition imposed on the surface of every particle
+    IBTracerBoundaryCondition<dim> tracer_boundary_condition;
 
     // Number of declared IB particles
     unsigned int nb_particles = 1;

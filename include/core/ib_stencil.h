@@ -61,7 +61,7 @@ public:
   support_points_for_interpolation(
     const unsigned int                                    degree,
     const double                                          length_ratio,
-    IBParticle<dim>                                      &p,
+    const IBParticle<dim>                                &p,
     const Point<dim>                                     &dof_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
@@ -69,10 +69,10 @@ public:
    * @brief See overloaded function.
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  support_points_for_interpolation(const unsigned int degree,
-                                   const double       length_ratio,
-                                   IBParticle<dim>   &p,
-                                   const Point<dim>  &dof_point);
+  support_points_for_interpolation(const unsigned int     degree,
+                                   const double           length_ratio,
+                                   const IBParticle<dim> &p,
+                                   const Point<dim>      &dof_point);
 
   /**
    * @brief Define the point used to define the cell used for the stencil calculation.
@@ -86,7 +86,7 @@ public:
    */
   virtual Point<dim>
   point_for_cell_detection(
-    IBParticle<dim>                                      &p,
+    const IBParticle<dim>                                &p,
     const Point<dim>                                     &dof_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
@@ -94,7 +94,8 @@ public:
    * @brief See overloaded function.
    */
   virtual Point<dim>
-  point_for_cell_detection(IBParticle<dim> &p, const Point<dim> &dof_point);
+  point_for_cell_detection(const IBParticle<dim> &p,
+                           const Point<dim>      &dof_point);
 
   /**
    * @brief Return the coefficients (weights) of the stencil.
@@ -125,7 +126,7 @@ public:
    * which is useful to reduce computation time.
    */
   virtual double
-  ib_velocity(IBParticle<dim>                                      &p,
+  ib_velocity(const IBParticle<dim>                                &p,
               const Point<dim>                                     &dof_point,
               const unsigned int                                    component,
               const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
@@ -134,9 +135,9 @@ public:
    * @brief See overloaded function.
    */
   virtual double
-  ib_velocity(IBParticle<dim>   &p,
-              const Point<dim>  &dof_point,
-              const unsigned int component);
+  ib_velocity(const IBParticle<dim> &p,
+              const Point<dim>      &dof_point,
+              const unsigned int     component);
 
 private:
   /**

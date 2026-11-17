@@ -4443,6 +4443,43 @@ namespace Parameters
 
   template <int dim>
   void
+  IBTracerBoundaryCondition<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("tracer boundary condition");
+    {
+      declare_enum_entry(
+        prm,
+        "type",
+        type,
+        "Type of the tracer boundary condition imposed on the surface of "
+        "every particle. With none, the tracer is also solved inside the "
+        "particles. With dirichlet, the tracer concentration is imposed on "
+        "the surface with the sharp-interface stencils.");
+
+      prm.enter_subsection("dirichlet");
+      dirichlet->declare_parameters(prm);
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  IBTracerBoundaryCondition<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("tracer boundary condition");
+    {
+      type = string_to_enum<IBTracerBoundaryType>(prm.get("type"));
+
+      prm.enter_subsection("dirichlet");
+      dirichlet->parse_parameters(prm);
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
   IBParticles<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("particles");
@@ -4482,6 +4519,8 @@ namespace Parameters
 
         prm.leave_subsection();
       }
+
+      tracer_boundary_condition.declare_parameters(prm);
 
       prm.enter_subsection("input file");
       {
@@ -4708,6 +4747,8 @@ namespace Parameters
         enable_extrapolation = prm.get_bool("enable extrapolation");
         prm.leave_subsection();
       }
+
+      tracer_boundary_condition.parse_parameters(prm);
 
       prm.enter_subsection("input file");
       {
@@ -5272,6 +5313,8 @@ namespace Parameters
   template class Laser<3>;
   template class PostProcessing<2>;
   template class PostProcessing<3>;
+  template struct IBTracerBoundaryCondition<2>;
+  template struct IBTracerBoundaryCondition<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
   template class Mesh<1>;

@@ -28,6 +28,14 @@ to define a conformal mesh for the fluid between the particles.
        set enable extrapolation = true
      end
 
+     subsection tracer boundary condition
+       set type = none
+
+       subsection dirichlet
+         set Function expression = 0
+       end
+     end
+
      subsection output
        set calculate force                               = true
        set enable extra sharp interface vtu output field = false
@@ -157,6 +165,42 @@ to define a conformal mesh for the fluid between the particles.
 
        Disabling the extrapolation is not recommended since it makes the
        Sharp-IB solver first-order accurate in space.
+
+* The ``tracer boundary condition`` subsection defines the boundary condition
+  imposed on the tracer at the surface of every particle, including the
+  particles loaded from a file. It is imposed with the same stencils as the
+  velocity, defined in the ``extrapolation function`` subsection (see
+  :doc:`../../theory/multiphysics/passive_tracer/passive_tracer_immersed_boundary`).
+
+  * The ``type`` parameter selects the boundary condition:
+
+    * ``none`` (default): no boundary condition is imposed on the particles,
+      and the tracer is solved in the whole domain, including inside the
+      particles. This type is required by the ``immersed_boundary_tanh`` and
+      ``immersed_boundary_gaussian`` tracer diffusivity and reaction constant
+      models.
+    * ``dirichlet``: the tracer concentration given in the ``dirichlet``
+      subsection is imposed on the surface of the particles. For example, a
+      concentration of ``0`` models a surface reaction that is much faster than
+      the transport of the tracer towards the particles.
+
+  * The ``dirichlet`` subsection contains the function of the tracer
+    concentration imposed on the surface of the particles. It can depend on the
+    position and on time, and it is evaluated at the point of the surface that
+    is the closest to each constrained degree of freedom.
+
+  With a type other than ``none``, the tracer is no longer solved inside the
+  particles. Inside them, it is a harmonic extension of the solution in the
+  fluid, which does not affect the solution in the fluid. The analytical
+  error and the tracer statistics are then only computed on the cells that are
+  neither cut by a particle nor inside one.
+
+  .. note::
+
+     This boundary condition requires continuous elements for the tracer
+     (``tracer uses dg = false``) and a mesh made of quadrilaterals or
+     hexahedra. The shapes of the particles must have a signed distance
+     function, which excludes the shapes loaded from IGES files.
 
 * The ``output`` subsection contains the parameters controlling the information
   printed in the terminal and output files.

@@ -8,3 +8,4 @@ Passive Tracer
     :titlesonly:
 
     passive_tracer_equations
+    passive_tracer_immersed_boundary

@@ -1,0 +1,171 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Manufactured solution for the steady advection-diffusion of a tracer around
+# a disk of radius R = 0.25 on which c = 0 is imposed with the sharp-interface
+# immersed boundary method. The velocity is a rigid rotation around the center
+# of the disk, which is tangent to its surface. With r and theta the polar
+# coordinates around the center, the manufactured solution is
+# c = ln(r/R) (1 + 0.5 sin(theta)), and the source term is
+# f = 0.5 ln(r/R) (cos(theta) + D sin(theta) / r^2).
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 2
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics = false
+  set tracer         = true
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+  set tracer degree   = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1, 1 : -1, -1 : 1, 1 : false
+  set initial refinement = 4
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function constants  = xc=0.0123, yc=-0.0071
+    set Function expression = -(y-yc); x-xc; 0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity = 0.1
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
+subsection boundary conditions tracer
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      set Function constants  = xc=0.0123, yc=-0.0071, R=0.25
+      set Function expression = log(sqrt((x-xc)^2+(y-yc)^2)/R)*(1+0.5*(y-yc)/sqrt((x-xc)^2+(y-yc)^2))
+    end
+  end
+end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
+subsection source term
+  subsection tracer
+    set Function constants  = xc=0.0123, yc=-0.0071, R=0.25, D=0.1
+    set Function expression = 0.5*log(sqrt((x-xc)^2+(y-yc)^2)/R)*((x-xc)/sqrt((x-xc)^2+(y-yc)^2)+D*(y-yc)/sqrt((x-xc)^2+(y-yc)^2)^3)
+  end
+end
+
+#---------------------------------------------------
+# IB Particles
+#---------------------------------------------------
+
+subsection particles
+  set number of particles = 1
+  subsection output
+    set calculate force = false
+  end
+  subsection tracer boundary condition
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 0
+    end
+  end
+  subsection particle info 0
+    set type            = sphere
+    set shape arguments = 0.25
+    subsection position
+      set Function expression = 0.0123; -0.0071
+    end
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection tracer
+    set Function constants  = xc=0.0123, yc=-0.0071, R=0.25
+    set Function expression = log(sqrt((x-xc)^2+(y-yc)^2)/R)*(1+0.5*(y-yc)/sqrt((x-xc)^2+(y-yc)^2))
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection tracer
+    set verbosity      = quiet
+    set tolerance      = 1e-10
+    set max iterations = 5
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection tracer
+    set verbosity         = quiet
+    set relative residual = 1e-10
+    set minimum residual  = 1e-14
+  end
+end

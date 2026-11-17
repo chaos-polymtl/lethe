@@ -4,6 +4,7 @@
 #define lethe_tracer_h
 
 #include <core/bdf.h>
+#include <core/ib_scalar_constraints.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/simulation_control.h>
 #include <core/vector.h>
@@ -34,6 +35,7 @@
 #include <deal.II/numerics/solution_transfer.h>
 
 #include <map>
+#include <memory>
 #include <utility>
 
 /*
@@ -497,10 +499,31 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Calculate tracer statistics : Max, min, average and standard-deviation
+   * @brief Calculate tracer statistics : Max, min, average and standard-deviation.
+   * When a boundary condition is imposed on the particles of the
+   * sharp-interface immersed boundary method, the statistics are only computed
+   * on the fluid cells.
    */
   void
   calculate_tracer_statistics();
+
+  /**
+   * @brief Create the constraints that impose the tracer boundary condition on
+   * the particles of the sharp-interface immersed boundary method when the
+   * type of this boundary condition is not none, and verify that the
+   * simulation supports this boundary condition.
+   */
+  void
+  setup_immersed_boundary_constraints();
+
+  /**
+   * @brief Update the immersed boundary constraints when the particles may
+   * have moved since their last update, that is once per time step, or when
+   * the degrees of freedom were redistributed. Does nothing when no boundary
+   * condition is imposed on the particles.
+   */
+  void
+  update_immersed_boundary_constraints();
 
 
   /**
@@ -739,6 +762,17 @@ private:
   // Tracer post-processing tables
   TableHandler statistics_table;
   TableHandler tracer_flow_rate_table;
+
+  // Constraints that impose the tracer boundary condition on the particles of
+  // the sharp-interface immersed boundary method. Null when no boundary
+  // condition is imposed on the particles.
+  std::unique_ptr<IBScalarConstraints<dim>> immersed_boundary_constraints;
+
+  // Iteration of the simulation at which the immersed boundary constraints
+  // were last updated. It is invalid when they must be updated, for example
+  // after the degrees of freedom are redistributed.
+  unsigned int immersed_boundary_constraints_iteration =
+    numbers::invalid_unsigned_int;
 };
 
 

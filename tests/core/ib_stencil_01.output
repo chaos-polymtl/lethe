@@ -1,0 +1,28 @@
+
+DEAL::Length ratio 1.00000, degree 1, coefficients: 2.00000 -1.00000
+DEAL::  Polynomials of degree 1 are extrapolated exactly: true
+DEAL::Length ratio 1.00000, degree 2, coefficients: 6.00000 -8.00000 3.00000
+DEAL::  Polynomials of degree 2 are extrapolated exactly: true
+DEAL::Length ratio 1.00000, degree 3, coefficients: 23.3333 -37.3333 26.6667 -11.6667
+DEAL::  Polynomials of degree 3 are extrapolated exactly: true
+DEAL::Length ratio 1.00000, degree 4, coefficients: 102.000 -177.941 136.000 -110.059 51.0000
+DEAL::  Polynomials of degree 4 are extrapolated exactly: true
+DEAL::Length ratio 4.00000, degree 1, coefficients: 5.00000 -4.00000
+DEAL::  Polynomials of degree 1 are extrapolated exactly: true
+DEAL::Length ratio 4.00000, degree 2, coefficients: 45.0000 -80.0000 36.0000
+DEAL::  Polynomials of degree 2 are extrapolated exactly: true
+DEAL::Length ratio 4.00000, degree 3, coefficients: 538.333 -1013.33 906.667 -430.667
+DEAL::  Polynomials of degree 3 are extrapolated exactly: true
+DEAL::Length ratio 4.00000, degree 4, coefficients: 7245.00 -13978.2 12880.0 -11941.8 5796.00
+DEAL::  Polynomials of degree 4 are extrapolated exactly: true
+DEAL::Length ratio 8.00000, degree 1, coefficients: 9.00000 -8.00000
+DEAL::  Polynomials of degree 1 are extrapolated exactly: true
+DEAL::Length ratio 8.00000, degree 2, coefficients: 153.000 -288.000 136.000
+DEAL::  Polynomials of degree 2 are extrapolated exactly: true
+DEAL::Length ratio 8.00000, degree 3, coefficients: 3465.00 -6720.00 6336.00 -3080.00
+DEAL::  Polynomials of degree 3 are extrapolated exactly: true
+DEAL::Length ratio 8.00000, degree 4, coefficients: 88281.0 -173388. 166176. -159540. 78472.0
+DEAL::  Polynomials of degree 4 are extrapolated exactly: true
+DEAL::Degree 1, stencil point: 0.600000 0.800000, interpolation points: (0.675000 0.900000)
+DEAL::Degree 2, stencil point: 0.600000 0.800000, interpolation points: (0.637500 0.850000) (0.675000 0.900000)
+DEAL::Point for the cell detection: 0.618750 0.825000

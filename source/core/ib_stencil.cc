@@ -99,7 +99,7 @@ std::tuple<Point<dim>, std::vector<Point<dim>>>
 IBStencil<dim>::support_points_for_interpolation(
   const unsigned int                                    degree,
   const double                                          length_ratio,
-  IBParticle<dim>                                      &p,
+  const IBParticle<dim>                                &p,
   const Point<dim>                                     &dof_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
@@ -144,8 +144,8 @@ IBStencil<dim>::support_points_for_interpolation(
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
 IBStencil<dim>::support_points_for_interpolation(const unsigned int degree,
-                                                 const double      length_ratio,
-                                                 IBParticle<dim>  &p,
+                                                 const double length_ratio,
+                                                 const IBParticle<dim> &p,
                                                  const Point<dim> &dof_point)
 {
   // Create the vector of points used for the stencil based on the degree of the
@@ -189,7 +189,7 @@ IBStencil<dim>::support_points_for_interpolation(const unsigned int degree,
 template <int dim>
 Point<dim>
 IBStencil<dim>::point_for_cell_detection(
-  IBParticle<dim>                                      &p,
+  const IBParticle<dim>                                &p,
   const Point<dim>                                     &dof_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
@@ -206,8 +206,8 @@ IBStencil<dim>::point_for_cell_detection(
 
 template <int dim>
 Point<dim>
-IBStencil<dim>::point_for_cell_detection(IBParticle<dim>  &p,
-                                         const Point<dim> &dof_point)
+IBStencil<dim>::point_for_cell_detection(const IBParticle<dim> &p,
+                                         const Point<dim>      &dof_point)
 {
   // Create the vector of points used for the stencil based on the degree of the
   // stencil. Also return the DOF position or the position of the point on the
@@ -224,7 +224,7 @@ IBStencil<dim>::point_for_cell_detection(IBParticle<dim>  &p,
 template <int dim>
 double
 IBStencil<dim>::ib_velocity(
-  IBParticle<dim>                                      &p,
+  const IBParticle<dim>                                &p,
   const Point<dim>                                     &dof_point,
   unsigned int                                          component,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
@@ -290,9 +290,9 @@ IBStencil<dim>::ib_velocity(
 
 template <int dim>
 double
-IBStencil<dim>::ib_velocity(IBParticle<dim>  &p,
-                            const Point<dim> &dof_point,
-                            unsigned int      component)
+IBStencil<dim>::ib_velocity(const IBParticle<dim> &p,
+                            const Point<dim>      &dof_point,
+                            unsigned int           component)
 {
   double immersed_boundary_velocity = 0;
 

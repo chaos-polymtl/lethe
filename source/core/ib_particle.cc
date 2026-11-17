@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/ib_particle.h>
@@ -177,7 +177,7 @@ void
 IBParticle<dim>::closest_surface_point(
   const Point<dim>                                     &p,
   Point<dim>                                           &closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess) const
 {
   shape->closest_surface_point(p, closest_point, cell_guess);
 }
@@ -185,7 +185,7 @@ IBParticle<dim>::closest_surface_point(
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
-                                       Point<dim>       &closest_point)
+                                       Point<dim>       &closest_point) const
 {
   shape->closest_surface_point(p, closest_point);
 }

@@ -84,6 +84,10 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_matrix()
 {
+  // The particles of the sharp-interface immersed boundary method may have
+  // moved since the last time step
+  update_immersed_boundary_constraints();
+
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 
   this->system_matrix = 0;
@@ -134,6 +138,15 @@ Tracer<dim>::assemble_system_matrix_cg()
     }
 
   system_matrix.compress(VectorOperation::add);
+
+  // Impose the boundary condition on the particles of the sharp-interface
+  // immersed boundary method
+  if (immersed_boundary_constraints)
+    immersed_boundary_constraints->assemble_matrix(*this->dof_handler,
+                                                   *this->get_mapping(),
+                                                   *this->cell_quadrature,
+                                                   this->zero_constraints,
+                                                   system_matrix);
 }
 
 
@@ -284,6 +297,15 @@ Tracer<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
+  // The cells cut by the particles of the sharp-interface immersed boundary
+  // method and the cells inside them are assembled by the immersed boundary
+  // constraints, not by the tracer assemblers.
+  copy_data.cell_is_skipped =
+    immersed_boundary_constraints &&
+    !immersed_boundary_constraints->is_fluid_cell(cell);
+  if (copy_data.cell_is_skipped)
+    return;
+
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       *this->previous_solutions,
@@ -376,7 +398,7 @@ void
 Tracer<dim>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsCopyData &copy_data)
 {
-  if (!copy_data.cell_is_local)
+  if (!copy_data.cell_is_local || copy_data.cell_is_skipped)
     return;
 
   const AffineConstraints<double> &constraints_used = this->zero_constraints;
@@ -389,6 +411,10 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_rhs()
 {
+  // The particles of the sharp-interface immersed boundary method may have
+  // moved since the last time step
+  update_immersed_boundary_constraints();
+
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
   // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
@@ -449,6 +475,23 @@ Tracer<dim>::assemble_system_rhs_cg()
     }
 
   this->system_rhs.compress(VectorOperation::add);
+
+  // Impose the boundary condition on the particles of the sharp-interface
+  // immersed boundary method
+  if (immersed_boundary_constraints)
+    {
+      Functions::ParsedFunction<dim> &boundary_concentration =
+        *simulation_parameters.particlesParameters->tracer_boundary_condition
+           .dirichlet;
+      boundary_concentration.set_time(simulation_control->get_current_time());
+      immersed_boundary_constraints->assemble_rhs(*this->dof_handler,
+                                                  *this->get_mapping(),
+                                                  *this->cell_quadrature,
+                                                  this->zero_constraints,
+                                                  this->evaluation_point,
+                                                  boundary_concentration,
+                                                  this->system_rhs);
+    }
 }
 
 template <int dim>
@@ -592,6 +635,15 @@ Tracer<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
+  // The cells cut by the particles of the sharp-interface immersed boundary
+  // method and the cells inside them are assembled by the immersed boundary
+  // constraints, not by the tracer assemblers.
+  copy_data.cell_is_skipped =
+    immersed_boundary_constraints &&
+    !immersed_boundary_constraints->is_fluid_cell(cell);
+  if (copy_data.cell_is_skipped)
+    return;
+
   // The time of the source term is set in assemble_system_rhs
   scratch_data.reinit(cell,
                       this->evaluation_point,
@@ -684,7 +736,7 @@ void
 Tracer<dim>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsCopyData &copy_data)
 {
-  if (!copy_data.cell_is_local)
+  if (!copy_data.cell_is_local || copy_data.cell_is_skipped)
     return;
 
   const AffineConstraints<double> &constraints_used = this->zero_constraints;
@@ -735,7 +787,12 @@ Tracer<dim>::calculate_L2_error()
 
   for (const auto &cell : dof_handler->active_cell_iterators())
     {
-      if (cell->is_locally_owned())
+      // When a boundary condition is imposed on the particles of the
+      // sharp-interface immersed boundary method, the error is only computed
+      // on the fluid cells, as in the fluid dynamics solver.
+      if (cell->is_locally_owned() &&
+          (!immersed_boundary_constraints ||
+           immersed_boundary_constraints->is_fluid_cell(cell)))
         {
           fe_values.reinit(cell);
           fe_values.get_function_values(*present_solution, q_scalar_values);
@@ -806,6 +863,10 @@ template <int dim>
 void
 Tracer<dim>::postprocess(bool first_iteration)
 {
+  // The post-processing of the first iteration can happen before any
+  // assembly, so the immersed boundary constraints may not be up to date.
+  update_immersed_boundary_constraints();
+
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
@@ -884,12 +945,23 @@ Tracer<dim>::calculate_tracer_statistics()
   std::vector<double> q_tracer_values(n_q_points);
 
   double volume_integral  = 0;
+  double fluid_volume     = 0;
   double max_tracer_value = DBL_MIN;
   double min_tracer_value = DBL_MAX;
 
+  // When a boundary condition is imposed on the particles of the
+  // sharp-interface immersed boundary method, the statistics are only computed
+  // on the fluid cells.
+  const auto cell_is_used =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell) {
+      return cell->is_locally_owned() &&
+             (!immersed_boundary_constraints ||
+              immersed_boundary_constraints->is_fluid_cell(cell));
+    };
+
   for (const auto &cell : dof_handler->active_cell_iterators())
     {
-      if (cell->is_locally_owned())
+      if (cell_is_used(cell))
         {
           fe_values.reinit(cell);
           fe_values.get_function_values(*present_solution, q_tracer_values);
@@ -897,21 +969,24 @@ Tracer<dim>::calculate_tracer_statistics()
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               volume_integral += q_tracer_values[q] * fe_values.JxW(q);
+              fluid_volume += fe_values.JxW(q);
               max_tracer_value = std::max(q_tracer_values[q], max_tracer_value);
               min_tracer_value = std::min(q_tracer_values[q], min_tracer_value);
             }
         }
     }
   volume_integral = Utilities::MPI::sum(volume_integral, mpi_communicator);
-  double global_volume =
-    GridTools::volume(*triangulation, *this->get_mapping());
+  const double global_volume =
+    immersed_boundary_constraints ?
+      Utilities::MPI::sum(fluid_volume, mpi_communicator) :
+      GridTools::volume(*triangulation, *this->get_mapping());
   double tracer_average = volume_integral / global_volume;
 
   double variance_integral = 0;
 
   for (const auto &cell : dof_handler->active_cell_iterators())
     {
-      if (cell->is_locally_owned())
+      if (cell_is_used(cell))
         {
           fe_values.reinit(cell);
           fe_values.get_function_values(*present_solution, q_tracer_values);
@@ -1364,6 +1439,136 @@ Tracer<dim>::setup_dofs()
   multiphysics->set_solution(PhysicsID::tracer, this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::tracer,
                                        this->previous_solutions);
+
+  // The cells and the degrees of freedom changed, so the immersed boundary
+  // constraints must be updated before the next assembly
+  setup_immersed_boundary_constraints();
+}
+
+template <int dim>
+void
+Tracer<dim>::setup_immersed_boundary_constraints()
+{
+  const Parameters::IBParticles<dim> &particles_parameters =
+    *simulation_parameters.particlesParameters;
+
+  switch (particles_parameters.tracer_boundary_condition.type)
+    {
+      case Parameters::IBTracerBoundaryType::none:
+        return;
+      case Parameters::IBTracerBoundaryType::dirichlet:
+        break;
+    }
+
+  AssertThrow(
+    multiphysics->immersed_boundary_particles_are_available(),
+    ExcMessage(
+      "A tracer boundary condition is imposed on the particles of the "
+      "sharp-interface immersed boundary method (subsection <tracer boundary "
+      "condition> of the subsection <particles>), but this solver does not "
+      "use this method. Use lethe-fluid-sharp, or set the type of this "
+      "boundary condition to none."));
+  AssertThrow(!simulation_parameters.fem_parameters.tracer_uses_dg,
+              ExcMessage(
+                "The tracer boundary condition on the particles of the "
+                "sharp-interface immersed boundary method requires continuous "
+                "elements. Set <tracer uses dg> to false in the subsection "
+                "<FEM>."));
+  AssertThrow(!simulation_parameters.mesh.simplex,
+              ExcMessage(
+                "The tracer boundary condition on the particles of the "
+                "sharp-interface immersed boundary method requires a mesh made "
+                "of quadrilaterals or hexahedra."));
+  AssertThrow(!simulation_parameters.mortar_parameters.enable,
+              ExcMessage(
+                "The tracer boundary condition on the particles of the "
+                "sharp-interface immersed boundary method cannot be combined "
+                "with the mortar method."));
+
+  // The tracer is not solved inside the particles, so the models that describe
+  // the solid with the signed distance to the particles cannot be used.
+  const auto &properties_manager =
+    simulation_parameters.physical_properties_manager;
+  for (unsigned int fluid_id = 0;
+       fluid_id < properties_manager.get_number_of_fluids();
+       ++fluid_id)
+    AssertThrow(
+      !properties_manager.get_tracer_diffusivity(fluid_id)->depends_on(
+        field::levelset) &&
+        !properties_manager.get_tracer_reaction_prefactor(fluid_id)->depends_on(
+          field::levelset),
+      ExcMessage(
+        "The tracer boundary condition on the particles of the "
+        "sharp-interface immersed boundary method cannot be combined with the "
+        "tracer diffusivity and reaction constant models immersed_boundary_tanh "
+        "and immersed_boundary_gaussian, since the tracer is not solved inside "
+        "the particles. Use constant models."));
+
+  for (const IBParticle<dim> &particle :
+       multiphysics->get_immersed_boundary_particles())
+    AssertThrow(
+      particle.shape->additional_info_on_shape != "iges",
+      ExcMessage(
+        "The tracer boundary condition on the particles of the "
+        "sharp-interface immersed boundary method requires shapes with a "
+        "signed distance, but the shape of particle " +
+        std::to_string(particle.particle_id) +
+        " only provides an unsigned distance."));
+
+  if (!immersed_boundary_constraints)
+    immersed_boundary_constraints = std::make_unique<IBScalarConstraints<dim>>(
+      particles_parameters.stencil_degree,
+      particles_parameters.length_ratio,
+      particles_parameters.enable_extrapolation);
+
+  // Force the update of the constraints at the next assembly
+  immersed_boundary_constraints_iteration = numbers::invalid_unsigned_int;
+}
+
+template <int dim>
+void
+Tracer<dim>::update_immersed_boundary_constraints()
+{
+  if (!immersed_boundary_constraints)
+    return;
+
+  // The particles only move between two time steps
+  const unsigned int iteration = simulation_control->get_iteration_number();
+  if (iteration == immersed_boundary_constraints_iteration)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer,
+                       "Update immersed boundary constraints");
+
+  // The diffusivity and the time step only scale the equations of the
+  // immersed boundary constraints. The diffusivity of the first fluid is used.
+  const double diffusivity =
+    simulation_parameters.physical_properties_manager.get_tracer_diffusivity()
+      ->value(std::map<field, double>());
+  const double time_step = simulation_control->get_time_step();
+  const bool   simulation_is_steady =
+    simulation_parameters.simulation_control.method ==
+    Parameters::SimulationControl::TimeSteppingMethod::steady;
+  const double inverse_time_step =
+    (simulation_is_steady || time_step <= 0.) ? 0. : 1. / time_step;
+
+  immersed_boundary_constraints->update(
+    *this->dof_handler,
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics),
+    *this->get_mapping(),
+    multiphysics->get_immersed_boundary_particles(),
+    this->zero_constraints,
+    diffusivity,
+    inverse_time_step);
+  immersed_boundary_constraints_iteration = iteration;
+
+  if (simulation_parameters.physics_solving_strategy.at(PhysicsID::tracer)
+        .verbosity == Parameters::Verbosity::verbose)
+    this->pcout << "  -Tracer immersed boundary: "
+                << immersed_boundary_constraints->get_n_interface_dofs()
+                << " constrained degrees of freedom, "
+                << immersed_boundary_constraints->get_n_dofs_without_stencil()
+                << " without stencil" << std::endl;
 }
 
 template <int dim>

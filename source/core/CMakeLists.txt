@@ -23,6 +23,7 @@ add_library(lethe-core
   grids.cc
   heat_transfer_boundary_conditions.cc
   ib_particle.cc
+  ib_scalar_constraints.cc
   ib_stencil.cc
   interface_tools.cc
   lethe_grid_tools.cc
@@ -84,6 +85,7 @@ add_library(lethe-core
   ../../include/core/grids.h
   ../../include/core/heat_transfer_boundary_conditions.h
   ../../include/core/ib_particle.h
+  ../../include/core/ib_scalar_constraints.h
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver_strategy.h
   ../../include/core/interface_property_model.h

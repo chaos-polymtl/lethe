@@ -15,6 +15,7 @@
 #define lethe_multiphysics_interface_h
 
 #include <core/exceptions.h>
+#include <core/ib_particle.h>
 #include <core/multiphysics.h>
 #include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
@@ -712,6 +713,51 @@ public:
   set_immersed_solid_shape(const std::shared_ptr<Shape<dim>> &shape);
 
   /**
+   * @brief Share the particles of the sharp-interface immersed boundary method
+   * with the auxiliary physics, which can impose a boundary condition on their
+   * surface.
+   *
+   * @param[in] particles Particles of the sharp-interface immersed boundary
+   * solver. The interface only stores a pointer to this vector, which must
+   * outlive the interface. Since the solver moves its particles in place, the
+   * auxiliary physics always see their current position.
+   */
+  void
+  set_immersed_boundary_particles(const std::vector<IBParticle<dim>> &particles)
+  {
+    immersed_boundary_particles = &particles;
+  }
+
+  /**
+   * @brief Return whether the particles of the sharp-interface immersed
+   * boundary method are available, which is the case with lethe-fluid-sharp.
+   *
+   * @return True if set_immersed_boundary_particles() was called.
+   */
+  bool
+  immersed_boundary_particles_are_available() const
+  {
+    return immersed_boundary_particles != nullptr;
+  }
+
+  /**
+   * @brief Return the particles of the sharp-interface immersed boundary
+   * method.
+   *
+   * @return Reference to the particles of the sharp-interface immersed
+   * boundary solver.
+   */
+  const std::vector<IBParticle<dim>> &
+  get_immersed_boundary_particles() const
+  {
+    AssertThrow(immersed_boundary_particles != nullptr,
+                ExcMessage("The particles of the sharp-interface immersed "
+                           "boundary method are only available with "
+                           "lethe-fluid-sharp."));
+    return *immersed_boundary_particles;
+  }
+
+  /**
    * @brief Request the reference to the vector of previous solutions of a given
    * physics.
    *
@@ -1153,6 +1199,11 @@ private:
 
   /// Shared pointer to immersed solid shapes to be used by auxiliary physics
   std::shared_ptr<Shape<dim>> immersed_solid_shape;
+
+  /// Particles of the sharp-interface immersed boundary method, owned by the
+  /// fluid dynamics solver of lethe-fluid-sharp. This pointer does not own the
+  /// particles, and it is null with the other solvers.
+  const std::vector<IBParticle<dim>> *immersed_boundary_particles = nullptr;
 
   /**
    * Map of physics and shared pointers to their respective previous (n-1)
