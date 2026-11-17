@@ -18,7 +18,8 @@ var searchData=
   ['steady_15',['steady',['../structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5',1,'Parameters::SimulationControl']]],
   ['steady_5fbdf_16',['steady_bdf',['../structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9',1,'Parameters::SimulationControl']]],
   ['step_17',['step',['../classParameters_1_1Manifolds.html#a104ef04cd60eac47ebd1636a0a9fe68aa2764ca9d34e90313978d044f27ae433b',1,'Parameters::Manifolds']]],
-  ['subdomain_18',['subdomain',['../structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39acd9fb49631e1e52bac55a75bf39c81a8',1,'Parameters::Testing']]],
-  ['superquadric_19',['superquadric',['../classShape.html#a394819ce751267dc955abe4ad18ebdebaf502cc98512d04388eac34f415eacc44',1,'Shape']]],
-  ['symm_20',['symm',['../classPreconditionASM.html#aa6db2cd2ca97a487ef86465f299230cca84eaf492edd4aa33724479e7f4f9f075',1,'PreconditionASM']]]
+  ['strang_18',['strang',['../namespaceParameters.html#aec26a1b6eefc3583c45b415f2fa91e78a09393b89e071daa6711ae0a264f34398',1,'Parameters']]],
+  ['subdomain_19',['subdomain',['../structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39acd9fb49631e1e52bac55a75bf39c81a8',1,'Parameters::Testing']]],
+  ['superquadric_20',['superquadric',['../classShape.html#a394819ce751267dc955abe4ad18ebdebaf502cc98512d04388eac34f415eacc44',1,'Shape']]],
+  ['symm_21',['symm',['../classPreconditionASM.html#aa6db2cd2ca97a487ef86465f299230cca84eaf492edd4aa33724479e7f4f9f075',1,'PreconditionASM']]]
 ];

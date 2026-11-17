@@ -101,10 +101,17 @@ $(function() {
 <code>#include &lt;<a class="el" href="core_2utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/exceptions.h&gt;</code><br />
 <code>#include &lt;deal.II/base/parameter_handler.h&gt;</code><br />
+<code>#include &lt;deal.II/base/parsed_function.h&gt;</code><br />
+<code>#include &lt;deal.II/base/utilities.h&gt;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;cctype&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for parameters_multiphysics.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="parameters__multiphysics_8cc__incl.svg" width="3000" height="595"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="parameters__multiphysics_8cc__incl.svg" width="3268" height="595"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="parameters__multiphysics_8cc_source.html">Go to the source code of this file.</a></p>
@@ -118,10 +125,45 @@ Functions</h2></td></tr>
 <tr class="memitem:aac7a108111c4415032fbb2be27d1f969" id="r_aac7a108111c4415032fbb2be27d1f969"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac7a108111c4415032fbb2be27d1f969">DeclException1</a> (SharpeningThresholdError, double,&lt;&lt; &quot;Sharpening threshold : &quot;&lt;&lt; arg1&lt;&lt; &quot; is smaller than 0 or larger than 1.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Projection-based interface sharpening model requires a sharpening threshold between 0 and 1.&quot;)</td></tr>
 <tr class="memitem:a9c2f195fe300249b8f8a38eb24588946" id="r_a9c2f195fe300249b8f8a38eb24588946"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c2f195fe300249b8f8a38eb24588946">DeclException1</a> (SharpeningThresholdErrorMaxDeviation, double,&lt;&lt; &quot;Sharpening threshold max deviation : &quot;&lt;&lt; arg1&lt;&lt; &quot; is smaller than 0 or larger than 0.5.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Adaptive projection-based interface sharpening requires a maximum deviation of the&quot;&lt;&lt; &quot; sharpening threshold between 0.0 and 0.5. See documentation for further details&quot;)</td></tr>
 <tr class="memitem:a23ebbcbd2ce923e4c3e24a407a9d68fa" id="r_a23ebbcbd2ce923e4c3e24a407a9d68fa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23ebbcbd2ce923e4c3e24a407a9d68fa">DeclException1</a> (ReinitializationMethodFrequencyError, int,&lt;&lt; &quot;Reinitialization method frequency : &quot;&lt;&lt; arg1&lt;&lt; &quot; is equal or smaller than 0.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Interface reinitialization method requires an frequency larger than 0.&quot;)</td></tr>
+<tr class="memitem:abe6704926b4ff5e7debb702a3f925ebd" id="r_abe6704926b4ff5e7debb702a3f925ebd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe6704926b4ff5e7debb702a3f925ebd">DeclException2</a> (QMOMScalarNamesCountError, std::size_t, unsigned int,&lt;&lt; &quot;The \&quot;scalar names\&quot; of the QMOM subsection has &quot;&lt;&lt; arg1&lt;&lt; &quot; names, but the \&quot;number of scalars\&quot; is &quot;&lt;&lt; arg2&lt;&lt; &quot;.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Give one name per scalar, or no name to use scalar_0, scalar_1, ...&quot;)</td></tr>
+<tr class="memitem:a7c5f3f305f8e253bb5d47ff4c3f98701" id="r_a7c5f3f305f8e253bb5d47ff4c3f98701"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c5f3f305f8e253bb5d47ff4c3f98701">DeclException1</a> (QMOMScalarNameError, std::string,&lt;&lt; &quot;The scalar name \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; of the QMOM subsection is invalid.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Scalar names may only contain letters, digits and underscores.&quot;)</td></tr>
+<tr class="memitem:aef467d917e3ed7e39ff04ba6bd01855f" id="r_aef467d917e3ed7e39ff04ba6bd01855f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef467d917e3ed7e39ff04ba6bd01855f">DeclException2</a> (QMOMProcessConflictError, std::string, std::string,&lt;&lt; &quot;The \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; of the QMOM subsection contradicts the \&quot;&quot;&lt;&lt; arg2&lt;&lt; &quot;\&quot; process, which imposes it.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Remove \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; from the parameter file, or set the &quot;&lt;&lt; &quot;process to generic.&quot;)</td></tr>
+<tr class="memitem:a7bc10db09d8ac61c1247eaba5c72fc26" id="r_a7bc10db09d8ac61c1247eaba5c72fc26"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bc10db09d8ac61c1247eaba5c72fc26">DeclException3</a> (QMOMDistributionExpressionsCountError, std::string, unsigned int, unsigned int,&lt;&lt; &quot;The \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; particle size distribution of the QMOM physics expects &quot;&lt;&lt; arg2&lt;&lt; &quot; expressions, but &quot;&lt;&lt; arg3&lt;&lt; &quot; are given.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Give the number density, in particles per m^3, followed by the &quot;&lt;&lt; &quot;parameters of the distribution.&quot;)</td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a7c5f3f305f8e253bb5d47ff4c3f98701" name="a7c5f3f305f8e253bb5d47ff4c3f98701"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c5f3f305f8e253bb5d47ff4c3f98701">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">QMOMScalarNameError</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;The scalar name \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; of the QMOM subsection is invalid.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Scalar names may only contain</td>          <td class="paramname"><span class="paramname"><em>letters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">digits and underscores.&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a23ebbcbd2ce923e4c3e24a407a9d68fa" name="a23ebbcbd2ce923e4c3e24a407a9d68fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23ebbcbd2ce923e4c3e24a407a9d68fa">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a23ebbcbd2ce923e4c3e24a407a9d68fa">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -144,12 +186,10 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00069">Parameters::piecewise_polynomial</a>.</p>
-
 </div>
 </div>
 <a id="aac7a108111c4415032fbb2be27d1f969" name="aac7a108111c4415032fbb2be27d1f969"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac7a108111c4415032fbb2be27d1f969">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aac7a108111c4415032fbb2be27d1f969">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -175,7 +215,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a9c2f195fe300249b8f8a38eb24588946" name="a9c2f195fe300249b8f8a38eb24588946"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c2f195fe300249b8f8a38eb24588946">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c2f195fe300249b8f8a38eb24588946">&#9670;&#160;</a></span>DeclException1() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -197,6 +237,151 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="aef467d917e3ed7e39ff04ba6bd01855f" name="aef467d917e3ed7e39ff04ba6bd01855f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef467d917e3ed7e39ff04ba6bd01855f">&#9670;&#160;</a></span>DeclException2() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException2 </td>
+          <td>(</td>
+          <td class="paramtype">QMOMProcessConflictError</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;The \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; of the QMOM subsection contradicts the \&quot;&quot;&lt;&lt; arg2&lt;&lt; &quot;\&quot;</td>          <td class="paramname"><span class="paramname"><em>process</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">which imposes it.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Remove \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; from the parameter</td>          <td class="paramname"><span class="paramname"><em>file</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">or set the &quot;&lt;&lt; &quot;process to generic.&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abe6704926b4ff5e7debb702a3f925ebd" name="abe6704926b4ff5e7debb702a3f925ebd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe6704926b4ff5e7debb702a3f925ebd">&#9670;&#160;</a></span>DeclException2() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException2 </td>
+          <td>(</td>
+          <td class="paramtype">QMOMScalarNamesCountError</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;The \&quot;scalar names\&quot; of the QMOM subsection has &quot;&lt;&lt; arg1&lt;&lt; &quot;</td>          <td class="paramname"><span class="paramname"><em>names</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">but the \&quot;number of scalars\&quot; is &quot;&lt;&lt; arg2&lt;&lt; &quot;.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Give one name per</td>          <td class="paramname"><span class="paramname"><em>scalar</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">or no name to use</td>          <td class="paramname"><span class="paramname"><em>scalar_0</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">scalar_1</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">...&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7bc10db09d8ac61c1247eaba5c72fc26" name="a7bc10db09d8ac61c1247eaba5c72fc26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bc10db09d8ac61c1247eaba5c72fc26">&#9670;&#160;</a></span>DeclException3()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException3 </td>
+          <td>(</td>
+          <td class="paramtype">QMOMDistributionExpressionsCountError</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;The \&quot;&quot;&lt;&lt; arg1&lt;&lt; &quot;\&quot; particle size distribution of the QMOM physics expects &quot;&lt;&lt; arg2&lt;&lt; &quot;</td>          <td class="paramname"><span class="paramname"><em>expressions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">but &quot;&lt;&lt; arg3&lt;&lt; &quot; are given.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Give the number</td>          <td class="paramname"><span class="paramname"><em>density</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in particles per m^</td>          <td class="paramname"><span class="paramname"><em>3</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">followed by the &quot;&lt;&lt; &quot;parameters of the distribution.&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00075">Parameters::piecewise_polynomial</a>.</p>
 
 </div>
 </div>

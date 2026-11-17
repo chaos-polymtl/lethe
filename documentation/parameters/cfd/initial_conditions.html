@@ -195,6 +195,7 @@
 <li class="toctree-l3"><a class="reference internal" href="non-linear_solver_control.html">Non-linear Solver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="physical_properties.html">Physical Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmom.html">Quadrature Method of Moments</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restart.html">Restart</a></li>
 <li class="toctree-l3"><a class="reference internal" href="simulation_control.html">Simulation Control</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
@@ -482,6 +483,16 @@
    set Function expression = if (x&lt;0.5 &amp; y&lt;1, 1, -1); 0
   end
 
+  subsection QMOM
+    subsection scalars
+      set Function expression = 0
+    end
+    subsection distribution
+      set type                = none
+      set Function expression = 0
+    end
+  end
+
   subsection ramp
     subsection kinematic viscosity
       set initial kinematic viscosity = 1.0
@@ -533,6 +544,7 @@ end
 </li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">cahn</span> <span class="pre">hilliard</span></code> defines the areas where both fluids lay at the initial state (see section <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>). It works similarly to the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">CLS</span></code> for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">temperature</span></code> allows the user to define an initial temperature for the fluid domain (if <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">heat</span> <span class="pre">transfer</span> <span class="pre">=</span> <span class="pre">true</span></code> in <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">QMOM</span></code> defines the initial scalars and particle size distribution of the quadrature method of moments (if <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">qmom</span> <span class="pre">=</span> <span class="pre">true</span></code> in <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>). The format of this subsection is described in <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>. With the default <code class="docutils literal notranslate"><span class="pre">none</span></code> distribution type, there are initially no particles.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">ramp</span></code> holds the parameters to operate a ramp on either or both the kinematic viscosity and the <code class="docutils literal notranslate"><span class="pre">n</span></code> parameter in rheological models (see <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a> for more information on this parameter). When ramping on the kinematic viscosity value,</p>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">kinematic</span> <span class="pre">viscosity</span></code> is the kinematic viscosity with which the initial condition starts off. An initial kinematic viscosity of <span class="math notranslate nohighlight">\(1.0\)</span> is suggested.</p></li>

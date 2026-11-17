@@ -195,6 +195,7 @@
 <li class="toctree-l3"><a class="reference internal" href="non-linear_solver_control.html">Non-linear Solver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="physical_properties.html">Physical Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmom.html">Quadrature Method of Moments</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restart.html">Restart</a></li>
 <li class="toctree-l3"><a class="reference internal" href="simulation_control.html">Simulation Control</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
@@ -489,6 +490,9 @@
   # interpolation degrees of the solid phase (Euler-Euler model)
   set solid velocity degree        = 1
   set solid volume fraction degree = 1
+
+  # interpolation degree of the quadrature method of moments (QMOM)
+  set qmom degree = 1
 end
 </pre></div>
 </div>
@@ -514,6 +518,7 @@ end
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">solid</span> <span class="pre">velocity</span> <span class="pre">degree</span></code> and <code class="docutils literal notranslate"><span class="pre">solid</span> <span class="pre">volume</span> <span class="pre">fraction</span> <span class="pre">degree</span></code> specify the polynomial degree of the solid velocity and of the solid volume fraction of the Euler-Euler model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">qmom</span> <span class="pre">degree</span></code> specifies the polynomial degree of the scalar and moment fields of the quadrature method of moments (QMOM) physics. These fields are discretized with discontinuous Galerkin finite elements. A degree of <code class="docutils literal notranslate"><span class="pre">0</span></code> is allowed and corresponds to a finite volume discretization with first-order upwind (see <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">velocity</span></code> and <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">pressure</span></code> specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259400721X">Franca and Farhat 1995</a> and <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259290102P">Brezzi et al 1992</a> for more detail.</p></li>
 </ul>
 <div class="admonition warning">

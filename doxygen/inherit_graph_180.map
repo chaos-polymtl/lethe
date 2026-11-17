@@ -1,11 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsAssemblerBase.html" title=" " alt="" coords="5,71,249,133"/>
-<area shape="rect" id="Node000001" href="$classCLSAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the CLS equation...." alt="" coords="316,5,513,33"/>
-<area shape="poly" id="edge159_Node000000_Node000001" title=" " alt="" coords="231,63,296,43,347,32,343,35,297,48,233,68"/>
-<area shape="rect" id="Node000002" href="$classCLSAssemblerCore.html" title="Class that assembles the core of the CLS solver. According to the following weak form: &#160;with an SUPG ..." alt="" coords="314,57,514,85"/>
-<area shape="poly" id="edge160_Node000000_Node000002" title=" " alt="" coords="264,85,316,81,311,83,265,90"/>
-<area shape="rect" id="Node000003" href="$classCLSAssemblerDCDDStabilization.html" title="Assemble the Discontinuity&#45;Capturing Directional Dissipation (DCDD) stabilization term for the CLS ph..." alt="" coords="297,109,532,154"/>
-<area shape="poly" id="edge161_Node000000_Node000003" title=" " alt="" coords="264,113,299,119,294,120,264,118"/>
-<area shape="rect" id="Node000004" href="$classCLSAssemblerDGCore.html" title="Class that assembles the core (cells) of the CLS equation for DG elements. This class assembles the w..." alt="" coords="332,178,497,223"/>
-<area shape="poly" id="edge162_Node000000_Node000004" title=" " alt="" coords="222,136,298,163,336,178,331,178,296,168,221,141"/>
+<area shape="rect" id="Node000000" href="$structperiodic__boundaries__cells__info__struct.html" title="Handle the information related to the periodic boundary cells which will be used for particle&#45;wall co..." alt="" coords="5,5,195,50"/>
 </map>

@@ -30,6 +30,7 @@ General, CFD and Multiphysics
    non-linear_solver_control
    physical_properties
    post_processing
+   qmom
    restart
    simulation_control
    source_term

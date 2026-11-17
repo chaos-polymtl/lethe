@@ -198,10 +198,10 @@
 </a>
 </g>
 </g>
-<!-- Node274 -->
-<g id="Node000274" class="node">
-<title>Node274</title>
-<g id="a_Node000274"><a xlink:href="particle__point__line__fine__search_8cc.html" target="_top" xlink:title=" ">
+<!-- Node282 -->
+<g id="Node000282" class="node">
+<title>Node282</title>
+<g id="a_Node000282"><a xlink:href="particle__point__line__fine__search_8cc.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="#666666" points="3650.75,-571.62 3507.25,-571.62 3507.25,-525.38 3650.75,-525.38 3650.75,-571.62"/>
 <text xml:space="preserve" text-anchor="start" x="3515.25" y="-558.12" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text xml:space="preserve" text-anchor="start" x="3515.25" y="-545.38" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/source/dem/particle</text>
@@ -209,10 +209,10 @@
 </a>
 </g>
 </g>
-<!-- Node1&#45;&gt;Node274 -->
-<g id="edge63_Node000001_Node000274" class="edge">
-<title>Node1&#45;&gt;Node274</title>
-<g id="a_edge63_Node000001_Node000274"><a xlink:title=" ">
+<!-- Node1&#45;&gt;Node282 -->
+<g id="edge63_Node000001_Node000282" class="edge">
+<title>Node1&#45;&gt;Node282</title>
+<g id="a_edge63_Node000001_Node000282"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M3358.08,-612.73C3402.18,-603.07 3452.69,-591.07 3498,-578 3504.3,-576.18 3510.83,-574.15 3517.32,-572.02"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="3357.52,-609.27 3348.49,-614.81 3359,-616.11 3357.52,-609.27"/>
 </a>
@@ -238,10 +238,10 @@
 </a>
 </g>
 </g>
-<!-- Node275 -->
-<g id="Node000275" class="node">
-<title>Node275</title>
-<g id="a_Node000275"><a xlink:href="periodic__boundaries__manipulator_8cc.html" target="_top" xlink:title=" ">
+<!-- Node283 -->
+<g id="Node000283" class="node">
+<title>Node283</title>
+<g id="a_Node000283"><a xlink:href="periodic__boundaries__manipulator_8cc.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="#666666" points="3983.25,-571.62 3830.75,-571.62 3830.75,-525.38 3983.25,-525.38 3983.25,-571.62"/>
 <text xml:space="preserve" text-anchor="start" x="3838.75" y="-558.12" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text xml:space="preserve" text-anchor="start" x="3838.75" y="-545.38" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/source/dem/periodic</text>
@@ -249,10 +249,10 @@
 </a>
 </g>
 </g>
-<!-- Node1&#45;&gt;Node275 -->
-<g id="edge65_Node000001_Node000275" class="edge">
-<title>Node1&#45;&gt;Node275</title>
-<g id="a_edge65_Node000001_Node000275"><a xlink:title=" ">
+<!-- Node1&#45;&gt;Node283 -->
+<g id="edge65_Node000001_Node000283" class="edge">
+<title>Node1&#45;&gt;Node283</title>
+<g id="a_edge65_Node000001_Node000283"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M3358.27,-632.11C3476.23,-626.26 3663.49,-612.07 3822,-578 3829.46,-576.4 3837.17,-574.36 3844.78,-572.12"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="3358.41,-628.6 3348.59,-632.58 3358.75,-635.59 3358.41,-628.6"/>
 </a>
@@ -1085,10 +1085,10 @@
 </a>
 </g>
 </g>
-<!-- Node271 -->
-<g id="Node000271" class="node">
-<title>Node271</title>
-<g id="a_Node000271"><a xlink:href="shape__parsing_8h.html" target="_top" xlink:title=" ">
+<!-- Node279 -->
+<g id="Node000279" class="node">
+<title>Node279</title>
+<g id="a_Node000279"><a xlink:href="shape__parsing_8h.html" target="_top" xlink:title=" ">
 <polygon fill="#fff0f0" stroke="red" points="3020.12,-483 2881.88,-483 2881.88,-436.75 3020.12,-436.75 3020.12,-483"/>
 <text xml:space="preserve" text-anchor="start" x="2889.88" y="-469.5" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text xml:space="preserve" text-anchor="start" x="2889.88" y="-456.75" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/core/shape</text>
@@ -1096,48 +1096,48 @@
 </a>
 </g>
 </g>
-<!-- Node80&#45;&gt;Node271 -->
-<g id="edge51_Node000080_Node000271" class="edge">
-<title>Node80&#45;&gt;Node271</title>
-<g id="a_edge51_Node000080_Node000271"><a xlink:title=" ">
+<!-- Node80&#45;&gt;Node279 -->
+<g id="edge51_Node000080_Node000279" class="edge">
+<title>Node80&#45;&gt;Node279</title>
+<g id="a_edge51_Node000080_Node000279"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M2778.75,-527.19C2812.9,-514.04 2857.39,-496.91 2892.6,-483.36"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="2777.54,-523.91 2769.47,-530.76 2780.06,-530.44 2777.54,-523.91"/>
 </a>
 </g>
 </g>
-<!-- Node269 -->
-<g id="Node000269" class="node">
-<title>Node269</title>
-<g id="a_Node000269"><a xlink:href="parameters_8cc.html" target="_top" xlink:title=" ">
+<!-- Node277 -->
+<g id="Node000277" class="node">
+<title>Node277</title>
+<g id="a_Node000277"><a xlink:href="parameters_8cc.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="#666666" points="3010.88,-388 2835.12,-388 2835.12,-354.5 3010.88,-354.5 3010.88,-388"/>
 <text xml:space="preserve" text-anchor="start" x="2843.12" y="-374.5" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text xml:space="preserve" text-anchor="middle" x="2923" y="-361.75" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/source/core/parameters.cc</text>
 </a>
 </g>
 </g>
-<!-- Node80&#45;&gt;Node269 -->
-<g id="edge54_Node000080_Node000269" class="edge">
-<title>Node80&#45;&gt;Node269</title>
-<g id="a_edge54_Node000080_Node000269"><a xlink:title=" ">
+<!-- Node80&#45;&gt;Node277 -->
+<g id="edge54_Node000080_Node000277" class="edge">
+<title>Node80&#45;&gt;Node277</title>
+<g id="a_edge54_Node000080_Node000277"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M2769.96,-526.26C2790.86,-515.02 2815.48,-500.01 2835,-483 2839.47,-479.11 2887.22,-418.14 2910.45,-388.36"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="2768.61,-523.02 2761.38,-530.77 2771.86,-529.22 2768.61,-523.02"/>
 </a>
 </g>
 </g>
-<!-- Node273 -->
-<g id="Node000273" class="node">
-<title>Node273</title>
-<g id="a_Node000273"><a xlink:href="shape_8cc.html" target="_top" xlink:title=" ">
+<!-- Node281 -->
+<g id="Node000281" class="node">
+<title>Node281</title>
+<g id="a_Node000281"><a xlink:href="shape_8cc.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="#666666" points="3187.38,-476.62 3038.62,-476.62 3038.62,-443.12 3187.38,-443.12 3187.38,-476.62"/>
 <text xml:space="preserve" text-anchor="start" x="3046.62" y="-463.12" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text xml:space="preserve" text-anchor="middle" x="3113" y="-450.38" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/source/core/shape.cc</text>
 </a>
 </g>
 </g>
-<!-- Node80&#45;&gt;Node273 -->
-<g id="edge55_Node000080_Node000273" class="edge">
-<title>Node80&#45;&gt;Node273</title>
-<g id="a_edge55_Node000080_Node000273"><a xlink:title=" ">
+<!-- Node80&#45;&gt;Node281 -->
+<g id="edge55_Node000080_Node000281" class="edge">
+<title>Node80&#45;&gt;Node281</title>
+<g id="a_edge55_Node000080_Node000281"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M2779.45,-527.67C2789.2,-524.48 2799.34,-521.43 2809,-519 2905.08,-494.83 2932.1,-503.64 3029,-483 3037.26,-481.24 3045.93,-479.19 3054.42,-477.07"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="2778.45,-524.31 2770.1,-530.83 2780.69,-530.95 2778.45,-524.31"/>
 </a>
@@ -1161,10 +1161,10 @@
 </a>
 </g>
 </g>
-<!-- Node271&#45;&gt;Node269 -->
-<g id="edge52_Node000271_Node000269" class="edge">
-<title>Node271&#45;&gt;Node269</title>
-<g id="a_edge52_Node000271_Node000269"><a xlink:title=" ">
+<!-- Node279&#45;&gt;Node277 -->
+<g id="edge52_Node000279_Node000277" class="edge">
+<title>Node279&#45;&gt;Node277</title>
+<g id="a_edge52_Node000279_Node000277"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M2940.3,-425.78C2936.17,-413 2931.63,-398.96 2928.24,-388.46"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="2936.92,-426.69 2943.32,-435.13 2943.58,-424.53 2936.92,-426.69"/>
 </a>

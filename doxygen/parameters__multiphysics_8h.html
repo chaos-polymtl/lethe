@@ -94,22 +94,28 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">parameters_multiphysics.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="parameters_8h_source.html">core/parameters.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/parameter_handler.h&gt;</code><br />
+<code>#include &lt;deal.II/base/parsed_function.h&gt;</code><br />
 <code>#include &lt;deal.II/base/utilities.h&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;numbers&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for parameters_multiphysics.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="parameters__multiphysics_8h__incl.svg" width="4251" height="612"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="parameters__multiphysics_8h__incl.svg" width="4582" height="612"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="parameters__multiphysics_8h__dep__incl.svg" width="4214" height="908"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="parameters__multiphysics_8h__dep__incl.svg" width="4083" height="1002"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="parameters__multiphysics_8h_source.html">Go to the source code of this file.</a></p>
@@ -125,6 +131,11 @@ Classes</h2></td></tr>
 <tr class="memitem:Parameters_3A_3ACLS_5FReinitializationMethod" id="r_Parameters_3A_3ACLS_5FReinitializationMethod"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS__ReinitializationMethod.html">Parameters::CLS_ReinitializationMethod</a></td></tr>
 <tr class="memitem:Parameters_3A_3ACLS" id="r_Parameters_3A_3ACLS"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS.html">Parameters::CLS</a></td></tr>
 <tr class="memitem:Parameters_3A_3ACahnHilliard" id="r_Parameters_3A_3ACahnHilliard"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CahnHilliard.html">Parameters::CahnHilliard</a></td></tr>
+<tr class="memitem:Parameters_3A_3AQMOMPhaseEvolution" id="r_Parameters_3A_3AQMOMPhaseEvolution"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMPhaseEvolution.html">Parameters::QMOMPhaseEvolution</a></td></tr>
+<tr class="memitem:Parameters_3A_3AQMOMLipidNanoparticleProduction" id="r_Parameters_3A_3AQMOMLipidNanoparticleProduction"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMLipidNanoparticleProduction.html">Parameters::QMOMLipidNanoparticleProduction</a></td></tr>
+<tr class="memitem:Parameters_3A_3AQMOMPhysicalConstants" id="r_Parameters_3A_3AQMOMPhysicalConstants"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMPhysicalConstants.html">Parameters::QMOMPhysicalConstants</a></td></tr>
+<tr class="memitem:Parameters_3A_3AQMOMFunctions_3C_20dim_20_3E" id="r_Parameters_3A_3AQMOMFunctions_3C_20dim_20_3E"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMFunctions.html">Parameters::QMOMFunctions&lt; dim &gt;</a></td></tr>
+<tr class="memitem:Parameters_3A_3AQMOM" id="r_Parameters_3A_3AQMOM"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOM.html">Parameters::QMOM</a></td></tr>
 <tr class="memitem:Parameters_3A_3ATimeHarmonicMaxwell_3C_20dim_20_3E" id="r_Parameters_3A_3ATimeHarmonicMaxwell_3C_20dim_20_3E"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell&lt; dim &gt;</a></td></tr>
 <tr class="memitem:Parameters_3A_3AMultiphysics_3C_20dim_20_3E" id="r_Parameters_3A_3AMultiphysics_3C_20dim_20_3E"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html">Parameters::Multiphysics&lt; dim &gt;</a></td></tr>
 </table><table class="memberdecls">
@@ -168,6 +179,28 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceParameters.html#aa00157f43a0189c3afc66a469b3e7aaea07cc694b9b3fc636710fa08b6922c42b">Parameters::time</a>
 , <a class="el" href="namespaceParameters.html#aa00157f43a0189c3afc66a469b3e7aaeaf0598264a691a8f62272aca0e79af374">Parameters::threshold</a>
  }</td></tr>
+<tr class="memitem:aec26a1b6eefc3583c45b415f2fa91e78" id="r_aec26a1b6eefc3583c45b415f2fa91e78"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#aec26a1b6eefc3583c45b415f2fa91e78">Parameters::QMOMSplittingScheme</a> : std::int8_t { <a class="el" href="namespaceParameters.html#aec26a1b6eefc3583c45b415f2fa91e78a2a2f953aacab0ef33e99acab61b51cfe">Parameters::lie</a>
+, <a class="el" href="namespaceParameters.html#aec26a1b6eefc3583c45b415f2fa91e78a09393b89e071daa6711ae0a264f34398">Parameters::strang</a>
+ }</td></tr>
+<tr class="memitem:aa1aad565d06130ff92d60f4b98b9e1f3" id="r_aa1aad565d06130ff92d60f4b98b9e1f3"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#aa1aad565d06130ff92d60f4b98b9e1f3">Parameters::QMOMProcess</a> : std::int8_t { <a class="el" href="namespaceParameters.html#aa1aad565d06130ff92d60f4b98b9e1f3a3d517f8924ac7fd03699a29d97dc52d9">Parameters::generic</a>
+, <a class="el" href="namespaceParameters.html#aa1aad565d06130ff92d60f4b98b9e1f3a28d39ac7af5f1c4aa5c13b6466200eba">Parameters::lipid_nanoparticle_production</a>
+ }</td></tr>
+<tr class="memitem:ab94fb2081fcd1b3587eb7249d321ef89" id="r_ab94fb2081fcd1b3587eb7249d321ef89"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89">Parameters::QMOMDistributionType</a> : std::int8_t { <br />
+&#160;&#160;<a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>
+, <a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89afea087517c26fadd409bd4b9dc642555">Parameters::normal</a>
+, <a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89a755025229ae92770a8fdb6bb55975c88">Parameters::lognormal</a>
+, <a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89a05b048d7242cb7b8b57cfa3b1d65ecea">Parameters::gamma</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89a17198fea0bd47a1170b57db7db9e6060">Parameters::weibull</a>
+, <a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89a987bcab01b929eb2c07877b224215c92">Parameters::beta</a>
+, <a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89a1e6086b705c7161eeb93a8b249a5ca7c">Parameters::chi</a>
+, <a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89a60ba97903782b06ec74363098e7697d9">Parameters::chi_squared</a>
+<br />
+ }</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a80d4aa2bd6536b0f61cf8e6053928822" id="r_a80d4aa2bd6536b0f61cf8e6053928822"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a80d4aa2bd6536b0f61cf8e6053928822">Parameters::get_number_of_distribution_parameters</a> (const <a class="el" href="namespaceParameters.html#ab94fb2081fcd1b3587eb7249d321ef89">QMOMDistributionType</a> distribution_type)</td></tr>
 </table>
 </div><!-- contents -->
 <!--

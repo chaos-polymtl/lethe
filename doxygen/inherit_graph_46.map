@@ -1,27 +1,27 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="Node000000" title=" " alt="" coords="5,187,176,215"/>
 <area shape="rect" id="Node000001" href="$classNavierStokesOperatorBase.html" title=" " alt="" coords="232,5,428,50"/>
-<area shape="poly" id="edge56_Node000000_Node000001" title=" " alt="" coords="108,173,156,116,188,86,222,60,248,49,244,53,225,65,191,90,160,120,113,176"/>
+<area shape="poly" id="edge57_Node000000_Node000001" title=" " alt="" coords="108,173,156,116,188,86,222,60,248,49,244,53,225,65,191,90,160,120,113,176"/>
 <area shape="rect" id="Node000002" href="$classPreconditionBase.html" title=" " alt="" coords="224,75,436,119"/>
-<area shape="poly" id="edge57_Node000000_Node000002" title=" " alt="" coords="128,177,223,129,256,118,252,122,225,134,131,181"/>
+<area shape="poly" id="edge58_Node000000_Node000002" title=" " alt="" coords="128,177,223,129,256,118,252,122,225,134,131,181"/>
 <area shape="rect" id="Node000003" href="$classBlockDiagPreconditioner.html" title=" " alt="" coords="239,144,420,189"/>
-<area shape="poly" id="edge58_Node000000_Node000003" title=" " alt="" coords="190,184,241,178,237,181,193,189"/>
+<area shape="poly" id="edge59_Node000000_Node000003" title=" " alt="" coords="190,184,241,178,237,181,193,189"/>
 <area shape="rect" id="Node000004" href="$classBlockSchurPreconditioner.html" title=" " alt="" coords="236,213,424,258"/>
-<area shape="poly" id="edge59_Node000000_Node000004" title=" " alt="" coords="190,213,238,221,233,223,192,218"/>
+<area shape="poly" id="edge60_Node000000_Node000004" title=" " alt="" coords="190,213,238,221,233,223,192,218"/>
 <area shape="rect" id="Node000005" href="$classNavierStokesOperatorBase.html" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="232,283,428,327"/>
-<area shape="poly" id="edge60_Node000000_Node000005" title=" " alt="" coords="129,220,225,268,257,281,252,283,223,273,130,226"/>
+<area shape="poly" id="edge61_Node000000_Node000005" title=" " alt="" coords="129,220,225,268,257,281,252,283,223,273,130,226"/>
 <area shape="rect" id="Node000009" href="$classPreconditionBase.html" title="A base class of preconditioners used by the smoother." alt="" coords="235,416,425,461"/>
-<area shape="poly" id="edge64_Node000000_Node000009" title=" " alt="" coords="116,224,226,338,306,415,301,416,222,342,115,229"/>
+<area shape="poly" id="edge65_Node000000_Node000009" title=" " alt="" coords="116,224,226,338,306,415,301,416,222,342,115,229"/>
 <area shape="rect" id="Node000006" href="$classNavierStokesNonNewtonianStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient non&#45;Newtonian Navier&#45;Stokes equations u..." alt="" coords="524,162,727,224"/>
-<area shape="poly" id="edge61_Node000005_Node000006" title=" " alt="" coords="422,274,435,268,458,251,483,233,525,218,521,221,485,238,462,255,437,273,425,279"/>
+<area shape="poly" id="edge62_Node000005_Node000006" title=" " alt="" coords="422,274,435,268,458,251,483,233,525,218,521,221,485,238,462,255,437,273,425,279"/>
 <area shape="rect" id="Node000007" href="$classNavierStokesStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="511,248,739,293"/>
-<area shape="poly" id="edge62_Node000005_Node000007" title=" " alt="" coords="443,289,513,283,508,285,444,294"/>
+<area shape="poly" id="edge63_Node000005_Node000007" title=" " alt="" coords="443,289,513,283,508,285,444,294"/>
 <area shape="rect" id="Node000008" href="$classVANSOperator.html" title="Implements the matrix&#45;free operator for the VANS equations." alt="" coords="546,317,704,362"/>
-<area shape="poly" id="edge63_Node000005_Node000008" title=" " alt="" coords="443,316,549,330,544,331,444,321"/>
+<area shape="poly" id="edge64_Node000005_Node000008" title=" " alt="" coords="443,316,549,330,544,331,444,321"/>
 <area shape="rect" id="Node000010" href="$classMyDiagonalMatrix.html" title="A wrapper class around DiagonalMatrix class from deal.II." alt="" coords="526,387,724,431"/>
-<area shape="poly" id="edge65_Node000009_Node000010" title=" " alt="" coords="440,425,529,418,524,419,441,430"/>
+<area shape="poly" id="edge66_Node000009_Node000010" title=" " alt="" coords="440,425,529,418,524,419,441,430"/>
 <area shape="rect" id="Node000011" href="$classPreconditionASM.html" title="An Additive Schwarz preconditioner." alt="" coords="509,455,741,483"/>
-<area shape="poly" id="edge66_Node000009_Node000011" title=" " alt="" coords="441,447,511,457,506,457,441,452"/>
+<area shape="poly" id="edge67_Node000009_Node000011" title=" " alt="" coords="441,447,511,457,506,457,441,452"/>
 <area shape="rect" id="Node000012" href="$classPreconditionAdapter.html" title="A wrapper class around a preconditioner to be able to handle vector types that are not supported by t..." alt="" coords="484,507,766,551"/>
-<area shape="poly" id="edge67_Node000009_Node000012" title=" " alt="" coords="404,464,485,492,528,506,523,506,483,497,403,469"/>
+<area shape="poly" id="edge68_Node000009_Node000012" title=" " alt="" coords="404,464,485,492,528,506,523,506,483,497,403,469"/>
 </map>

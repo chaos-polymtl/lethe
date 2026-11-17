@@ -152,6 +152,11 @@ Classes</h2></td></tr>
 <tr class="memitem:CLS_5FReinitializationMethod" id="r_CLS_5FReinitializationMethod"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS__ReinitializationMethod.html">CLS_ReinitializationMethod</a></td></tr>
 <tr class="memitem:CLS" id="r_CLS"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CLS.html">CLS</a></td></tr>
 <tr class="memitem:CahnHilliard" id="r_CahnHilliard"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CahnHilliard.html">CahnHilliard</a></td></tr>
+<tr class="memitem:QMOMPhaseEvolution" id="r_QMOMPhaseEvolution"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMPhaseEvolution.html">QMOMPhaseEvolution</a></td></tr>
+<tr class="memitem:QMOMLipidNanoparticleProduction" id="r_QMOMLipidNanoparticleProduction"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMLipidNanoparticleProduction.html">QMOMLipidNanoparticleProduction</a></td></tr>
+<tr class="memitem:QMOMPhysicalConstants" id="r_QMOMPhysicalConstants"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMPhysicalConstants.html">QMOMPhysicalConstants</a></td></tr>
+<tr class="memitem:QMOMFunctions" id="r_QMOMFunctions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOMFunctions.html">QMOMFunctions</a></td></tr>
+<tr class="memitem:QMOM" id="r_QMOM"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1QMOM.html">QMOM</a></td></tr>
 <tr class="memitem:TimeHarmonicMaxwell" id="r_TimeHarmonicMaxwell"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">TimeHarmonicMaxwell</a></td></tr>
 <tr class="memitem:Multiphysics" id="r_Multiphysics"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html">Multiphysics</a></td></tr>
 <tr class="memitem:PeriodicBoundary" id="r_PeriodicBoundary"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1PeriodicBoundary.html">PeriodicBoundary</a></td></tr>
@@ -241,6 +246,24 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#aa00157f43a0189c3afc66a469b3e7aaea07cc694b9b3fc636710fa08b6922c42b">time</a>
 , <a class="el" href="#aa00157f43a0189c3afc66a469b3e7aaeaf0598264a691a8f62272aca0e79af374">threshold</a>
  }</td></tr>
+<tr class="memitem:aec26a1b6eefc3583c45b415f2fa91e78" id="r_aec26a1b6eefc3583c45b415f2fa91e78"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec26a1b6eefc3583c45b415f2fa91e78">QMOMSplittingScheme</a> : std::int8_t { <a class="el" href="#aec26a1b6eefc3583c45b415f2fa91e78a2a2f953aacab0ef33e99acab61b51cfe">lie</a>
+, <a class="el" href="#aec26a1b6eefc3583c45b415f2fa91e78a09393b89e071daa6711ae0a264f34398">strang</a>
+ }</td></tr>
+<tr class="memitem:aa1aad565d06130ff92d60f4b98b9e1f3" id="r_aa1aad565d06130ff92d60f4b98b9e1f3"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1aad565d06130ff92d60f4b98b9e1f3">QMOMProcess</a> : std::int8_t { <a class="el" href="#aa1aad565d06130ff92d60f4b98b9e1f3a3d517f8924ac7fd03699a29d97dc52d9">generic</a>
+, <a class="el" href="#aa1aad565d06130ff92d60f4b98b9e1f3a28d39ac7af5f1c4aa5c13b6466200eba">lipid_nanoparticle_production</a>
+ }</td></tr>
+<tr class="memitem:ab94fb2081fcd1b3587eb7249d321ef89" id="r_ab94fb2081fcd1b3587eb7249d321ef89"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89">QMOMDistributionType</a> : std::int8_t { <br />
+&#160;&#160;<a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89afea087517c26fadd409bd4b9dc642555">normal</a>
+, <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89a755025229ae92770a8fdb6bb55975c88">lognormal</a>
+, <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89a05b048d7242cb7b8b57cfa3b1d65ecea">gamma</a>
+, <br />
+&#160;&#160;<a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89a17198fea0bd47a1170b57db7db9e6060">weibull</a>
+, <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89a987bcab01b929eb2c07877b224215c92">beta</a>
+, <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89a1e6086b705c7161eeb93a8b249a5ca7c">chi</a>
+, <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89a60ba97903782b06ec74363098e7697d9">chi_squared</a>
+<br />
+ }</td></tr>
 <tr class="memitem:acc63067dec4e97f0c49d400304a75beb" id="r_acc63067dec4e97f0c49d400304a75beb"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc63067dec4e97f0c49d400304a75beb">SolidObjectThermalBoundaryType</a> { <a class="el" href="#acc63067dec4e97f0c49d400304a75bebaecc572378821e873d5ada6b243eb2167">adiabatic</a>
 , <a class="el" href="#acc63067dec4e97f0c49d400304a75beba39d29ad6494e2b6e96c691e96977b7ef">isothermal</a>
  }</td></tr>
@@ -265,6 +288,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a5fb7113b91c00be9fa2bae1fd229f8ce" id="r_a5fb7113b91c00be9fa2bae1fd229f8ce"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#a91f1943180a615249347b911b0ed3919">Verbosity</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fb7113b91c00be9fa2bae1fd229f8ce">quiet_or_verbose</a> ()</td></tr>
 <tr class="memitem:a6726a46b08f9f7a1b3997ad46ace9792" id="r_a6726a46b08f9f7a1b3997ad46ace9792"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt; <a class="el" href="#af7808f8635a6a7dc05ee8c1487118f2f">FluidIndicator</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6726a46b08f9f7a1b3997ad46ace9792">deprecated_fluid_indicator_names</a> ()</td></tr>
 <tr class="memitem:ac1af034a210d86aca1157e2fd75b9ab5" id="r_ac1af034a210d86aca1157e2fd75b9ab5"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#af7808f8635a6a7dc05ee8c1487118f2f">FluidIndicator</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1af034a210d86aca1157e2fd75b9ab5">single_fluid_indicators</a> ()</td></tr>
+<tr class="memitem:a80d4aa2bd6536b0f61cf8e6053928822" id="r_a80d4aa2bd6536b0f61cf8e6053928822"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80d4aa2bd6536b0f61cf8e6053928822">get_number_of_distribution_parameters</a> (const <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89">QMOMDistributionType</a> distribution_type)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Drift velocity that is added to the tracer velocity to account for simplified multiphase simulations using drift-flux modeling. </p>
@@ -316,7 +340,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a3afa4d0c12c6c995b8b6978a4e413c3ba65a383f3960a0cb2b8b0ace54817d575" name="a3afa4d0c12c6c995b8b6978a4e413c3ba65a383f3960a0cb2b8b0ace54817d575"></a>geometric&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00026">26</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00028">28</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -434,7 +458,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ae2409eaf7621323659ebf4a3ec3c77d2a62cd275989e78ee56a81f0265a87562e" name="ae2409eaf7621323659ebf4a3ec3c77d2a62cd275989e78ee56a81f0265a87562e"></a>power&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00136">136</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00142">142</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -462,7 +486,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="aea64bd5414c051b692d8df44e5ccd369a3c78b35502b2693fefdfc51cba3a53a5" name="aea64bd5414c051b692d8df44e5ccd369a3c78b35502b2693fefdfc51cba3a53a5"></a>manual&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00086">86</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00092">92</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -494,7 +518,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00095">95</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00101">101</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -529,7 +553,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="af7f1dc7c6e6c0acaebb4395af3c3f07ba5c0dbba3a6ee4ac0eb26cfee75ccb8b4" name="af7f1dc7c6e6c0acaebb4395af3c3f07ba5c0dbba3a6ee4ac0eb26cfee75ccb8b4"></a>tanh&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00079">79</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00085">85</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -560,7 +584,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427" name="a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427"></a>average_velocity_profile&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00016">16</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00018">18</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -634,6 +658,116 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ab94fb2081fcd1b3587eb7249d321ef89" name="ab94fb2081fcd1b3587eb7249d321ef89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab94fb2081fcd1b3587eb7249d321ef89">&#9670;&#160;</a></span>QMOMDistributionType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89">Parameters::QMOMDistributionType</a> : std::int8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Family of the particle size distribution from which the moments of the <a class="el" href="structParameters_1_1QMOM.html" title="Parameters of the quadrature method of moments (QMOM) physics, declared in the &quot;QMOM&quot; subsection.">QMOM</a> physics are computed. The raw moments of each family are computed analytically by QMOMKit: </p>
+<ul>
+<li>none: no particles, all the moments are zero;</li>
+<li>normal: mean and standard deviation;</li>
+<li>lognormal: mean and standard deviation of the logarithm of the size;</li>
+<li>gamma: shape and scale;</li>
+<li>weibull: shape and scale;</li>
+<li>beta: shape parameters alpha and beta, on the interval [0, 1];</li>
+<li>chi: number of degrees of freedom;</li>
+<li>chi_squared: number of degrees of freedom. </li>
+</ul>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89a334c4a4c42fdb79d7ebc3e73b517e6f8" name="ab94fb2081fcd1b3587eb7249d321ef89a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89afea087517c26fadd409bd4b9dc642555" name="ab94fb2081fcd1b3587eb7249d321ef89afea087517c26fadd409bd4b9dc642555"></a>normal&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89a755025229ae92770a8fdb6bb55975c88" name="ab94fb2081fcd1b3587eb7249d321ef89a755025229ae92770a8fdb6bb55975c88"></a>lognormal&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89a05b048d7242cb7b8b57cfa3b1d65ecea" name="ab94fb2081fcd1b3587eb7249d321ef89a05b048d7242cb7b8b57cfa3b1d65ecea"></a>gamma&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89a17198fea0bd47a1170b57db7db9e6060" name="ab94fb2081fcd1b3587eb7249d321ef89a17198fea0bd47a1170b57db7db9e6060"></a>weibull&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89a987bcab01b929eb2c07877b224215c92" name="ab94fb2081fcd1b3587eb7249d321ef89a987bcab01b929eb2c07877b224215c92"></a>beta&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89a1e6086b705c7161eeb93a8b249a5ca7c" name="ab94fb2081fcd1b3587eb7249d321ef89a1e6086b705c7161eeb93a8b249a5ca7c"></a>chi&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab94fb2081fcd1b3587eb7249d321ef89a60ba97903782b06ec74363098e7697d9" name="ab94fb2081fcd1b3587eb7249d321ef89a60ba97903782b06ec74363098e7697d9"></a>chi_squared&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00690">690</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+
+</div>
+</div>
+<a id="aa1aad565d06130ff92d60f4b98b9e1f3" name="aa1aad565d06130ff92d60f4b98b9e1f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1aad565d06130ff92d60f4b98b9e1f3">&#9670;&#160;</a></span>QMOMProcess</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#aa1aad565d06130ff92d60f4b98b9e1f3">Parameters::QMOMProcess</a> : std::int8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Process simulated with the <a class="el" href="structParameters_1_1QMOM.html" title="Parameters of the quadrature method of moments (QMOM) physics, declared in the &quot;QMOM&quot; subsection.">QMOM</a> physics. A process other than generic imposes the scalars and the number of moments. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa1aad565d06130ff92d60f4b98b9e1f3a3d517f8924ac7fd03699a29d97dc52d9" name="aa1aad565d06130ff92d60f4b98b9e1f3a3d517f8924ac7fd03699a29d97dc52d9"></a>generic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa1aad565d06130ff92d60f4b98b9e1f3a28d39ac7af5f1c4aa5c13b6466200eba" name="aa1aad565d06130ff92d60f4b98b9e1f3a28d39ac7af5f1c4aa5c13b6466200eba"></a>lipid_nanoparticle_production&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00573">573</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+
+</div>
+</div>
+<a id="aec26a1b6eefc3583c45b415f2fa91e78" name="aec26a1b6eefc3583c45b415f2fa91e78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec26a1b6eefc3583c45b415f2fa91e78">&#9670;&#160;</a></span>QMOMSplittingScheme</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#aec26a1b6eefc3583c45b415f2fa91e78">Parameters::QMOMSplittingScheme</a> : std::int8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Operator splitting scheme between the physical-space transport (T) and the phase-space evolution (P) of the <a class="el" href="structParameters_1_1QMOM.html" title="Parameters of the quadrature method of moments (QMOM) physics, declared in the &quot;QMOM&quot; subsection.">QMOM</a> fields: </p>
+<ul>
+<li>lie: T then P over the whole time step (first order);</li>
+<li>strang: P over half a time step, T, then P over half a time step (second order). </li>
+</ul>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aec26a1b6eefc3583c45b415f2fa91e78a2a2f953aacab0ef33e99acab61b51cfe" name="aec26a1b6eefc3583c45b415f2fa91e78a2a2f953aacab0ef33e99acab61b51cfe"></a>lie&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aec26a1b6eefc3583c45b415f2fa91e78a09393b89e071daa6711ae0a264f34398" name="aec26a1b6eefc3583c45b415f2fa91e78a09393b89e071daa6711ae0a264f34398"></a>strang&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00563">563</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+
+</div>
+</div>
 <a id="a34edd9cb3faad925234f73958172eb84" name="a34edd9cb3faad925234f73958172eb84"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34edd9cb3faad925234f73958172eb84">&#9670;&#160;</a></span>RedistanciationTransformationType</h2>
 
@@ -668,7 +802,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873" name="a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873"></a>piecewise_polynomial&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00066">66</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00072">72</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -706,7 +840,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="aa2e0fb6073129a03752879571fee0f3fa65a383f3960a0cb2b8b0ace54817d575" name="aa2e0fb6073129a03752879571fee0f3fa65a383f3960a0cb2b8b0ace54817d575"></a>geometric&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00028">28</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00034">34</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -740,7 +874,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f" name="a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f"></a>adaptive&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00043">43</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00049">49</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -811,7 +945,7 @@ iteration".</li>
 <tr><td class="fieldname"><a id="aa00157f43a0189c3afc66a469b3e7aaeaf0598264a691a8f62272aca0e79af374" name="aa00157f43a0189c3afc66a469b3e7aaeaf0598264a691a8f62272aca0e79af374"></a>threshold&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00160">160</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00166">166</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -976,7 +1110,7 @@ iteration".</li>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00111">111</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8h_source.html#l00117">117</a> of file <a class="el" href="parameters__multiphysics_8h_source.html">parameters_multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -1026,6 +1160,36 @@ iteration".</li>
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00102">102</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l00065">extra_verbose</a>.</p>
+
+</div>
+</div>
+<a id="a80d4aa2bd6536b0f61cf8e6053928822" name="a80d4aa2bd6536b0f61cf8e6053928822"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80d4aa2bd6536b0f61cf8e6053928822">&#9670;&#160;</a></span>get_number_of_distribution_parameters()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int Parameters::get_number_of_distribution_parameters </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#ab94fb2081fcd1b3587eb7249d321ef89">QMOMDistributionType</a></td>          <td class="paramname"><span class="paramname"><em>distribution_type</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of parameters of a particle size distribution family, not counting the number density. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">distribution_type</td><td>Family of the distribution.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of parameters of the family. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="parameters__multiphysics_8cc_source.html#l01167">1167</a> of file <a class="el" href="parameters__multiphysics_8cc_source.html">parameters_multiphysics.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00697">beta</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00698">chi</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00699">chi_squared</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00695">gamma</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00694">lognormal</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00692">none</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00693">normal</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00696">weibull</a>.</p>
 
 </div>
 </div>

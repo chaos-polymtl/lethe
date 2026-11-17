@@ -170,6 +170,7 @@ var searchData=
   ['average_5fvelocity_5fprofile_167',['average_velocity_profile',['../namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427',1,'Parameters']]],
   ['averagescalar_168',['AverageScalar',['../classAverageScalar.html',1,'AverageScalar&lt; dim &gt;'],['../classAverageScalar.html#aaa4af605c91ba0fb4b1ef6eec76db15b',1,'AverageScalar::AverageScalar()']]],
   ['averagevelocities_169',['AverageVelocities',['../classAverageVelocities.html',1,'AverageVelocities&lt; dim, VectorType, DofsType &gt;'],['../classAverageVelocities.html#ae46cc1b344953c98e55fd58add46d360',1,'AverageVelocities::AverageVelocities()']]],
-  ['axis_5fmax_170',['axis_max',['../classInsertionPacked.html#a124b6d4adff40b2f68a0efd9347efc9e',1,'InsertionPacked::axis_max'],['../classInsertionVolume.html#a39b820160aa26778e9d21811183c2e3f',1,'InsertionVolume::axis_max']]],
-  ['axis_5fmin_171',['axis_min',['../classInsertionPacked.html#a4f42157eb08361645c241b364b8982c9',1,'InsertionPacked::axis_min'],['../classInsertionVolume.html#a2d65e6fe07aa1d0a560a52aee47a48cd',1,'InsertionVolume::axis_min']]]
+  ['avogadro_5fnumber_170',['avogadro_number',['../structParameters_1_1QMOMPhysicalConstants.html#a35427e1a887f23f3d7adf30c5aeaa79c',1,'Parameters::QMOMPhysicalConstants']]],
+  ['axis_5fmax_171',['axis_max',['../classInsertionPacked.html#a124b6d4adff40b2f68a0efd9347efc9e',1,'InsertionPacked::axis_max'],['../classInsertionVolume.html#a39b820160aa26778e9d21811183c2e3f',1,'InsertionVolume::axis_max']]],
+  ['axis_5fmin_172',['axis_min',['../classInsertionPacked.html#a4f42157eb08361645c241b364b8982c9',1,'InsertionPacked::axis_min'],['../classInsertionVolume.html#a2d65e6fe07aa1d0a560a52aee47a48cd',1,'InsertionVolume::axis_min']]]
 ];

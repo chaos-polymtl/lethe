@@ -1,5 +1,29 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsFaceAssemblerBase.html" title=" " alt="" coords="5,5,254,67"/>
-<area shape="rect" id="Node000001" href="$classCLSAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="302,22,502,50"/>
-<area shape="poly" id="edge218_Node000000_Node000001" title=" " alt="" coords="269,34,304,36,298,36,269,39"/>
+<area shape="rect" id="Node000000" href="$classPhysicsAssemblerBase.html" title=" " alt="" coords="5,413,289,474"/>
+<area shape="rect" id="Node000001" href="$classHeatTransferAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the heat transfer solve..." alt="" coords="383,5,583,50"/>
+<area shape="poly" id="edge165_Node000000_Node000001" title=" " alt="" coords="155,397,176,323,211,232,235,184,263,139,296,97,335,60,357,46,384,37,380,41,359,51,338,64,300,100,267,142,239,187,216,234,181,324,160,399"/>
+<area shape="rect" id="Node000002" href="$classHeatTransferAssemblerCLSEvaporation.html" title="Class that assembles the evaporation sink for the heat transfer solver at the free surface (air/metal..." alt="" coords="345,75,620,119"/>
+<area shape="poly" id="edge166_Node000000_Node000002" title=" " alt="" coords="160,397,185,336,222,263,272,191,302,158,335,129,358,118,354,122,338,134,305,162,276,194,226,266,190,338,165,399"/>
+<area shape="rect" id="Node000003" href="$classHeatTransferAssemblerCore.html" title="Class that assembles the core of the heat transfer equation. This class assembles the weak form of: &#160;..." alt="" coords="381,144,584,189"/>
+<area shape="poly" id="edge167_Node000000_Node000003" title=" " alt="" coords="168,398,196,350,234,296,280,243,335,199,383,179,379,183,338,203,284,247,238,300,201,353,173,400"/>
+<area shape="rect" id="Node000004" href="$classHeatTransferAssemblerDCDDstabilization.html" title="Class that assembles the Discontinuity&#45;Capturing Directional Dissipation stabilization term for the h..." alt="" coords="337,213,629,258"/>
+<area shape="poly" id="edge168_Node000000_Node000004" title=" " alt="" coords="181,399,248,331,290,297,335,268,365,257,361,260,338,273,293,301,252,335,185,403"/>
+<area shape="rect" id="Node000005" href="$classHeatTransferAssemblerFreeSurfaceRadiationCLS.html" title="Class that assembles the radiation sink for the heat transfer solver at the free surface (air/metal i..." alt="" coords="377,283,588,327"/>
+<area shape="poly" id="edge169_Node000000_Node000005" title=" " alt="" coords="207,403,269,368,336,337,379,325,375,328,338,342,271,373,211,406"/>
+<area shape="rect" id="Node000006" href="$classHeatTransferAssemblerLaserExponentialDecay.html" title="Class that assembles the laser heating as a volumetric source for the heat transfer solver...." alt="" coords="379,352,587,397"/>
+<area shape="poly" id="edge170_Node000000_Node000006" title=" " alt="" coords="303,409,380,394,376,397,305,414"/>
+<area shape="rect" id="Node000007" href="$classHeatTransferAssemblerLaserExponentialDecayCLS.html" title="Class that assembles the laser heating as a volumetric source for the heat transfer solver when CLS i..." alt="" coords="374,421,592,466"/>
+<area shape="poly" id="edge171_Node000000_Node000007" title=" " alt="" coords="303,441,375,442,371,445,305,446"/>
+<area shape="rect" id="Node000008" href="$classHeatTransferAssemblerLaserGaussianHeatFluxCLSInterface.html" title="Class that assembles the laser heating as a surface flux for the heat transfer solver when CLS is ena..." alt="" coords="344,491,622,535"/>
+<area shape="poly" id="edge172_Node000000_Node000008" title=" " alt="" coords="303,473,373,489,369,491,305,479"/>
+<area shape="rect" id="Node000009" href="$classHeatTransferAssemblerLaserUniformHeatFluxCLSInterface.html" title="Class that assembles the laser heating as a uniform surface flux for the heat transfer solver when CL..." alt="" coords="348,560,618,605"/>
+<area shape="poly" id="edge173_Node000000_Node000009" title=" " alt="" coords="209,480,271,515,338,545,374,559,369,560,336,550,269,519,210,485"/>
+<area shape="rect" id="Node000010" href="$classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html" title="Class that assembles the time average electromagnetic heating for the heat transfer solver when the t..." alt="" coords="344,629,622,674"/>
+<area shape="poly" id="edge174_Node000000_Node000010" title=" " alt="" coords="183,484,252,552,293,586,338,615,366,628,360,629,335,619,290,590,248,556,183,489"/>
+<area shape="rect" id="Node000011" href="$classHeatTransferAssemblerRobinBC.html" title="Class that assembles the Robin boundary condition for the heat transfer solver." alt="" coords="378,699,588,743"/>
+<area shape="poly" id="edge175_Node000000_Node000011" title=" " alt="" coords="171,486,201,534,238,588,284,640,338,684,380,705,374,705,335,689,280,644,234,591,196,537,171,491"/>
+<area shape="rect" id="Node000012" href="$classHeatTransferAssemblerViscousDissipation.html" title="Class that assembles the viscous dissipation for the heat transfer solver." alt="" coords="371,768,594,813"/>
+<area shape="poly" id="edge176_Node000000_Node000012" title=" " alt="" coords="163,486,190,549,226,621,276,693,305,726,338,753,373,774,368,774,335,758,302,729,272,697,222,624,185,551,163,492"/>
+<area shape="rect" id="Node000013" href="$classHeatTransferAssemblerViscousDissipationCLS.html" title="Class that assembles the viscous dissipation for the heat transfer solver, for the specific case of C..." alt="" coords="371,837,594,882"/>
+<area shape="poly" id="edge177_Node000000_Node000013" title=" " alt="" coords="158,487,181,563,216,654,239,700,267,746,300,787,338,823,373,844,368,844,335,827,296,791,263,749,235,703,211,656,176,565,157,492"/>
 </map>

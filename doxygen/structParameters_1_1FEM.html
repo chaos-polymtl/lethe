@@ -128,6 +128,7 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a070e31c79900ce015722d838ea0a9d36" id="r_a070e31c79900ce015722d838ea0a9d36"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a070e31c79900ce015722d838ea0a9d36">electromagnetics_test_degree</a> = 2</td></tr>
 <tr class="memitem:a12ed45fe7e5b3656fc591f57ef68af6f" id="r_a12ed45fe7e5b3656fc591f57ef68af6f"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12ed45fe7e5b3656fc591f57ef68af6f">solid_velocity_degree</a> = 1</td></tr>
 <tr class="memitem:a096d2552eec0bc4107fcf99f65efca9e" id="r_a096d2552eec0bc4107fcf99f65efca9e"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a096d2552eec0bc4107fcf99f65efca9e">solid_volume_fraction_degree</a> = 1</td></tr>
+<tr class="memitem:acd5f26ac5a12cf55d61aaac9db387b50" id="r_acd5f26ac5a12cf55d61aaac9db387b50"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd5f26ac5a12cf55d61aaac9db387b50">qmom_degree</a> = 1</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1FEM.html" title="FEM - The finite element section controls the properties of the finite element method....">FEM</a> - The finite element section controls the properties of the finite element method. This section controls the interpolation degree of polynomial integration and the number of quadrature points within the cells. </p>
@@ -167,7 +168,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01960">1960</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01653">CLS_degree</a>, <a class="el" href="parameters_8h_source.html#l01656">CLS_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01671">electromagnetics_test_degree</a>, <a class="el" href="parameters_8h_source.html#l01670">electromagnetics_trial_degree</a>, <a class="el" href="parameters_8h_source.html#l01664">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01663">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01659">phase_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01660">potential_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01638">pressure_degree</a>, <a class="el" href="parameters_8h_source.html#l01674">solid_velocity_degree</a>, <a class="el" href="parameters_8h_source.html#l01678">solid_volume_fraction_degree</a>, <a class="el" href="parameters_8h_source.html#l01644">temperature_degree</a>, <a class="el" href="parameters_8h_source.html#l01647">tracer_degree</a>, <a class="el" href="parameters_8h_source.html#l01650">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01635">velocity_degree</a>, and <a class="el" href="parameters_8h_source.html#l01641">void_fraction_degree</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01653">CLS_degree</a>, <a class="el" href="parameters_8h_source.html#l01656">CLS_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01671">electromagnetics_test_degree</a>, <a class="el" href="parameters_8h_source.html#l01670">electromagnetics_trial_degree</a>, <a class="el" href="parameters_8h_source.html#l01664">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01663">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01659">phase_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01660">potential_cahn_hilliard_degree</a>, <a class="el" href="parameters_8h_source.html#l01638">pressure_degree</a>, <a class="el" href="parameters_8h_source.html#l01683">qmom_degree</a>, <a class="el" href="parameters_8h_source.html#l01674">solid_velocity_degree</a>, <a class="el" href="parameters_8h_source.html#l01678">solid_volume_fraction_degree</a>, <a class="el" href="parameters_8h_source.html#l01644">temperature_degree</a>, <a class="el" href="parameters_8h_source.html#l01647">tracer_degree</a>, <a class="el" href="parameters_8h_source.html#l01650">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01635">velocity_degree</a>, and <a class="el" href="parameters_8h_source.html#l01641">void_fraction_degree</a>.</p>
 
 </div>
 </div>
@@ -194,7 +195,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02063">2063</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02069">2069</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 </div>
 </div>
@@ -341,6 +342,23 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01638">1638</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="acd5f26ac5a12cf55d61aaac9db387b50" name="acd5f26ac5a12cf55d61aaac9db387b50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd5f26ac5a12cf55d61aaac9db387b50">&#9670;&#160;</a></span>qmom_degree</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int Parameters::FEM::qmom_degree = 1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Polynomial degree of the discontinuous Galerkin discretization of all the fields of the <a class="el" href="structParameters_1_1QMOM.html" title="Parameters of the quadrature method of moments (QMOM) physics, declared in the &quot;QMOM&quot; subsection.">QMOM</a> physics (scalars and moments). A degree of 0 is a finite volume discretization. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01683">1683</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

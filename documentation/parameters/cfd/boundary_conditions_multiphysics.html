@@ -195,6 +195,7 @@
 <li class="toctree-l3"><a class="reference internal" href="non-linear_solver_control.html">Non-linear Solver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="physical_properties.html">Physical Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmom.html">Quadrature Method of Moments</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restart.html">Restart</a></li>
 <li class="toctree-l3"><a class="reference internal" href="simulation_control.html">Simulation Control</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
@@ -576,6 +577,51 @@ end
 </li>
 </ul>
 </section>
+<section id="qmom">
+<h2>QMOM<a class="headerlink" href="#qmom" title="Link to this heading">#</a></h2>
+<p>The boundary conditions of the quadrature method of moments (see <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>) apply to the scalars and the moments. The possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">none</span></code> (default), <code class="docutils literal notranslate"><span class="pre">outlet</span></code> and <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code>. The parameters for each type of QMOM boundary conditions are:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions qmom
+  set number         = 3
+  set time dependent = false
+  subsection bc 0
+    set id   = 0
+    set type = none
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = dirichlet
+    subsection dirichlet
+      subsection scalars
+        set Function expression = 0
+      end
+      subsection distribution
+        set type                = none
+        set Function expression = 0
+      end
+    end
+  end
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">dependent</span></code> and <code class="docutils literal notranslate"><span class="pre">id</span></code> are as for the tracer boundary conditions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: This is the type of boundary condition being imposed:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> (default): the advective flux is zero (no flux). This is the natural choice for walls.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">outlet</span></code>: a natural boundary condition that prevents backflow.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dirichlet</span></code>: the scalars and the particle size distribution are imposed, as functions of space and time, in the <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code> subsection. The format of this subsection is described in <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>.</p></li>
+</ul>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The solver of the QMOM physics is not implemented yet: the boundary conditions are parsed, but not applied.</p>
+</div>
+</section>
 <section id="cls">
 <h2>CLS<a class="headerlink" href="#cls" title="Link to this heading">#</a></h2>
 <p>For CLS boundary conditions (multiphase flow), the possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">none</span></code> (default) and <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code>, as shown below.</p>
@@ -930,6 +976,7 @@ end
 <li><a class="reference internal" href="#">Boundary Conditions - Multiphysics</a><ul>
 <li><a class="reference internal" href="#heat-transfer">Heat Transfer</a></li>
 <li><a class="reference internal" href="#tracer">Tracer</a></li>
+<li><a class="reference internal" href="#qmom">QMOM</a></li>
 <li><a class="reference internal" href="#cls">CLS</a></li>
 <li><a class="reference internal" href="#cahn-hilliard">Cahn-Hilliard</a></li>
 <li><a class="reference internal" href="#time-harmonic-maxwell">Time-Harmonic Maxwell</a></li>

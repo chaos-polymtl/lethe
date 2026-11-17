@@ -195,6 +195,7 @@
 <li class="toctree-l3"><a class="reference internal" href="non-linear_solver_control.html">Non-linear Solver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="physical_properties.html">Physical Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmom.html">Quadrature Method of Moments</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restart.html">Restart</a></li>
 <li class="toctree-l3"><a class="reference internal" href="simulation_control.html">Simulation Control</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Source Term</a></li>
@@ -475,6 +476,16 @@
   subsection cahn hilliard
     set Function expression = 0; 0
   end
+
+  subsection QMOM
+    subsection scalars
+      set Function expression = 0
+    end
+    subsection distribution
+      set type                = none
+      set Function expression = 0
+    end
+  end
 end
 </pre></div>
 </div>
@@ -508,6 +519,7 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">heat</span> <span class="pre">transfer</span></code>: defines the parameters for a heat source term. This source term is defined by a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> and can depend on both space (<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and, if 3D, <code class="docutils literal notranslate"><span class="pre">z</span></code>) and time (<code class="docutils literal notranslate"><span class="pre">t</span></code>). See <a class="reference internal" href="#ex-function"><span class="std std-ref">Examples of Function Expression</span></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">tracer</span></code>: defines the parameters for the a source term for a tracer. This source term is defined by a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> and can depend on both space (<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and, if 3D, <code class="docutils literal notranslate"><span class="pre">z</span></code>) and time (<code class="docutils literal notranslate"><span class="pre">t</span></code>). See <a class="reference internal" href="#ex-function"><span class="std std-ref">Examples of Function Expression</span></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">cahn</span> <span class="pre">hilliard</span></code>: defines the parameters for a source term in the Cahn-Hilliard equations. This source term is defined by a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> and can depend on both space (<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and, if 3D, <code class="docutils literal notranslate"><span class="pre">z</span></code>) and time (<code class="docutils literal notranslate"><span class="pre">t</span></code>). Both the phase order parameter (first component) and chemical potential (second component) can have source terms, hence the two components. See <a class="reference internal" href="#ex-function"><span class="std std-ref">Examples of Function Expression</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">QMOM</span></code>: defines the source terms of the scalars and of the moments of the quadrature method of moments, in addition to those handled by QMOMKit. The source terms of the moments are the raw moments of a particle size distribution, whose number density is in particles per m<sup>3</sup> per s. The format of this subsection is described in <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>.</p></li>
 </ul>
 <section id="examples-of-function-expression">
 <span id="ex-function"></span><h2>Examples of Function Expression<a class="headerlink" href="#examples-of-function-expression" title="Link to this heading">#</a></h2>

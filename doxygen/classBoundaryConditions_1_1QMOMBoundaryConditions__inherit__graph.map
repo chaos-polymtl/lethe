@@ -1,0 +1,5 @@
+<map id="BoundaryConditions::QMOMBoundaryConditions&lt; dim &gt;" name="BoundaryConditions::QMOMBoundaryConditions&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Boundary conditions of the QMOM physics. They apply to the advective flux of all the QMOM fields (sca..." alt="" coords="5,98,210,160"/>
+<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="27,5,188,50"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,63,110,98,105,97,106,68"/>
+</map>

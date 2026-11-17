@@ -108,7 +108,7 @@ Include dependency graph for multiphysics.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="multiphysics_8h__dep__incl.svg" width="5211" height="1076"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="multiphysics_8h__dep__incl.svg" width="4851" height="1076"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="multiphysics_8h_source.html">Go to the source code of this file.</a></p>
@@ -127,6 +127,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#ae14bb720bc9a37edc36fb8d90df712c2a8e850192410dab47698910ff083c9728">continuum_solid_dynamics</a> = 7
 , <br />
 &#160;&#160;<a class="el" href="#ae14bb720bc9a37edc36fb8d90df712c2abc5383c45cee0b8fe446f4248a18874f">particle_temperature</a> = 8
+, <a class="el" href="#ae14bb720bc9a37edc36fb8d90df712c2a2e78b488fad96c81e519df6382b7784c">qmom</a> = 9
 <br />
  }</td></tr>
 <tr class="memitem:a2e64db3af4eb5ce13914ce8be125c2c2" id="r_a2e64db3af4eb5ce13914ce8be125c2c2"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e64db3af4eb5ce13914ce8be125c2c2">FluidDynamicsFormulation</a> { <a class="el" href="#a2e64db3af4eb5ce13914ce8be125c2c2ac00f0c4675b91fb8b918e4079a0b1bac">standard</a>
@@ -188,7 +189,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00061">61</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00064">64</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -224,6 +225,8 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2a8e850192410dab47698910ff083c9728" name="ae14bb720bc9a37edc36fb8d90df712c2a8e850192410dab47698910ff083c9728"></a>continuum_solid_dynamics&#160;</td><td class="fielddoc"><p>Euler-Euler solid phase (solid velocity, solid volume fraction). </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2abc5383c45cee0b8fe446f4248a18874f" name="ae14bb720bc9a37edc36fb8d90df712c2abc5383c45cee0b8fe446f4248a18874f"></a>particle_temperature&#160;</td><td class="fielddoc"><p>Projected particle temperature from <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> (not an auxiliary physics). Like the void fraction, it is computed by the particle projector of the VANS solvers and registered by them in the multiphysics interface. Only available with the VANS formulation in thermal CFD-DEM simulations (solver type = dem_mp). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2a2e78b488fad96c81e519df6382b7784c" name="ae14bb720bc9a37edc36fb8d90df712c2a2e78b488fad96c81e519df6382b7784c"></a>qmom&#160;</td><td class="fielddoc"><p>Quadrature method of moments (scalars and moments of the particle size distribution) </p>
 </td></tr>
 </table>
 
@@ -275,7 +278,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00074">74</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00077">77</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
 </div>
 </div>
@@ -305,9 +308,9 @@ Functions</h2></td></tr>
 
 <p>Utility function used for parsing physics-based parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00103">103</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00106">106</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00040">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00048">continuum_solid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="multiphysics_8h_source.html#l00035">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00044">void_fraction</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00040">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00048">continuum_solid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="multiphysics_8h_source.html#l00035">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00044">void_fraction</a>.</p>
 
 </div>
 </div>
@@ -355,9 +358,9 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00145">145</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00150">150</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00086">chemical_potential_cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00090">electric_field</a>, <a class="el" href="multiphysics_8h_source.html#l00094">electromagnetic_fields</a>, <a class="el" href="multiphysics_8h_source.html#l00092">magnetic_field</a>, <a class="el" href="multiphysics_8h_source.html#l00080">phase</a>, <a class="el" href="multiphysics_8h_source.html#l00084">phase_cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00078">pressure</a>, <a class="el" href="multiphysics_8h_source.html#l00082">temperature</a>, <a class="el" href="multiphysics_8h_source.html#l00088">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00076">velocity</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00089">chemical_potential_cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00093">electric_field</a>, <a class="el" href="multiphysics_8h_source.html#l00097">electromagnetic_fields</a>, <a class="el" href="multiphysics_8h_source.html#l00095">magnetic_field</a>, <a class="el" href="multiphysics_8h_source.html#l00083">phase</a>, <a class="el" href="multiphysics_8h_source.html#l00087">phase_cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00081">pressure</a>, <a class="el" href="multiphysics_8h_source.html#l00085">temperature</a>, <a class="el" href="multiphysics_8h_source.html#l00091">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00079">velocity</a>.</p>
 
 </div>
 </div>
@@ -405,9 +408,9 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00192">192</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00197">197</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00145">get_variable_string()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00150">get_variable_string()</a>.</p>
 
 </div>
 </div>

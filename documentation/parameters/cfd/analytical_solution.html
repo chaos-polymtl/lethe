@@ -195,6 +195,7 @@
 <li class="toctree-l3"><a class="reference internal" href="non-linear_solver_control.html">Non-linear Solver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="physical_properties.html">Physical Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmom.html">Quadrature Method of Moments</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restart.html">Restart</a></li>
 <li class="toctree-l3"><a class="reference internal" href="simulation_control.html">Simulation Control</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
@@ -472,6 +473,15 @@
  subsection tracer
    set Function expression = 0
  end
+ subsection QMOM
+   subsection scalars
+     set Function expression = 0
+   end
+   subsection distribution
+     set type                = none
+     set Function expression = 0
+   end
+ end
  subsection CLS
    set Function expression = 0
  end
@@ -501,6 +511,7 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">uvwp</span></code>: Analytical solution for the velocity and pressure fields obtained from fluid dynamics. The expression must provide <span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(v\)</span> and <span class="math notranslate nohighlight">\(p\)</span> for a 2D simulation and <span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(v\)</span>, <span class="math notranslate nohighlight">\(w\)</span> and <span class="math notranslate nohighlight">\(p\)</span> for a 3D simulation.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code>: Analytical solution for temperature obtained with the heat transfer physics.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tracer</span></code>: Analytical solution for the tracer physics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QMOM</span></code>: Analytical solution for the scalars and the particle size distribution of the quadrature method of moments. The format of this subsection is described in <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CLS</span></code>: Analytical solution for the CLS field.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code>: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">electromagnetics</span></code>: Analytical solution for the electric and magnetic fields obtained with the time-harmonic Maxwell physics. The expression must provide <span class="math notranslate nohighlight">\(E_x\)</span>, <span class="math notranslate nohighlight">\(E_y\)</span>, <span class="math notranslate nohighlight">\(E_z\)</span>, <span class="math notranslate nohighlight">\(H_x\)</span>, <span class="math notranslate nohighlight">\(H_y\)</span> and <span class="math notranslate nohighlight">\(H_z\)</span> for a 3D simulation. Each component of the electric and magnetic fields must be provided as a real and imaginary part (e.g. <span class="math notranslate nohighlight">\(\Re(E_x)\)</span>, <span class="math notranslate nohighlight">\(\Re(E_y)\)</span>, <span class="math notranslate nohighlight">\(\Re(E_z)\)</span> and then <span class="math notranslate nohighlight">\(\Im(E_x)\)</span>, <span class="math notranslate nohighlight">\(\Im(E_y)\)</span>, <span class="math notranslate nohighlight">\(\Im(E_z)\)</span>).</p></li>
