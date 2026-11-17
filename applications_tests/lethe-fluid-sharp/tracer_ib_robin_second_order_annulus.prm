@@ -7,6 +7,9 @@
 # disk is alpha c^2, with alpha = 1. With a unit diffusivity, the exact
 # solution is c = 2 + ln(r/R), where r is the distance to the center of the
 # disk. It is also imposed on the boundary of the domain. The fluid is at rest.
+#
+# The test also prints the flux of tracer into the disk computed by the
+# solver, whose exact value is 2 pi D.
 
 set dimension = 2
 
@@ -95,6 +98,15 @@ subsection boundary conditions tracer
       set Function expression = 2 + log(sqrt((x-xc)^2+(y-yc)^2)/R)
     end
   end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                          = verbose
+  set calculate tracer flux on particles = true
 end
 
 #---------------------------------------------------

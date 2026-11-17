@@ -10,6 +10,8 @@ Steady iteration:        1/3
 div u : 0.000000e+00
 L2 error velocity : 0.000000e+00 L2 error pressure: 0.000000e+00
 L2 error tracer: 1.445050e-02
+Tracer flux into the particles: 
+	 particle 0: 7.117599e+00
 
 *****************************
 Steady iteration:        2/3
@@ -21,6 +23,8 @@ Steady iteration:        2/3
 div u : 0.000000e+00
 L2 error velocity : 0.000000e+00 L2 error pressure: 0.000000e+00
 L2 error tracer: 3.893713e-03
+Tracer flux into the particles: 
+	 particle 0: 6.693953e+00
 
 *****************************
 Steady iteration:        3/3
@@ -32,6 +36,8 @@ Steady iteration:        3/3
 div u : 0.000000e+00
 L2 error velocity : 0.000000e+00 L2 error pressure: 0.000000e+00
 L2 error tracer: 9.803124e-04
+Tracer flux into the particles: 
+	 particle 0: 6.483467e+00
 cells  error_velocity   error_pressure  
   256 0.000000e+00   - 0.000000e+00   - 
  1024 0.000000e+00 nan 0.000000e+00 nan 

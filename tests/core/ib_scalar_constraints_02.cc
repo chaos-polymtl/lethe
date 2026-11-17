@@ -17,7 +17,9 @@
  * The values of A ensure that a wrong order or a wrong sign of q would change
  * the solution. The problems are solved with Newton's method. The test prints,
  * for two element degrees and three meshes, the number of constrained degrees
- * of freedom and the L2 norm of the error on the fluid cells.
+ * of freedom, the L2 norm of the error on the fluid cells, and the relative
+ * error of the total flux into the disk computed from the residual of the
+ * equation on the fluid cells, whose exact value is 2 pi D.
  */
 
 // Lethe
@@ -227,6 +229,10 @@ test(const TestCase    &test_case,
   GlobalVectorType system_rhs(locally_owned_dofs, mpi_communicator);
   GlobalVectorType newton_update(locally_owned_dofs, mpi_communicator);
 
+  // Flux into the disk, computed from the residual of the equation on the
+  // fluid cells at the last evaluation point
+  std::vector<double> particle_fluxes;
+
   // Newton's method, with a direct solver so that the result does not depend
   // on the convergence of an iterative solver
   constexpr unsigned int max_newton_iterations = 20;
@@ -267,6 +273,9 @@ test(const TestCase    &test_case,
         }
       system_matrix.compress(VectorOperation::add);
       system_rhs.compress(VectorOperation::add);
+
+      particle_fluxes =
+        immersed_boundary_constraints.calculate_particle_fluxes(system_rhs);
 
       immersed_boundary_constraints.assemble_matrix(dof_handler,
                                                     mapping,
@@ -321,12 +330,17 @@ test(const TestCase    &test_case,
   const double error_norm =
     std::sqrt(Utilities::MPI::sum(squared_error, mpi_communicator));
 
+  const double exact_flux = 2. * numbers::PI * diffusivity;
+  const double flux_relative_error =
+    std::abs(particle_fluxes[0] - exact_flux) / exact_flux;
+
   deallog << test_case.name << ", degree " << fe_degree << ", refinements "
           << n_refinements << ": "
           << immersed_boundary_constraints.get_n_interface_dofs()
           << " constrained degrees of freedom ("
           << immersed_boundary_constraints.get_n_dofs_without_stencil()
-          << " without stencil), L2 error " << error_norm << std::endl;
+          << " without stencil), L2 error " << error_norm
+          << ", flux relative error " << flux_relative_error << std::endl;
 }
 
 int

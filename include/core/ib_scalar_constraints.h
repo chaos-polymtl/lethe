@@ -9,6 +9,7 @@
 #include <core/vector.h>
 
 #include <deal.II/base/index_set.h>
+#include <deal.II/base/mpi.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature.h>
 
@@ -219,6 +220,40 @@ public:
                GlobalVectorType                &system_rhs) const;
 
   /**
+   * @brief Return the flux of the scalar field into every particle, computed
+   * from the residual of the equation that the solver assembles on the fluid
+   * cells.
+   *
+   * The sum of the test functions of the interface degrees of freedom of a
+   * particle is one on the boundary of the fluid region around this particle,
+   * and zero on the rest of the boundary of the fluid region. The equation
+   * tested with this sum is therefore a balance of the scalar over the fluid
+   * cells next to the particle, whose only boundary term is the diffusive
+   * flux into the particle (consistent flux). This flux is the sum of the
+   * right-hand side of the interface degrees of freedom of the particle,
+   * before their equation is replaced. It is the flux through the boundary of
+   * the fluid region, which differs from the flux through the surface of the
+   * particle by the accumulation, advection, reaction and sources in the cut
+   * cells between them. These terms vanish in a steady diffusion problem
+   * without sources, and their volume vanishes as the mesh is refined. A
+   * positive flux enters the particle. The interface degrees of freedom that
+   * are constrained, for example on the boundary of the domain, are not
+   * counted, so the flux of a particle that touches the boundary of the domain
+   * is underestimated.
+   *
+   * @param[in] fluid_cells_rhs Right-hand side of the equation assembled by the
+   * solver on the fluid cells, at the solution, and compressed. The right-hand
+   * side is the opposite of the residual, as for the Newton correction. The
+   * equation of the interface degrees of freedom must not have been replaced
+   * by assemble_rhs().
+   *
+   * @return Flux into every particle, in the order of the particles given to
+   * update(), summed over all the processes.
+   */
+  std::vector<double>
+  calculate_particle_fluxes(const GlobalVectorType &fluid_cells_rhs) const;
+
+  /**
    * @brief Return the number of interface degrees of freedom whose equation is
    * replaced, summed over all the processes.
    *
@@ -291,6 +326,8 @@ private:
   {
     /// Global index of the interface degree of freedom.
     types::global_dof_index dof_index;
+    /// Index of the particle closest to the degree of freedom.
+    unsigned int particle_index;
     /// Point of the surface of the particle closest to the degree of freedom.
     Point<dim> boundary_point;
     /// Global indices of the degrees of freedom involved in the equation.
@@ -351,6 +388,12 @@ private:
 
   /// Inverse of the time step (zero if steady), used to scale the equations.
   double inverse_time_step;
+
+  /// MPI communicator of the DoFHandler given to update().
+  MPI_Comm mpi_communicator;
+
+  /// Number of particles given to update().
+  unsigned int n_particles;
 
   /// Locally relevant degrees of freedom of the scalar field.
   IndexSet locally_relevant_dofs;

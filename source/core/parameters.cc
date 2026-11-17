@@ -2760,6 +2760,21 @@ namespace Parameters
                         Patterns::FileName(),
                         "Output file name for tracer flow rate");
 
+      prm.declare_entry(
+        "calculate tracer flux on particles",
+        Patterns::Tools::Convert<bool>::to_string(
+          calculate_tracer_flux_on_particles),
+        Patterns::Bool(),
+        "Enable the calculation of the flux of tracer into every particle of "
+        "the sharp-interface immersed boundary method. It requires a tracer "
+        "boundary condition on the particles.");
+
+      prm.declare_entry(
+        "tracer flux on particles name",
+        tracer_flux_on_particles_output_name,
+        Patterns::FileName(),
+        "Output file name for the flux of tracer into the particles");
+
       prm.declare_entry("enstrophy name",
                         enstrophy_output_name,
                         Patterns::FileName(),
@@ -2985,10 +3000,14 @@ namespace Parameters
         prm.get_double("initial time for average velocity");
       initial_time_for_average_temp_and_hf =
         prm.get_double("initial time for average temperature and heat flux");
-      kinetic_energy_output_name      = prm.get("kinetic energy name");
-      pressure_drop_output_name       = prm.get("pressure drop name");
-      flow_rate_output_name           = prm.get("flow rate name");
-      tracer_flow_rate_output_name    = prm.get("tracer flow rate name");
+      kinetic_energy_output_name   = prm.get("kinetic energy name");
+      pressure_drop_output_name    = prm.get("pressure drop name");
+      flow_rate_output_name        = prm.get("flow rate name");
+      tracer_flow_rate_output_name = prm.get("tracer flow rate name");
+      calculate_tracer_flux_on_particles =
+        prm.get_bool("calculate tracer flux on particles");
+      tracer_flux_on_particles_output_name =
+        prm.get("tracer flux on particles name");
       enstrophy_output_name           = prm.get("enstrophy name");
       pressure_power_output_name      = prm.get("pressure power name");
       viscous_dissipation_output_name = prm.get("viscous dissipation name");

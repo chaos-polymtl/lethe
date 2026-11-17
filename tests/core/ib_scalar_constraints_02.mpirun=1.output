@@ -1,19 +1,19 @@
 
-DEAL::Neumann, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.292
-DEAL::Neumann, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.150
-DEAL::Neumann, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0755
-DEAL::Neumann, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0997
-DEAL::Neumann, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0396
-DEAL::Neumann, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.0129
-DEAL::Robin of order 1, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.206
-DEAL::Robin of order 1, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.108
-DEAL::Robin of order 1, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0550
-DEAL::Robin of order 1, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0726
-DEAL::Robin of order 1, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0291
-DEAL::Robin of order 1, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.00948
-DEAL::Robin of order 2, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.120
-DEAL::Robin of order 2, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.0624
-DEAL::Robin of order 2, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0313
-DEAL::Robin of order 2, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0423
-DEAL::Robin of order 2, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0168
-DEAL::Robin of order 2, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.00538
+DEAL::Neumann, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.292, flux relative error 0.323
+DEAL::Neumann, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.150, flux relative error 0.157
+DEAL::Neumann, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0755, flux relative error 0.0770
+DEAL::Neumann, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0997, flux relative error 0.110
+DEAL::Neumann, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0396, flux relative error 0.0418
+DEAL::Neumann, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.0129, flux relative error 0.0131
+DEAL::Robin of order 1, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.206, flux relative error 0.228
+DEAL::Robin of order 1, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.108, flux relative error 0.113
+DEAL::Robin of order 1, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0550, flux relative error 0.0561
+DEAL::Robin of order 1, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0726, flux relative error 0.0804
+DEAL::Robin of order 1, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0291, flux relative error 0.0307
+DEAL::Robin of order 1, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.00948, flux relative error 0.00967
+DEAL::Robin of order 2, degree 1, refinements 4: 20 constrained degrees of freedom (0 without stencil), L2 error 0.120, flux relative error 0.133
+DEAL::Robin of order 2, degree 1, refinements 5: 36 constrained degrees of freedom (0 without stencil), L2 error 0.0624, flux relative error 0.0654
+DEAL::Robin of order 2, degree 1, refinements 6: 68 constrained degrees of freedom (0 without stencil), L2 error 0.0313, flux relative error 0.0319
+DEAL::Robin of order 2, degree 2, refinements 4: 40 constrained degrees of freedom (0 without stencil), L2 error 0.0423, flux relative error 0.0468
+DEAL::Robin of order 2, degree 2, refinements 5: 72 constrained degrees of freedom (0 without stencil), L2 error 0.0168, flux relative error 0.0177
+DEAL::Robin of order 2, degree 2, refinements 6: 136 constrained degrees of freedom (0 without stencil), L2 error 0.00538, flux relative error 0.00549

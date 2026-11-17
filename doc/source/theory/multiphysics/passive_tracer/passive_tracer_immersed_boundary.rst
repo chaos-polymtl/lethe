@@ -58,4 +58,23 @@ It is nonlinear for a Robin boundary condition of order :math:`n \neq 1`, and it
 
 This approximation is only first-order accurate. The number of degrees of freedom without stencil is printed when the ``verbosity`` of the tracer non-linear solver is ``verbose``.
 
+Flux into the Particles
+-----------------------
+
+The flux of tracer into a particle :math:`P`, :math:`\Phi_P = \int_{\Gamma_P} J \: \mathrm{d}\Gamma`, is the rate at which the particle consumes the tracer, for example the rate of a surface reaction. When ``calculate tracer flux on particles`` is enabled in the subsection ``post-processing`` (see :doc:`../../../parameters/cfd/post_processing`), it is computed from the residual of the tracer equation on the fluid cells rather than from the gradient of the solution. This consistent flux is more accurate than the gradient, which converges one order slower than the solution.
+
+Let :math:`\mathcal{I}_P` be the degrees of freedom whose equation is replaced by a stencil and whose closest particle is :math:`P`, :math:`\varphi_i` their test functions, and :math:`w_P = \sum_{i \in \mathcal{I}_P} \varphi_i`. The function :math:`w_P` is one on the boundary :math:`\partial \Omega_{h,P}` of the fluid cells around :math:`P`, and it is zero beyond the first layer of fluid cells. Let :math:`R_i(C_h)` be the residual of the weak form of the tracer equation for the test function :math:`\varphi_i`, assembled on the fluid cells :math:`\Omega_h`. Integrating its diffusion term by parts gives
+
+.. math::
+    \sum_{i \in \mathcal{I}_P} R_i(C_h) = \int_{\Omega_h} r(C_h) \: w_P \: \mathrm{d}\Omega + \int_{\partial \Omega_{h,P}} D \: \nabla C_h \cdot \mathbf{n}_h \: \mathrm{d}\Gamma,
+
+where :math:`r` is the strong residual of the tracer equation and :math:`\mathbf{n}_h` is the normal pointing out of the fluid cells, towards the particle. The last term is the opposite of the diffusive flux into the particle through :math:`\partial \Omega_{h,P}`, so the flux into the particle is computed as
+
+.. math::
+    \Phi_P = -\sum_{i \in \mathcal{I}_P} R_i(C_h),
+
+with the residuals evaluated at the solution of the time step, before the equations of these degrees of freedom are replaced by the stencils. This flux crosses :math:`\partial \Omega_{h,P}` instead of the surface of the particle. The two differ by the accumulation, advection, reaction and sources of tracer in the cut cells between them, which vanish for a steady diffusion without sources, and whose volume vanishes as the mesh is refined. The degrees of freedom of :math:`\mathcal{I}_P` constrained by a boundary condition of the domain are not counted, so the flux into a particle that touches the boundary of the domain is underestimated.
+
+In a transient simulation, the flux is the balance of the time-stepping scheme over the fluid cells next to the particle. After a discontinuous initial condition, for example a particle that starts consuming the tracer at :math:`t = 0`, the flux of the first time steps can therefore oscillate with BDF2, and even become negative, while their sum remains consistent. For a moving particle, the degrees of freedom that change category from one time step to the next also make the flux of a single time step noisy: it should be averaged over several time steps.
+
 .. [#barbeau2022] \L. Barbeau, S. Étienne, C. Béguin, and B. Blais, “Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,” *Computer & Fluids*, vol. 239, p. 105415, May 2022, doi: `10.1016/j.compfluid.2022.105415 <https://doi.org/10.1016/j.compfluid.2022.105415>`_\.

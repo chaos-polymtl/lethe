@@ -8,7 +8,10 @@
  * u = ln(r/R) on the boundary of the square domain, where r is the distance to
  * the center of the disk. The exact solution is u = ln(r/R). The test prints,
  * for two element degrees and three meshes, the number of constrained degrees
- * of freedom and the L2 norm of the error on the fluid cells.
+ * of freedom, the L2 norm of the error on the fluid cells, and the relative
+ * error of the total flux into the disk computed from the residual of the
+ * equation on the fluid cells, whose exact value is 2 pi D with a unit
+ * diffusivity D.
  */
 
 // Lethe
@@ -180,7 +183,8 @@ test(const unsigned int fe_degree, const unsigned int n_refinements)
                                        diffusivity,
                                        inverse_time_step);
 
-  // Laplace equation on the fluid cells, in Newton form
+  // Laplace equation on the fluid cells, in Newton form, at the evaluation
+  // point
   const QGauss<2>           quadrature(fe_degree + 1);
   const unsigned int        n_dofs_per_cell = fe.n_dofs_per_cell();
   const unsigned int        n_q_points      = quadrature.size();
@@ -194,32 +198,40 @@ test(const unsigned int fe_degree, const unsigned int n_refinements)
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
   GlobalVectorType system_rhs(locally_owned_dofs, mpi_communicator);
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (!cell->is_locally_owned() ||
-          !immersed_boundary_constraints.is_fluid_cell(cell))
-        continue;
+  const auto assemble_fluid_cells = [&]() {
+    system_matrix = 0;
+    system_rhs    = 0;
+    for (const auto &cell : dof_handler.active_cell_iterators())
+      {
+        if (!cell->is_locally_owned() ||
+            !immersed_boundary_constraints.is_fluid_cell(cell))
+          continue;
 
-      fe_values.reinit(cell);
-      fe_values.get_function_gradients(evaluation_point, solution_gradients);
-      local_matrix = 0;
-      local_rhs    = 0;
-      for (unsigned int q = 0; q < n_q_points; ++q)
-        for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
-          {
-            for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
-              local_matrix(i, j) += fe_values.shape_grad(i, q) *
-                                    fe_values.shape_grad(j, q) *
-                                    fe_values.JxW(q);
-            local_rhs(i) -= fe_values.shape_grad(i, q) * solution_gradients[q] *
-                            fe_values.JxW(q);
-          }
-      cell->get_dof_indices(local_dof_indices);
-      zero_constraints.distribute_local_to_global(
-        local_matrix, local_rhs, local_dof_indices, system_matrix, system_rhs);
-    }
-  system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
+        fe_values.reinit(cell);
+        fe_values.get_function_gradients(evaluation_point, solution_gradients);
+        local_matrix = 0;
+        local_rhs    = 0;
+        for (unsigned int q = 0; q < n_q_points; ++q)
+          for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+            {
+              for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
+                local_matrix(i, j) += fe_values.shape_grad(i, q) *
+                                      fe_values.shape_grad(j, q) *
+                                      fe_values.JxW(q);
+              local_rhs(i) -= fe_values.shape_grad(i, q) *
+                              solution_gradients[q] * fe_values.JxW(q);
+            }
+        cell->get_dof_indices(local_dof_indices);
+        zero_constraints.distribute_local_to_global(local_matrix,
+                                                    local_rhs,
+                                                    local_dof_indices,
+                                                    system_matrix,
+                                                    system_rhs);
+      }
+    system_matrix.compress(VectorOperation::add);
+    system_rhs.compress(VectorOperation::add);
+  };
+  assemble_fluid_cells();
 
   immersed_boundary_constraints.assemble_matrix(dof_handler,
                                                 mapping,
@@ -244,6 +256,15 @@ test(const unsigned int fe_degree, const unsigned int n_refinements)
   locally_owned_solution += newton_update;
   evaluation_point = locally_owned_solution;
   evaluation_point.update_ghost_values();
+
+  // Flux into the disk, computed from the residual of the equation on the
+  // fluid cells at the solution
+  assemble_fluid_cells();
+  const std::vector<double> particle_fluxes =
+    immersed_boundary_constraints.calculate_particle_fluxes(system_rhs);
+  const double exact_flux = 2. * numbers::PI * diffusivity;
+  const double flux_relative_error =
+    std::abs(particle_fluxes[0] - exact_flux) / exact_flux;
 
   // L2 norm of the error on the fluid cells
   const QGauss<2>     error_quadrature(fe_degree + 2);
@@ -277,7 +298,8 @@ test(const unsigned int fe_degree, const unsigned int n_refinements)
           << immersed_boundary_constraints.get_n_interface_dofs()
           << " constrained degrees of freedom ("
           << immersed_boundary_constraints.get_n_dofs_without_stencil()
-          << " without stencil), L2 error " << error_norm << std::endl;
+          << " without stencil), L2 error " << error_norm
+          << ", flux relative error " << flux_relative_error << std::endl;
 }
 
 int

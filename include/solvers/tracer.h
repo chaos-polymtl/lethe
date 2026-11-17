@@ -37,6 +37,7 @@
 #include <map>
 #include <memory>
 #include <utility>
+#include <vector>
 
 /*
  * Implementation of tracer as an auxiliary physics.
@@ -154,7 +155,10 @@ public:
   finish_simulation() override;
 
   /**
-   * @brief Rearrange vector solution correctly for transient simulations
+   * @brief Rearrange vector solution correctly for transient simulations.
+   * When the flux of tracer into the particles is post-processed, it is
+   * calculated before the vectors are rearranged, since it depends on the
+   * previous solutions of the time step.
    */
   void
   percolate_time_vectors() override;
@@ -370,6 +374,13 @@ public:
 
 private:
   /**
+   * @brief Shift the previous solutions by one time step and copy the present
+   * solution into the most recent one, without any calculation.
+   */
+  void
+  shift_time_vectors();
+
+  /**
    * @brief Verify consistency of the input parameters for boundary
    * conditions to ensure that for every boundary condition within the
    * triangulation, a boundary condition has been specified in the input file.
@@ -424,6 +435,16 @@ private:
    */
   void
   assemble_system_rhs_cg();
+
+  /**
+   * @brief Assemble and compress the rhs of the equation on the cells, at the
+   * evaluation point, when CG elements are used. Unlike
+   * assemble_system_rhs_cg(), the boundary condition on the particles of the
+   * sharp-interface immersed boundary method is not imposed, and the rhs is
+   * neither reset nor are the assemblers set up.
+   */
+  void
+  assemble_cells_rhs_cg();
 
   /**
    *  @brief Assembles the rhs associated with the solver when DG elements are used.
@@ -552,6 +573,31 @@ private:
    */
   void
   write_tracer_statistics();
+
+  /**
+   * @brief Calculate the flux of tracer into every particle of the
+   * sharp-interface immersed boundary method, from the residual of the
+   * equation assembled on the fluid cells at the present solution (see
+   * IBScalarConstraints::calculate_particle_fluxes()). It must be called after
+   * the solution of the time step and before the time vectors are percolated,
+   * since the time derivative uses the previous solutions. It modifies the
+   * evaluation point and the rhs.
+   *
+   * @return Flux of tracer into every particle. A positive flux enters the
+   * particle.
+   */
+  std::vector<double>
+  calculate_tracer_flux_on_particles();
+
+  /**
+   * @brief Add the flux of tracer into the particles to its table, print it
+   * when the post-processing is verbose, and write the table to its output
+   * file.
+   *
+   * @param[in] tracer_fluxes Flux of tracer into every particle.
+   */
+  void
+  write_tracer_flux_on_particles(const std::vector<double> &tracer_fluxes);
 
   /**
    * @brief Modify the tracer solution by applying a limiter;
@@ -762,6 +808,12 @@ private:
   // Tracer post-processing tables
   TableHandler statistics_table;
   TableHandler tracer_flow_rate_table;
+  TableHandler tracer_flux_on_particles_table;
+
+  // Flux of tracer into every particle of the sharp-interface immersed
+  // boundary method at the last solved time step. It is calculated before the
+  // time vectors are percolated and written by postprocess().
+  std::vector<double> tracer_flux_on_particles;
 
   // Constraints that impose the tracer boundary condition on the particles of
   // the sharp-interface immersed boundary method. Null when no boundary

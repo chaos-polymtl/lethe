@@ -75,6 +75,8 @@ This subsection controls the post-processing other than the forces and torque on
     set tracer statistics name      = tracer_statistics
     set calculate tracer flow rate  = false
     set tracer flow rate name       = tracer_flow_rate
+    set calculate tracer flux on particles = false
+    set tracer flux on particles name      = tracer_flux_particles
 
     # Thermal postprocessing
     set postprocessed fluid               = both
@@ -239,6 +241,10 @@ Multiphysics Post-processing
         Do not forget to ``set tracer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
     * ``tracer statistics name``: output filename for tracer statistics calculations.
+
+* ``calculate tracer flux on particles``: controls if the flux of tracer into every particle of the sharp-interface immersed boundary method (``lethe-fluid-sharp``) is calculated, for example to obtain the rate of a surface reaction or a Sherwood number. A positive flux enters the particle. It requires a tracer boundary condition on the particles (see :doc:`../sharp-immersed-boundary/sharp-immersed-boundary`). The flux is computed from the residual of the tracer equation on the fluid cells, as explained in :doc:`../../theory/multiphysics/passive_tracer/passive_tracer_immersed_boundary`. In 2D, it is a flux per unit depth. With ``set verbosity = verbose``, the flux into every particle is also printed in the terminal.
+
+    * ``tracer flux on particles name``: output filename for the flux of tracer into the particles. The file has one line per time step, with the time and one column per particle, ``particle-0``, ``particle-1``, and so on.
 
 * ``postprocessed fluid``: fluid domain used for thermal postprocesses. Choices are : ``fluid_0``, ``fluid_1``, or ``both`` (default).
     * For monophasic simulations (``set cls = false`` in :doc:`multiphysics`), ``both`` and ``fluid_0`` are equivalent and the temperature statistics are computed over the entire domain.

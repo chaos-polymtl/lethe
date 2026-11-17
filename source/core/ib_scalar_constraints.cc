@@ -128,6 +128,8 @@ IBScalarConstraints<dim>::IBScalarConstraints(
       p_boundary_condition.type == Parameters::IBTracerBoundaryType::robin)
   , diffusivity(0.)
   , inverse_time_step(0.)
+  , mpi_communicator(MPI_COMM_SELF)
+  , n_particles(0)
   , n_interface_dofs(0)
   , n_dofs_without_stencil(0)
 {
@@ -181,7 +183,8 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
   diffusivity       = p_diffusivity;
   inverse_time_step = p_inverse_time_step;
 
-  const MPI_Comm  mpi_communicator   = dof_handler.get_mpi_communicator();
+  mpi_communicator = dof_handler.get_mpi_communicator();
+  n_particles      = static_cast<unsigned int>(particles.size());
   const IndexSet &locally_owned_dofs = dof_handler.locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
 
@@ -428,8 +431,9 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
             particles[dof_closest_particle[dof_relevant_index]];
 
           InterfaceRow row;
-          row.dof_index = dof_index;
-          row.scaling   = scaling;
+          row.dof_index      = dof_index;
+          row.particle_index = dof_closest_particle[dof_relevant_index];
+          row.scaling        = scaling;
           particle.closest_surface_point(dof_point,
                                          row.boundary_point,
                                          geometry_cell);
@@ -818,6 +822,25 @@ IBScalarConstraints<dim>::assemble_rhs(
       system_rhs(row.dof_index) = -row.scaling * residual;
     }
   system_rhs.compress(VectorOperation::insert);
+}
+
+template <int dim>
+std::vector<double>
+IBScalarConstraints<dim>::calculate_particle_fluxes(
+  const GlobalVectorType &fluid_cells_rhs) const
+{
+  // The right-hand side is the opposite of the residual, whose boundary term is
+  // the diffusive flux out of the fluid region, that is into the particle.
+  std::vector<double> local_fluxes(n_particles, 0.);
+  for (const auto &row : interface_rows)
+    {
+      AssertIndexRange(row.particle_index, n_particles);
+      local_fluxes[row.particle_index] += fluid_cells_rhs(row.dof_index);
+    }
+
+  std::vector<double> fluxes(n_particles, 0.);
+  Utilities::MPI::sum(local_fluxes, mpi_communicator, fluxes);
+  return fluxes;
 }
 
 template <int dim>

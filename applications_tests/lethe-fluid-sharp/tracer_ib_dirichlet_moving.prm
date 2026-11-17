@@ -5,7 +5,9 @@
 # the tracer instantly (c = 0), imposed with the sharp-interface immersed
 # boundary method. The disk moves with a prescribed velocity through a fluid
 # at rest. The test checks that the immersed boundary constraints follow the
-# disk, through the tracer statistics.
+# disk, through the tracer statistics and the flux of tracer into the disk.
+# The diffusivity is large (D dt / h^2 > 1), which avoids the overshoots of the
+# Galerkin solution at small D dt / h^2: the tracer stays between 0 and 1.
 
 set dimension = 2
 
@@ -71,7 +73,7 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set tracer diffusivity = 0.01
+    set tracer diffusivity = 1
   end
 end
 
@@ -95,9 +97,10 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                   = verbose
-  set calculate tracer statistics = true
-  set tracer statistics name      = tracer_statistics
+  set verbosity                          = verbose
+  set calculate tracer statistics        = true
+  set tracer statistics name             = tracer_statistics
+  set calculate tracer flux on particles = true
 end
 
 #---------------------------------------------------

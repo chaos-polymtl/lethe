@@ -29,7 +29,9 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <fstream>
 #include <map>
+#include <string>
 
 template <int dim>
 void
@@ -439,6 +441,30 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_rhs_cg()
 {
+  assemble_cells_rhs_cg();
+
+  // Impose the boundary condition on the particles of the sharp-interface
+  // immersed boundary method
+  if (immersed_boundary_constraints)
+    {
+      const Parameters::IBTracerBoundaryCondition<dim> &boundary_condition =
+        simulation_parameters.particlesParameters->tracer_boundary_condition;
+      const double time = simulation_control->get_current_time();
+      boundary_condition.dirichlet->set_time(time);
+      boundary_condition.flux->set_time(time);
+      immersed_boundary_constraints->assemble_rhs(*this->dof_handler,
+                                                  *this->get_mapping(),
+                                                  *this->cell_quadrature,
+                                                  this->zero_constraints,
+                                                  this->evaluation_point,
+                                                  this->system_rhs);
+    }
+}
+
+template <int dim>
+void
+Tracer<dim>::assemble_cells_rhs_cg()
+{
   const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -476,23 +502,6 @@ Tracer<dim>::assemble_system_rhs_cg()
     }
 
   this->system_rhs.compress(VectorOperation::add);
-
-  // Impose the boundary condition on the particles of the sharp-interface
-  // immersed boundary method
-  if (immersed_boundary_constraints)
-    {
-      const Parameters::IBTracerBoundaryCondition<dim> &boundary_condition =
-        simulation_parameters.particlesParameters->tracer_boundary_condition;
-      const double time = simulation_control->get_current_time();
-      boundary_condition.dirichlet->set_time(time);
-      boundary_condition.flux->set_time(time);
-      immersed_boundary_constraints->assemble_rhs(*this->dof_handler,
-                                                  *this->get_mapping(),
-                                                  *this->cell_quadrature,
-                                                  this->zero_constraints,
-                                                  this->evaluation_point,
-                                                  this->system_rhs);
-    }
 }
 
 template <int dim>
@@ -853,6 +862,25 @@ template <int dim>
 void
 Tracer<dim>::percolate_time_vectors()
 {
+  // The flux of tracer into the particles depends on the previous solutions
+  // of the time step through the time derivative, so it is calculated before
+  // they are shifted. This function is called right after the tracer is
+  // solved, before the post-processing.
+  if (this->simulation_parameters.post_processing
+        .calculate_tracer_flux_on_particles)
+    {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate tracer flux on particles");
+      tracer_flux_on_particles = calculate_tracer_flux_on_particles();
+    }
+
+  shift_time_vectors();
+}
+
+template <int dim>
+void
+Tracer<dim>::shift_time_vectors()
+{
   for (unsigned int i = previous_solutions->size() - 1; i > 0; --i)
     {
       (*previous_solutions)[i] = (*previous_solutions)[i - 1];
@@ -917,6 +945,14 @@ Tracer<dim>::postprocess(bool first_iteration)
         }
       this->write_tracer_flow_rates(tracer_flow_rates);
     }
+
+  // Write the flux of tracer into the particles of the sharp-interface
+  // immersed boundary method, calculated before the time vectors were
+  // percolated. Before the first iteration, no time step is solved.
+  if (this->simulation_parameters.post_processing
+        .calculate_tracer_flux_on_particles &&
+      !first_iteration && !tracer_flux_on_particles.empty())
+    write_tracer_flux_on_particles(tracer_flux_on_particles);
 }
 
 template <int dim>
@@ -1218,6 +1254,71 @@ Tracer<dim>::write_tracer_statistics()
 }
 
 template <int dim>
+std::vector<double>
+Tracer<dim>::calculate_tracer_flux_on_particles()
+{
+  AssertThrow(immersed_boundary_constraints != nullptr,
+              ExcMessage("The flux of tracer into the particles requires a "
+                         "tracer boundary condition on the particles."));
+
+  // Residual of the equation assembled on the fluid cells at the solution of
+  // the time step, with the previous solutions of the time step
+  this->evaluation_point = *this->present_solution;
+  this->system_rhs       = 0;
+  setup_assemblers();
+  simulation_parameters.source_term.tracer_source->set_time(
+    simulation_control->get_current_time());
+  assemble_cells_rhs_cg();
+
+  return immersed_boundary_constraints->calculate_particle_fluxes(
+    this->system_rhs);
+}
+
+template <int dim>
+void
+Tracer<dim>::write_tracer_flux_on_particles(
+  const std::vector<double> &tracer_fluxes)
+{
+  // Fill the table
+  this->tracer_flux_on_particles_table.add_value(
+    "time", this->simulation_control->get_current_time());
+  this->tracer_flux_on_particles_table.set_precision("time", 12);
+  for (unsigned int p = 0; p < tracer_fluxes.size(); ++p)
+    {
+      const std::string column_name = "particle-" + std::to_string(p);
+      this->tracer_flux_on_particles_table.add_value(column_name,
+                                                     tracer_fluxes[p]);
+      this->tracer_flux_on_particles_table.set_scientific(column_name, true);
+      this->tracer_flux_on_particles_table.set_precision(column_name, 8);
+    }
+
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Tracer flux into the particles: " << std::endl;
+      for (unsigned int p = 0; p < tracer_fluxes.size(); ++p)
+        this->pcout << "\t particle " << p << ": " << tracer_fluxes[p]
+                    << std::endl;
+    }
+
+  const MPI_Comm mpi_communicator = triangulation->get_mpi_communicator();
+  if ((simulation_control->get_iteration_number() %
+         this->simulation_parameters.post_processing.output_frequency ==
+       0) &&
+      Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      const std::string filename =
+        simulation_parameters.simulation_control.output_folder +
+        simulation_parameters.post_processing
+          .tracer_flux_on_particles_output_name +
+        ".dat";
+      std::ofstream output(filename.c_str());
+      this->tracer_flux_on_particles_table.write_text(output);
+    }
+}
+
+template <int dim>
 void
 Tracer<dim>::pre_mesh_adaptation()
 {
@@ -1287,6 +1388,15 @@ Tracer<dim>::gather_tables()
       prefix +
         this->simulation_parameters.post_processing
           .tracer_flow_rate_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing
+        .calculate_tracer_flux_on_particles)
+    table_output_structs.emplace_back(
+      this->tracer_flux_on_particles_table,
+      prefix +
+        this->simulation_parameters.post_processing
+          .tracer_flux_on_particles_output_name +
         suffix);
 
   return table_output_structs;
@@ -1455,6 +1565,16 @@ Tracer<dim>::setup_immersed_boundary_constraints()
 
   const Parameters::IBTracerBoundaryCondition<dim> &boundary_condition =
     particles_parameters.tracer_boundary_condition;
+  AssertThrow(
+    !simulation_parameters.post_processing.calculate_tracer_flux_on_particles ||
+      boundary_condition.type != Parameters::IBTracerBoundaryType::none,
+    ExcMessage(
+      "The flux of tracer into the particles is calculated (<calculate tracer "
+      "flux on particles> in the subsection <post-processing>), but no tracer "
+      "boundary condition is imposed on the particles. Set the type of the "
+      "subsection <tracer boundary condition> of the subsection <particles>, "
+      "or disable this calculation."));
+
   bool boundary_condition_imposes_flux = false;
   switch (boundary_condition.type)
     {
@@ -1735,7 +1855,7 @@ Tracer<dim>::set_initial_conditions()
                            newton_update);
   nonzero_constraints.distribute(newton_update);
   *present_solution = newton_update;
-  percolate_time_vectors();
+  shift_time_vectors();
 }
 
 template <int dim>

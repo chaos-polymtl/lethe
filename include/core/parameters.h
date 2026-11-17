@@ -1512,6 +1512,13 @@ namespace Parameters
     /// Prefix for tracer flow rate output
     std::string tracer_flow_rate_output_name = "tracer_flow_rate";
 
+    /// Enable the calculation of the flux of tracer into the particles of the
+    /// sharp-interface immersed boundary method
+    bool calculate_tracer_flux_on_particles = false;
+
+    /// Prefix for the output of the flux of tracer into the particles
+    std::string tracer_flux_on_particles_output_name = "tracer_flux_particles";
+
     /// Prefix for the enstrophy output
     std::string enstrophy_output_name = "enstrophy";
 
