@@ -1404,6 +1404,17 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
             "time", this->simulation_control->get_current_time());
         }
       this->error_table.add_value("error_phase", phase_error);
+      this->error_table.set_scientific("error_phase", true);
+
+      if (this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_cls.dat";
+          std::ofstream output(filename.c_str());
+          this->error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
