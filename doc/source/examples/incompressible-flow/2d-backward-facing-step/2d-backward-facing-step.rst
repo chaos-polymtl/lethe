@@ -277,7 +277,11 @@ Results and Discussion
 :math:`\mathrm{Re}=100`
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The results can be visualized by opening the file ``backward_facing_step_output.pvd`` with Paraview. Downstream of the step, the flow separates from the bottom wall and a recirculation zone forms, which ends at the reattachment point. With the Python module `PyVista <https://docs.pyvista.org/>`_, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically using the following equation:
+After opening the file ``backward_facing_step_output.pvd`` with Paraview, the following results are observed:
+
+.. image:: image/Reynolds100_profile.png
+
+It is possible to notice a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. Downstream of the step, the flow separates from the bottom wall and this recirculation zone ends at the reattachment point. It is also visually noticeable that :math:`x_r \simeq 2.9` (:math:`x \simeq 17.9`). With the Python module `PyVista <https://docs.pyvista.org/>`_, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically using the following equation:
 
 .. math::
 	\left[ \frac{du}{dy} \right]_{y=0} = 0
@@ -290,6 +294,15 @@ The ``velocity_gradient`` field is written in the ``.vtu`` files, and its :math:
   python3 reattachment_length.py
 
 The final value of :math:`x_r` is :math:`2.892` with a relative error of :math:`1.0\%`.  The reference value used to compute the error is the one given by Erturk (2008) [#erturk2008]_.
+
+:math:`\mathrm{Re}=1000`
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+In a similar way as we did in the last subsection, for :math:`\mathrm{Re} = 1000` (case ``reynolds_sweep/Re_1000`` of the sweep) the results that can be visualized in Paraview are the following:
+
+.. image:: image/Reynolds1000_profile.png
+
+On the contrary of what we saw in the :math:`\mathrm{Re} = 100` case, it is clear that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 13.0` (:math:`x \simeq 28.0`). The postprocessing of the Reynolds number sweep (see below) gives :math:`x_r = 12.957` on the final mesh, with a relative error of :math:`1.2\%`.
 
 Reynolds Number Sweep
 ~~~~~~~~~~~~~~~~~~~~~
