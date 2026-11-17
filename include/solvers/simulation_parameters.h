@@ -13,6 +13,7 @@
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
+#include <core/qmom_boundary_conditions.h>
 #include <core/solid_objects_parameters.h>
 #include <core/time_harmonic_maxwell_boundary_conditions.h>
 #include <core/tracer_boundary_conditions.h>
@@ -54,6 +55,7 @@ public:
   BoundaryConditions::HeatTransferBoundaryConditions<dim>
                                                     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> tracer_boundary_conditions;
+  BoundaryConditions::QMOMBoundaryConditions<dim>   qmom_boundary_conditions;
   BoundaryConditions::CLSBoundaryConditions<dim>    cls_boundary_conditions;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     cahn_hilliard_boundary_conditions;
@@ -109,6 +111,8 @@ public:
     boundary_conditions_ht.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     tracer_boundary_conditions.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    qmom_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     cls_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
@@ -217,6 +221,7 @@ public:
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
     tracer_boundary_conditions.parse_parameters(prm);
+    qmom_boundary_conditions.parse_parameters(prm);
     cls_boundary_conditions.parse_parameters(prm);
     cahn_hilliard_boundary_conditions.parse_parameters(prm);
     boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
@@ -614,7 +619,8 @@ private:
     "CLS",
     "cahn hilliard",
     "void fraction",
-    "continuum solid dynamics"};
+    "continuum solid dynamics",
+    "qmom"};
   std::vector<std::string> linear_physics_names = {"electromagnetics"};
   // Names of subequations within CLS that inherits from PhysicsSolver
   std::vector<std::string> cls_subequations_names = {

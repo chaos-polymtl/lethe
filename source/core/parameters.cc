@@ -2031,6 +2031,12 @@ namespace Parameters
         "interpolation degree of the solid volume fraction of the Euler-Euler model.");
 
       prm.declare_entry(
+        "qmom degree",
+        Patterns::Tools::Convert<unsigned int>::to_string(defaults.qmom_degree),
+        Patterns::Integer(0),
+        "interpolation degree of the discontinuous Galerkin discretization of the scalars and of the moments of the QMOM physics. A degree of 0 corresponds to a finite volume discretization.");
+
+      prm.declare_entry(
         "tracer uses dg",
         Patterns::Tools::Convert<bool>::to_string(defaults.tracer_uses_dg),
         Patterns::Bool(),
@@ -2087,6 +2093,7 @@ namespace Parameters
       solid_velocity_degree = prm.get_integer("solid velocity degree");
       solid_volume_fraction_degree =
         prm.get_integer("solid volume fraction degree");
+      qmom_degree = prm.get_integer("qmom degree");
     }
     prm.leave_subsection();
   }

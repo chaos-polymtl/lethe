@@ -37,6 +37,7 @@ add_library(lethe-core
   parameters_lagrangian.cc
   parameters_multiphysics.cc
   pvd_handler.cc
+  qmom_boundary_conditions.cc
   rheological_model.cc
   sdirk_stage_data.cc
   serial_solid.cc
@@ -108,6 +109,7 @@ add_library(lethe-core
   ../../include/core/physical_property_model.h
   ../../include/core/physics_solver.h
   ../../include/core/pvd_handler.h
+  ../../include/core/qmom_boundary_conditions.h
   ../../include/core/rheological_model.h
   ../../include/core/sdirk_stage_data.h
   ../../include/core/serial_solid.h

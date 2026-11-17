@@ -37,6 +37,8 @@ namespace BoundaryConditions
     convection_radiation,
     // for tracer
     tracer_dirichlet,
+    // for qmom
+    qmom_dirichlet,
     // for cls
     cls_dirichlet,
     // for cahn hilliard
