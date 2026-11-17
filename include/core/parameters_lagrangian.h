@@ -822,8 +822,8 @@ namespace Parameters
       std::set<types::boundary_id> outlet_boundaries;
 
       /// Boundary ids designated as none. This boundary type is used in CFD-DEM
-      /// simulations using the mortar method, since mortar boundaries should not
-      /// be considered as walls in the DEM simulation.
+      /// simulations using the mortar method, since mortar boundaries should
+      /// not be considered as walls in the DEM simulation.
       std::set<types::boundary_id> none_boundaries;
 
       /// Translational velocity of each translational boundary, keyed by the

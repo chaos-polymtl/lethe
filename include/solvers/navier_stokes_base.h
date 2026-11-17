@@ -547,6 +547,12 @@ protected:
   define_zero_constraints();
 
   /**
+   * @brief Creates the mortar coupling evaluator for the base Navier-Stokes class
+   */
+  virtual void
+  create_mortar_coupling_evaluator();
+
+  /**
    * @brief Initialize mortar coupling manager, operator, and evaluator
    */
   void
@@ -964,7 +970,7 @@ protected:
   // Mortar coupling manager and operator
   std::shared_ptr<MortarManagerBase<dim>>        mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
-  std::shared_ptr<NavierStokesCouplingEvaluationSIPG<dim, double>>
+  std::shared_ptr<CouplingEvaluationBase<dim, double>>
     mortar_coupling_evaluator;
 
   // Mapping cache used in rotor mesh rotation in mortar method

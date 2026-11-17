@@ -9,12 +9,14 @@
 #include <core/lethe_grid_tools.h>
 #include <core/parameters.h>
 #include <core/utilities.h>
+#include <core/vector.h>
 
 #include <deal.II/base/mpi_noncontiguous_partitioner.h>
 
 #include <deal.II/fe/fe_system.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
+
 
 using namespace dealii;
 
@@ -1153,6 +1155,73 @@ public:
 
   /// Kinematic viscosity
   const double kinematic_viscosity;
+};
+
+template <int dim, typename Number>
+class VANSCouplingEvaluationSIPG
+  : public NavierStokesCouplingEvaluationSIPG<dim, Number>
+{
+public:
+  using FEPointIntegratorU = FEPointEvaluation<dim, dim, dim, Number>;
+  using FEPointIntegratorP = FEPointEvaluation<1, dim, dim, Number>;
+  using FEPointIntegratorEps = FEPointEvaluation<1, dim, dim, Number>;
+
+  using u_value_type = typename FEPointIntegratorU::value_type;
+
+  /**
+   * @brief Class constructor
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] kinematic_vicosity Kinematic viscosity
+   */
+  VANSCouplingEvaluationSIPG(const Mapping<dim>    &mapping,
+                             const DoFHandler<dim> &dof_handler_fd,
+                             const DoFHandler<dim> &void_fraction_dof_handler,
+                             const GlobalVectorType &void_fraction_solution,
+                             const double           kinematic_viscosity)
+    : NavierStokesCouplingEvaluationSIPG<dim, Number>(mapping,
+                                                     dof_handler_fd,
+                                                     kinematic_viscosity)
+    , void_fraction_dof_handler(&void_fraction_dof_handler)
+    , void_fraction_solution(&void_fraction_solution)
+    , phi_eps_m(mapping, void_fraction_dof_handler.get_fe(), update_values)
+  {}
+
+  unsigned int
+  data_size() const override;
+
+  void
+  local_reinit(const typename Triangulation<dim>::cell_iterator &cell,
+               const ArrayView<const Point<dim, Number>> &points) const override;
+
+  void
+  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
+                 const Vector<Number>                      &buffer,
+                 const unsigned int                         ptr_q,
+                 const unsigned int                         q_stride,
+                 Number *all_values_local) const override;
+
+  void
+  local_integrate(const CouplingEvaluationData<dim, Number> &data,
+                  Vector<Number>                            &buffer,
+                  const unsigned int                         ptr_q,
+                  const unsigned int                         q_stride,
+                  Number                                    *all_values_m,
+                  Number *all_values_p) const override;
+
+
+                  
+  const DoFHandler<dim> *void_fraction_dof_handler;
+  const GlobalVectorType *void_fraction_solution;
+
+  /// Cell iterator for void fraction calculation
+  mutable typename DoFHandler<dim>::active_cell_iterator void_fraction_cell;
+  /// Interface to the evaluation of mortar coupling interpolated void fraction
+  mutable FEPointIntegratorEps phi_eps_m;
+
+
+  
+
 };
 
 #endif

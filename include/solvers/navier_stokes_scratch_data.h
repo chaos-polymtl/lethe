@@ -83,6 +83,8 @@ public:
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes
    * equations are solved
+   *
+   * @param face_quadrature The quadrature to use on faces for the assembly
    */
   NavierStokesScratchData(
     const std::shared_ptr<SimulationControl> &simulation_control,

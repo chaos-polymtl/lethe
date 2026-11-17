@@ -2080,6 +2080,183 @@ NavierStokesCouplingEvaluationSIPG<dim, Number>::local_integrate(
 }
 
 
+/*----------- VANSCouplingEvaluationSIPG -------------------------*/
+
+template <int dim, typename Number>
+unsigned int
+VANSCouplingEvaluationSIPG<dim, Number>::data_size() const
+{
+  return 4 * dim + 1;
+}
+
+template <int dim, typename Number>
+void
+VANSCouplingEvaluationSIPG<dim, Number>::local_reinit(
+  const typename Triangulation<dim>::cell_iterator &cell,
+  const ArrayView<const Point<dim, Number>> &points) const
+{
+  NavierStokesCouplingEvaluationSIPG<dim, Number>::local_reinit(cell, points);
+
+  this->void_fraction_cell =
+    typename DoFHandler<dim>::active_cell_iterator(
+      &cell->get_triangulation(),
+      cell->level(),
+      cell->index(),
+      &(*this->void_fraction_dof_handler));
+
+  this->phi_eps_m.reinit(this->void_fraction_cell, points);
+}
+
+template <int dim, typename Number>
+void
+VANSCouplingEvaluationSIPG<dim, Number>::local_evaluate(
+  const CouplingEvaluationData<dim, Number> &data,
+  const Vector<Number>                      &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_values_m) const
+{
+  AssertDimension(buffer.size(),
+                  this->fe_sub_u.n_dofs_per_cell() +
+                    this->fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<const Number> buffer_u(buffer.data() + 0,
+                                   this->fe_sub_u.n_dofs_per_cell());
+  ArrayView<const Number> buffer_p(buffer.data() +
+                                     this->fe_sub_u.n_dofs_per_cell(),
+                                   this->fe_sub_p.n_dofs_per_cell());
+
+  this->phi_u_m.evaluate(buffer_u,
+                         EvaluationFlags::values | EvaluationFlags::gradients);
+  this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
+
+  Vector<double> local_void_fraction_dofs(this->void_fraction_cell->get_fe()
+                                           .n_dofs_per_cell());
+  this->void_fraction_cell->get_dof_values(*this->void_fraction_solution,
+                                           local_void_fraction_dofs);
+  this->phi_eps_m.evaluate(local_void_fraction_dofs, EvaluationFlags::values);
+
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      // Quadrature point index ('global' index within the rotor-stator
+      // interface)
+      const unsigned int q_index = ptr_q + q;
+
+      // Normal, value, and gradient referring to the quadrature point
+      const auto normal = data.all_normals[q_index];
+
+      const auto u_value = this->phi_u_m.get_value(q);
+      const auto u_grad_normal =
+        contract(this->phi_u_m.get_gradient(q), normal);
+      const auto p_value_normal = this->phi_p_m.get_value(q) * normal;
+      const auto epsilon = this->phi_eps_m.get_value(q);
+
+      // Initialize buffer for local side of the interface (i.e. rotor),
+      // where information is evaluated
+      BufferRW<Number> buffer_m(all_values_m, q * (4 * dim + 1) * q_stride);
+
+      // Store values and gradients at the created buffer
+      buffer_m.write(u_value);
+      buffer_m.write(u_grad_normal);
+      buffer_m.write(p_value_normal);
+      buffer_m.write(epsilon);
+    }
+}
+
+template <int dim, typename Number>
+void
+VANSCouplingEvaluationSIPG<dim, Number>::local_integrate(
+  const CouplingEvaluationData<dim, Number> &data,
+  Vector<Number>                            &buffer,
+  const unsigned int                         ptr_q,
+  const unsigned int                         q_stride,
+  Number                                    *all_values_m,
+  Number                                    *all_values_p) const
+{
+  for (const auto q : this->phi_u_m.quadrature_point_indices())
+    {
+      const unsigned int q_index = ptr_q + q;
+
+      // Initialize buffer for both local and ghost sides
+      BufferRW<Number> buffer_m(all_values_m, q * (4 * dim + 1) * q_stride);
+      BufferRW<Number> buffer_p(all_values_p, q * (4 * dim + 1) * q_stride);
+
+      // Read shape functions values and gradients stored in the buffer
+      const auto u_value_m        = buffer_m.template read<u_value_type>();
+      const auto u_value_p        = buffer_p.template read<u_value_type>();
+      const auto u_grad_normal_m  = buffer_m.template read<u_value_type>();
+      const auto u_grad_normal_p  = buffer_p.template read<u_value_type>();
+      const auto p_value_normal_m = buffer_m.template read<u_value_type>();
+      const auto p_value_normal_p = buffer_p.template read<u_value_type>();
+      const auto void_fraction_m  = buffer_m.template read<Number>();
+      const auto void_fraction_p  = buffer_p.template read<Number>();
+
+      const auto JxW               = data.all_weights[q_index];
+      const auto penalty_parameter = data.all_penalty_parameter[q_index];
+      const auto normal            = data.all_normals[q_index];
+
+      // jump(u) = u_m - u_p
+      const auto u_value_jump = u_value_m - u_value_p;
+
+      // jump(u) = u_m - u_p
+      const auto u_value_vf_jump = void_fraction_m*u_value_m - void_fraction_p*u_value_p;
+
+      // The expression for the average on the mortar interface is
+      // avg(\eps*∇u).n = (\eps_m*∇u_m.normal_m + \eps_p*∇u_p.normal_p) * 0.5. Since we are
+      // accessing only the value of normal_m, we use a minus sign here because
+      // normal_p = - normal_m
+      const auto u_grad_vf_avg = (void_fraction_m*u_grad_normal_m - void_fraction_p*u_grad_normal_p) * 0.5;
+
+      // {{\eps*p}} = (\eps_m*p_m + \eps_p*p_p)/2
+      const auto p_value_vf_avg = (void_fraction_m*p_value_normal_m - void_fraction_p*p_value_normal_p) * 0.5;
+
+      typename FEPointIntegratorU::value_type u_grad_result  = {};
+      typename FEPointIntegratorU::value_type u_value_result = {};
+      typename FEPointIntegratorP::value_type p_value_result = {};
+
+      // SIPG penalty parameter
+      const double sigma = penalty_parameter * data.penalty_factor;
+
+      /* Contributions from viscous term */
+      // - (n avg(∇v), jump(u))
+      u_grad_result -= u_value_jump;
+      // - (jump(v), ν avg(∇δu) n)
+      u_value_result -= u_grad_vf_avg * this->kinematic_viscosity;
+      // + (jump(v), ν σ jump(δu))
+      u_value_result += sigma * this->kinematic_viscosity * u_value_jump;
+
+      /* Contribution from pressure gradient term */
+      // + (jump(v), avg(δp) n)
+      u_value_result += p_value_vf_avg;
+
+      /* Contribution from velocity divergence term */
+      // - (avg(q), jump(u) n)
+      p_value_result -= 0.5 * contract(u_value_vf_jump, normal);
+
+      // - (n avg(∇v), ν/2 jump(δu))
+      this->phi_u_m.submit_gradient(outer(u_grad_result, normal) *
+                                      this->kinematic_viscosity * 0.5 * JxW,
+                                    q);
+      this->phi_u_m.submit_value(u_value_result * JxW, q);
+      this->phi_p_m.submit_value(p_value_result * JxW, q);
+    }
+
+  AssertDimension(buffer.size(),
+                  this->fe_sub_u.n_dofs_per_cell() +
+                    this->fe_sub_p.n_dofs_per_cell());
+
+  ArrayView<Number> buffer_u(buffer.data() + 0,
+                             this->fe_sub_u.n_dofs_per_cell());
+  ArrayView<Number> buffer_p(buffer.data() + this->fe_sub_u.n_dofs_per_cell(),
+                             this->fe_sub_p.n_dofs_per_cell());
+
+  this->phi_u_m.test_and_sum(buffer_u,
+                             EvaluationFlags::values |
+                               EvaluationFlags::gradients);
+  this->phi_p_m.test_and_sum(buffer_p, EvaluationFlags::values);
+}
+
+
 /*-------------- Explicit Instantiations -------------------------------*/
 template class MortarManagerBase<1>;
 template class MortarManagerBase<2>;
@@ -2161,6 +2338,9 @@ template class ScalarCouplingEvaluationSIPG<3, 4, double>;
 
 template class NavierStokesCouplingEvaluationSIPG<2, double>;
 template class NavierStokesCouplingEvaluationSIPG<3, double>;
+
+template class VANSCouplingEvaluationSIPG<2, double>;
+template class VANSCouplingEvaluationSIPG<3, double>;
 
 template std::vector<unsigned int>
 compute_number_interface_cells<2>(
