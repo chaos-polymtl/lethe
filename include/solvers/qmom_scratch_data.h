@@ -3,8 +3,8 @@
 
 /**
  * @file qmom_scratch_data.h
- * @brief Scratch and copy data used to assemble the discontinuous Galerkin
- * transport of the QMOM components.
+ * @brief Scratch data used to assemble the discontinuous Galerkin transport of
+ * the QMOM components.
  *
  * All the QMOM components (scalars and moments) are discretized with the same
  * scalar discontinuous element and advected by the same fluid velocity. The
@@ -24,7 +24,6 @@
 #include <deal.II/base/quadrature.h>
 #include <deal.II/base/table.h>
 #include <deal.II/base/tensor.h>
-#include <deal.II/base/types.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
@@ -34,63 +33,12 @@
 #include <deal.II/fe/fe_values_extractors.h>
 #include <deal.II/fe/mapping.h>
 
-#include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/vector.h>
 
 #include <memory>
 #include <vector>
 
 using namespace dealii;
-
-/**
- * @brief Local contributions of one cell to the transport matrix, shared by
- * all the QMOM components, and to the right-hand side of every component. The
- * contributions of the interior faces to the matrix are stored separately,
- * since they couple the degrees of freedom of two cells.
- */
-struct QMOMCopyData
-{
-  /**
-   * @brief Allocate the cell contributions.
-   *
-   * @param[in] n_dofs Number of degrees of freedom of a cell.
-   * @param[in] n_components Number of QMOM components (scalars and moments).
-   */
-  QMOMCopyData(const unsigned int n_dofs, const unsigned int n_components)
-    : local_matrix(n_dofs, n_dofs)
-    , local_rhs(n_components, Vector<double>(n_dofs))
-    , local_dof_indices(n_dofs)
-  {}
-
-  /// Contributions of the cell and of its boundary faces to the matrix
-  FullMatrix<double> local_matrix;
-
-  /// Contributions of the cell and of its boundary faces to the right-hand
-  /// side of every component: local_rhs[component]
-  std::vector<Vector<double>> local_rhs;
-
-  /// Global indices of the degrees of freedom of the cell
-  std::vector<types::global_dof_index> local_dof_indices;
-
-  /// Whether the cell is locally owned, i.e. whether local_matrix and
-  /// local_rhs are valid
-  bool cell_is_local = false;
-
-  /// Contributions of an interior face to the degrees of freedom of the two
-  /// cells that share it
-  struct FaceData
-  {
-    /// Face contributions to the matrix, ordered as the interface degrees of
-    /// freedom
-    FullMatrix<double> face_matrix;
-
-    /// Global indices of the interface degrees of freedom
-    std::vector<types::global_dof_index> joint_dof_indices;
-  };
-
-  /// Contributions of the interior faces assembled with the cell
-  std::vector<FaceData> face_data;
-};
 
 /**
  * @brief Scratch data of the transport of the QMOM components.

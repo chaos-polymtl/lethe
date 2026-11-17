@@ -6,11 +6,11 @@
 #include <core/dimensionality.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
-#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 #include <core/vector.h>
 
 #include <solvers/analytical_solutions.h>
+#include <solvers/copy_data.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/qmom.h>
 #include <solvers/qmom_scratch_data.h>
@@ -124,9 +124,19 @@ QMOM<dim>::QMOM(
                          "implemented yet, but \"number of scalars\" is " +
                          std::to_string(n_scalars) +
                          " in the QMOM subsection. Set it to 0."));
-  AssertThrow(
-    !time_stepping_is_sdirk(simulation_parameters.simulation_control.method),
-    ExcMessage("The SDIRK scheme is not yet supported for this physics"));
+  // The steady state of the Lie splitting depends on the time step, and the
+  // phase-space evolution needs a physical time step
+  using TimeSteppingMethod = Parameters::SimulationControl::TimeSteppingMethod;
+  const TimeSteppingMethod method =
+    simulation_parameters.simulation_control.method;
+  AssertThrow(method == TimeSteppingMethod::bdf1 ||
+                method == TimeSteppingMethod::bdf2 ||
+                method == TimeSteppingMethod::bdf3,
+              ExcMessage("The QMOM physics only supports the bdf1, bdf2 and "
+                         "bdf3 time-stepping methods, but \"method\" is " +
+                         enum_to_string(method) +
+                         " in the simulation control subsection. Set it to "
+                         "bdf1, bdf2 or bdf3."));
   AssertThrow(qmom_parameters.splitting_scheme ==
                 Parameters::QMOMSplittingScheme::lie,
               ExcMessage("The strang splitting scheme of the QMOM physics is "
@@ -595,11 +605,9 @@ QMOM<dim>::assemble_system_matrix()
     };
 
   // Coefficient of the present solution in the BDF time derivative, which
-  // includes the inverse of the time step. It is zero for steady simulations.
-  const bool transient =
-    time_stepping_is_bdf(simulation_control->get_assembly_method());
+  // includes the inverse of the time step
   const double bdf_coefficient_present =
-    transient ? simulation_control->get_bdf_coefficients()[0] : 0.;
+    simulation_control->get_bdf_coefficients()[0];
 
   QMOMScratchData<dim> scratch_data(*fe,
                                     *cell_quadrature,
@@ -840,11 +848,9 @@ QMOM<dim>::assemble_system_rhs()
                                                             &dof_handler_fluid);
     };
 
-  // Number of previous solutions of the BDF time derivative, zero for steady
-  // simulations
-  const auto         method = simulation_control->get_assembly_method();
+  // Number of previous solutions of the BDF time derivative
   const unsigned int n_previous_solutions =
-    time_stepping_is_bdf(method) ? number_of_previous_solutions(method) : 0;
+    number_of_previous_solutions(simulation_control->get_assembly_method());
   const Vector<double> &bdf_coefficients =
     simulation_control->get_bdf_coefficients();
 
@@ -868,8 +874,7 @@ QMOM<dim>::assemble_system_rhs()
 
       cell->get_dof_indices(copy_data.local_dof_indices);
       scratch_data.reinit(cell);
-      if (n_previous_solutions > 0)
-        scratch_data.reinit_previous_solutions(previous_solutions);
+      scratch_data.reinit_previous_solutions(previous_solutions);
       scratch_data.reinit_source(*source_term);
 
       for (unsigned int q = 0; q < scratch_data.n_q_points; ++q)
