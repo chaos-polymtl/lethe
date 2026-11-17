@@ -261,7 +261,7 @@ The ``backward-facing-step.tpl`` file is a template of the parameter file above,
 
   python3 generate_cases_locally.py
 
-This creates a folder ``reynolds_sweep/Re_XXXX`` with the parameter file ``backward-facing-step.prm`` for every Reynolds number of the benchmark of Erturk (2008) [#erturk2008]_ (:math:`\mathrm{Re} = 100, 200, \dots, 1000`). Other Reynolds numbers can be given with the ``-Re`` argument, for example ``python3 generate_cases_locally.py -Re 150 250``. The simulations are then launched with:
+This creates a folder ``reynolds_sweep/Re_XXXX`` with the parameter file ``backward-facing-step.prm`` for every Reynolds number of the benchmark of Erturk (2008) [#erturk2008]_ (:math:`\mathrm{Re} = 100, 200, \dots, 1000`). Other Reynolds numbers can be given as a list with the ``-Re`` argument, for example ``python3 generate_cases_locally.py -Re 150 250 350`` will simulate the case for the Reynolds number 150, 250 and 350. The simulations are then launched with:
 
 .. code-block:: text
   :class: copy-button
