@@ -87,12 +87,12 @@ print_moments(const std::string &label,
                                         n_scalars,
                                         n_moments,
                                         "test");
-  Vector<double>               values(function.n_components);
-  function.vector_value(point, values);
+  Vector<double>               moments(n_moments);
+  function.moment_values(point, moments);
 
   deallog << label << ":";
   for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
-    deallog << " " << values[n_scalars + i_moment];
+    deallog << " " << moments[i_moment];
   deallog << std::endl;
 }
 

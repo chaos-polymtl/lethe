@@ -7,6 +7,7 @@
  * - the components are the scalars followed by the moments, scalar i being
  *   given by expression i, and the time is passed to the expressions;
  * - value() and vector_value() agree;
+ * - scalar_values() and moment_values() agree with vector_value();
  * - without scalars, all the components are moments;
  * - a number of scalar expressions that differs from the number of scalars
  *   throws.
@@ -117,6 +118,25 @@ test()
       }
     deallog << "  vector_value matches value: "
             << (vector_value_matches_value ? "true" : "false") << std::endl;
+
+    Vector<double> scalar_values(n_scalars);
+    Vector<double> moment_values(function.n_components - n_scalars);
+    function.scalar_values(point, scalar_values);
+    function.moment_values(point, moment_values);
+
+    bool split_values_match_vector_value = true;
+    for (unsigned int component = 0; component < function.n_components;
+         ++component)
+      {
+        const double split_value = (component < n_scalars) ?
+                                     scalar_values[component] :
+                                     moment_values[component - n_scalars];
+        split_values_match_vector_value &=
+          (std::abs(values[component] - split_value) < tolerance);
+      }
+    deallog << "  scalar_values and moment_values match vector_value: "
+            << (split_values_match_vector_value ? "true" : "false")
+            << std::endl;
   }
 
   // Without scalars, the scalar expression is ignored and all the components

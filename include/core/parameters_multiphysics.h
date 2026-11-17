@@ -782,19 +782,6 @@ namespace Parameters
     /// Number of transported raw moments M_0 to M_{number_of_moments - 1}
     unsigned int number_of_moments = 4;
 
-    /**
-     * @brief Get the number of nodes of the quadrature that uses all the
-     * transported moments. N nodes are defined by 2N moments, so an odd number
-     * of moments requires one more node.
-     *
-     * @return Number of moments divided by 2, rounded up.
-     */
-    unsigned int
-    get_number_of_nodes() const
-    {
-      return (number_of_moments + 1) / 2;
-    }
-
     /// Operator splitting scheme between the physical-space transport and
     /// the phase-space evolution
     QMOMSplittingScheme splitting_scheme = QMOMSplittingScheme::lie;

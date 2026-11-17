@@ -55,7 +55,7 @@ public:
   BoundaryConditions::HeatTransferBoundaryConditions<dim>
                                                     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> tracer_boundary_conditions;
-  BoundaryConditions::QMOMBoundaryConditions<dim>   boundary_conditions_qmom;
+  BoundaryConditions::QMOMBoundaryConditions<dim>   qmom_boundary_conditions;
   BoundaryConditions::CLSBoundaryConditions<dim>    cls_boundary_conditions;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     cahn_hilliard_boundary_conditions;
@@ -112,7 +112,7 @@ public:
       prm, size_of_subsections.boundary_conditions);
     tracer_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_qmom.declare_parameters(
+    qmom_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     cls_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
@@ -221,7 +221,7 @@ public:
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
     tracer_boundary_conditions.parse_parameters(prm);
-    boundary_conditions_qmom.parse_parameters(prm);
+    qmom_boundary_conditions.parse_parameters(prm);
     cls_boundary_conditions.parse_parameters(prm);
     cahn_hilliard_boundary_conditions.parse_parameters(prm);
     boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
