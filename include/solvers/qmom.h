@@ -143,10 +143,11 @@ public:
   percolate_time_vectors() override;
 
   /**
-   * @brief Post-process the QMOM components: compute the L2 error of every
-   * component if the analytical solution is enabled.
-   *
-   * @param[in] first_iteration Whether this is the first iteration.
+   * @brief Postprocess the auxiliary physics results. Post-processing this case implies
+   * the calculation of all derived quantities using the solution vector of the
+   * physics. It does not concern the output of the solution using the
+   * DataOutObject, which is accomplished through the attach_solution_to_output
+   * function
    */
   void
   postprocess(bool first_iteration) override;

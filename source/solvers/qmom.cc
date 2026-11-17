@@ -47,6 +47,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <iomanip>
 #include <memory>
 #include <string>
@@ -311,8 +312,23 @@ QMOM<dim>::postprocess(bool first_iteration)
 
       error_table.add_value("time", simulation_control->get_current_time());
       for (unsigned int component = 0; component < n_components; ++component)
-        error_table.add_value("error_" + component_names[component],
-                              errors[component]);
+        {
+          error_table.add_value("error_" + component_names[component],
+                                errors[component]);
+          error_table.set_scientific("error_" + component_names[component],
+                                     true);
+        }
+
+      if (Utilities::MPI::this_mpi_process(
+            triangulation->get_mpi_communicator()) == 0)
+        {
+          const std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_qmom.dat";
+          std::ofstream output(filename.c_str());
+          error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
