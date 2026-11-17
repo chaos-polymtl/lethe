@@ -898,6 +898,7 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
   {
     number_of_scalars = prm.get_integer("number of scalars");
     number_of_moments = prm.get_integer("number of moments");
+    number_of_nodes   = (number_of_moments + 1) / 2;
 
     scalar_names = Utilities::split_string_list(prm.get("scalar names"));
     if (scalar_names.empty())
