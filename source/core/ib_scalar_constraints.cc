@@ -4,6 +4,7 @@
 #include <core/ib_scalar_constraints.h>
 #include <core/ib_stencil.h>
 #include <core/lethe_grid_tools.h>
+#include <core/tracer_reaction_model.h>
 
 #include <deal.II/base/mpi.h>
 
@@ -16,20 +17,115 @@
 #include <deal.II/lac/vector.h>
 
 #include <algorithm>
+#include <cmath>
+#include <iterator>
 #include <limits>
 #include <map>
 #include <set>
 #include <string>
 #include <utility>
 
+namespace
+{
+  /**
+   * @brief Return the derivatives of the shape functions of a cell at a point,
+   * along a direction.
+   *
+   * @tparam dim Number of spatial dimensions.
+   *
+   * @param[in] mapping Mapping of the cell.
+   *
+   * @param[in] cell Cell whose shape functions are differentiated.
+   *
+   * @param[in] point Point at which the derivatives are evaluated. It can lie
+   * outside of the cell, in which case the polynomials of the cell are
+   * extrapolated.
+   *
+   * @param[in] direction Unit vector along which the shape functions are
+   * differentiated.
+   *
+   * @return Derivatives of the shape functions, in the order of the degrees of
+   * freedom of the cell.
+   */
+  template <int dim>
+  std::vector<double>
+  compute_shape_function_directional_derivatives(
+    const Mapping<dim>                                   &mapping,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const Point<dim>                                     &point,
+    const Tensor<1, dim>                                 &direction)
+  {
+    const FiniteElement<dim> &fe = cell->get_fe();
+    FEValues<dim>             fe_values(mapping,
+                            fe,
+                            Quadrature<dim>(
+                              mapping.transform_real_to_unit_cell(cell, point)),
+                            update_gradients);
+    fe_values.reinit(cell);
+
+    std::vector<double> derivatives(fe.n_dofs_per_cell());
+    for (unsigned int m = 0; m < fe.n_dofs_per_cell(); ++m)
+      derivatives[m] = fe_values.shape_grad(m, 0) * direction;
+    return derivatives;
+  }
+
+  /**
+   * @brief Return the rate of a surface reaction of order n,
+   * \f$ \alpha C_\text{eff}^{n-1} c \f$ with
+   * \f$ C_\text{eff} = \sqrt{c^2 + \epsilon^2} \f$, and its derivative with
+   * respect to the concentration \f$ c \f$,
+   * \f$ \alpha C_\text{eff}^{n-1} \left(1 + (n-1) (c / C_\text{eff})^2
+   * \right) \f$. The effective concentration is the one of the volumetric
+   * reaction (see calculate_effective_concentration()).
+   *
+   * @param[in] concentration Concentration \f$ c \f$ on the surface.
+   *
+   * @param[in] reaction_constant Reaction constant \f$ \alpha \f$.
+   *
+   * @param[in] reaction_order Reaction order \f$ n \f$. If it is lower than 1,
+   * the reaction threshold must be positive.
+   *
+   * @param[in] reaction_threshold Reaction threshold \f$ \epsilon \f$.
+   *
+   * @return Pair containing the reaction rate and its derivative.
+   */
+  std::pair<double, double>
+  compute_surface_reaction_rate(const double concentration,
+                                const double reaction_constant,
+                                const double reaction_order,
+                                const double reaction_threshold)
+  {
+    const double effective_concentration =
+      calculate_effective_concentration(concentration, reaction_threshold);
+    const double prefactor =
+      reaction_constant *
+      std::pow(effective_concentration, reaction_order - 1.);
+
+    // Derivative of the effective concentration, c / C_eff. Its magnitude does
+    // not exceed 1, and it is zero if the effective concentration is zero.
+    const double effective_concentration_derivative =
+      calculate_d_effective_concentration_dC(concentration, reaction_threshold);
+
+    return {prefactor * concentration,
+            prefactor *
+              (1. + (reaction_order - 1.) * effective_concentration_derivative *
+                      effective_concentration_derivative)};
+  }
+} // namespace
+
 template <int dim>
 IBScalarConstraints<dim>::IBScalarConstraints(
-  const unsigned int p_stencil_degree,
-  const double       p_length_ratio,
-  const bool         p_enable_extrapolation)
+  const unsigned int                                p_stencil_degree,
+  const double                                      p_length_ratio,
+  const bool                                        p_enable_extrapolation,
+  const Parameters::IBTracerBoundaryCondition<dim> &p_boundary_condition)
   : stencil_degree(p_stencil_degree)
   , length_ratio(p_length_ratio)
   , enable_extrapolation(p_enable_extrapolation)
+  , boundary_condition(p_boundary_condition)
+  , imposes_flux(
+      p_boundary_condition.type == Parameters::IBTracerBoundaryType::neumann ||
+      p_boundary_condition.type == Parameters::IBTracerBoundaryType::robin)
   , diffusivity(0.)
   , inverse_time_step(0.)
   , n_interface_dofs(0)
@@ -48,6 +144,10 @@ IBScalarConstraints<dim>::IBScalarConstraints(
                          ". It must be positive. Change the parameter <length "
                          "ratio> of the subsection <extrapolation function> of "
                          "the subsection <particles>."));
+  AssertThrow(boundary_condition.type != Parameters::IBTracerBoundaryType::none,
+              ExcMessage("The immersed boundary constraints of a scalar field "
+                         "require a boundary condition whose type is not "
+                         "none."));
 }
 
 template <int dim>
@@ -71,6 +171,12 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
               ExcMessage("The diffusivity and the inverse of the time step "
                          "used to scale the immersed boundary equations must "
                          "not be negative."));
+  AssertThrow(!imposes_flux || p_diffusivity > 0.,
+              ExcMessage("A flux is imposed on the surface of the particles "
+                         "(neumann or robin type), but the diffusivity is " +
+                         std::to_string(p_diffusivity) +
+                         ". The diffusivity must be positive to impose a "
+                         "flux."));
 
   diffusivity       = p_diffusivity;
   inverse_time_step = p_inverse_time_step;
@@ -247,11 +353,10 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
       ++dof_position;
     }
 
-  // Build the stencil equation of every locally owned interface degree of
-  // freedom that is not constrained. The stencil cell is a fluid cell that
-  // contains the degree of freedom, so that the sparsity pattern already
-  // couples the degree of freedom with the degrees of freedom of the stencil
-  // cell. When no such cell is found, the boundary value is imposed directly.
+  // Build the equation of every locally owned interface degree of freedom that
+  // is not constrained. The stencil cell is a fluid cell that contains the
+  // degree of freedom, so that the sparsity pattern already couples the degree
+  // of freedom with the degrees of freedom of the stencil cell.
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cells;
@@ -264,9 +369,19 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
   const unsigned int n_interpolation_points =
     stencil.number_of_interpolation_support_points(stencil_degree);
 
+  // A stencil with a single coefficient evaluates the polynomial of the
+  // stencil cell directly on the surface (see IBStencil). The normal
+  // derivative is then the derivative of this polynomial. Otherwise, it is the
+  // derivative of the polynomial of the 1D stencil.
+  const bool stencil_uses_cell_directly = (n_stencil_points == 1);
+  const std::vector<double> stencil_derivative_coefficients =
+    (imposes_flux && !stencil_uses_cell_directly) ?
+      stencil.derivative_coefficients(stencil_degree, length_ratio) :
+      std::vector<double>();
+
   // Relative distance under which a degree of freedom is considered to be on
-  // the surface of the particle, in which case the boundary value is imposed
-  // directly, as in the fluid dynamics solver.
+  // the surface of the particle, in which case the boundary condition is
+  // imposed on the degree of freedom, as in the fluid dynamics solver.
   constexpr double relative_distance_tolerance = 1e-12;
 
   std::vector<bool>                    row_is_built(n_relevant_dofs, false);
@@ -284,7 +399,14 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
       fe_values_support_points.reinit(cell);
       cell->get_dof_indices(local_dof_indices);
       const auto   geometry_cell = get_geometry_cell(cell);
-      const double scaling       = cell->measure() * get_reference_rate(cell);
+      const double cell_size     = cell->diameter();
+
+      // The equation imposing the flux is divided by the diffusivity and
+      // multiplied by the cell size to have the dimension of the solution, as
+      // the equation imposing the value
+      double scaling = cell->measure() * get_reference_rate(cell);
+      if (imposes_flux)
+        scaling *= cell_size / diffusivity;
 
       for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
         {
@@ -312,15 +434,34 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
                                          row.boundary_point,
                                          geometry_cell);
 
+          const double distance_to_surface =
+            dof_point.distance(row.boundary_point);
+          const bool dof_is_on_surface =
+            distance_to_surface <= relative_distance_tolerance * cell_size;
+
+          // Normal to the surface pointing out of the particle, only used to
+          // impose a flux. On the surface, it is the direction of the
+          // gradient of the signed distance.
+          Tensor<1, dim> normal;
+          if (imposes_flux)
+            {
+              normal =
+                dof_is_on_surface ?
+                  particle.shape->gradient_with_cell_guess(dof_point,
+                                                           geometry_cell) :
+                  (dof_point - row.boundary_point) / distance_to_surface;
+              const double normal_norm = normal.norm();
+              if (normal_norm > 0.)
+                normal /= normal_norm;
+            }
+
           // Find the stencil cell: a fluid cell sharing a vertex with the cut
           // cell, containing the point used for the cell detection and the
           // degree of freedom. The farthest interpolation point must not be in
           // the cut cell, otherwise the stencil would extrapolate the solution
           // of the cut cell.
           bool stencil_cell_is_found = false;
-          if (enable_extrapolation &&
-              dof_point.distance(row.boundary_point) >
-                relative_distance_tolerance * cell->diameter())
+          if (enable_extrapolation && !dof_is_on_surface)
             {
               const auto [stencil_point, interpolation_points] =
                 stencil.support_points_for_interpolation(stencil_degree,
@@ -371,6 +512,31 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
                             stencil_coefficients[k] *
                             fe.shape_value(m, unit_stencil_points[k]);
 
+                      if (imposes_flux && stencil_uses_cell_directly)
+                        row.normal_derivative_coefficients =
+                          compute_shape_function_directional_derivatives(
+                            mapping,
+                            candidate_cell,
+                            row.boundary_point,
+                            normal);
+                      else if (imposes_flux)
+                        {
+                          // The coordinate of the 1D stencil increases towards
+                          // the particle, and the distance between the degree
+                          // of freedom and the surface is length_ratio on the
+                          // 1D stencil.
+                          const double derivative_factor =
+                            -length_ratio / distance_to_surface;
+                          row.normal_derivative_coefficients.assign(
+                            n_dofs_per_cell, 0.);
+                          for (unsigned int m = 0; m < n_dofs_per_cell; ++m)
+                            for (unsigned int k = 0; k < n_stencil_points; ++k)
+                              row.normal_derivative_coefficients[m] +=
+                                derivative_factor *
+                                stencil_derivative_coefficients[k] *
+                                fe.shape_value(m, unit_stencil_points[k]);
+                        }
+
                       stencil_cell_is_found = true;
                       break;
                     }
@@ -379,9 +545,54 @@ IBScalarConstraints<dim>::update(const DoFHandler<dim> &dof_handler,
 
           if (!stencil_cell_is_found)
             {
-              row.column_indices     = {dof_index};
-              row.value_coefficients = {1.};
               ++n_local_dofs_without_stencil;
+              if (!imposes_flux)
+                {
+                  // The value is imposed on the degree of freedom
+                  row.column_indices     = {dof_index};
+                  row.value_coefficients = {1.};
+                }
+              else
+                {
+                  // The flux is computed with the value and the gradient of
+                  // the solution at the degree of freedom, in a fluid cell that
+                  // contains it. Such a cell exists, since the degree of
+                  // freedom is an interface degree of freedom. If it is not
+                  // found or if the normal is undefined, the equation of the
+                  // fluid cells is kept, which imposes a zero flux.
+                  if (normal.norm() <= 0.)
+                    continue;
+
+                  bool fluid_cell_is_found = false;
+                  for (const auto &fluid_cell :
+                       LetheGridTools::find_cells_around_cell<dim>(
+                         vertices_to_cells, cell))
+                    {
+                      if (cell_categories[fluid_cell->active_cell_index()] !=
+                          CellCategory::fluid)
+                        continue;
+
+                      fluid_cell->get_dof_indices(stencil_dof_indices);
+                      const auto dof_iterator =
+                        std::ranges::find(stencil_dof_indices, dof_index);
+                      if (dof_iterator == stencil_dof_indices.end())
+                        continue;
+
+                      const auto local_dof_position = static_cast<unsigned int>(
+                        std::distance(stencil_dof_indices.begin(),
+                                      dof_iterator));
+                      row.column_indices = stencil_dof_indices;
+                      row.value_coefficients.assign(n_dofs_per_cell, 0.);
+                      row.value_coefficients[local_dof_position] = 1.;
+                      row.normal_derivative_coefficients =
+                        compute_shape_function_directional_derivatives(
+                          mapping, fluid_cell, dof_point, normal);
+                      fluid_cell_is_found = true;
+                      break;
+                    }
+                  if (!fluid_cell_is_found)
+                    continue;
+                }
             }
 
           interface_rows.push_back(std::move(row));
@@ -402,6 +613,7 @@ IBScalarConstraints<dim>::assemble_matrix(
   const Mapping<dim>              &mapping,
   const Quadrature<dim>           &quadrature,
   const AffineConstraints<double> &constraints,
+  const GlobalVectorType          &evaluation_point,
   TrilinosWrappers::SparseMatrix  &system_matrix) const
 {
   const FiniteElement<dim> &fe              = dof_handler.get_fe();
@@ -462,8 +674,39 @@ IBScalarConstraints<dim>::assemble_matrix(
 
       row_indices[0] = row.dof_index;
       row_matrix.reinit(1, row.column_indices.size());
-      for (unsigned int m = 0; m < row.column_indices.size(); ++m)
-        row_matrix(0, m) = row.scaling * row.value_coefficients[m];
+      if (!imposes_flux)
+        {
+          // term: s * v_m
+          for (unsigned int m = 0; m < row.column_indices.size(); ++m)
+            row_matrix(0, m) = row.scaling * row.value_coefficients[m];
+        }
+      else
+        {
+          // Derivative of the imposed flux with respect to the value on the
+          // surface, which is zero for the neumann type
+          double flux_derivative = 0.;
+          if (boundary_condition.type ==
+              Parameters::IBTracerBoundaryType::robin)
+            {
+              double value_at_boundary = 0.;
+              for (unsigned int m = 0; m < row.column_indices.size(); ++m)
+                value_at_boundary += row.value_coefficients[m] *
+                                     evaluation_point(row.column_indices[m]);
+              flux_derivative = compute_surface_reaction_rate(
+                                  value_at_boundary,
+                                  boundary_condition.reaction_constant,
+                                  boundary_condition.reaction_order,
+                                  boundary_condition.reaction_threshold)
+                                  .second;
+            }
+
+          // term: s * (dJ/du * v_m - D * g_m)
+          for (unsigned int m = 0; m < row.column_indices.size(); ++m)
+            row_matrix(0, m) =
+              row.scaling *
+              (flux_derivative * row.value_coefficients[m] -
+               diffusivity * row.normal_derivative_coefficients[m]);
+        }
 
       // The constrained columns are distributed to their master degrees of
       // freedom, which share a cell with the interface degree of freedom.
@@ -483,7 +726,6 @@ IBScalarConstraints<dim>::assemble_rhs(
   const Quadrature<dim>           &quadrature,
   const AffineConstraints<double> &constraints,
   const GlobalVectorType          &evaluation_point,
-  const Function<dim>             &boundary_value,
   GlobalVectorType                &system_rhs) const
 {
   const FiniteElement<dim> &fe              = dof_handler.get_fe();
@@ -538,9 +780,42 @@ IBScalarConstraints<dim>::assemble_rhs(
         value_at_boundary +=
           row.value_coefficients[m] * evaluation_point(row.column_indices[m]);
 
-      system_rhs(row.dof_index) =
-        -row.scaling *
-        (value_at_boundary - boundary_value.value(row.boundary_point));
+      double residual = 0.;
+      if (!imposes_flux)
+        {
+          // u_Gamma - u_D
+          residual = value_at_boundary -
+                     boundary_condition.dirichlet->value(row.boundary_point);
+        }
+      else
+        {
+          double normal_derivative_at_boundary = 0.;
+          for (unsigned int m = 0; m < row.column_indices.size(); ++m)
+            normal_derivative_at_boundary +=
+              row.normal_derivative_coefficients[m] *
+              evaluation_point(row.column_indices[m]);
+
+          // Imposed flux J into the particle: q for the neumann type, and
+          // alpha * C_eff^(n-1) * u_Gamma + q for the robin type
+          double imposed_flux =
+            boundary_condition.flux->value(row.boundary_point);
+          if (boundary_condition.type ==
+              Parameters::IBTracerBoundaryType::robin)
+            imposed_flux += compute_surface_reaction_rate(
+                              value_at_boundary,
+                              boundary_condition.reaction_constant,
+                              boundary_condition.reaction_order,
+                              boundary_condition.reaction_threshold)
+                              .first;
+
+          // J - D * du/dn. With this sign, the diagonal coefficient is
+          // usually positive, as for the equations assembled on the fluid
+          // cells, since the normal derivative on the surface decreases when
+          // the value of the degree of freedom increases.
+          residual = imposed_flux - diffusivity * normal_derivative_at_boundary;
+        }
+
+      system_rhs(row.dof_index) = -row.scaling * residual;
     }
   system_rhs.compress(VectorOperation::insert);
 }

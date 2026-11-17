@@ -4452,13 +4452,38 @@ namespace Parameters
         "type",
         type,
         "Type of the tracer boundary condition imposed on the surface of "
-        "every particle. With none, the tracer is also solved inside the "
-        "particles. With dirichlet, the tracer concentration is imposed on "
-        "the surface with the sharp-interface stencils.");
+        "every particle with the sharp-interface stencils. With none, the "
+        "tracer is also solved inside the particles. With dirichlet, the "
+        "tracer concentration is imposed. With neumann, the flux of tracer "
+        "into the particles is imposed. With robin, this flux is the rate of "
+        "a surface reaction of order n, plus the imposed flux.");
 
       prm.enter_subsection("dirichlet");
       dirichlet->declare_parameters(prm);
       prm.leave_subsection();
+
+      prm.enter_subsection("flux");
+      flux->declare_parameters(prm);
+      prm.leave_subsection();
+
+      prm.declare_entry("reaction constant",
+                        Patterns::Tools::Convert<double>::to_string(
+                          reaction_constant),
+                        Patterns::Double(0.),
+                        "Constant (alpha) of the surface reaction of the "
+                        "robin type");
+      prm.declare_entry("reaction order",
+                        Patterns::Tools::Convert<double>::to_string(
+                          reaction_order),
+                        Patterns::Double(0.),
+                        "Order (n) of the surface reaction of the robin type");
+      prm.declare_entry(
+        "reaction threshold",
+        Patterns::Tools::Convert<double>::to_string(reaction_threshold),
+        Patterns::Double(0.),
+        "Concentration (epsilon) under which the effective concentration of "
+        "the surface reaction of the robin type stops decreasing. It must be "
+        "positive when the reaction order is lower than 1.");
     }
     prm.leave_subsection();
   }
@@ -4474,6 +4499,26 @@ namespace Parameters
       prm.enter_subsection("dirichlet");
       dirichlet->parse_parameters(prm);
       prm.leave_subsection();
+
+      prm.enter_subsection("flux");
+      flux->parse_parameters(prm);
+      prm.leave_subsection();
+
+      reaction_constant  = prm.get_double("reaction constant");
+      reaction_order     = prm.get_double("reaction order");
+      reaction_threshold = prm.get_double("reaction threshold");
+
+      // Below the first order, the derivative of the reaction rate is infinite
+      // at a zero concentration, unless the effective concentration is floored
+      AssertThrow(type != IBTracerBoundaryType::robin || reaction_order >= 1. ||
+                    reaction_threshold > 0.,
+                  ExcMessage(
+                    "The reaction order of the tracer boundary condition on "
+                    "the particles is " +
+                    std::to_string(reaction_order) +
+                    ". A reaction order lower than 1 requires a positive "
+                    "<reaction threshold> in the subsection <tracer boundary "
+                    "condition> of the subsection <particles>."));
     }
     prm.leave_subsection();
   }

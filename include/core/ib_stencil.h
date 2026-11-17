@@ -114,6 +114,29 @@ public:
   coefficients(const unsigned int degree, const double length_ratio);
 
   /**
+   * @brief Return the coefficients that give the derivative of the stencil
+   * polynomial at the IB, with respect to the coordinate of the reference 1D
+   * stencil.
+   *
+   * On the reference 1D stencil, the farthest interpolation point is at 0, the
+   * DOF at 1 and the IB at 1 + length_ratio. The coefficients are sorted as
+   * those of coefficients(): from the coefficient of the DOF to the coefficient
+   * of the farthest interpolation point. If the DOF is at a distance d from the
+   * IB, the derivative of the solution at the IB along the normal pointing out
+   * of the particle is -length_ratio / d times the sum of the products of these
+   * coefficients with the values of the solution at the points of the stencil.
+   *
+   * @param[in] degree Stencil degree, from 1 to 4. The stencils of a higher
+   * degree use the cell directly (see coefficients()).
+   *
+   * @param[in] length_ratio Length ratio between the 2 side of the stencil.
+   *
+   * @return Coefficients of the derivative of the stencil polynomial.
+   */
+  virtual std::vector<double>
+  derivative_coefficients(const unsigned int degree, const double length_ratio);
+
+  /**
    * @brief Return the velocity of the IB used in the RHS of the equation.
    *
    * @param[in] p IB particle that cuts the cell.

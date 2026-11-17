@@ -14,11 +14,13 @@
 // Lethe
 #include <core/ib_particle.h>
 #include <core/ib_scalar_constraints.h>
+#include <core/parameters.h>
 #include <core/vector.h>
 
 // deal.II
 #include <deal.II/base/function.h>
 #include <deal.II/base/mpi.h>
+#include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/tria.h>
@@ -149,12 +151,25 @@ test(const unsigned int fe_degree, const unsigned int n_refinements)
   evaluation_point = locally_owned_solution;
   evaluation_point.update_ghost_values();
 
-  // Immersed boundary constraints, with the default stencil of the solver
+  // Immersed boundary constraints imposing u = 0 on the surface of the disk,
+  // with the default stencil of the solver
+  Parameters::IBTracerBoundaryCondition<2> boundary_condition;
+  ParameterHandler                         prm;
+  boundary_condition.declare_parameters(prm);
+  prm.parse_input_from_string("subsection tracer boundary condition\n"
+                              "  set type = dirichlet\n"
+                              "  subsection dirichlet\n"
+                              "    set Function expression = 0\n"
+                              "  end\n"
+                              "end\n");
+  boundary_condition.parse_parameters(prm);
+
   const unsigned int     stencil_degree = 2;
   const double           length_ratio   = 4.;
   IBScalarConstraints<2> immersed_boundary_constraints(stencil_degree,
                                                        length_ratio,
-                                                       true);
+                                                       true,
+                                                       boundary_condition);
   constexpr double       diffusivity       = 1.;
   constexpr double       inverse_time_step = 0.;
   immersed_boundary_constraints.update(dof_handler,
@@ -206,14 +221,17 @@ test(const unsigned int fe_degree, const unsigned int n_refinements)
   system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
 
-  immersed_boundary_constraints.assemble_matrix(
-    dof_handler, mapping, quadrature, zero_constraints, system_matrix);
+  immersed_boundary_constraints.assemble_matrix(dof_handler,
+                                                mapping,
+                                                quadrature,
+                                                zero_constraints,
+                                                evaluation_point,
+                                                system_matrix);
   immersed_boundary_constraints.assemble_rhs(dof_handler,
                                              mapping,
                                              quadrature,
                                              zero_constraints,
                                              evaluation_point,
-                                             Functions::ZeroFunction<2>(),
                                              system_rhs);
 
   // Newton correction, computed with a direct solver so that the result does

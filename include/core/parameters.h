@@ -2358,13 +2358,26 @@ namespace Parameters
     /// No boundary condition: the tracer is also solved inside the particles.
     none,
     /// Tracer concentration imposed on the surface of the particles.
-    dirichlet
+    dirichlet,
+    /// Flux of tracer into the particles imposed on their surface.
+    neumann,
+    /// Flux of tracer into the particles that depends on the concentration on
+    /// their surface, as for a surface reaction.
+    robin
   };
 
   /**
    * @brief Tracer boundary condition imposed on the surface of every particle
    * of the sharp-interface immersed boundary method. It is declared in the
    * subsection "tracer boundary condition" of the subsection "particles".
+   *
+   * The neumann and robin types impose the flux of tracer into the particles,
+   * \f$ J = D \partial c / \partial n \f$, where \f$ D \f$ is the tracer
+   * diffusivity and \f$ n \f$ the normal pointing out of the particle. A
+   * positive flux removes tracer from the fluid. The neumann type imposes
+   * \f$ J = q \f$ and the robin type
+   * \f$ J = \alpha C_\text{eff}^{n-1} c + q \f$, with
+   * \f$ C_\text{eff} = \sqrt{c^2 + \epsilon^2} \f$.
    *
    * @tparam dim Number of spatial dimensions.
    */
@@ -2379,6 +2392,23 @@ namespace Parameters
     /// the closest to each constrained degree of freedom.
     std::shared_ptr<Functions::ParsedFunction<dim>> dirichlet =
       std::make_shared<Functions::ParsedFunction<dim>>();
+
+    /// Flux of tracer into the particles imposed by the neumann type, and
+    /// added to the reaction rate by the robin type. It is evaluated at the
+    /// point of the surface that is the closest to each constrained degree of
+    /// freedom.
+    std::shared_ptr<Functions::ParsedFunction<dim>> flux =
+      std::make_shared<Functions::ParsedFunction<dim>>();
+
+    /// Reaction constant (alpha) of the robin type.
+    double reaction_constant = 0.;
+
+    /// Reaction order (n) of the robin type.
+    double reaction_order = 1.;
+
+    /// Concentration (epsilon) under which the effective concentration of the
+    /// robin type stops decreasing, to keep the reaction rate differentiable.
+    double reaction_threshold = 0.;
 
     /**
      * @brief Declare the parameters.

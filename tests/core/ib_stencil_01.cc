@@ -5,8 +5,11 @@
  * @brief This test checks the stencil of the sharp-interface immersed boundary
  * method. The coefficients of the stencil must extrapolate exactly, to the
  * surface of the particle, the polynomials whose degree does not exceed the
- * degree of the stencil. The interpolation points must lie on the normal to the
- * surface that passes through the degree of freedom.
+ * degree of the stencil, and the derivative coefficients must give exactly the
+ * derivatives of these polynomials on the surface. The interpolation points
+ * must lie on the normal to the surface that passes through the degree of
+ * freedom, and the derivative coefficients must give the derivative along this
+ * normal of a quadratic function.
  */
 
 // Lethe
@@ -45,23 +48,44 @@ test()
           reference_points[k] =
             0.5 * (1. - std::cos(numbers::PI * (degree - k) / degree));
 
-        double maximal_relative_error = 0.;
+        const std::vector<double> derivative_coefficients =
+          stencil.derivative_coefficients(degree, length_ratio);
+
+        // The monomial s^n and its derivative n s^(n-1) at the surface
+        double maximal_relative_error            = 0.;
+        double maximal_derivative_relative_error = 0.;
         for (unsigned int n = 0; n <= degree; ++n)
           {
-            double extrapolated_value     = 0.;
-            double sum_of_absolute_values = 0.;
+            double extrapolated_value                = 0.;
+            double sum_of_absolute_values            = 0.;
+            double extrapolated_derivative           = 0.;
+            double sum_of_absolute_derivative_values = 0.;
             for (unsigned int k = 0; k <= degree; ++k)
               {
-                const double term =
-                  coefficients[k] * std::pow(reference_points[k], n);
+                const double monomial = std::pow(reference_points[k], n);
+                const double term     = coefficients[k] * monomial;
                 extrapolated_value += term;
                 sum_of_absolute_values += std::abs(term);
+
+                const double derivative_term =
+                  derivative_coefficients[k] * monomial;
+                extrapolated_derivative += derivative_term;
+                sum_of_absolute_derivative_values += std::abs(derivative_term);
               }
             const double exact_value = std::pow(1. + length_ratio, n);
             maximal_relative_error =
               std::max(maximal_relative_error,
                        std::abs(extrapolated_value - exact_value) /
                          sum_of_absolute_values);
+
+            // The derivative of a constant is zero, so the error is only
+            // relative to the sum of the absolute values of the terms
+            const double exact_derivative =
+              (n == 0) ? 0. : n * std::pow(1. + length_ratio, n - 1);
+            maximal_derivative_relative_error =
+              std::max(maximal_derivative_relative_error,
+                       std::abs(extrapolated_derivative - exact_derivative) /
+                         sum_of_absolute_derivative_values);
           }
 
         deallog << "Length ratio " << length_ratio << ", degree " << degree
@@ -73,6 +97,17 @@ test()
                 << " are extrapolated exactly: "
                 << (maximal_relative_error < extrapolation_tolerance ? "true" :
                                                                        "false")
+                << std::endl;
+        deallog << "  Derivative coefficients:";
+        for (const double coefficient : derivative_coefficients)
+          deallog << " " << coefficient;
+        deallog << std::endl;
+        deallog << "  Derivatives of the polynomials of degree " << degree
+                << " are exact: "
+                << (maximal_derivative_relative_error <
+                        extrapolation_tolerance ?
+                      "true" :
+                      "false")
                 << std::endl;
       }
 
@@ -102,6 +137,34 @@ test()
     stencil.point_for_cell_detection(particle, dof_point);
   deallog << "Point for the cell detection: " << detection_point[0] << " "
           << detection_point[1] << std::endl;
+
+  // Derivative of f(x, y) = x^2 + y along the normal pointing out of the
+  // particle, at the point of the surface closest to the degree of freedom,
+  // (0.3, 0.4). The degree of freedom is at a distance d = 0.5 from the
+  // surface, and the derivative is -length_ratio / d times the derivative of
+  // the stencil polynomial (see IBStencil::derivative_coefficients()).
+  const auto quadratic_function = [](const Point<2> &point) {
+    return point[0] * point[0] + point[1];
+  };
+  const double       length_ratio = 4.;
+  const unsigned int degree       = 2;
+  const auto [point, interpolation_points] =
+    stencil.support_points_for_interpolation(degree,
+                                             length_ratio,
+                                             particle,
+                                             dof_point);
+  const std::vector<double> derivative_coefficients =
+    stencil.derivative_coefficients(degree, length_ratio);
+  double stencil_derivative =
+    derivative_coefficients[0] * quadratic_function(point);
+  for (unsigned int k = 1; k <= degree; ++k)
+    stencil_derivative += derivative_coefficients[k] *
+                          quadratic_function(interpolation_points[k - 1]);
+  const double distance_to_surface = 0.5;
+  deallog << "Degree " << degree
+          << ", normal derivative of x^2 + y on the surface: "
+          << -length_ratio / distance_to_surface * stencil_derivative
+          << " (exact: 1.16)" << std::endl;
 }
 
 int

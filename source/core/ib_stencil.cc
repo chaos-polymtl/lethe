@@ -6,6 +6,8 @@
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/vector.h>
 
+#include <string>
+
 template <int dim>
 unsigned int
 IBStencil<dim>::number_of_interpolation_support_points(
@@ -92,6 +94,39 @@ IBStencil<dim>::coefficients(const unsigned int degree,
     }
 
   return coef;
+}
+
+template <int dim>
+std::vector<double>
+IBStencil<dim>::derivative_coefficients(const unsigned int degree,
+                                        const double       length_ratio)
+{
+  AssertThrow(degree <= 4,
+              ExcMessage("The derivative of the IB stencil is only defined for "
+                         "stencil degrees 1 to 4, but the degree is " +
+                         std::to_string(degree) +
+                         ". The stencils of a higher degree use the cell "
+                         "directly."));
+  p_base(degree);
+
+  // Column i of the inverse of the Vandermonde matrix holds the monomial
+  // coefficients of the Lagrange polynomial of the reference point i.
+  FullMatrix<double> vandermonde(degree + 1, degree + 1);
+  for (unsigned int i = 0; i < degree + 1; ++i)
+    for (unsigned int j = 0; j < degree + 1; ++j)
+      vandermonde(i, j) = std::pow(reference_points[i], j);
+  FullMatrix<double> inverse_vandermonde(degree + 1, degree + 1);
+  inverse_vandermonde.invert(vandermonde);
+
+  // Derivative of the Lagrange polynomial of each reference point at the IB.
+  // The DOF is the last reference point, but its coefficient comes first.
+  std::vector<double> stencil_derivative_coefficients(degree + 1, 0.);
+  for (unsigned int i = 0; i < degree + 1; ++i)
+    for (unsigned int j = 1; j < degree + 1; ++j)
+      stencil_derivative_coefficients[degree - i] +=
+        j * inverse_vandermonde(j, i) * std::pow(1. + length_ratio, j - 1);
+
+  return stencil_derivative_coefficients;
 }
 
 template <int dim>

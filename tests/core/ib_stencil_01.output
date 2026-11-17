@@ -1,28 +1,53 @@
 
 DEAL::Length ratio 1.00000, degree 1, coefficients: 2.00000 -1.00000
 DEAL::  Polynomials of degree 1 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 1.00000 -1.00000
+DEAL::  Derivatives of the polynomials of degree 1 are exact: true
 DEAL::Length ratio 1.00000, degree 2, coefficients: 6.00000 -8.00000 3.00000
 DEAL::  Polynomials of degree 2 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 7.00000 -12.0000 5.00000
+DEAL::  Derivatives of the polynomials of degree 2 are exact: true
 DEAL::Length ratio 1.00000, degree 3, coefficients: 23.3333 -37.3333 26.6667 -11.6667
 DEAL::  Polynomials of degree 3 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 43.6667 -77.3333 61.3333 -27.6667
+DEAL::  Derivatives of the polynomials of degree 3 are exact: true
 DEAL::Length ratio 1.00000, degree 4, coefficients: 102.000 -177.941 136.000 -110.059 51.0000
 DEAL::  Polynomials of degree 4 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 263.000 -481.539 396.000 -334.461 157.000
+DEAL::  Derivatives of the polynomials of degree 4 are exact: true
 DEAL::Length ratio 4.00000, degree 1, coefficients: 5.00000 -4.00000
 DEAL::  Polynomials of degree 1 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 1.00000 -1.00000
+DEAL::  Derivatives of the polynomials of degree 1 are exact: true
 DEAL::Length ratio 4.00000, degree 2, coefficients: 45.0000 -80.0000 36.0000
 DEAL::  Polynomials of degree 2 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 19.0000 -36.0000 17.0000
+DEAL::  Derivatives of the polynomials of degree 2 are exact: true
 DEAL::Length ratio 4.00000, degree 3, coefficients: 538.333 -1013.33 906.667 -430.667
 DEAL::  Polynomials of degree 3 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 347.667 -669.333 621.333 -299.667
+DEAL::  Derivatives of the polynomials of degree 3 are exact: true
 DEAL::Length ratio 4.00000, degree 4, coefficients: 7245.00 -13978.2 12880.0 -11941.8 5796.00
 DEAL::  Polynomials of degree 4 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 6299.00 -12276.5 11556.0 -10907.5 5329.00
+DEAL::  Derivatives of the polynomials of degree 4 are exact: true
 DEAL::Length ratio 8.00000, degree 1, coefficients: 9.00000 -8.00000
 DEAL::  Polynomials of degree 1 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 1.00000 -1.00000
+DEAL::  Derivatives of the polynomials of degree 1 are exact: true
 DEAL::Length ratio 8.00000, degree 2, coefficients: 153.000 -288.000 136.000
 DEAL::  Polynomials of degree 2 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 35.0000 -68.0000 33.0000
+DEAL::  Derivatives of the polynomials of degree 2 are exact: true
 DEAL::Length ratio 8.00000, degree 3, coefficients: 3465.00 -6720.00 6336.00 -3080.00
 DEAL::  Polynomials of degree 3 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 1201.00 -2354.67 2264.00 -1110.33
+DEAL::  Derivatives of the polynomials of degree 3 are exact: true
 DEAL::Length ratio 8.00000, degree 4, coefficients: 88281.0 -173388. 166176. -159540. 78472.0
 DEAL::  Polynomials of degree 4 are extrapolated exactly: true
+DEAL::  Derivative coefficients: 41003.0 -80921.4 78404.0 -76022.6 37537.0
+DEAL::  Derivatives of the polynomials of degree 4 are exact: true
 DEAL::Degree 1, stencil point: 0.600000 0.800000, interpolation points: (0.675000 0.900000)
 DEAL::Degree 2, stencil point: 0.600000 0.800000, interpolation points: (0.637500 0.850000) (0.675000 0.900000)
 DEAL::Point for the cell detection: 0.618750 0.825000
+DEAL::Degree 2, normal derivative of x^2 + y on the surface: 1.16000 (exact: 1.16)

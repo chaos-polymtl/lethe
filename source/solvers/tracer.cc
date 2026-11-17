@@ -146,6 +146,7 @@ Tracer<dim>::assemble_system_matrix_cg()
                                                    *this->get_mapping(),
                                                    *this->cell_quadrature,
                                                    this->zero_constraints,
+                                                   this->evaluation_point,
                                                    system_matrix);
 }
 
@@ -480,16 +481,16 @@ Tracer<dim>::assemble_system_rhs_cg()
   // immersed boundary method
   if (immersed_boundary_constraints)
     {
-      Functions::ParsedFunction<dim> &boundary_concentration =
-        *simulation_parameters.particlesParameters->tracer_boundary_condition
-           .dirichlet;
-      boundary_concentration.set_time(simulation_control->get_current_time());
+      const Parameters::IBTracerBoundaryCondition<dim> &boundary_condition =
+        simulation_parameters.particlesParameters->tracer_boundary_condition;
+      const double time = simulation_control->get_current_time();
+      boundary_condition.dirichlet->set_time(time);
+      boundary_condition.flux->set_time(time);
       immersed_boundary_constraints->assemble_rhs(*this->dof_handler,
                                                   *this->get_mapping(),
                                                   *this->cell_quadrature,
                                                   this->zero_constraints,
                                                   this->evaluation_point,
-                                                  boundary_concentration,
                                                   this->system_rhs);
     }
 }
@@ -1452,11 +1453,18 @@ Tracer<dim>::setup_immersed_boundary_constraints()
   const Parameters::IBParticles<dim> &particles_parameters =
     *simulation_parameters.particlesParameters;
 
-  switch (particles_parameters.tracer_boundary_condition.type)
+  const Parameters::IBTracerBoundaryCondition<dim> &boundary_condition =
+    particles_parameters.tracer_boundary_condition;
+  bool boundary_condition_imposes_flux = false;
+  switch (boundary_condition.type)
     {
       case Parameters::IBTracerBoundaryType::none:
         return;
       case Parameters::IBTracerBoundaryType::dirichlet:
+        break;
+      case Parameters::IBTracerBoundaryType::neumann:
+      case Parameters::IBTracerBoundaryType::robin:
+        boundary_condition_imposes_flux = true;
         break;
     }
 
@@ -1504,6 +1512,17 @@ Tracer<dim>::setup_immersed_boundary_constraints()
         "and immersed_boundary_gaussian, since the tracer is not solved inside "
         "the particles. Use constant models."));
 
+  // The flux on the surface of the particles is computed with the diffusivity
+  // of the first fluid
+  AssertThrow(
+    !boundary_condition_imposes_flux ||
+      properties_manager.get_number_of_fluids() == 1,
+    ExcMessage(
+      "The neumann and robin tracer boundary conditions on the particles of "
+      "the sharp-interface immersed boundary method require a single fluid, "
+      "but the number of fluids is " +
+      std::to_string(properties_manager.get_number_of_fluids()) + "."));
+
   for (const IBParticle<dim> &particle :
        multiphysics->get_immersed_boundary_particles())
     AssertThrow(
@@ -1519,7 +1538,8 @@ Tracer<dim>::setup_immersed_boundary_constraints()
     immersed_boundary_constraints = std::make_unique<IBScalarConstraints<dim>>(
       particles_parameters.stencil_degree,
       particles_parameters.length_ratio,
-      particles_parameters.enable_extrapolation);
+      particles_parameters.enable_extrapolation,
+      boundary_condition);
 
   // Force the update of the constraints at the next assembly
   immersed_boundary_constraints_iteration = numbers::invalid_unsigned_int;
@@ -1540,8 +1560,10 @@ Tracer<dim>::update_immersed_boundary_constraints()
   TimerOutput::Scope t(this->computing_timer,
                        "Update immersed boundary constraints");
 
-  // The diffusivity and the time step only scale the equations of the
-  // immersed boundary constraints. The diffusivity of the first fluid is used.
+  // The diffusivity and the time step scale the equations of the immersed
+  // boundary constraints, and the diffusivity multiplies the normal derivative
+  // in the flux imposed by the neumann and robin types. The diffusivity of the
+  // first fluid is used.
   const double diffusivity =
     simulation_parameters.physical_properties_manager.get_tracer_diffusivity()
       ->value(std::map<field, double>());

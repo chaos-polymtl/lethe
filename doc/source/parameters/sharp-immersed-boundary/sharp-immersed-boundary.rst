@@ -29,9 +29,16 @@ to define a conformal mesh for the fluid between the particles.
      end
 
      subsection tracer boundary condition
-       set type = none
+       set type               = none
+       set reaction constant  = 0
+       set reaction order     = 1
+       set reaction threshold = 0
 
        subsection dirichlet
+         set Function expression = 0
+       end
+
+       subsection flux
          set Function expression = 0
        end
      end
@@ -183,11 +190,37 @@ to define a conformal mesh for the fluid between the particles.
       subsection is imposed on the surface of the particles. For example, a
       concentration of ``0`` models a surface reaction that is much faster than
       the transport of the tracer towards the particles.
+    * ``neumann``: the flux of tracer into the particles, :math:`J = D \partial
+      C / \partial n`, is imposed. :math:`D` is the tracer diffusivity and
+      :math:`n` the normal pointing out of the particle. The flux is given in
+      the ``flux`` subsection. A positive flux removes tracer from the fluid, as
+      for the heat flux of the heat transfer boundary conditions.
+    * ``robin``: the flux into the particles is the rate of a surface reaction
+      of order :math:`n`, plus the flux :math:`q` given in the ``flux``
+      subsection:
+
+      .. math::
+          J = \alpha \: C_\text{eff}^{n-1} \: C + q \quad \text{with} \quad
+          C_\text{eff} = \sqrt{C^2 + \varepsilon^2}
+
+      where :math:`C` is the concentration on the surface. The effective
+      concentration is the one of the tracer reaction in the fluid (see
+      :doc:`../cfd/physical_properties`).
 
   * The ``dirichlet`` subsection contains the function of the tracer
     concentration imposed on the surface of the particles. It can depend on the
     position and on time, and it is evaluated at the point of the surface that
     is the closest to each constrained degree of freedom.
+
+  * The ``flux`` subsection contains the function of the flux :math:`q` of the
+    ``neumann`` and ``robin`` types. It is evaluated as the ``dirichlet``
+    function.
+
+  * The ``reaction constant`` (:math:`\alpha`), ``reaction order``
+    (:math:`n`) and ``reaction threshold`` (:math:`\varepsilon`) define the surface
+    reaction of the ``robin`` type. A reaction order lower than 1 requires a
+    positive threshold, since the derivative of the reaction rate is otherwise
+    infinite for a zero concentration.
 
   With a type other than ``none``, the tracer is no longer solved inside the
   particles. Inside them, it is a harmonic extension of the solution in the
@@ -200,7 +233,8 @@ to define a conformal mesh for the fluid between the particles.
      This boundary condition requires continuous elements for the tracer
      (``tracer uses dg = false``) and a mesh made of quadrilaterals or
      hexahedra. The shapes of the particles must have a signed distance
-     function, which excludes the shapes loaded from IGES files.
+     function, which excludes the shapes loaded from IGES files. The
+     ``neumann`` and ``robin`` types also require a single fluid.
 
 * The ``output`` subsection contains the parameters controlling the information
   printed in the terminal and output files.

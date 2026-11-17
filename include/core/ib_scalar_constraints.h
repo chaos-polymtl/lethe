@@ -5,9 +5,9 @@
 #define lethe_ib_scalar_constraints_h
 
 #include <core/ib_particle.h>
+#include <core/parameters.h>
 #include <core/vector.h>
 
-#include <deal.II/base/function.h>
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature.h>
@@ -35,7 +35,11 @@ using namespace dealii;
  * freedom located next to the surface of the particles is replaced by a
  * polynomial stencil (see IBStencil). The stencil extrapolates the solution of
  * a neighbouring fluid cell along the normal to the surface, where the
- * boundary condition is imposed.
+ * boundary condition is imposed. The boundary condition imposes either the
+ * value of the field (dirichlet type), or the flux into the particles
+ * \f$ D \partial u / \partial n \f$ (neumann and robin types), where
+ * \f$ D \f$ is the diffusivity and \f$ n \f$ the normal pointing out of the
+ * particle (see Parameters::IBTracerBoundaryCondition).
  *
  * Each locally owned or ghost cell is classified as:
  * - a fluid cell, if all its support points are outside the particles;
@@ -61,6 +65,12 @@ using namespace dealii;
  *   however gives a value consistent with the solution to the degrees of
  *   freedom that a moving particle uncovers.
  *
+ * When no valid stencil is found for an interface degree of freedom, the
+ * boundary condition is imposed to first order at the degree of freedom: the
+ * dirichlet value is imposed on the degree of freedom, and the flux is
+ * computed with the value and the gradient of the solution at the degree of
+ * freedom, in a fluid cell that contains it.
+ *
  * The solver must only assemble its equation on the fluid cells (see
  * is_fluid_cell()), then call assemble_matrix() and assemble_rhs().
  *
@@ -79,13 +89,19 @@ public:
    * @param[in] p_length_ratio Length ratio of the immersed boundary stencil
    * (see IBStencil).
    *
-   * @param[in] p_enable_extrapolation If false, the boundary value is imposed
-   * directly on every interface degree of freedom, without stencil. This is
-   * intended for debugging purposes.
+   * @param[in] p_enable_extrapolation If false, the boundary condition is
+   * imposed to first order on every interface degree of freedom, without
+   * stencil. This is intended for debugging purposes.
+   *
+   * @param[in] p_boundary_condition Boundary condition imposed on the surface
+   * of the particles. Its type must not be none. Its functions are shared with
+   * the caller, which must set their time before assemble_rhs() is called.
    */
-  IBScalarConstraints(const unsigned int p_stencil_degree,
-                      const double       p_length_ratio,
-                      const bool         p_enable_extrapolation);
+  IBScalarConstraints(
+    const unsigned int                                p_stencil_degree,
+    const double                                      p_length_ratio,
+    const bool                                        p_enable_extrapolation,
+    const Parameters::IBTracerBoundaryCondition<dim> &p_boundary_condition);
 
   /**
    * @brief Classify the cells and the degrees of freedom with respect to the
@@ -109,8 +125,10 @@ public:
    * @param[in] constraints Constraints of the Newton correction of the scalar
    * field (hanging nodes, Dirichlet and periodic boundary conditions).
    *
-   * @param[in] p_diffusivity Diffusivity of the scalar field. It is only used
-   * to scale the equations of the interface and extension degrees of freedom.
+   * @param[in] p_diffusivity Diffusivity of the scalar field. It scales the
+   * equations of the interface and extension degrees of freedom and, for the
+   * neumann and robin types, it multiplies the normal derivative in the flux.
+   * It must then be positive.
    *
    * @param[in] p_inverse_time_step Inverse of the time step, zero for a steady
    * simulation. It is only used to scale the equations of the interface and
@@ -157,6 +175,9 @@ public:
    *
    * @param[in] constraints Constraints given to update().
    *
+   * @param[in] evaluation_point Solution at which the Jacobian is evaluated.
+   * It must have its ghost values. Only the robin type depends on it.
+   *
    * @param[in,out] system_matrix System matrix (Jacobian) of the scalar field.
    */
   void
@@ -164,6 +185,7 @@ public:
                   const Mapping<dim>              &mapping,
                   const Quadrature<dim>           &quadrature,
                   const AffineConstraints<double> &constraints,
+                  const GlobalVectorType          &evaluation_point,
                   TrilinosWrappers::SparseMatrix  &system_matrix) const;
 
   /**
@@ -172,7 +194,8 @@ public:
    * every interface degree of freedom by the residual of its stencil. The
    * right-hand side is the opposite of the residual, as for the Newton
    * correction. The solver must have assembled and compressed its equation on
-   * the fluid cells before.
+   * the fluid cells before, and set the time of the functions of the boundary
+   * condition.
    *
    * @param[in] dof_handler DoFHandler given to update().
    *
@@ -185,9 +208,6 @@ public:
    * @param[in] evaluation_point Solution at which the residual is evaluated.
    * It must have its ghost values.
    *
-   * @param[in] boundary_value Value of the scalar field imposed on the surface
-   * of the particles. Its time must be set by the caller.
-   *
    * @param[in,out] system_rhs Right-hand side of the scalar field.
    */
   void
@@ -196,7 +216,6 @@ public:
                const Quadrature<dim>           &quadrature,
                const AffineConstraints<double> &constraints,
                const GlobalVectorType          &evaluation_point,
-               const Function<dim>             &boundary_value,
                GlobalVectorType                &system_rhs) const;
 
   /**
@@ -213,8 +232,8 @@ public:
 
   /**
    * @brief Return the number of interface degrees of freedom on which the
-   * boundary value is imposed directly because no valid stencil was found,
-   * summed over all the processes.
+   * boundary condition is imposed to first order because no valid stencil was
+   * found, summed over all the processes.
    *
    * @return Number of interface degrees of freedom without stencil.
    */
@@ -252,13 +271,21 @@ private:
   };
 
   /**
-   * @brief Stencil equation of a locally owned interface degree of freedom.
-   * The equation is
-   * \f$ s \left( \sum_m v_m u_m - g(\mathbf{x}_\Gamma) \right) = 0 \f$,
-   * where \f$ s \f$ is the scaling, \f$ v_m \f$ the value coefficients,
-   * \f$ u_m \f$ the degrees of freedom of the stencil cell, \f$ g \f$ the
-   * boundary value and \f$ \mathbf{x}_\Gamma \f$ the point of the surface
-   * closest to the degree of freedom.
+   * @brief Equation of a locally owned interface degree of freedom. The value
+   * of the solution at the point of the surface closest to the degree of
+   * freedom, \f$ \mathbf{x}_\Gamma \f$, is
+   * \f$ u_\Gamma = \sum_m v_m u_m \f$, and its derivative along the normal
+   * pointing out of the particle is
+   * \f$ \partial_n u_\Gamma = \sum_m g_m u_m \f$, where \f$ v_m \f$ are the
+   * value coefficients, \f$ g_m \f$ the normal derivative coefficients and
+   * \f$ u_m \f$ the degrees of freedom of the stencil cell. The equation is
+   * \f$ s \left( u_\Gamma - u_D(\mathbf{x}_\Gamma) \right) = 0 \f$ for the
+   * dirichlet type and
+   * \f$ s \left( J(u_\Gamma, \mathbf{x}_\Gamma) - D \partial_n u_\Gamma
+   * \right) = 0 \f$ for the neumann and robin types, where \f$ s \f$ is the
+   * scaling, \f$ u_D \f$ the imposed value and \f$ J \f$ the imposed flux.
+   * With these signs, the diagonal coefficient of both equations is usually
+   * positive, as for the equations assembled on the fluid cells.
    */
   struct InterfaceRow
   {
@@ -270,6 +297,10 @@ private:
     std::vector<types::global_dof_index> column_indices;
     /// Coefficients giving the value of the solution at the boundary point.
     std::vector<double> value_coefficients;
+    /// Coefficients giving the derivative of the solution at the boundary
+    /// point along the normal pointing out of the particle. It is empty for
+    /// the dirichlet type.
+    std::vector<double> normal_derivative_coefficients;
     /// Scaling of the equation, of the order of the diagonal of the matrix.
     double scaling;
   };
@@ -304,10 +335,18 @@ private:
   /// Length ratio of the immersed boundary stencil.
   const double length_ratio;
 
-  /// If false, the boundary value is imposed without stencil.
+  /// If false, the boundary condition is imposed without stencil.
   const bool enable_extrapolation;
 
-  /// Diffusivity of the scalar field, used to scale the equations.
+  /// Boundary condition imposed on the surface of the particles.
+  const Parameters::IBTracerBoundaryCondition<dim> boundary_condition;
+
+  /// True if the boundary condition imposes the flux (neumann and robin
+  /// types), false if it imposes the value (dirichlet type).
+  const bool imposes_flux;
+
+  /// Diffusivity of the scalar field, used to scale the equations and in the
+  /// flux.
   double diffusivity;
 
   /// Inverse of the time step (zero if steady), used to scale the equations.
@@ -324,8 +363,8 @@ private:
   /// position in locally_relevant_dofs.
   std::vector<DoFCategory> dof_categories;
 
-  /// Stencil equations of the locally owned interface degrees of freedom that
-  /// are not constrained.
+  /// Equations of the locally owned interface degrees of freedom that are not
+  /// constrained.
   std::vector<InterfaceRow> interface_rows;
 
   /// Number of interface degrees of freedom, summed over all the processes.
