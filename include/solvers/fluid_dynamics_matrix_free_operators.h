@@ -140,12 +140,15 @@ evaluate_function(const Function<dim>                       &function,
  */
 inline bool
 boundary_condition_requires_face_assembly(
-  BoundaryConditions::BoundaryType boundary_type)
+  BoundaryConditions::FluidDynamicsBoundaryType boundary_type)
 {
-  if (boundary_type == BoundaryConditions::BoundaryType::function_weak ||
-      boundary_type == BoundaryConditions::BoundaryType::outlet ||
-      boundary_type == BoundaryConditions::BoundaryType::pressure ||
-      boundary_type == BoundaryConditions::BoundaryType::neumann_traction)
+  if (boundary_type ==
+        BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+      boundary_type == BoundaryConditions::FluidDynamicsBoundaryType::outlet ||
+      boundary_type ==
+        BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+      boundary_type ==
+        BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
     return true;
   else
     return false;

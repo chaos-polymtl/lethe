@@ -400,7 +400,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   this->assemblers.clear();
 
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::function_weak))
+        BoundaryConditions::FluidDynamicsBoundaryType::function_weak))
     {
       this->assemblers.emplace_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
@@ -408,21 +408,23 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::partial_slip))
+        BoundaryConditions::FluidDynamicsBoundaryType::partial_slip))
     {
       this->assemblers.emplace_back(
         std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::outlet))
     {
       this->assemblers.emplace_back(
         std::make_shared<OutletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::pressure))
     {
       this->assemblers.emplace_back(
         std::make_shared<PressureBoundaryCondition<dim>>(
@@ -431,7 +433,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
     }
 
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::neumann_traction))
+        BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction))
     {
       this->assemblers.emplace_back(
         std::make_shared<NeumannTractionBoundaryCondition<dim>>(

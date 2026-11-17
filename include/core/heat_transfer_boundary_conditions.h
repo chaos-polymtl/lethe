@@ -5,6 +5,7 @@
 #define lethe_heat_transfer_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
@@ -17,12 +18,32 @@ using namespace dealii;
 
 namespace BoundaryConditions
 {
-  /// Boundary condition types of the heat transfer
-  inline const std::vector<BoundaryType> heat_transfer_boundary_types = {
-    BoundaryType::noflux,
-    BoundaryType::temperature,
-    BoundaryType::convection_radiation,
-    BoundaryType::periodic};
+  /// Boundary condition types of the heat transfer. periodic_neighbor is not a
+  /// user choice: it is assigned to the boundary matching a periodic boundary.
+  enum class HeatTransferBoundaryType
+  {
+    noflux,
+    temperature,
+    convection_radiation,
+    periodic,
+    periodic_neighbor
+  };
+
+  /// Deprecated strings of the heat transfer boundary condition "type"
+  /// parameter, which remain accepted in parameter files
+  inline const DeprecatedEnumNames<HeatTransferBoundaryType>
+    deprecated_heat_transfer_boundary_type_names = {
+      {"convection-radiation-flux",
+       HeatTransferBoundaryType::convection_radiation}};
+
+  /// Boundary condition types of the heat transfer which can be selected in
+  /// the parameter file
+  inline const std::vector<HeatTransferBoundaryType>
+    heat_transfer_boundary_types = {
+      HeatTransferBoundaryType::noflux,
+      HeatTransferBoundaryType::temperature,
+      HeatTransferBoundaryType::convection_radiation,
+      HeatTransferBoundaryType::periodic};
 
   /**
    * @brief This class manages the boundary conditions for Heat-Transfer solver
@@ -35,7 +56,7 @@ namespace BoundaryConditions
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
    *
-   *  - if bc type is "convection-radiation-flux" (Robin condition), "h" is the
+   *  - if bc type is "convection_radiation" (Robin condition), "h" is the
    * convective heat transfer coefficient and "Tinf" is the
    * environment temperature at the boundary, "emissivity" is the emissivity
    * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
@@ -44,7 +65,8 @@ namespace BoundaryConditions
    *
    */
   template <int dim>
-  class HeatTransferBoundaryConditions : public BoundaryConditions
+  class HeatTransferBoundaryConditions
+    : public BoundaryConditions<HeatTransferBoundaryType>
   {
   public:
     /// Temperature values for Dirichlet boundary conditions

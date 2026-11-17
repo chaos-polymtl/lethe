@@ -39,7 +39,7 @@ CLSLinearSubequationsSolver<dim>::setup_dofs()
   for (auto const &[id, type] :
        this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CLSBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.cls_boundary_conditions

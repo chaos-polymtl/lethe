@@ -665,9 +665,10 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::pressure ||
-          type == BoundaryConditions::BoundaryType::function_weak ||
-          type == BoundaryConditions::BoundaryType::partial_slip)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+          type ==
+            BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
         {
           Assert(
             false,

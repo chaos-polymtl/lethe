@@ -730,10 +730,10 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_waveguide_port_excitation(
 template <int dim>
 std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
 TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_robin_boundary_data(
-  const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-  const unsigned int                         q,
-  const BoundaryConditions::BoundaryType     bc_type,
-  const unsigned int                         waveguide_port_index) const
+  const TimeHarmonicMaxwellScratchData<dim>                &scratch_data,
+  const unsigned int                                        q,
+  const BoundaryConditions::TimeHarmonicMaxwellBoundaryType bc_type,
+  const unsigned int waveguide_port_index) const
 {
   static constexpr std::complex<double> imag{0., 1.};
 
@@ -743,14 +743,16 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_robin_boundary_data(
   const Point<dim>        &position = scratch_data.face_quadrature_points[q];
   const types::boundary_id face_id  = scratch_data.face_boundary_id;
 
-  if (bc_type == BoundaryConditions::BoundaryType::silver_muller)
+  if (bc_type ==
+      BoundaryConditions::TimeHarmonicMaxwellBoundaryType::silver_muller)
     {
       boundary_surface_admittance =
         std::sqrt(scratch_data.face_effective_electric_permittivities[q] /
                   scratch_data.face_effective_magnetic_permeabilities[q]);
       g_inc = 0.;
     }
-  if (bc_type == BoundaryConditions::BoundaryType::impedance_boundary)
+  if (bc_type ==
+      BoundaryConditions::TimeHarmonicMaxwellBoundaryType::impedance_boundary)
     {
       boundary_surface_admittance =
         boundary_conditions.surface_admittance_real.at(face_id)->value(
@@ -780,7 +782,8 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::compute_robin_boundary_data(
       else
         AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
     }
-  if (bc_type == BoundaryConditions::BoundaryType::waveguide_port)
+  if (bc_type ==
+      BoundaryConditions::TimeHarmonicMaxwellBoundaryType::waveguide_port)
     {
       std::tie(g_inc, boundary_surface_admittance) =
         compute_waveguide_port_excitation(
@@ -803,13 +806,14 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_matrix(
   if (!scratch_data.face_at_boundary)
     return;
 
-  const BoundaryConditions::BoundaryType bc_type =
+  const BoundaryConditions::TimeHarmonicMaxwellBoundaryType bc_type =
     boundary_conditions.type.at(scratch_data.face_boundary_id);
   if (!is_robin_boundary_type(bc_type))
     return;
 
   const unsigned int waveguide_port_index =
-    (bc_type == BoundaryConditions::BoundaryType::waveguide_port) ?
+    (bc_type ==
+     BoundaryConditions::TimeHarmonicMaxwellBoundaryType::waveguide_port) ?
       get_waveguide_port_index(time_harmonic_maxwell_parameters,
                                scratch_data.face_boundary_id) :
       0;
@@ -1008,13 +1012,14 @@ TimeHarmonicMaxwellAssemblerRobinBC<dim>::assemble_rhs(
   if (!scratch_data.face_at_boundary)
     return;
 
-  const BoundaryConditions::BoundaryType bc_type =
+  const BoundaryConditions::TimeHarmonicMaxwellBoundaryType bc_type =
     boundary_conditions.type.at(scratch_data.face_boundary_id);
   if (!is_robin_boundary_type(bc_type))
     return;
 
   const unsigned int waveguide_port_index =
-    (bc_type == BoundaryConditions::BoundaryType::waveguide_port) ?
+    (bc_type ==
+     BoundaryConditions::TimeHarmonicMaxwellBoundaryType::waveguide_port) ?
       get_waveguide_port_index(time_harmonic_maxwell_parameters,
                                scratch_data.face_boundary_id) :
       0;

@@ -27,11 +27,12 @@ namespace BoundaryConditions
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry("type",
-                      "outlet",
-                      Patterns::Selection("dirichlet|outlet|periodic|none"),
-                      "Type of boundary condition for tracer"
-                      "Choices are <dirichlet|outlet|periodic|none>.");
+    declare_enum_entry(prm,
+                       "type",
+                       TracerBoundaryType::outlet,
+                       "Type of boundary condition for the tracer.",
+                       {},
+                       tracer_boundary_types);
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -112,45 +113,30 @@ namespace BoundaryConditions
         // Allocate function for tracer
         tracer[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
-        const std::string op = prm.get("type");
-        if (op == "dirichlet")
+        const TracerBoundaryType boundary_type =
+          string_to_enum<TracerBoundaryType>(prm.get("type"));
+        this->type[boundary_id] = boundary_type;
+        if (boundary_type == TracerBoundaryType::dirichlet)
           {
-            this->type[boundary_id] = BoundaryType::tracer_dirichlet;
             prm.enter_subsection("dirichlet");
-
             tracer[boundary_id]->parse_parameters(prm);
             prm.leave_subsection();
           }
-        else if (op == "outlet")
-          {
-            this->type[boundary_id] = BoundaryType::outlet;
-          }
-        else if (op == "periodic")
+        else if (boundary_type == TracerBoundaryType::periodic)
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
 
-            this->type[boundary_id] = BoundaryType::periodic;
-
             // We attribute a periodic neighbor boundary type to the neighbor
             // boundary to ensure that all boundaries have a defined type
-            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+            this->type[periodic_boundary_id] =
+              TracerBoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
               .neighbor_id = periodic_boundary_id,
               .direction   = static_cast<unsigned int>(
                 prm.get_integer("periodic direction"))};
-          }
-        else if (op == "none")
-          {
-            this->type[boundary_id] = BoundaryType::none;
-          }
-        else
-          {
-            AssertThrow(false,
-                        ExcMessage(
-                          "Unknown boundary condition type for tracers."));
           }
       }
   }

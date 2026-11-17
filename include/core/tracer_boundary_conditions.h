@@ -5,24 +5,45 @@
 #define lethe_tracer_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
 #include <map>
 #include <memory>
+#include <vector>
 
 using namespace dealii;
 
 namespace BoundaryConditions
 {
+  /// Boundary condition types of the tracer. periodic_neighbor is not a user
+  /// choice: it is assigned to the boundary matching a periodic boundary.
+  enum class TracerBoundaryType
+  {
+    none,
+    dirichlet,
+    outlet,
+    periodic,
+    periodic_neighbor
+  };
+
+  /// Boundary condition types of the tracer which can be selected in the
+  /// parameter file
+  inline const std::vector<TracerBoundaryType> tracer_boundary_types = {
+    TracerBoundaryType::none,
+    TracerBoundaryType::dirichlet,
+    TracerBoundaryType::outlet,
+    TracerBoundaryType::periodic};
+
   /**
    * @brief This class manages the boundary conditions for Tracer solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
   template <int dim>
-  class TracerBoundaryConditions : public BoundaryConditions
+  class TracerBoundaryConditions : public BoundaryConditions<TracerBoundaryType>
   {
   public:
     std::map<types::boundary_id,

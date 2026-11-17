@@ -1579,7 +1579,7 @@ HeatTransfer<dim>::setup_dofs()
          this->simulation_parameters.boundary_conditions_ht.type)
       {
         // Dirichlet condition : imposed temperature at i_bc
-        if (type == BoundaryConditions::BoundaryType::temperature)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -1588,7 +1588,7 @@ HeatTransfer<dim>::setup_dofs()
                  .dirichlet_value.at(id),
               nonzero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::periodic)
           {
             const auto &periodic_boundary =
               this->simulation_parameters.boundary_conditions_ht
@@ -1625,7 +1625,7 @@ HeatTransfer<dim>::setup_dofs()
     for (auto const &[id, type] :
          this->simulation_parameters.boundary_conditions_ht.type)
       {
-        if (type == BoundaryConditions::BoundaryType::temperature)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -1633,7 +1633,7 @@ HeatTransfer<dim>::setup_dofs()
               Functions::ZeroFunction<dim>(),
               zero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::periodic)
           {
             const auto &periodic_boundary =
               this->simulation_parameters.boundary_conditions_ht
@@ -1714,7 +1714,7 @@ HeatTransfer<dim>::update_boundary_conditions()
        this->simulation_parameters.boundary_conditions_ht.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (type == BoundaryConditions::BoundaryType::temperature)
+      if (type == BoundaryConditions::HeatTransferBoundaryType::temperature)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -1723,7 +1723,7 @@ HeatTransfer<dim>::update_boundary_conditions()
                .at(id),
             nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::HeatTransferBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_ht

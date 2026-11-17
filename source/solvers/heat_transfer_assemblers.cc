@@ -388,7 +388,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
     {
       if (this->boundary_conditions_ht.type.at(
             scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::convection_radiation)
+          BoundaryConditions::HeatTransferBoundaryType::convection_radiation)
         {
           // Robin boundary condition, loop on faces (Newton's cooling law +
           // Stefan-Boltzmann law) implementation similar to deal.ii step-7
@@ -451,7 +451,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
     {
       if (this->boundary_conditions_ht.type.at(
             scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::convection_radiation)
+          BoundaryConditions::HeatTransferBoundaryType::convection_radiation)
         {
           Function<dim> &h_function = *(this->boundary_conditions_ht.h.at(
             scratch_data.boundary_face_id[f]));

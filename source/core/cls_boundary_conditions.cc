@@ -27,11 +27,12 @@ namespace BoundaryConditions
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry("type",
-                      "none",
-                      Patterns::Selection("none|dirichlet|periodic"),
-                      "Type of boundary condition for CLS"
-                      "Choices are <none|dirichlet|periodic>.");
+    declare_enum_entry(prm,
+                       "type",
+                       CLSBoundaryType::none,
+                       "Type of boundary condition for the CLS.",
+                       {},
+                       cls_boundary_types);
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -107,30 +108,26 @@ namespace BoundaryConditions
         AssertThrow(this->type.find(boundary_id) == this->type.end(),
                     CLSBoundaryDuplicated(boundary_id));
 
-        if (auto const option = prm.get("type"); option == "none")
+        const CLSBoundaryType boundary_type =
+          string_to_enum<CLSBoundaryType>(prm.get("type"));
+        this->type[boundary_id] = boundary_type;
+        if (boundary_type == CLSBoundaryType::dirichlet)
           {
-            this->type[boundary_id] = BoundaryType::none;
-          }
-
-        if (auto const option = prm.get("type"); option == "dirichlet")
-          {
-            this->type[boundary_id] = BoundaryType::cls_dirichlet;
             prm.enter_subsection("dirichlet");
             phase_indicator[boundary_id] =
               std::make_shared<Functions::ParsedFunction<dim>>();
             phase_indicator[boundary_id]->parse_parameters(prm);
             prm.leave_subsection();
           }
-        if (auto const option = prm.get("type"); option == "periodic")
+        else if (boundary_type == CLSBoundaryType::periodic)
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
 
-            this->type[boundary_id] = BoundaryType::periodic;
-
             // We attribute a periodic neighbor boundary type to the neighbor
             // boundary to ensure that all boundaries have a defined type
-            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+            this->type[periodic_boundary_id] =
+              CLSBoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {

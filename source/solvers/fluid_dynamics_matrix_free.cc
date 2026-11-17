@@ -1027,7 +1027,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       for (auto const &[id, type] :
            this->simulation_parameters.boundary_conditions.type)
         {
-          if (type == BoundaryConditions::BoundaryType::slip)
+          if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
             {
               std::set<types::boundary_id> no_normal_flux_boundaries;
               no_normal_flux_boundaries.insert(id);
@@ -1061,45 +1061,54 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     levels[level].first, temp_constraints);
                 }
             }
-          else if (type == BoundaryConditions::BoundaryType::periodic)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::periodic)
             {
               /*already taken into account when mg_constrained_dofs is
                * initialized*/
             }
-          else if (type == BoundaryConditions::BoundaryType::periodic_neighbor)
+          else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                             periodic_neighbor)
             {
               /*already taken into account when mg_constrained_dofs is
                * initialized*/
             }
-          else if (type == BoundaryConditions::BoundaryType::pressure)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::pressure)
             {
               /*The pressure boundary condition is implemented in the
                * operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::function_weak)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
             {
               /*The function weak boundary condition is implemented in the
                * operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::neumann_traction)
+          else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                             neumann_traction)
             {
               /*The Neumann traction boundary condition is implemented in the
                * operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::partial_slip)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
             {
               AssertThrow(
                 false,
                 ExcMessage(
                   "Partial slip boundary conditions are not supported by the matrix free application."));
             }
-          else if (type == BoundaryConditions::BoundaryType::outlet)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::outlet)
             {
               /*The directional do-nothing boundary condition is implemented in
                * the operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::noslip ||
-                   type == BoundaryConditions::BoundaryType::function)
+          else if (type ==
+                     BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
+                   type ==
+                     BoundaryConditions::FluidDynamicsBoundaryType::function)
             {
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
 
@@ -1592,7 +1601,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           for (auto const &[id, type] :
                this->simulation_parameters.boundary_conditions.type)
             {
-              if (type == BoundaryConditions::BoundaryType::slip)
+              if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
                 {
                   std::set<types::boundary_id> no_normal_flux_boundaries;
                   no_normal_flux_boundaries.insert(id);
@@ -1605,7 +1614,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     *level_mapping,
                     this->use_manifold_for_normal);
                 }
-              else if (type == BoundaryConditions::BoundaryType::periodic)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::periodic)
                 {
                   const auto &periodic_boundary =
                     this->simulation_parameters.boundary_conditions
@@ -1617,41 +1627,46 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     periodic_boundary.direction,
                     level_constraint);
                 }
-              else if (type ==
-                       BoundaryConditions::BoundaryType::periodic_neighbor)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 periodic_neighbor)
                 {
                   /*already taken into account in the previous else if*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::pressure)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::pressure)
                 {
                   /*The pressure boundary condition is implemented in
                    * the operators*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::function_weak)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 function_weak)
                 {
                   /*The function weak boundary condition is implemented in
                    * the operators*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::partial_slip)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 partial_slip)
                 {
                   AssertThrow(
                     false,
                     ExcMessage(
                       "Partial slip boundary conditions are not supported by the matrix free application."));
                 }
-              else if (type == BoundaryConditions::BoundaryType::outlet)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::outlet)
                 {
                   /*The directional do-nothing boundary condition is implemented
                    * in the operators*/
                 }
-              else if (type ==
-                       BoundaryConditions::BoundaryType::neumann_traction)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 neumann_traction)
                 {
                   /*The Neumann traction boundary condition is implemented in
                    * the operators*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::noslip ||
-                       type == BoundaryConditions::BoundaryType::function)
+              else if (
+                type == BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
+                type == BoundaryConditions::FluidDynamicsBoundaryType::function)
                 {
                   VectorTools::interpolate_boundary_values(
                     *level_mapping,
@@ -1661,7 +1676,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     level_constraint,
                     fe->component_mask(velocities));
                 }
-              else if (type == BoundaryConditions::BoundaryType::none)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::none)
                 {
                   /*Default boundary condition*/
                 }
@@ -3094,7 +3110,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::partial_slip)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
         {
           AssertThrow(
             false,

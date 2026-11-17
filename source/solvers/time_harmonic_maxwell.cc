@@ -412,7 +412,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
                                                         update_JxW_values);
       const unsigned int n_face_q_points =
         fe_face_values_trial_skeleton.n_quadrature_points;
-      BoundaryConditions::BoundaryType bc_type;
+      BoundaryConditions::TimeHarmonicMaxwellBoundaryType bc_type;
 
       // Containers for electromagnetic quantities at the quadrature points
       Tensor<1, dim, std::complex<double>> E_inc;
@@ -532,7 +532,8 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
 
                   // We only compute the modal power if its a port boundary
                   if (!(bc_type ==
-                        BoundaryConditions::BoundaryType::waveguide_port))
+                        BoundaryConditions::TimeHarmonicMaxwellBoundaryType::
+                          waveguide_port))
                     continue;
 
                   // Get the index of the waveguide port boundary
@@ -1498,7 +1499,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
        this->simulation_parameters
          .boundary_conditions_time_harmonic_electromagnetics.type)
     {
-      if (type == BoundaryConditions::BoundaryType::pec)
+      if (type == BoundaryConditions::TimeHarmonicMaxwellBoundaryType::pec)
         {
           // Perfect electric conductor (PEC) boundary condition
           // Real
@@ -1517,7 +1518,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             id,
             this->nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::pmc)
+      if (type == BoundaryConditions::TimeHarmonicMaxwellBoundaryType::pmc)
         {
           // Perfect magnetic conductor (PMC) boundary condition
           // Real
@@ -1536,7 +1537,8 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             id,
             this->nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::electric_field)
+      if (type ==
+          BoundaryConditions::TimeHarmonicMaxwellBoundaryType::electric_field)
         {
           // Imposed electric field boundary condition
 
@@ -1605,7 +1607,8 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             this->nonzero_constraints);
         }
 
-      if (type == BoundaryConditions::BoundaryType::magnetic_field)
+      if (type ==
+          BoundaryConditions::TimeHarmonicMaxwellBoundaryType::magnetic_field)
         {
           // Imposed magnetic field boundary condition
 

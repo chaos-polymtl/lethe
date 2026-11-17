@@ -190,7 +190,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
         {
           if (this->cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
-              BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
+              BoundaryConditions::CahnHilliardBoundaryType::angle_of_contact)
             {
               const double angle_of_contact =
                 this->cahn_hilliard_boundary_conditions.angle_of_contact.at(
@@ -251,7 +251,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
         {
           if (this->cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
-              BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
+              BoundaryConditions::CahnHilliardBoundaryType::angle_of_contact)
             {
               const double angle_of_contact =
                 this->cahn_hilliard_boundary_conditions.angle_of_contact.at(
@@ -307,7 +307,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
         {
           if (cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
-              BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
+              BoundaryConditions::CahnHilliardBoundaryType::free_angle)
             {
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
@@ -360,7 +360,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
         {
           if (this->cahn_hilliard_boundary_conditions.type.at(
                 scratch_data.boundary_face_id[f]) ==
-              BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
+              BoundaryConditions::CahnHilliardBoundaryType::free_angle)
             {
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
