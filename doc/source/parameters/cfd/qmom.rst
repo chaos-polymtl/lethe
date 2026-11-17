@@ -29,6 +29,7 @@ The default values of the QMOM parameters are given in the text box below:
 .. code-block:: text
 
   subsection QMOM
+    set process            = generic
     set number of scalars  = 0
     set scalar names       = # empty: scalar_0, scalar_1, ...
     set number of moments  = 4
@@ -74,6 +75,13 @@ The default values of the QMOM parameters are given in the text box below:
       set permittivity vacuum = 8.8541878188e-12
     end
   end
+
+* ``process``: process simulated. The choices are:
+
+  * ``generic``: the scalars and the moments are given by ``number of scalars``, ``scalar names`` and ``number of moments``.
+  * ``lipid_nanoparticle_production``: lipid nanoparticle production, whose parameters are given in the ``lipid nanoparticle production`` subsection. The process imposes two scalars, ``ethanol_concentration`` and ``free_lipids_concentration``, and 8 moments (4-node quadrature).
+
+  A process other than ``generic`` ignores ``number of scalars``, ``scalar names`` and ``number of moments``, and stops the simulation with an error if they contradict it.
 
 * ``number of scalars``: number of regular scalars transported together with the moments.
 

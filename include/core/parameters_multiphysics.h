@@ -567,6 +567,16 @@ namespace Parameters
   };
 
   /**
+   * @brief Process simulated with the QMOM physics. A process other than
+   * generic imposes the scalars and the number of moments.
+   */
+  enum class QMOMProcess : std::int8_t
+  {
+    generic,
+    lipid_nanoparticle_production
+  };
+
+  /**
    * @brief Process parameters of the lipid nanoparticle (LNP) production
    * simulated with the QMOM physics: operating conditions, properties of the
    * aqueous and organic phases and shape factor of the particles. All of them
@@ -772,6 +782,10 @@ namespace Parameters
    */
   struct QMOM
   {
+    /// Process simulated, which may impose the scalars and the number of
+    /// moments
+    QMOMProcess process = QMOMProcess::generic;
+
     /// Number of scalars transported together with the moments
     unsigned int number_of_scalars = 0;
 

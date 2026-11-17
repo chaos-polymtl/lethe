@@ -13,6 +13,7 @@
 #include <cctype>
 #include <memory>
 #include <string>
+#include <vector>
 
 DeclException1(
   SharpeningThresholdError,
@@ -50,6 +51,16 @@ DeclException1(
   << "The scalar name \"" << arg1 << "\" of the QMOM subsection is invalid."
   << std::endl
   << "Scalar names may only contain letters, digits and underscores.");
+
+DeclException2(QMOMProcessConflictError,
+               std::string,
+               std::string,
+               << "The \"" << arg1
+               << "\" of the QMOM subsection contradicts the \"" << arg2
+               << "\" process, which imposes it." << std::endl
+               << "Remove \"" << arg1
+               << "\" from the parameter file, or set the "
+               << "process to generic.");
 
 DeclException3(
   QMOMDistributionExpressionsCountError,
@@ -839,6 +850,12 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
   const QMOM defaults;
   prm.enter_subsection("QMOM");
   {
+    declare_enum_entry(prm,
+                       "process",
+                       defaults.process,
+                       "Process simulated. A process other than generic "
+                       "imposes the scalars and the number of moments.");
+
     prm.declare_entry("number of scalars",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.number_of_scalars),
@@ -896,11 +913,47 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("QMOM");
   {
+    process           = string_to_enum<QMOMProcess>(prm.get("process"));
     number_of_scalars = prm.get_integer("number of scalars");
     number_of_moments = prm.get_integer("number of moments");
-    number_of_nodes   = (number_of_moments + 1) / 2;
+    scalar_names      = Utilities::split_string_list(prm.get("scalar names"));
 
-    scalar_names = Utilities::split_string_list(prm.get("scalar names"));
+    // A process other than generic imposes its scalars and its number of
+    // moments. The entries of the parameter file are ignored, but must not
+    // contradict the process.
+    std::vector<std::string> process_scalar_names;
+    unsigned int             process_number_of_moments = number_of_moments;
+    switch (process)
+      {
+        case QMOMProcess::generic:
+          break;
+        case QMOMProcess::lipid_nanoparticle_production:
+          process_scalar_names      = {"ethanol_concentration",
+                                       "free_lipids_concentration"};
+          process_number_of_moments = 8; // 4-node quadrature
+          break;
+      }
+    if (process != QMOMProcess::generic)
+      {
+        const QMOM defaults;
+        AssertThrow(number_of_scalars == defaults.number_of_scalars ||
+                      number_of_scalars == process_scalar_names.size(),
+                    QMOMProcessConflictError("number of scalars",
+                                             enum_to_string(process)));
+        AssertThrow(scalar_names.empty() ||
+                      scalar_names == process_scalar_names,
+                    QMOMProcessConflictError("scalar names",
+                                             enum_to_string(process)));
+        AssertThrow(number_of_moments == defaults.number_of_moments ||
+                      number_of_moments == process_number_of_moments,
+                    QMOMProcessConflictError("number of moments",
+                                             enum_to_string(process)));
+        number_of_scalars = process_scalar_names.size();
+        scalar_names      = process_scalar_names;
+        number_of_moments = process_number_of_moments;
+      }
+    number_of_nodes = (number_of_moments + 1) / 2;
+
     if (scalar_names.empty())
       for (unsigned int i_scalar = 0; i_scalar < number_of_scalars; ++i_scalar)
         scalar_names.emplace_back("scalar_" + std::to_string(i_scalar));
