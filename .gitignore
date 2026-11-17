@@ -74,3 +74,4 @@ contrib/postprocessing/lethe_pyvista_tools.egg-info
 *__pycache__
 doc/doxygen/html/
 doc/doxygen/DoxygenWarningLog.txt
+
