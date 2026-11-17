@@ -2034,6 +2034,18 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::create_mortar_coupling_evaluator()
+{
+  this->mortar_coupling_evaluator =
+    std::make_shared<NavierStokesCouplingEvaluationSIPG<dim, double>>(
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->simulation_parameters.physical_properties_manager
+        .get_kinematic_viscosity_scale());
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
 {
   if (!this->simulation_parameters.mortar_parameters.enable)
@@ -2061,12 +2073,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
 
 
   // Create mortar coupling evaluator
-  this->mortar_coupling_evaluator =
-    std::make_shared<NavierStokesCouplingEvaluationSIPG<dim, double>>(
-      *this->get_mapping(),
-      *this->dof_handler,
-      this->simulation_parameters.physical_properties_manager
-        .get_kinematic_viscosity_scale());
+  this->create_mortar_coupling_evaluator();
 
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(

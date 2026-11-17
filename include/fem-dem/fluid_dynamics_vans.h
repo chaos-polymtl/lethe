@@ -266,6 +266,12 @@ protected:
   virtual std::vector<OutputStruct<dim, GlobalVectorType>>
   gather_output_hook() override;
 
+  /**
+   * @brief Creates the mortar coupling evaluator for the base VANS fluid dynamics class.
+   */
+  virtual void
+  create_mortar_coupling_evaluator() override;
+
 
   /**
    * @brief Member Variables

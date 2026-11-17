@@ -826,7 +826,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
         this->multiphysics->get_filtered_solution(PhysicsID::CLS),
         this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
-  
+
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
                                this->simulation_parameters.mortar_parameters);
@@ -939,6 +939,20 @@ FluidDynamicsVANS<dim, PropertiesIndex>::copy_local_rhs_to_global_rhs(
   constraints_used.distribute_local_to_global(copy_data.local_rhs,
                                               copy_data.local_dof_indices,
                                               this->system_rhs);
+}
+
+template <int dim, typename PropertiesIndex>
+void
+FluidDynamicsVANS<dim, PropertiesIndex>::create_mortar_coupling_evaluator()
+{
+  this->mortar_coupling_evaluator =
+    std::make_shared<VANSCouplingEvaluationSIPG<dim, double>>(
+      *this->get_mapping(),
+      *this->dof_handler,
+      *this->particle_projector.dof_handler,
+      *this->particle_projector.void_fraction_locally_relevant,
+      this->simulation_parameters.physical_properties_manager
+        .get_kinematic_viscosity_scale());
 }
 
 template <int dim, typename PropertiesIndex>
