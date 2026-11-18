@@ -1088,11 +1088,12 @@ private:
   }
 
   /**
-   * @brief Calculate the displacement that separates a particle from a wall it
-   * overlaps. This "contact force" model is used by the packed insertion
-   * method. The displacement is along the wall normal and is slightly larger
-   * than the normal overlap, so that the particle is separated from the wall
-   * once it is displaced.
+   * @brief Calculate the displacement that separates a particle from a wall or
+   * a solid surface it overlaps. This "contact force" model is used by the
+   * packed insertion method. The displacement is along the contact normal. Its
+   * norm is the normal overlap multiplied by the packed particle-wall overlap
+   * factor, plus the particle diameter multiplied by the packed clearance
+   * ratio.
    *
    * @param[in] normal_overlap Contact normal overlap.
    * @param[in] contact_info A container that contains the required
@@ -1117,11 +1118,9 @@ private:
         // convention (i -> j), the forces are thus calculated on the wall
         const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
 
-        // TODO: 1.02 and 0.01 are arbitrary values. These values could be
-        // input parameters from a parameter file.
         normal_displacement =
-          (1.02 * normal_overlap +
-           0.01 * particle_properties[PropertiesIndex::dp]) *
+          (packed_particle_wall_overlap_factor * normal_overlap +
+           packed_clearance_ratio * particle_properties[PropertiesIndex::dp]) *
           normal_vector;
       }
     else
@@ -1221,6 +1220,8 @@ private:
   double              wall_thermal_conductivity;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
+  const double        packed_particle_wall_overlap_factor;
+  const double        packed_clearance_ratio;
 
   std::map<types::boundary_id, double> boundary_rotational_speed_map;
   std::map<types::boundary_id, Tensor<1, 3>>

@@ -1525,9 +1525,9 @@ private:
   /**
    * @brief Calculate the displacement that separates two overlapping particles.
    * This "contact force" model is used by the packed insertion method. The
-   * displacement is along the contact normal and is slightly larger than half
-   * the normal overlap, so that the two particles are separated once each of
-   * them is displaced.
+   * displacement is along the contact normal. Its norm is the normal overlap
+   * multiplied by the packed particle-particle overlap factor, plus the mean
+   * diameter of the two particles multiplied by the packed clearance ratio.
    *
    * @param[in] normal_unit_vector Normal unit contact vector from particle one
    * to particle two.
@@ -1549,10 +1549,10 @@ private:
       0.5 * (particle_one_properties[PropertiesIndex::dp] +
              particle_two_properties[PropertiesIndex::dp]);
 
-    // TODO: 0.501 and 0.01 values should be parameters declared in the
-    // parameter file
     normal_displacement =
-      (0.501 * normal_overlap + 0.01 * mean_diameter) * normal_unit_vector;
+      (packed_particle_particle_overlap_factor * normal_overlap +
+       packed_clearance_ratio * mean_diameter) *
+      normal_unit_vector;
 
     ++this->n_contacts;
   }
@@ -2104,6 +2104,8 @@ private:
   std::vector<double> model_parameter_beta;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
+  const double        packed_particle_particle_overlap_factor;
+  const double        packed_clearance_ratio;
   std::vector<double> equivalent_surface_roughness;
   std::vector<double> equivalent_surface_slope;
   std::vector<double> effective_microhardness;

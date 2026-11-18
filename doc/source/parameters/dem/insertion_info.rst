@@ -57,6 +57,11 @@ In this subsection, the insertion methods ``volume``, ``plane``, ``list`` and ``
     # If method = file
     set list of input files                            = particles.input
 
+    # If method = packed
+    set packed particle-particle overlap factor        = 0.501
+    set packed particle-wall overlap factor            = 1.02
+    set packed clearance ratio                         = 0.01
+
     # Box removal
     set remove particles                               = false
     set removal box points coordinates                 = 0., 0., 0.: 1., 1., 1.
@@ -196,6 +201,22 @@ Each line is associated with a particle and its properties. The main advantage o
 Packed
 --------------------
 The ``packed`` insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions **as is** for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motion are not solved.
+
+At each pseudo time-step, every contact is evaluated with the positions of the particles at the beginning of the pseudo time-step. Each contact adds a displacement to its particle along the contact normal, and each particle is then moved by the sum of the displacements of its contacts, limited to the largest particle diameter. The walls of the triangulation, its boundary points and lines, and the solid surfaces (see :doc:`solid_objects`) all shift the particles that overlap them.
+
+* ``packed particle-particle overlap factor`` (:math:`f_{pp}`) defines the fraction of the normal overlap :math:`\delta_n` of a particle-particle contact by which each of the two particles is shifted. A value slightly larger than 0.5 separates the two particles once both are shifted.
+
+* ``packed particle-wall overlap factor`` (:math:`f_{pw}`) defines the fraction of the normal overlap of a contact with a wall, a boundary point or line, or a solid surface by which the particle is shifted. A value slightly larger than 1 separates the particle from the wall.
+
+* ``packed clearance ratio`` (:math:`c`) defines a distance added to every shift, as a fraction of the particle diameter. It leaves a small gap between the surfaces once they are separated.
+
+A particle :math:`i` in contact with a particle :math:`j` and a particle in contact with a wall are thus shifted by:
+
+.. math::
+    \Delta x_{ij} = f_{pp} \delta_n + c \frac{d_i + d_j}{2} \quad \text{and} \quad \Delta x_{iw} = f_{pw} \delta_n + c d_i
+
+.. note::
+    The solid objects do not move during the packed insertion: the particles are arranged around their initial position, even if a translational or angular velocity is prescribed. The insertion points are generated without regard to the solid surfaces, so a particle whose center is generated inside a closed solid surface remains inside it. Use the ``insertion acceptance function`` to reject these points.
 
 .. note::
     Currently, when using this insertion method, the simulation ends once no contact is detected, thus the particle positions need to be extracted in an insertion file and the simulation must be relaunched with the ``file`` insertion method.

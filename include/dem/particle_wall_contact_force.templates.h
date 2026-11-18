@@ -35,6 +35,9 @@ ParticleWallContactForce<dim,
   ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
+  , packed_particle_wall_overlap_factor(
+      dem_parameters.insertion_info.packed_particle_wall_overlap_factor)
+  , packed_clearance_ratio(dem_parameters.insertion_info.packed_clearance_ratio)
 {
   set_effective_properties(dem_parameters);
   if constexpr (DEM::has_thermal_properties<PropertiesIndex>)

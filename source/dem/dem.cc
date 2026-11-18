@@ -595,13 +595,17 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
     {
       particle_point_line_contact_force_object
         .calculate_particle_point_shift_displacement(
-          contact_manager.get_particle_points_in_contact(), force);
+          contact_manager.get_particle_points_in_contact(),
+          parameters.insertion_info,
+          force);
 
       if constexpr (dim == 3)
         {
           particle_point_line_contact_force_object
             .calculate_particle_line_shift_displacement(
-              contact_manager.get_particle_lines_in_contact(), force);
+              contact_manager.get_particle_lines_in_contact(),
+              parameters.insertion_info,
+              force);
         }
     }
   else // If this is a regular DEM simulation
@@ -628,6 +632,13 @@ void
 DEMSolver<dim, PropertiesIndex>::move_solid_objects()
 {
   if (!action_manager->check_solid_objects_enabled())
+    return;
+
+  // The packed insertion method arranges the particles around the solid
+  // objects at their initial position. Its iterations are pseudo-time steps
+  // that only separate the particles, so the solid objects do not move.
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
     return;
 
   // Move the solid triangulations, previous time must be used here

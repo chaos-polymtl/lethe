@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_point_line_force_h
@@ -75,6 +75,8 @@ public:
    *
    * @param[in] particle_point_pairs_in_contact Required information for
    * calculation of the particle-point contacts.
+   * @param[in] insertion_info Insertion parameters, which hold the packed
+   * particle-wall overlap factor and the packed clearance ratio.
    * @param[in,out] displacement Displacement of each local particle. The
    * displacement of each particle-point contact is added to the entry of its
    * particle.
@@ -82,8 +84,9 @@ public:
   void
   calculate_particle_point_shift_displacement(
     const typename DEM::dem_data_structures<dim>::particle_point_in_contact
-                              &particle_point_pairs_in_contact,
-    std::vector<Tensor<1, 3>> &displacement);
+      &particle_point_pairs_in_contact,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+    std::vector<Tensor<1, 3>>                        &displacement);
 
   /**
    * @brief Calculate the displacements that separate the particles from the
@@ -92,6 +95,8 @@ public:
    *
    * @param[in] particle_line_pairs_in_contact Required information for
    * calculation of the particle-line contacts.
+   * @param[in] insertion_info Insertion parameters, which hold the packed
+   * particle-wall overlap factor and the packed clearance ratio.
    * @param[in,out] displacement Displacement of each local particle. The
    * displacement of each particle-line contact is added to the entry of its
    * particle.
@@ -99,8 +104,9 @@ public:
   void
   calculate_particle_line_shift_displacement(
     const typename DEM::dem_data_structures<dim>::particle_line_in_contact
-                              &particle_line_pairs_in_contact,
-    std::vector<Tensor<1, 3>> &displacement);
+      &particle_line_pairs_in_contact,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+    std::vector<Tensor<1, 3>>                        &displacement);
 
   /**
    * @brief Return the number of particle-point and particle-line contacts
@@ -127,20 +133,25 @@ private:
    * @brief Add the displacement that separates a particle from the boundary
    * point or line it overlaps to the displacement of the particle. The
    * displacement is along the normal from the closest point of the boundary
-   * to the particle center and is slightly larger than the normal overlap, as
-   * in the particle-wall shift model.
+   * to the particle center. As in the particle-wall shift model, its norm is
+   * the normal overlap multiplied by the packed particle-wall overlap factor,
+   * plus the particle diameter multiplied by the packed clearance ratio.
    *
    * @param[in] particle Iterator of the particle in contact.
    * @param[in] particle_location Location of the particle center in 3D.
    * @param[in] contact_point Point of the boundary point or line that is the
    * closest to the particle center.
+   * @param[in] insertion_info Insertion parameters, which hold the packed
+   * particle-wall overlap factor and the packed clearance ratio.
    * @param[in,out] displacement Displacement of each local particle.
    */
   void
-  add_shift_displacement(const Particles::ParticleIterator<dim> &particle,
-                         const Point<3>            &particle_location,
-                         const Point<3>            &contact_point,
-                         std::vector<Tensor<1, 3>> &displacement);
+  add_shift_displacement(
+    const Particles::ParticleIterator<dim>           &particle,
+    const Point<3>                                   &particle_location,
+    const Point<3>                                   &contact_point,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+    std::vector<Tensor<1, 3>>                        &displacement);
 
   /**
    * @brief This private function is used to find the projection of point_p on

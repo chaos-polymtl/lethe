@@ -256,8 +256,9 @@ void
 ParticlePointLineForce<dim, PropertiesIndex>::
   calculate_particle_point_shift_displacement(
     const typename DEM::dem_data_structures<dim>::particle_point_in_contact
-                              &particle_point_pairs_in_contact,
-    std::vector<Tensor<1, 3>> &displacement)
+      &particle_point_pairs_in_contact,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+    std::vector<Tensor<1, 3>>                        &displacement)
 {
   for (const auto &pair_in_contact : particle_point_pairs_in_contact)
     {
@@ -275,6 +276,7 @@ ParticlePointLineForce<dim, PropertiesIndex>::
       add_shift_displacement(particle,
                              particle_location_3d,
                              contact_information.point,
+                             insertion_info,
                              displacement);
     }
 }
@@ -284,8 +286,9 @@ void
 ParticlePointLineForce<dim, PropertiesIndex>::
   calculate_particle_line_shift_displacement(
     const typename DEM::dem_data_structures<dim>::particle_line_in_contact
-                              &particle_line_pairs_in_contact,
-    std::vector<Tensor<1, 3>> &displacement)
+      &particle_line_pairs_in_contact,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+    std::vector<Tensor<1, 3>>                        &displacement)
 {
   for (const auto &pair_in_contact : particle_line_pairs_in_contact)
     {
@@ -310,6 +313,7 @@ ParticlePointLineForce<dim, PropertiesIndex>::
       add_shift_displacement(particle,
                              particle_location_3d,
                              projection,
+                             insertion_info,
                              displacement);
     }
 }
@@ -317,10 +321,11 @@ ParticlePointLineForce<dim, PropertiesIndex>::
 template <int dim, typename PropertiesIndex>
 void
 ParticlePointLineForce<dim, PropertiesIndex>::add_shift_displacement(
-  const Particles::ParticleIterator<dim> &particle,
-  const Point<3>                         &particle_location,
-  const Point<3>                         &contact_point,
-  std::vector<Tensor<1, 3>>              &displacement)
+  const Particles::ParticleIterator<dim>           &particle,
+  const Point<3>                                   &particle_location,
+  const Point<3>                                   &contact_point,
+  const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+  std::vector<Tensor<1, 3>>                        &displacement)
 {
   const double particle_diameter =
     particle->get_properties()[PropertiesIndex::dp];
@@ -336,10 +341,10 @@ ParticlePointLineForce<dim, PropertiesIndex>::add_shift_displacement(
   const Tensor<1, 3> normal_vector =
     (particle_location - contact_point) / distance;
 
-  // TODO: 1.02 and 0.01 are the arbitrary values of the particle-wall shift
-  // model. These values could be input parameters from a parameter file.
   displacement[particle->get_local_index()] +=
-    (1.02 * normal_overlap + 0.01 * particle_diameter) * normal_vector;
+    (insertion_info.packed_particle_wall_overlap_factor * normal_overlap +
+     insertion_info.packed_clearance_ratio * particle_diameter) *
+    normal_vector;
 }
 
 template <int dim, typename PropertiesIndex>
