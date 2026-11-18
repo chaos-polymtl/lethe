@@ -45,10 +45,14 @@
 #   We don't care if an enum could use a smaller base type than
 #   unsigned int.
 #
-# - modernize-avoid-c-style-cast:
-#   Only exists from clang-tidy 22 on, where it reports the C-style casts that
-#   google-readability-casting already reports. Disabled, as in deal.II, so
-#   that runs with a recent clang-tidy agree with the CI (clang-tidy 20).
+# Check names:
+#   Every check named below, excluded ones included, must exist in clang-tidy
+#   20 (the CI version): run_clang_tidy.sh validates this file with
+#   --verify-config, which rejects unknown names. For this reason,
+#   modernize-avoid-c-style-cast, which only exists from clang-tidy 22 on, is
+#   not excluded. It reports C-style casts, which google-readability-casting
+#   already keeps out of the code, so a run with clang-tidy 22 still agrees
+#   with the CI.
 #
 # CheckOptions:
 #
@@ -78,7 +82,6 @@ Checks: >
   misc-throw-by-value-catch-by-reference,
   modernize-*,
   -modernize-avoid-c-arrays,
-  -modernize-avoid-c-style-cast,
   -modernize-concat-nested-namespaces,
   -modernize-pass-by-value,
   -modernize-raw-string-literal,
