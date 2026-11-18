@@ -1907,7 +1907,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
                   // either
                   continue;
               }
-            catch (TriaAccessorExceptions::ExcCellHasNoParent())
+            catch (const TriaAccessorExceptions::ExcCellHasNoParent &)
               {}
 
           std::shared_ptr<std::vector<size_t>> current_cell_nodes =
@@ -2057,7 +2057,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
             iterable_nodes.swap(*parent_iterator->second);
           }
       }
-    catch (TriaAccessorExceptions::ExcCellHasNoParent())
+    catch (const TriaAccessorExceptions::ExcCellHasNoParent &)
       {}
 
   double       distance, max_distance;

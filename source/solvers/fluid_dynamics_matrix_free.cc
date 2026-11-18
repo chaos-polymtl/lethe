@@ -1061,35 +1061,21 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     levels[level].first, temp_constraints);
                 }
             }
-          else if (type ==
-                   BoundaryConditions::FluidDynamicsBoundaryType::periodic)
+          else if (
+            type == BoundaryConditions::FluidDynamicsBoundaryType::periodic ||
+            type == BoundaryConditions::FluidDynamicsBoundaryType::
+                      periodic_neighbor ||
+            type == BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+            type ==
+              BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+            type ==
+              BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction ||
+            type == BoundaryConditions::FluidDynamicsBoundaryType::outlet)
             {
-              /*already taken into account when mg_constrained_dofs is
-               * initialized*/
-            }
-          else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
-                             periodic_neighbor)
-            {
-              /*already taken into account when mg_constrained_dofs is
-               * initialized*/
-            }
-          else if (type ==
-                   BoundaryConditions::FluidDynamicsBoundaryType::pressure)
-            {
-              /*The pressure boundary condition is implemented in the
-               * operators*/
-            }
-          else if (type ==
-                   BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
-            {
-              /*The function weak boundary condition is implemented in the
-               * operators*/
-            }
-          else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
-                             neumann_traction)
-            {
-              /*The Neumann traction boundary condition is implemented in the
-               * operators*/
+              /*Periodic boundaries are already taken into account when
+               * mg_constrained_dofs is initialized. The pressure, function
+               * weak, Neumann traction and directional do-nothing (outlet)
+               * boundary conditions are implemented in the operators*/
             }
           else if (type ==
                    BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
@@ -1098,12 +1084,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 false,
                 ExcMessage(
                   "Partial slip boundary conditions are not supported by the matrix free application."));
-            }
-          else if (type ==
-                   BoundaryConditions::FluidDynamicsBoundaryType::outlet)
-            {
-              /*The directional do-nothing boundary condition is implemented in
-               * the operators*/
             }
           else if (type ==
                      BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
@@ -1627,22 +1607,24 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     periodic_boundary.direction,
                     level_constraint);
                 }
-              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
-                                 periodic_neighbor)
+              else if (
+                type == BoundaryConditions::FluidDynamicsBoundaryType::
+                          periodic_neighbor ||
+                type ==
+                  BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+                type == BoundaryConditions::FluidDynamicsBoundaryType::
+                          function_weak ||
+                type == BoundaryConditions::FluidDynamicsBoundaryType::outlet ||
+                type == BoundaryConditions::FluidDynamicsBoundaryType::
+                          neumann_traction ||
+                type == BoundaryConditions::FluidDynamicsBoundaryType::none)
                 {
-                  /*already taken into account in the previous else if*/
-                }
-              else if (type ==
-                       BoundaryConditions::FluidDynamicsBoundaryType::pressure)
-                {
-                  /*The pressure boundary condition is implemented in
-                   * the operators*/
-                }
-              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
-                                 function_weak)
-                {
-                  /*The function weak boundary condition is implemented in
-                   * the operators*/
+                  /*Periodic neighbors are already taken into account in the
+                   * previous else if, with their periodic boundary. The
+                   * pressure, function weak, directional do-nothing (outlet)
+                   * and Neumann traction boundary conditions are implemented
+                   * in the operators, and none is the default boundary
+                   * condition*/
                 }
               else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
                                  partial_slip)
@@ -1651,18 +1633,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     false,
                     ExcMessage(
                       "Partial slip boundary conditions are not supported by the matrix free application."));
-                }
-              else if (type ==
-                       BoundaryConditions::FluidDynamicsBoundaryType::outlet)
-                {
-                  /*The directional do-nothing boundary condition is implemented
-                   * in the operators*/
-                }
-              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
-                                 neumann_traction)
-                {
-                  /*The Neumann traction boundary condition is implemented in
-                   * the operators*/
                 }
               else if (
                 type == BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
@@ -1675,11 +1645,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     dealii::Functions::ZeroFunction<dim, MGNumber>(dim + 1),
                     level_constraint,
                     fe->component_mask(velocities));
-                }
-              else if (type ==
-                       BoundaryConditions::FluidDynamicsBoundaryType::none)
-                {
-                  /*Default boundary condition*/
                 }
               else
                 {

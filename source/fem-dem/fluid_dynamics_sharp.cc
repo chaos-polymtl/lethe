@@ -1595,7 +1595,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                   auto force = viscous_force + pressure_force;
 
                                   bool force_is_nan = false;
-                                  for (unsigned int d = 0; d < dim; ++d)
+                                  for (int d = 0; d < dim; ++d)
                                     force_is_nan =
                                       force_is_nan || std::isnan(force[d]);
 

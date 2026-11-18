@@ -267,7 +267,8 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
       Point<std::max(1, dim - 1)>()};
 
   // Mesh alignment
-  const auto [type, _, __] = get_config(face_center, is_inner);
+  const auto [type, id_in_plane, id_out_plane] =
+    get_config(face_center, is_inner);
   // Angle span of each cell (in radians)
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
 
@@ -889,9 +890,9 @@ mortar_workload_imbalance(const Triangulation<dim>      &triangulation,
   const auto [n_mortar_cells_sum,
               n_mortar_cells_min,
               n_mortar_cells_max,
-              _,
-              __,
-              ___] =
+              n_mortar_cells_min_rank,
+              n_mortar_cells_max_rank,
+              n_mortar_cells_avg] =
     Utilities::MPI::min_max_avg(n_mortar_cells,
                                 triangulation.get_mpi_communicator());
 

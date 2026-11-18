@@ -702,7 +702,6 @@ SolidBase<dim, spacedim>::write_checkpoint(const std::string &prefix)
   // the solid triangulation. Consequently, they only need to be prepared
   // for serialization and will be serialized when the background triangulation
   // itself is serialized by the main solver.
-  std::string                   prefix_particles = prefix + "_particles";
   std::ostringstream            oss;
   boost::archive::text_oarchive oa(oss, boost::archive::no_header);
   oa << *(this->solid_particle_handler);
@@ -726,7 +725,6 @@ SolidBase<dim, spacedim>::write_checkpoint(const std::string &prefix)
 
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  std::string triangulationName = prefix + ".triangulation";
   this->solid_tria.get()->save(prefix + ".triangulation");
 }
 

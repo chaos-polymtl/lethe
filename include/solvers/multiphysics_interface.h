@@ -193,15 +193,12 @@ public:
         if (!iphys.second->should_solve_auxiliary_physics())
           continue;
 
-        // If iphys.first should be solved BEFORE fluid dynamics
-        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
-          solve_physics(iphys.first, time_stepping_method);
-
-        // If iphys.first should be solved AFTER fluid dynamics OR if is not
-        // present in solve_pre_fluid map
-        else if (fluid_dynamics_has_been_solved &&
-                 (!solve_pre_fluid[iphys.first] ||
-                  solve_pre_fluid.count(iphys.first) == 0))
+        // If iphys.first should be solved BEFORE fluid dynamics, or AFTER
+        // fluid dynamics OR if is not present in solve_pre_fluid map
+        if ((!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first]) ||
+            (fluid_dynamics_has_been_solved &&
+             (!solve_pre_fluid[iphys.first] ||
+              solve_pre_fluid.count(iphys.first) == 0)))
           solve_physics(iphys.first, time_stepping_method);
       }
 
@@ -211,15 +208,12 @@ public:
         if (!iphys.second->should_solve_auxiliary_physics())
           continue;
 
-        // If iphys.first should be solved BEFORE fluid dynamics
-        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
-          solve_block_physics(iphys.first, time_stepping_method);
-
-        // If iphys.first should be solved AFTER fluid dynamics OR if is not
-        // present in solve_pre_fluid map
-        else if (fluid_dynamics_has_been_solved &&
-                 (!solve_pre_fluid[iphys.first] ||
-                  solve_pre_fluid.count(iphys.first) == 0))
+        // If iphys.first should be solved BEFORE fluid dynamics, or AFTER
+        // fluid dynamics OR if is not present in solve_pre_fluid map
+        if ((!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first]) ||
+            (fluid_dynamics_has_been_solved &&
+             (!solve_pre_fluid[iphys.first] ||
+              solve_pre_fluid.count(iphys.first) == 0)))
           solve_block_physics(iphys.first, time_stepping_method);
       }
   }
@@ -345,28 +339,24 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
-        // If iphys.first should be percolated BEFORE fluid dynamics is solved
-        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
-          iphys.second->percolate_time_vectors();
-
-        // If iphys.first should be percolated AFTER fluid dynamics is solved OR
-        // if is not present in solve_pre_fluid map
-        else if (fluid_dynamics_has_been_solved &&
-                 (!solve_pre_fluid[iphys.first] ||
-                  solve_pre_fluid.count(iphys.first) == 0))
+        // If iphys.first should be percolated BEFORE fluid dynamics is solved,
+        // or AFTER fluid dynamics is solved OR if is not present in
+        // solve_pre_fluid map
+        if ((!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first]) ||
+            (fluid_dynamics_has_been_solved &&
+             (!solve_pre_fluid[iphys.first] ||
+              solve_pre_fluid.count(iphys.first) == 0)))
           iphys.second->percolate_time_vectors();
       }
     for (auto &iphys : block_physics)
       {
-        // If iphys.first should be percolated BEFORE fluid dynamics is solved
-        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
-          iphys.second->percolate_time_vectors();
-
-        // If iphys.first should be percolated AFTER fluid dynamics is solved OR
-        // if is not present in solve_pre_fluid map
-        else if (fluid_dynamics_has_been_solved &&
-                 (!solve_pre_fluid[iphys.first] ||
-                  solve_pre_fluid.count(iphys.first) == 0))
+        // If iphys.first should be percolated BEFORE fluid dynamics is solved,
+        // or AFTER fluid dynamics is solved OR if is not present in
+        // solve_pre_fluid map
+        if ((!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first]) ||
+            (fluid_dynamics_has_been_solved &&
+             (!solve_pre_fluid[iphys.first] ||
+              solve_pre_fluid.count(iphys.first) == 0)))
           iphys.second->percolate_time_vectors();
       }
   }
