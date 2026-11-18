@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
-#include <core/boundary_conditions.h>
 #include <core/dimensionality.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
+#include <core/qmom_boundary_conditions.h>
 #include <core/utilities.h>
 #include <core/vector.h>
 
@@ -150,16 +150,6 @@ QMOM<dim>::QMOM(
                          "implemented yet. Set \"enable nucleation\", \"enable "
                          "coalescence\" and \"enable growth\" to false in the "
                          "QMOM subsection."));
-  // The QMOM boundary conditions are imposed weakly by the upwind fluxes
-  for (const auto &[boundary_id, type] :
-       simulation_parameters.boundary_conditions_qmom.type)
-    AssertThrow(type == BoundaryConditions::BoundaryType::none ||
-                  type == BoundaryConditions::BoundaryType::outlet ||
-                  type == BoundaryConditions::BoundaryType::qmom_dirichlet,
-                ExcMessage("The QMOM boundary condition of boundary id " +
-                           std::to_string(boundary_id) +
-                           " is not supported. The supported types are none, "
-                           "outlet and dirichlet."));
 
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
@@ -201,7 +191,7 @@ QMOM<dim>::QMOM(
     n_moments,
     "initial conditions");
   for (const auto &[boundary_id, functions] :
-       simulation_parameters.boundary_conditions_qmom.dirichlet)
+       simulation_parameters.qmom_boundary_conditions.dirichlet)
     dirichlet_functions[boundary_id] = std::make_shared<QMOMFieldFunction<dim>>(
       functions,
       n_scalars,
@@ -555,7 +545,7 @@ template <int dim>
 void
 QMOM<dim>::update_boundary_conditions()
 {
-  if (!simulation_parameters.boundary_conditions_qmom.time_dependent)
+  if (!simulation_parameters.qmom_boundary_conditions.time_dependent)
     return;
 
   const double time = simulation_control->get_current_time();
@@ -685,9 +675,9 @@ QMOM<dim>::assemble_system_matrix()
         QMOMCopyData                                         &copy_data) {
       // Only the outlet and Dirichlet boundaries contribute to the matrix: no
       // flux crosses a boundary of type none
-      if (simulation_parameters.boundary_conditions_qmom.type.at(
+      if (simulation_parameters.qmom_boundary_conditions.type.at(
             cell->face(face_no)->boundary_id()) ==
-          BoundaryConditions::BoundaryType::none)
+          BoundaryConditions::QMOMBoundaryType::none)
         return;
 
       scratch_data.reinit_boundary_face(cell, face_no);
@@ -933,8 +923,8 @@ QMOM<dim>::assemble_system_rhs()
       // Only the inflow through the Dirichlet boundaries contributes to the
       // right-hand side
       const types::boundary_id boundary_id = cell->face(face_no)->boundary_id();
-      if (simulation_parameters.boundary_conditions_qmom.type.at(boundary_id) !=
-          BoundaryConditions::BoundaryType::qmom_dirichlet)
+      if (simulation_parameters.qmom_boundary_conditions.type.at(boundary_id) !=
+          BoundaryConditions::QMOMBoundaryType::dirichlet)
         return;
 
       scratch_data.reinit_boundary_face(cell, face_no);
