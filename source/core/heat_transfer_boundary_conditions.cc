@@ -29,9 +29,9 @@ namespace BoundaryConditions
   {
     declare_enum_entry(prm,
                        "type",
-                       BoundaryType::noflux,
+                       HeatTransferBoundaryType::noflux,
                        "Type of boundary condition for heat transfer.",
-                       deprecated_boundary_type_names,
+                       deprecated_heat_transfer_boundary_type_names,
                        heat_transfer_boundary_types);
 
     prm.declare_entry("id",
@@ -136,26 +136,28 @@ namespace BoundaryConditions
                     HeatTransferBoundaryDuplicated(boundary_id));
 
 
-        const BoundaryType boundary_type =
-          string_to_enum<BoundaryType>(prm.get("type"),
-                                       deprecated_boundary_type_names,
-                                       "type");
+        const HeatTransferBoundaryType boundary_type =
+          string_to_enum<HeatTransferBoundaryType>(
+            prm.get("type"),
+            deprecated_heat_transfer_boundary_type_names,
+            "type");
         this->type[boundary_id] = boundary_type;
-        if (boundary_type == BoundaryType::convection_radiation)
+        if (boundary_type == HeatTransferBoundaryType::convection_radiation)
           {
             this->has_convection_radiation_bc = true;
 
             // Emissivity validity (0 <= emissivity <= 1) will be checked at
             // evaluation.
           }
-        else if (boundary_type == BoundaryType::periodic)
+        else if (boundary_type == HeatTransferBoundaryType::periodic)
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
 
             // We attribute a periodic neighbor boundary type to the neighbor
             // boundary to ensure that all boundaries have a defined type
-            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+            this->type[periodic_boundary_id] =
+              HeatTransferBoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {

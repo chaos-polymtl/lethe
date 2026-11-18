@@ -152,22 +152,24 @@ NavierStokesOperatorBase<dim, number>::reinit(
   // additional data
   for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::function_weak ||
-          type == BoundaryConditions::BoundaryType::pressure)
+      if (type ==
+            BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::pressure)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
             update_values | update_gradients | update_quadrature_points |
             update_JxW_values | update_normal_vectors;
         }
-      else if (type == BoundaryConditions::BoundaryType::outlet)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
             update_values | update_quadrature_points | update_JxW_values |
             update_normal_vectors;
         }
-      else if (type == BoundaryConditions::BoundaryType::neumann_traction)
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
@@ -884,7 +886,8 @@ NavierStokesOperatorBase<dim, number>::evaluate_prescribed_neumann_traction()
             {
               if (this->boundary_conditions.type.at(
                     face_integrator.boundary_id()) ==
-                  BoundaryConditions::BoundaryType::neumann_traction)
+                  BoundaryConditions::FluidDynamicsBoundaryType::
+                    neumann_traction)
                 {
                   Point<dim, VectorizedArray<number>> point_batch =
                     face_integrator.quadrature_point(q);
@@ -1148,7 +1151,7 @@ NavierStokesOperatorBase<dim, number>::
           // We need to read the values for the outlet boundary condition
           if (this->boundary_conditions.type.at(
                 face_integrator.boundary_id()) ==
-              BoundaryConditions::BoundaryType::outlet)
+              BoundaryConditions::FluidDynamicsBoundaryType::outlet)
             {
               face_integrator.read_dof_values_plain(newton_step);
               face_integrator.evaluate(
@@ -1159,7 +1162,7 @@ NavierStokesOperatorBase<dim, number>::
             {
               if (this->boundary_conditions.type.at(
                     face_integrator.boundary_id()) ==
-                  BoundaryConditions::BoundaryType::function_weak)
+                  BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
                 {
                   Point<dim, VectorizedArray<number>> point_batch =
                     face_integrator.quadrature_point(q);
@@ -1190,7 +1193,7 @@ NavierStokesOperatorBase<dim, number>::
                 }
               else if (this->boundary_conditions.type.at(
                          face_integrator.boundary_id()) ==
-                       BoundaryConditions::BoundaryType::outlet)
+                       BoundaryConditions::FluidDynamicsBoundaryType::outlet)
                 {
                   face_nonlinear_previous_values[face - n_inner_faces][q] =
                     face_integrator.get_value(q);
@@ -1198,7 +1201,7 @@ NavierStokesOperatorBase<dim, number>::
 
               else if (this->boundary_conditions.type.at(
                          face_integrator.boundary_id()) ==
-                       BoundaryConditions::BoundaryType::pressure)
+                       BoundaryConditions::FluidDynamicsBoundaryType::pressure)
                 {
                   // Gather the quadrature points
                   Point<dim, VectorizedArray<number>> point_batch =
@@ -1512,7 +1515,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   const auto penalty_parameter = this->effective_beta_face[face_index];
 
   if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
-      BoundaryConditions::BoundaryType::function_weak)
+      BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
     {
       integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
                           EvaluationFlags::EvaluationFlags::gradients);
@@ -1559,7 +1562,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   // . n , v)  = (traction_fn, v) only on the RHS (residual) since it does not
   // depend on the solution
   else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
-           BoundaryConditions::BoundaryType::neumann_traction)
+           BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
     {
       integrator.evaluate(EvaluationFlags::values);
       {
@@ -1589,7 +1592,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
     }
 
   else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
-           BoundaryConditions::BoundaryType::outlet)
+           BoundaryConditions::FluidDynamicsBoundaryType::outlet)
     {
       integrator.evaluate(EvaluationFlags::values);
 
@@ -1631,7 +1634,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
     }
 
   else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
-           BoundaryConditions::BoundaryType::pressure)
+           BoundaryConditions::FluidDynamicsBoundaryType::pressure)
     {
       integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
                           EvaluationFlags::EvaluationFlags::gradients);

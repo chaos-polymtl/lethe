@@ -1114,8 +1114,7 @@ CahnHilliard<dim>::setup_dofs()
         // Dirichlet condition: imposed phase_order at i_bc
         // To impose the boundary condition only on the phase order, a component
         // mask is used at the end of the interpolate_boundary_values function
-        if (type == BoundaryConditions::BoundaryType::
-                      cahn_hilliard_dirichlet_phase_order)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -1127,7 +1126,7 @@ CahnHilliard<dim>::setup_dofs()
               nonzero_constraints,
               mask);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::periodic)
           {
             const auto &periodic_boundary =
               this->simulation_parameters.cahn_hilliard_boundary_conditions
@@ -1152,8 +1151,7 @@ CahnHilliard<dim>::setup_dofs()
     for (auto const &[id, type] :
          this->simulation_parameters.cahn_hilliard_boundary_conditions.type)
       {
-        if (type == BoundaryConditions::BoundaryType::
-                      cahn_hilliard_dirichlet_phase_order)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -1161,7 +1159,7 @@ CahnHilliard<dim>::setup_dofs()
               Functions::ZeroFunction<dim>(2),
               zero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::periodic)
           {
             const auto &periodic_boundary =
               this->simulation_parameters.cahn_hilliard_boundary_conditions
@@ -1230,8 +1228,7 @@ CahnHilliard<dim>::update_boundary_conditions()
       // Dirichlet condition: imposed phase_order at i_bc
       // To impose the boundary condition only on the phase order, a component
       // mask is used at the end of the interpolate_boundary_values function
-      if (type ==
-          BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order)
+      if (type == BoundaryConditions::CahnHilliardBoundaryType::dirichlet)
         {
           this->simulation_parameters.cahn_hilliard_boundary_conditions
             .bcFunctions.at(id)
@@ -1247,7 +1244,7 @@ CahnHilliard<dim>::update_boundary_conditions()
             nonzero_constraints,
             mask);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CahnHilliardBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.cahn_hilliard_boundary_conditions

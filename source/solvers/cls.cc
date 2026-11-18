@@ -2823,7 +2823,7 @@ ConservativeLevelSet<dim>::update_boundary_conditions()
   for (auto const &[id, type] :
        this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+      if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
         {
           this->simulation_parameters.cls_boundary_conditions.phase_indicator
             .at(id)
@@ -2849,7 +2849,7 @@ ConservativeLevelSet<dim>::define_zero_constraints()
   for (auto const &[id, type] :
        this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+      if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -2857,7 +2857,7 @@ ConservativeLevelSet<dim>::define_zero_constraints()
             Functions::ZeroFunction<dim>(),
             this->zero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CLSBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.cls_boundary_conditions
@@ -2888,7 +2888,7 @@ ConservativeLevelSet<dim>::define_non_zero_constraints()
     for (auto const &[id, type] :
          this->simulation_parameters.cls_boundary_conditions.type)
       {
-        if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+        if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -2897,7 +2897,7 @@ ConservativeLevelSet<dim>::define_non_zero_constraints()
                  .phase_indicator.at(id),
               nonzero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::CLSBoundaryType::periodic)
           {
             const auto &periodic_boundary =
               this->simulation_parameters.cls_boundary_conditions

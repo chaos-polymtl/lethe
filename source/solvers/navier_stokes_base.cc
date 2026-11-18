@@ -268,7 +268,7 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 template <int dim, typename VectorType, typename DofsType>
 bool
 NavierStokesBase<dim, VectorType, DofsType>::check_existance_of_bc(
-  BoundaryConditions::BoundaryType bc)
+  BoundaryConditions::FluidDynamicsBoundaryType bc)
 {
   bool bc_exist = false;
   // Loop over the boundary to check if they need assembler on their face.
@@ -1841,7 +1841,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::noslip)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::noslip)
         {
           VectorTools::interpolate_boundary_values(
             *this->get_mapping(),
@@ -1851,7 +1851,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             nonzero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (type == BoundaryConditions::BoundaryType::slip)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
@@ -1863,7 +1863,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             *this->get_mapping(),
             this->use_manifold_for_normal);
         }
-      else if (type == BoundaryConditions::BoundaryType::function)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::function)
         {
           this->simulation_parameters.boundary_conditions
             .navier_stokes_functions.at(id)
@@ -1891,7 +1891,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             nonzero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (type == BoundaryConditions::BoundaryType::periodic)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions.periodic_boundaries
@@ -1953,8 +1953,8 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::noslip ||
-          type == BoundaryConditions::BoundaryType::function)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::function)
         {
           VectorTools::interpolate_boundary_values(
             *this->get_mapping(),
@@ -1964,7 +1964,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
             this->zero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (type == BoundaryConditions::BoundaryType::slip)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
@@ -1976,7 +1976,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
             *this->get_mapping(),
             this->use_manifold_for_normal);
         }
-      else if (type == BoundaryConditions::BoundaryType::periodic)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions.periodic_boundaries
@@ -1987,32 +1987,35 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
                                                  periodic_boundary.direction,
                                                  this->zero_constraints);
         }
-      else if (type == BoundaryConditions::BoundaryType::pressure)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::pressure)
         {
           /*The pressure boundary condition is implemented in the matrix-based
            * assemblers*/
         }
-      else if (type == BoundaryConditions::BoundaryType::function_weak)
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
         {
           /*The function weak boundary condition is implemented in the
            * matrix-based assemblers and the matrix-free operators*/
         }
-      else if (type == BoundaryConditions::BoundaryType::partial_slip)
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
         {
           /*The partial slip boundary condition is implemented in the
            * matrix-based assemblers*/
         }
-      else if (type == BoundaryConditions::BoundaryType::outlet)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet)
         {
           /*The directional do-nothing boundary condition is implemented
            * in the matrix-based assemblers and the matrix-free operators*/
         }
-      else if (type == BoundaryConditions::BoundaryType::neumann_traction)
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
         {
           /*The Neumann traction boundary condition is implemented
            * in the  matrix-based assemblers and the matrix-free operators*/
         }
-      else if (type == BoundaryConditions::BoundaryType::none)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::none)
         {
           /*Default boundary condition*/
         }
@@ -2158,11 +2161,13 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
        this->simulation_parameters.boundary_conditions.type)
     {
       // Only set the time if it actually makes sense to set the time.
-      if (type == BoundaryConditions::BoundaryType::function ||
-          type == BoundaryConditions::BoundaryType::function_weak ||
-          type == BoundaryConditions::BoundaryType::pressure ||
-          type == BoundaryConditions::BoundaryType::partial_slip ||
-          type == BoundaryConditions::BoundaryType::neumann_traction)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::function ||
+          type ==
+            BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::partial_slip ||
+          type ==
+            BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
         {
           this->simulation_parameters.boundary_conditions
             .navier_stokes_functions.at(id)

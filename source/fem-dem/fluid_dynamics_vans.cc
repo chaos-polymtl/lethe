@@ -58,7 +58,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::FluidDynamicsVANS(
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::periodic)
         {
           if (n_pbc++ > 1)
             {
@@ -290,7 +290,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_assemblers()
   particle_fluid_assemblers.clear();
 
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::function_weak))
+        BoundaryConditions::FluidDynamicsBoundaryType::function_weak))
     {
       this->assemblers.push_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
@@ -298,20 +298,22 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_assemblers()
           this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::partial_slip))
+        BoundaryConditions::FluidDynamicsBoundaryType::partial_slip))
     {
       this->assemblers.push_back(
         std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::outlet))
     {
       this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
         this->simulation_control,
         this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::pressure))
     {
       this->assemblers.push_back(
         std::make_shared<PressureBoundaryCondition<dim>>(

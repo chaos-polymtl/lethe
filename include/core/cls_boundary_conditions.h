@@ -5,24 +5,43 @@
 #define lethe_cls_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
 #include <map>
 #include <memory>
+#include <vector>
 
 using namespace dealii;
 
 namespace BoundaryConditions
 {
+  /// Boundary condition types of the CLS. periodic_neighbor is not a user
+  /// choice: it is assigned to the boundary matching a periodic boundary.
+  enum class CLSBoundaryType
+  {
+    none,
+    dirichlet,
+    periodic,
+    periodic_neighbor
+  };
+
+  /// Boundary condition types of the CLS which can be selected in the
+  /// parameter file
+  inline const std::vector<CLSBoundaryType> cls_boundary_types = {
+    CLSBoundaryType::none,
+    CLSBoundaryType::dirichlet,
+    CLSBoundaryType::periodic};
+
   /**
    * @brief This class manages the boundary conditions for CLS solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
   template <int dim>
-  class CLSBoundaryConditions : public BoundaryConditions
+  class CLSBoundaryConditions : public BoundaryConditions<CLSBoundaryType>
   {
   public:
     std::map<types::boundary_id,

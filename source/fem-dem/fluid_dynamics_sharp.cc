@@ -1962,7 +1962,7 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
           if (cell->at_boundary() &&
               this->check_existance_of_bc(
-                BoundaryConditions::BoundaryType::function_weak))
+                BoundaryConditions::FluidDynamicsBoundaryType::function_weak))
             {
               for (const auto face : cell->face_indices())
                 {
@@ -1972,7 +1972,8 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
                         cell->face(face)->boundary_id();
                       if (this->simulation_parameters.boundary_conditions.type
                             .at(boundary_id) ==
-                          BoundaryConditions::BoundaryType::function_weak)
+                          BoundaryConditions::FluidDynamicsBoundaryType::
+                            function_weak)
                         {
                           FluidDynamicsVelocityFunctionDefined<dim> function_v(
                             &this->simulation_parameters.boundary_conditions
@@ -2091,7 +2092,7 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
   this->pcout << "div u : " << total_velocity_divergence << std::endl;
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::function_weak))
+        BoundaryConditions::FluidDynamicsBoundaryType::function_weak))
     {
       this->pcout << "error at the weak BC : " << std::sqrt(l2errorU_boundary)
                   << std::endl;
@@ -4023,28 +4024,30 @@ FluidDynamicsSharp<dim>::setup_assemblers()
   assemblers_inside_ib.clear();
 
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::function_weak))
+        BoundaryConditions::FluidDynamicsBoundaryType::function_weak))
     {
       this->assemblers.push_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::pressure))
     {
       this->assemblers.push_back(
         std::make_shared<PressureBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::outlet))
     {
       this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
         this->simulation_control,
         this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::partial_slip))
+        BoundaryConditions::FluidDynamicsBoundaryType::partial_slip))
     {
       this->assemblers.push_back(
         std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(

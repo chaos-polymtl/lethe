@@ -5,6 +5,7 @@
 #define lethe_time_harmonic_maxwell_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
@@ -19,14 +20,27 @@ using namespace dealii;
 namespace BoundaryConditions
 {
   /// Boundary condition types of the time-harmonic Maxwell equations
-  inline const std::vector<BoundaryType> time_harmonic_maxwell_boundary_types =
-    {BoundaryType::pec,
-     BoundaryType::pmc,
-     BoundaryType::silver_muller,
-     BoundaryType::electric_field,
-     BoundaryType::magnetic_field,
-     BoundaryType::impedance_boundary,
-     BoundaryType::waveguide_port};
+  enum class TimeHarmonicMaxwellBoundaryType
+  {
+    pec,
+    pmc,
+    silver_muller,
+    electric_field,
+    magnetic_field,
+    impedance_boundary,
+    waveguide_port
+  };
+
+  /// Deprecated strings of the time-harmonic Maxwell boundary condition "type"
+  /// parameter, which remain accepted in parameter files
+  inline const DeprecatedEnumNames<TimeHarmonicMaxwellBoundaryType>
+    deprecated_time_harmonic_maxwell_boundary_type_names = {
+      {"silver muller", TimeHarmonicMaxwellBoundaryType::silver_muller},
+      {"electric field", TimeHarmonicMaxwellBoundaryType::electric_field},
+      {"magnetic field", TimeHarmonicMaxwellBoundaryType::magnetic_field},
+      {"impedance boundary",
+       TimeHarmonicMaxwellBoundaryType::impedance_boundary},
+      {"waveguide port", TimeHarmonicMaxwellBoundaryType::waveguide_port}};
 
   /**
    * @brief This class manages the functions associated with both imposed electric
@@ -60,7 +74,8 @@ namespace BoundaryConditions
    * coherently.
    */
   template <int dim>
-  class TimeHarmonicMaxwellBoundaryConditions : public BoundaryConditions
+  class TimeHarmonicMaxwellBoundaryConditions
+    : public BoundaryConditions<TimeHarmonicMaxwellBoundaryType>
   {
   public:
     /// Functions for (e_x_real, e_y_real, e_z_real, e_x_imag, e_y_imag,

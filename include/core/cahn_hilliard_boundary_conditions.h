@@ -5,6 +5,7 @@
 #define lethe_cahn_hilliard_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
@@ -12,11 +13,36 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 using namespace dealii;
 
 namespace BoundaryConditions
 {
+  /// Boundary condition types of the Cahn-Hilliard equations. periodic_neighbor
+  /// is not a user choice: it is assigned to the boundary matching a periodic
+  /// boundary.
+  enum class CahnHilliardBoundaryType
+  {
+    none,
+    noflux,
+    dirichlet,
+    angle_of_contact,
+    free_angle,
+    periodic,
+    periodic_neighbor
+  };
+
+  /// Boundary condition types of the Cahn-Hilliard equations which can be
+  /// selected in the parameter file
+  inline const std::vector<CahnHilliardBoundaryType>
+    cahn_hilliard_boundary_types = {CahnHilliardBoundaryType::none,
+                                    CahnHilliardBoundaryType::noflux,
+                                    CahnHilliardBoundaryType::dirichlet,
+                                    CahnHilliardBoundaryType::angle_of_contact,
+                                    CahnHilliardBoundaryType::free_angle,
+                                    CahnHilliardBoundaryType::periodic};
+
   /**
    * @brief This class manages the functions associated with function-type boundary conditions
    * of the Cahn-Hilliard equations
@@ -36,7 +62,8 @@ namespace BoundaryConditions
    * coherently.
    */
   template <int dim>
-  class CahnHilliardBoundaryConditions : public BoundaryConditions
+  class CahnHilliardBoundaryConditions
+    : public BoundaryConditions<CahnHilliardBoundaryType>
   {
   public:
     std::map<types::boundary_id, double> angle_of_contact;

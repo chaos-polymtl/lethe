@@ -6,6 +6,7 @@
 
 #include <core/boundary_conditions.h>
 #include <core/parameters_multiphysics.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 
@@ -15,6 +16,14 @@ using namespace dealii;
 
 namespace BoundaryConditions
 {
+  /// Boundary condition types of the QMOM physics
+  enum class QMOMBoundaryType
+  {
+    none,
+    dirichlet,
+    outlet
+  };
+
   /**
    * @brief Boundary conditions of the QMOM physics. They apply to the advective
    * flux of all the QMOM fields (scalars and moments), which is meant to be
@@ -30,11 +39,11 @@ namespace BoundaryConditions
    * @tparam dim Number of spatial dimensions.
    */
   template <int dim>
-  class QMOMBoundaryConditions : public BoundaryConditions
+  class QMOMBoundaryConditions : public BoundaryConditions<QMOMBoundaryType>
   {
   public:
     /// Values imposed by the Dirichlet boundary conditions, for each boundary
-    /// id of type qmom_dirichlet
+    /// id of type dirichlet
     std::map<types::boundary_id, Parameters::QMOMFunctions<dim>> dirichlet;
 
     /**

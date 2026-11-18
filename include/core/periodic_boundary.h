@@ -27,7 +27,7 @@ namespace Parameters
    * (first) boundary id of each pair.
    *
    * CFD and DEM simulations declare their boundary conditions through different
-   * parameter classes (BoundaryConditions::BoundaryConditions and
+   * parameter classes (BoundaryConditions::BoundaryConditions<BoundaryType> and
    * Parameters::Lagrangian::BCDEM respectively), but both describe periodicity
    * with this container, so that a single routine,
    * setup_periodic_boundary_conditions(), sets up the periodicity of the

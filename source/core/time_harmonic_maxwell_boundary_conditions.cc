@@ -30,10 +30,9 @@ namespace BoundaryConditions
     declare_enum_entry(
       prm,
       "type",
-      BoundaryType::silver_muller,
+      TimeHarmonicMaxwellBoundaryType::silver_muller,
       "Type of boundary condition for Time Harmonic Maxwell equations.",
-      deprecated_boundary_type_names,
-      time_harmonic_maxwell_boundary_types);
+      deprecated_time_harmonic_maxwell_boundary_type_names);
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -299,9 +298,10 @@ namespace BoundaryConditions
 
         // Establish the type of boundary condition
         this->type[boundary_id] =
-          string_to_enum<BoundaryType>(prm.get("type"),
-                                       deprecated_boundary_type_names,
-                                       "type");
+          string_to_enum<TimeHarmonicMaxwellBoundaryType>(
+            prm.get("type"),
+            deprecated_time_harmonic_maxwell_boundary_type_names,
+            "type");
       }
   }
 

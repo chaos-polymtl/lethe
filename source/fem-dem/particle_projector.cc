@@ -224,7 +224,7 @@ ParticleProjector<dim, PropertiesIndex>::setup_constraints(
 
   for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             boundary_conditions.periodic_boundaries.at(id);

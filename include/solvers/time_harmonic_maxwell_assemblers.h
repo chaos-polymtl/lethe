@@ -54,11 +54,15 @@ using TimeHarmonicMaxwellFaceAssemblerBase =
  * boundary conditions.
  */
 inline bool
-is_robin_boundary_type(const BoundaryConditions::BoundaryType type)
+is_robin_boundary_type(
+  const BoundaryConditions::TimeHarmonicMaxwellBoundaryType type)
 {
-  return (type == BoundaryConditions::BoundaryType::silver_muller) ||
-         (type == BoundaryConditions::BoundaryType::impedance_boundary) ||
-         (type == BoundaryConditions::BoundaryType::waveguide_port);
+  return (type ==
+          BoundaryConditions::TimeHarmonicMaxwellBoundaryType::silver_muller) ||
+         (type == BoundaryConditions::TimeHarmonicMaxwellBoundaryType::
+                    impedance_boundary) ||
+         (type ==
+          BoundaryConditions::TimeHarmonicMaxwellBoundaryType::waveguide_port);
 }
 
 /**
@@ -338,10 +342,10 @@ private:
    */
   std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
   compute_robin_boundary_data(
-    const TimeHarmonicMaxwellScratchData<dim> &scratch_data,
-    const unsigned int                         q,
-    const BoundaryConditions::BoundaryType     bc_type,
-    const unsigned int                         waveguide_port_index) const;
+    const TimeHarmonicMaxwellScratchData<dim>                &scratch_data,
+    const unsigned int                                        q,
+    const BoundaryConditions::TimeHarmonicMaxwellBoundaryType bc_type,
+    const unsigned int waveguide_port_index) const;
 
   /**
    * @brief Compute the excitation and the surface admittance of the Robin

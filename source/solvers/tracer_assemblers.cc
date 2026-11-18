@@ -599,12 +599,12 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
   const auto boundary_type = tracer_boundary_conditions.type[boundary_index];
 
   // Only outlet and Dirichlet boundaries contribute to the matrix
-  if (boundary_type != BoundaryConditions::BoundaryType::outlet &&
-      boundary_type != BoundaryConditions::BoundaryType::tracer_dirichlet)
+  if (boundary_type != BoundaryConditions::TracerBoundaryType::outlet &&
+      boundary_type != BoundaryConditions::TracerBoundaryType::dirichlet)
     return;
 
   const bool is_dirichlet =
-    boundary_type == BoundaryConditions::BoundaryType::tracer_dirichlet;
+    boundary_type == BoundaryConditions::TracerBoundaryType::dirichlet;
 
   // Normal gradient of the shape functions at a quadrature point
   std::vector<double> grad_phi_n(n_facet_dofs);
@@ -675,7 +675,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
   // If the boundary condition is an outlet, assumes that advection comes
   // out since there is no inflow
   if (tracer_boundary_conditions.type[boundary_index] ==
-      BoundaryConditions::BoundaryType::outlet)
+      BoundaryConditions::TracerBoundaryType::outlet)
     {
       for (unsigned int point = 0; point < q_points.size(); ++point)
         {
@@ -692,7 +692,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
   // Else the boundary condition is a dirichlet. Evaluate the function and
   // process it accordingly
   else if (tracer_boundary_conditions.type[boundary_index] ==
-           BoundaryConditions::BoundaryType::tracer_dirichlet)
+           BoundaryConditions::TracerBoundaryType::dirichlet)
     {
       std::vector<double> function_value(q_points.size());
       tracer_boundary_conditions.tracer[boundary_index]->value_list(
@@ -731,14 +731,14 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
   // imposes a zero total (advective and diffusive) flux. This is the natural
   // boundary condition, which is the expected behavior for walls.
   else if (tracer_boundary_conditions.type[boundary_index] ==
-           BoundaryConditions::BoundaryType::none)
+           BoundaryConditions::TracerBoundaryType::none)
     {
       return;
     }
   else if (tracer_boundary_conditions.type[boundary_index] ==
-             BoundaryConditions::BoundaryType::periodic ||
+             BoundaryConditions::TracerBoundaryType::periodic ||
            tracer_boundary_conditions.type[boundary_index] ==
-             BoundaryConditions::BoundaryType::periodic_neighbor)
+             BoundaryConditions::TracerBoundaryType::periodic_neighbor)
     {
       AssertThrow(
         false,

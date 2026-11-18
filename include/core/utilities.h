@@ -792,14 +792,12 @@ warn_deprecated_parameter_value(const std::string &parameter_name,
  * @param[in] deprecated_names Deprecated strings which remain accepted.
  *
  * @param[in] allowed_values Enumerators (e.g. the enum values, for example
- * quiet, verbose and extra_vebose) accepted by the parameter. If empty,
+ * quiet, verbose and extra_verbose) accepted by the parameter. If empty,
  * all the enumerators (meaning all possible values) of @p EnumType are accepted.
- * This is necessary because some enums (for example
- * BoundaryConditions::BoundaryType) contains values which are not accepted for
- * all physics.
- *
- * //TODO Separate the enum for the BoundaryConditions::BoundaryType into a
- * separate enum for each physics
+ * This is necessary because some enums contain internal enumerators which are
+ * not user choices (for example, the periodic_neighbor value of the boundary
+ * condition types, which the parser assigns to the boundary matching a
+ * periodic boundary).
  *
  * @return The choices separated by "|".
  */

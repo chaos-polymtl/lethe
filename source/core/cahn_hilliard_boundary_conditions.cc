@@ -26,13 +26,13 @@ namespace BoundaryConditions
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      "none",
-      Patterns::Selection(
-        "none|noflux|dirichlet|angle_of_contact|free_angle|periodic"),
-      "Type of boundary condition for the Cahn-Hilliard equations"
-      "Choices are <none|noflux|dirichlet|angle_of_contact|free_angle|periodic>.");
+      CahnHilliardBoundaryType::none,
+      "Type of boundary condition for the Cahn-Hilliard equations.",
+      {},
+      cahn_hilliard_boundary_types);
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -123,51 +123,24 @@ namespace BoundaryConditions
         // Do the same with the angle of contact
         this->angle_of_contact[boundary_id] = prm.get_double("angle value");
 
-        const std::string op = prm.get("type");
-        if (op == "none")
-          {
-            this->type[boundary_id] = BoundaryType::none;
-          }
-        else if (op == "noflux")
-          {
-            this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
-          }
-        else if (op == "dirichlet")
-          {
-            this->type[boundary_id] =
-              BoundaryType::cahn_hilliard_dirichlet_phase_order;
-          }
-        else if (op == "angle_of_contact")
-          {
-            this->type[boundary_id] =
-              BoundaryType::cahn_hilliard_angle_of_contact;
-          }
-        else if (op == "free_angle")
-          {
-            this->type[boundary_id] = BoundaryType::cahn_hilliard_free_angle;
-          }
-        else if (op == "periodic")
+        const CahnHilliardBoundaryType boundary_type =
+          string_to_enum<CahnHilliardBoundaryType>(prm.get("type"));
+        this->type[boundary_id] = boundary_type;
+        if (boundary_type == CahnHilliardBoundaryType::periodic)
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
 
-            this->type[boundary_id] = BoundaryType::periodic;
-
             // We attribute a periodic neighbor boundary type to the neighbor
             // boundary to ensure that all boundaries have a defined type
-            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+            this->type[periodic_boundary_id] =
+              CahnHilliardBoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
               .neighbor_id = periodic_boundary_id,
               .direction   = static_cast<unsigned int>(
                 prm.get_integer("periodic direction"))};
-          }
-        else
-          {
-            AssertThrow(
-              false,
-              ExcMessage("Unknown boundary condition type for Cahn-Hilliard."));
           }
       }
   }

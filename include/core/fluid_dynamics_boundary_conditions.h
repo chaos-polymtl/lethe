@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
@@ -19,18 +20,46 @@ using namespace dealii;
 
 namespace BoundaryConditions
 {
-  /// Boundary condition types of the fluid dynamics
-  inline const std::vector<BoundaryType> fluid_dynamics_boundary_types = {
-    BoundaryType::none,
-    BoundaryType::noslip,
-    BoundaryType::slip,
-    BoundaryType::function,
-    BoundaryType::periodic,
-    BoundaryType::pressure,
-    BoundaryType::neumann_traction,
-    BoundaryType::function_weak,
-    BoundaryType::partial_slip,
-    BoundaryType::outlet};
+  /// Boundary condition types of the fluid dynamics. periodic_neighbor is not
+  /// a user choice: it is assigned to the boundary matching a periodic
+  /// boundary.
+  enum class FluidDynamicsBoundaryType
+  {
+    none,
+    noslip,
+    slip,
+    function,
+    function_weak,
+    partial_slip,
+    pressure,
+    neumann_traction,
+    outlet,
+    periodic,
+    periodic_neighbor
+  };
+
+  /// Deprecated strings of the fluid dynamics boundary condition "type"
+  /// parameter, which remain accepted in parameter files
+  inline const DeprecatedEnumNames<FluidDynamicsBoundaryType>
+    deprecated_fluid_dynamics_boundary_type_names = {
+      {"function weak", FluidDynamicsBoundaryType::function_weak},
+      {"partial slip", FluidDynamicsBoundaryType::partial_slip},
+      {"neumann traction", FluidDynamicsBoundaryType::neumann_traction}};
+
+  /// Boundary condition types of the fluid dynamics which can be selected in
+  /// the parameter file
+  inline const std::vector<FluidDynamicsBoundaryType>
+    fluid_dynamics_boundary_types = {
+      FluidDynamicsBoundaryType::none,
+      FluidDynamicsBoundaryType::noslip,
+      FluidDynamicsBoundaryType::slip,
+      FluidDynamicsBoundaryType::function,
+      FluidDynamicsBoundaryType::periodic,
+      FluidDynamicsBoundaryType::pressure,
+      FluidDynamicsBoundaryType::neumann_traction,
+      FluidDynamicsBoundaryType::function_weak,
+      FluidDynamicsBoundaryType::partial_slip,
+      FluidDynamicsBoundaryType::outlet};
 
   /**
    * @brief This class manages the functions associated with function-type boundary conditions
@@ -84,9 +113,18 @@ namespace BoundaryConditions
    * coherently.
    */
   template <int dim>
-  class FluidDynamicsBoundaryConditions : public BoundaryConditions
+  class FluidDynamicsBoundaryConditions
+    : public BoundaryConditions<FluidDynamicsBoundaryType>
   {
   public:
+    /// Map containing the penalization parameter for weak Dirichlet BCs and
+    /// outlets for a corresponding id.
+    std::map<types::boundary_id, double> beta;
+
+    /// Map containing the boundary layer thickness used to compute the tangent
+    /// penalization parameter of partial slip BCs for a corresponding id.
+    std::map<types::boundary_id, double> boundary_layer_thickness;
+
     /// Functions for (u : x component of the velocity, v : y component of the
     /// velocity, w : z-component of the velocity, p : pressure, Neumann
     /// traction: traction_fn) for all boundaries
@@ -146,7 +184,7 @@ namespace BoundaryConditions
   void
   FluidDynamicsBoundaryConditions<dim>::createNoSlip()
   {
-    this->type[0]                       = BoundaryType::noslip;
+    this->type[0]                       = FluidDynamicsBoundaryType::noslip;
     this->number_of_boundary_conditions = 1;
     this->beta[0]                       = 0;
   }

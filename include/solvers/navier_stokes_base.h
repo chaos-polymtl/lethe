@@ -610,7 +610,7 @@ protected:
    * @param bc, the boundary type that we want to check if it exists
    */
   bool
-  check_existance_of_bc(BoundaryConditions::BoundaryType bc);
+  check_existance_of_bc(BoundaryConditions::FluidDynamicsBoundaryType bc);
 
   /**
    * @brief Turn regions of the mesh where the @p material_id>0 into a solid

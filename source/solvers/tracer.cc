@@ -1386,7 +1386,7 @@ Tracer<dim>::update_boundary_conditions()
        this->simulation_parameters.tracer_boundary_conditions.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+      if (type == BoundaryConditions::TracerBoundaryType::dirichlet)
         {
           this->simulation_parameters.tracer_boundary_conditions.tracer.at(id)
             ->set_time(time);
@@ -1397,7 +1397,7 @@ Tracer<dim>::update_boundary_conditions()
               id),
             nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::TracerBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.tracer_boundary_conditions
@@ -1408,7 +1408,7 @@ Tracer<dim>::update_boundary_conditions()
                                                  periodic_boundary.direction,
                                                  nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::none)
+      if (type == BoundaryConditions::TracerBoundaryType::none)
         {
           /* Do nothing */
         }
@@ -1430,7 +1430,7 @@ Tracer<dim>::define_zero_constraints()
   for (auto const &[id, type] :
        this->simulation_parameters.tracer_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+      if (type == BoundaryConditions::TracerBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -1438,7 +1438,7 @@ Tracer<dim>::define_zero_constraints()
             Functions::ZeroFunction<dim>(),
             zero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::TracerBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.tracer_boundary_conditions
@@ -1449,7 +1449,7 @@ Tracer<dim>::define_zero_constraints()
                                                  periodic_boundary.direction,
                                                  zero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::none)
+      if (type == BoundaryConditions::TracerBoundaryType::none)
         {
           /* Do nothing */
         }
@@ -1470,7 +1470,7 @@ Tracer<dim>::define_non_zero_constraints()
        this->simulation_parameters.tracer_boundary_conditions.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+      if (type == BoundaryConditions::TracerBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -1479,7 +1479,7 @@ Tracer<dim>::define_non_zero_constraints()
               id),
             nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::TracerBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.tracer_boundary_conditions
@@ -1490,7 +1490,7 @@ Tracer<dim>::define_non_zero_constraints()
                                                  periodic_boundary.direction,
                                                  nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::none)
+      if (type == BoundaryConditions::TracerBoundaryType::none)
         {
           /* Do nothing */
         }

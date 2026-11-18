@@ -29,9 +29,9 @@ namespace BoundaryConditions
   {
     declare_enum_entry(prm,
                        "type",
-                       BoundaryType::none,
+                       FluidDynamicsBoundaryType::none,
                        "Type of boundary condition.",
-                       deprecated_boundary_type_names,
+                       deprecated_fluid_dynamics_boundary_type_names,
                        fluid_dynamics_boundary_types);
 
     prm.declare_entry("id",
@@ -198,21 +198,23 @@ namespace BoundaryConditions
         prm.leave_subsection();
 
         // Establish the type of boundary condition
-        const BoundaryType boundary_type =
-          string_to_enum<BoundaryType>(prm.get("type"),
-                                       deprecated_boundary_type_names,
-                                       "type");
+        const FluidDynamicsBoundaryType boundary_type =
+          string_to_enum<FluidDynamicsBoundaryType>(
+            prm.get("type"),
+            deprecated_fluid_dynamics_boundary_type_names,
+            "type");
         this->type[boundary_id] = boundary_type;
-        if (boundary_type == BoundaryType::periodic)
+        if (boundary_type == FluidDynamicsBoundaryType::periodic)
           {
             types::boundary_id periodic_boundary_id =
               prm.get_integer("periodic id");
 
-            this->type[boundary_id] = BoundaryType::periodic;
+            this->type[boundary_id] = FluidDynamicsBoundaryType::periodic;
 
             // We attribute a periodic neighbor boundary type to the neighbor
             // boundary to ensure that all boundaries have a defined type
-            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+            this->type[periodic_boundary_id] =
+              FluidDynamicsBoundaryType::periodic_neighbor;
 
             // We store the periodic id and direction
             this->periodic_boundaries[boundary_id] = {
