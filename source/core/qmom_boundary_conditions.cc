@@ -25,11 +25,10 @@ namespace BoundaryConditions
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
-    prm.declare_entry("type",
-                      "none",
-                      Patterns::Selection("dirichlet|outlet|none"),
-                      "Type of boundary condition for the QMOM fields. "
-                      "Choices are <dirichlet|outlet|none>.");
+    declare_enum_entry(prm,
+                       "type",
+                       QMOMBoundaryType::none,
+                       "Type of boundary condition for the QMOM fields.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -84,33 +83,19 @@ namespace BoundaryConditions
       ExcMessage(
         "A boundary id has not been set for one of the QMOM boundary conditions. Please ensure that the id is set for every boundary condition."));
 
-    const std::string boundary_type = prm.get("type");
+    const QMOMBoundaryType boundary_type =
+      string_to_enum<QMOMBoundaryType>(prm.get("type"));
     for (const auto boundary_id : boundary_ids)
       {
         AssertThrow(this->type.find(boundary_id) == this->type.end(),
                     QMOMBoundaryDuplicated(boundary_id));
 
-        if (boundary_type == "dirichlet")
+        this->type[boundary_id] = boundary_type;
+        if (boundary_type == QMOMBoundaryType::dirichlet)
           {
-            this->type[boundary_id] = BoundaryType::qmom_dirichlet;
             prm.enter_subsection("dirichlet");
             dirichlet[boundary_id].parse_parameters(prm);
             prm.leave_subsection();
-          }
-        else if (boundary_type == "outlet")
-          {
-            this->type[boundary_id] = BoundaryType::outlet;
-          }
-        else if (boundary_type == "none")
-          {
-            this->type[boundary_id] = BoundaryType::none;
-          }
-        else
-          {
-            AssertThrow(false,
-                        ExcMessage(
-                          "Unknown boundary condition type for QMOM: " +
-                          boundary_type));
           }
       }
   }
