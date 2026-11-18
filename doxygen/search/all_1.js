@@ -81,7 +81,7 @@ var searchData=
   ['analytical_5fsolutions_2eh_78',['analytical_solutions.h',['../analytical__solutions_8h.html',1,'']]],
   ['analyticalsolution_79',['AnalyticalSolution',['../classAnalyticalSolutions_1_1AnalyticalSolution.html',1,'AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;'],['../classAnalyticalSolutions_1_1AnalyticalSolution.html#aca6eea7e4b34a56a65c4035f8cfbcefb',1,'AnalyticalSolutions::AnalyticalSolution::AnalyticalSolution()']]],
   ['analyticalsolutions_80',['AnalyticalSolutions',['../namespaceAnalyticalSolutions.html',1,'']]],
-  ['angle_5fof_5fcontact_81',['angle_of_contact',['../classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a35173bde5fa0eba1b8f3c5846e8f3d73',1,'BoundaryConditions::CahnHilliardBoundaryConditions']]],
+  ['angle_5fof_5fcontact_81',['angle_of_contact',['../classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a35173bde5fa0eba1b8f3c5846e8f3d73',1,'BoundaryConditions::CahnHilliardBoundaryConditions::angle_of_contact'],['../namespaceBoundaryConditions.html#a214ae6b94c31028f22f241afc3198170ad1e32e642b02af7fe46972d7721535ae',1,'BoundaryConditions::angle_of_contact']]],
   ['angular_5ffrequency_82',['angular_frequency',['../classHeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell.html#a92b579847b91ccbae92b7fea456a415f',1,'HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell']]],
   ['angular_5fto_5flinear_5fvelocity_83',['angular_to_linear_velocity',['../namespaceLetheGridTools.html#af664dc8360ab296677be2d669089e3a6',1,'LetheGridTools']]],
   ['angular_5fvelocities_84',['angular_velocities',['../classInsertionList.html#a0bd793266b0450ac7a3095bd534d7629',1,'InsertionList']]],

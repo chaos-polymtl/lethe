@@ -93,19 +93,23 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">tracer_boundary_conditions.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="boundary__conditions_8h_source.html">core/boundary_conditions.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="core_2utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/parameter_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/base/parsed_function.h&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for tracer_boundary_conditions.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="tracer__boundary__conditions_8h__incl.svg" width="3938" height="427"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="tracer__boundary__conditions_8h__incl.svg" width="4095" height="351"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -122,6 +126,22 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:BoundaryConditions" id="r_BoundaryConditions"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceBoundaryConditions.html">BoundaryConditions</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a1767b10c8ae7c44ac842247d7a5eac5b" id="r_a1767b10c8ae7c44ac842247d7a5eac5b"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceBoundaryConditions.html#a1767b10c8ae7c44ac842247d7a5eac5b">BoundaryConditions::TracerBoundaryType</a> { <br />
+&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a1767b10c8ae7c44ac842247d7a5eac5ba334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::none</a>
+, <a class="el" href="namespaceBoundaryConditions.html#a1767b10c8ae7c44ac842247d7a5eac5ba503b9bc8f55d2a048f0cb35ddf3fb4ec">BoundaryConditions::dirichlet</a>
+, <a class="el" href="namespaceBoundaryConditions.html#a1767b10c8ae7c44ac842247d7a5eac5bab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>
+, <a class="el" href="namespaceBoundaryConditions.html#a1767b10c8ae7c44ac842247d7a5eac5bae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a1767b10c8ae7c44ac842247d7a5eac5ba526a99532e70736e1153dec9f45ff924">BoundaryConditions::periodic_neighbor</a>
+<br />
+ }</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a60a5dbd682ef4ad59c85ef19dfcc5ea7" id="r_a60a5dbd682ef4ad59c85ef19dfcc5ea7"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="namespaceBoundaryConditions.html#a1767b10c8ae7c44ac842247d7a5eac5b">TracerBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceBoundaryConditions.html#a60a5dbd682ef4ad59c85ef19dfcc5ea7">BoundaryConditions::tracer_boundary_types</a></td></tr>
 </table>
 </div><!-- contents -->
 <!--

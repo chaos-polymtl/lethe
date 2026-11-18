@@ -635,7 +635,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Cell diameter value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00991">991</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00989">989</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -677,7 +677,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Area (2D) volume (3D) of the cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01019">1019</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01017">1017</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -758,7 +758,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A std::vector&lt;double&gt; corresponding to the entry_string in the prm file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01332">1332</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01330">1330</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -837,7 +837,7 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01304">1304</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01302">1302</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -911,7 +911,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00890">890</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00888">888</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1099,7 +1099,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The sentence listing the choices, separated by "|". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00856">856</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00854">854</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1143,14 +1143,13 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">deprecated_names</td><td>Deprecated strings which remain accepted.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">allowed_values</td><td>Enumerators (e.g. the enum values, for example quiet, verbose and extra_vebose) accepted by the parameter. If empty, all the enumerators (meaning all possible values) of <code class="param">EnumType</code> are accepted. This is necessary because some enums (for example <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a>) contains values which are not accepted for all physics.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">allowed_values</td><td>Enumerators (e.g. the enum values, for example quiet, verbose and extra_verbose) accepted by the parameter. If empty, all the enumerators (meaning all possible values) of <code class="param">EnumType</code> are accepted. This is necessary because some enums contain internal enumerators which are not user choices (for example, the periodic_neighbor value of the boundary condition types, which the parser assigns to the boundary matching a periodic boundary).</td></tr>
   </table>
   </dd>
 </dl>
-<p>//TODO Separate the enum for the <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a> into a separate enum for each physics</p>
 <dl class="section return"><dt>Returns</dt><dd>The choices separated by "|". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00809">809</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00807">807</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1271,7 +1270,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00930">930</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01529">points_are_in_domain()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01527">points_are_in_domain()</a>.</p>
 
 </div>
 </div>
@@ -1346,7 +1345,7 @@ template&lt;int n_component, int dim, typename <a class="el" href="time__harmoni
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l01027">1027</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01529">points_are_in_domain()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01527">points_are_in_domain()</a>.</p>
 
 </div>
 </div>
@@ -1383,7 +1382,7 @@ template&lt;typename key, typename val&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>keys Vector of keys from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01120">1120</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01118">1118</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1420,7 +1419,7 @@ template&lt;typename key, typename val&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>values Vector of values from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01140">1140</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01138">1138</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1687,7 +1686,7 @@ template&lt;typename key, typename val&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01101">1101</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01099">1099</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1748,9 +1747,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Smallest cell size value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01046">1046</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01044">1044</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00991">compute_cell_diameter()</a>, and <a class="el" href="core_2utilities_8h_source.html#l01019">compute_cell_measure_with_JxW()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00989">compute_cell_diameter()</a>, and <a class="el" href="core_2utilities_8h_source.html#l01017">compute_cell_measure_with_JxW()</a>.</p>
 
 </div>
 </div>
@@ -2193,7 +2192,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Angle in the plane perpendicular to the rotation axis </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01236">1236</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01234">1234</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2242,7 +2241,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><code class="param">true</code> if all points are within the simulated domain. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01529">1529</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01527">1527</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2400,7 +2399,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>point Point in cartesian coordinates </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01268">1268</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01266">1266</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2650,7 +2649,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The enumerator of <code class="param">EnumType</code> designated by <code class="param">name</code>. An exception is thrown if <code class="param">name</code> is neither an enumerator nor a deprecated string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00925">925</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00923">923</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00705">enum_to_string()</a>, <a class="el" href="core_2utilities_8h_source.html#l00734">string_to_enum()</a>, and <a class="el" href="utilities_8cc_source.html#l00839">warn_deprecated_parameter_value()</a>.</p>
 
@@ -2697,7 +2696,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code class="param">value_string</code> in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00958">958</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00956">956</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>

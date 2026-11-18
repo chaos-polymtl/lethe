@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['outputcontrol_0',['OutputControl',['../structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75',1,'Parameters::SimulationControl']]]
+  ['navierstokesstabilization_0',['NavierStokesStabilization',['../structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bb',1,'Parameters::Stabilization']]]
 ];

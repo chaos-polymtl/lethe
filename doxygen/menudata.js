@@ -71,6 +71,7 @@ var menudata={children:[
 {text:"d",url:"namespacemembers_enum.html#index_d"},
 {text:"e",url:"namespacemembers_enum.html#index_e"},
 {text:"f",url:"namespacemembers_enum.html#index_f"},
+{text:"h",url:"namespacemembers_enum.html#index_h"},
 {text:"p",url:"namespacemembers_enum.html#index_p"},
 {text:"q",url:"namespacemembers_enum.html#index_q"},
 {text:"r",url:"namespacemembers_enum.html#index_r"},

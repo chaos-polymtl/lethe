@@ -1,3 +1,17 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classGridPipeAndWaveguide.html" title="Generates a 3D mesh of a waveguide embedded in a cylindrical cavity in which a liquid flows." alt="" coords="5,5,179,50"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,230,82,258"/>
+<area shape="rect" id="Node000001" href="$classCahnHilliardFunctionDefined.html" title="Class that implements a boundary conditions for the Cahn&#45;Hilliard equation where the phase and chemic..." alt="" coords="143,5,349,50"/>
+<area shape="poly" id="edge71_Node000000_Node000001" title=" " alt="" coords="48,214,58,179,74,138,97,96,128,60,148,48,145,53,131,64,101,99,78,140,63,181,53,216"/>
+<area shape="rect" id="Node000002" href="$classFluidDynamicsPressureFunctionDefined.html" title="This class implements a pressure boundary condition for the Navier&#45;Stokes equations." alt="" coords="131,75,360,119"/>
+<area shape="poly" id="edge72_Node000000_Node000002" title=" " alt="" coords="57,215,86,171,106,149,128,129,152,118,149,122,131,134,109,152,90,174,62,217"/>
+<area shape="rect" id="Node000003" href="$classFluidDynamicsVelocityFunctionDefined.html" title="This class implements a boundary conditions for the fluid dynamics solver where the velocity componen..." alt="" coords="133,144,358,189"/>
+<area shape="poly" id="edge73_Node000000_Node000003" title=" " alt="" coords="82,220,129,199,164,187,160,191,131,203,86,224"/>
+<area shape="rect" id="Node000004" href="$classInterfaceTools_1_1CellWiseFunction.html" title="Scalar function defined by the DOF values of a single cell. Based on the CellWiseFunction and RefSpac..." alt="" coords="146,213,346,274"/>
+<area shape="poly" id="edge74_Node000000_Node000004" title=" " alt="" coords="96,241,148,242,144,245,98,246"/>
+<area shape="rect" id="Node000005" href="$classQMOMFieldFunction.html" title="Function of all the QMOM fields, built from the functions of the scalars and from the particle size d..." alt="" coords="165,299,327,343"/>
+<area shape="poly" id="edge75_Node000000_Node000005" title=" " alt="" coords="84,263,131,284,167,298,162,300,129,289,84,268"/>
+<area shape="rect" id="Node000006" href="$classTimeHarmonicMaxwellElectricFieldDefined.html" title="This class implements a boundary condition type for the Time Harmonic Maxwell equation where the elec..." alt="" coords="136,368,356,413"/>
+<area shape="poly" id="edge76_Node000000_Node000006" title=" " alt="" coords="59,269,90,313,109,335,131,353,153,367,148,368,128,358,106,339,86,317,59,274"/>
+<area shape="rect" id="Node000007" href="$classTimeHarmonicMaxwellMagneticFieldDefined.html" title="This class implements a boundary condition type for the Time Harmonic Maxwell equation where the magn..." alt="" coords="130,437,362,482"/>
+<area shape="poly" id="edge77_Node000000_Node000007" title=" " alt="" coords="51,270,63,307,78,347,101,388,131,423,149,437,144,437,128,427,97,391,74,350,58,308,50,275"/>
 </map>

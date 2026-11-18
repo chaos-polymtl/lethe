@@ -112,7 +112,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for time_harmonic_maxwell_assemblers.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="time__harmonic__maxwell__assemblers_8h__incl.svg" width="3147" height="814"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="time__harmonic__maxwell__assemblers_8h__incl.svg" width="3698" height="814"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -137,7 +137,7 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a96e13bfff3faebb7dff41e57bc7c1494" id="r_a96e13bfff3faebb7dff41e57bc7c1494"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96e13bfff3faebb7dff41e57bc7c1494">is_robin_boundary_type</a> (const <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a> type)</td></tr>
+<tr class="memitem:a150c9a2114e7385e67bf32ed38ff771a" id="r_a150c9a2114e7385e67bf32ed38ff771a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a150c9a2114e7385e67bf32ed38ff771a">is_robin_boundary_type</a> (const <a class="el" href="namespaceBoundaryConditions.html#a01aca7576c2c136de1c354a89009944b">BoundaryConditions::TimeHarmonicMaxwellBoundaryType</a> type)</td></tr>
 <tr class="memitem:a6c2f4fc24e8fd2d594308a9a0d7f95a3" id="r_a6c2f4fc24e8fd2d594308a9a0d7f95a3"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a6c2f4fc24e8fd2d594308a9a0d7f95a3 template"><td class="memItemLeft" align="right" valign="top">std::pair&lt; Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt;, Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c2f4fc24e8fd2d594308a9a0d7f95a3">compute_waveguide_port_incident_fields</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; dim &gt; &amp;time_harmonic_maxwell_parameters, const Point&lt; dim &gt; &amp;p, const Tensor&lt; 1, dim &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability, const unsigned int waveguide_port_index)</td></tr>
 <tr class="memitem:ad8ccc21127914d77c39eaf91c1a75359" id="r_ad8ccc21127914d77c39eaf91c1a75359"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
@@ -314,8 +314,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a96e13bfff3faebb7dff41e57bc7c1494" name="a96e13bfff3faebb7dff41e57bc7c1494"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96e13bfff3faebb7dff41e57bc7c1494">&#9670;&#160;</a></span>is_robin_boundary_type()</h2>
+<a id="a150c9a2114e7385e67bf32ed38ff771a" name="a150c9a2114e7385e67bf32ed38ff771a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a150c9a2114e7385e67bf32ed38ff771a">&#9670;&#160;</a></span>is_robin_boundary_type()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -326,7 +326,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">bool is_robin_boundary_type </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="namespaceBoundaryConditions.html#a01aca7576c2c136de1c354a89009944b">BoundaryConditions::TimeHarmonicMaxwellBoundaryType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -348,7 +348,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__assemblers_8h_source.html#l00057">57</a> of file <a class="el" href="time__harmonic__maxwell__assemblers_8h_source.html">time_harmonic_maxwell_assemblers.h</a>.</p>
 
-<p class="reference">References <a class="el" href="boundary__conditions_8h_source.html#l00055">BoundaryConditions::impedance_boundary</a>, <a class="el" href="boundary__conditions_8h_source.html#l00052">BoundaryConditions::silver_muller</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00056">BoundaryConditions::waveguide_port</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00027">BoundaryConditions::silver_muller</a>, and <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00031">BoundaryConditions::waveguide_port</a>.</p>
 
 </div>
 </div>

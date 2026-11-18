@@ -23,9 +23,10 @@ var searchData=
   ['fluid_5ffluid_20',['fluid_fluid',['../classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a1b2190c742f3b972ffbe02752ba4f8b2',1,'Parameters::MaterialInteractions::fluid_fluid'],['../physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6',1,'fluid_fluid:&#160;physical_properties_manager.h']]],
   ['fluid_5fsolid_21',['fluid_solid',['../classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8a7426537cf506209635da9eebebd9886a',1,'Parameters::MaterialInteractions::fluid_solid'],['../physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189a2116a68bfe5535ddc1f83113fcede062',1,'fluid_solid:&#160;physical_properties_manager.h']]],
   ['fraction_22',['fraction',['../structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45a03f0356d2d1c334d3567c9d67818f5d0',1,'Parameters::MeshAdaptation']]],
-  ['frequent_23',['frequent',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911',1,'Parameters::Lagrangian::ModelParameters']]],
-  ['fully_5fexplicit_24',['fully_explicit',['../namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f',1,'Parameters']]],
-  ['fully_5fimplicit_25',['fully_implicit',['../namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a555ede1f7c02f9ecb183480feb7ae143',1,'Parameters']]],
-  ['function_26',['function',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14',1,'BoundaryConditions::function'],['../namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14',1,'Parameters::function']]],
-  ['function_5fweak_27',['function_weak',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38',1,'BoundaryConditions']]]
+  ['free_5fangle_23',['free_angle',['../namespaceBoundaryConditions.html#a214ae6b94c31028f22f241afc3198170a244db0d38f4916b33ce2f6be6fee2fb8',1,'BoundaryConditions']]],
+  ['frequent_24',['frequent',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911',1,'Parameters::Lagrangian::ModelParameters']]],
+  ['fully_5fexplicit_25',['fully_explicit',['../namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f',1,'Parameters']]],
+  ['fully_5fimplicit_26',['fully_implicit',['../namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a555ede1f7c02f9ecb183480feb7ae143',1,'Parameters']]],
+  ['function_27',['function',['../namespaceBoundaryConditions.html#a6b254e6f36b7a5d01c0cc9f02e77a81eac1c425268e68385d1ab5074c17a94f14',1,'BoundaryConditions::function'],['../namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14',1,'Parameters::function']]],
+  ['function_5fweak_28',['function_weak',['../namespaceBoundaryConditions.html#a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38',1,'BoundaryConditions']]]
 ];

@@ -111,54 +111,86 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a07df76d63cde5cb5bcbea0d9c25a54b8" id="r_a07df76d63cde5cb5bcbea0d9c25a54b8"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a> { <br />
-&#160;&#160;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">outlet</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">periodic</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a526a99532e70736e1153dec9f45ff924">periodic_neighbor</a>
+<tr class="memitem:a214ae6b94c31028f22f241afc3198170" id="r_a214ae6b94c31028f22f241afc3198170"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a214ae6b94c31028f22f241afc3198170">CahnHilliardBoundaryType</a> { <br />
+&#160;&#160;<a class="el" href="#a214ae6b94c31028f22f241afc3198170a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="#a214ae6b94c31028f22f241afc3198170a0c072613d3a455a20f2a80d22865825e">noflux</a>
+, <a class="el" href="#a214ae6b94c31028f22f241afc3198170a503b9bc8f55d2a048f0cb35ddf3fb4ec">dirichlet</a>
+, <a class="el" href="#a214ae6b94c31028f22f241afc3198170ad1e32e642b02af7fe46972d7721535ae">angle_of_contact</a>
 , <br />
-&#160;&#160;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16">noslip</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8">slip</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14">function</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">function_weak</a>
+&#160;&#160;<a class="el" href="#a214ae6b94c31028f22f241afc3198170a244db0d38f4916b33ce2f6be6fee2fb8">free_angle</a>
+, <a class="el" href="#a214ae6b94c31028f22f241afc3198170ae6ffdec5e14fce371eb7ae99edebbbee">periodic</a>
+, <a class="el" href="#a214ae6b94c31028f22f241afc3198170a526a99532e70736e1153dec9f45ff924">periodic_neighbor</a>
+<br />
+ }</td></tr>
+<tr class="memitem:ab3abd0d0760f0ca525a7717519b0a236" id="r_ab3abd0d0760f0ca525a7717519b0a236"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236">CLSBoundaryType</a> { <a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236a503b9bc8f55d2a048f0cb35ddf3fb4ec">dirichlet</a>
+, <a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236ae6ffdec5e14fce371eb7ae99edebbbee">periodic</a>
+, <a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236a526a99532e70736e1153dec9f45ff924">periodic_neighbor</a>
+ }</td></tr>
+<tr class="memitem:a6b254e6f36b7a5d01c0cc9f02e77a81e" id="r_a6b254e6f36b7a5d01c0cc9f02e77a81e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81e">FluidDynamicsBoundaryType</a> { <br />
+&#160;&#160;<a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea38404c8a4847911c5e63eabe9a294b16">noslip</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea3daec8dea85232fa2baef18aeb2334d8">slip</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eac1c425268e68385d1ab5074c17a94f14">function</a>
 , <br />
-&#160;&#160;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">partial_slip</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">pressure</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42">neumann_traction</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e">noflux</a>
+&#160;&#160;<a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38">function_weak</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eac6bda74f8a2d6e410535eaa3dca28e9d">partial_slip</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ead99fad96a5d0a7cb2eb41341ea556093">pressure</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eaf5fae52f1253e4395a1d37275074bd42">neumann_traction</a>
 , <br />
-&#160;&#160;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591">temperature</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">convection_radiation</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">tracer_dirichlet</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a064f4a0cc1502c45e75b9b91ccdb7adf">qmom_dirichlet</a>
+&#160;&#160;<a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eab0ba1623558e169131cb513037504286">outlet</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eae6ffdec5e14fce371eb7ae99edebbbee">periodic</a>
+, <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea526a99532e70736e1153dec9f45ff924">periodic_neighbor</a>
+<br />
+ }</td></tr>
+<tr class="memitem:aa8a0d27aca36ebdd1a6b62ddc8111668" id="r_aa8a0d27aca36ebdd1a6b62ddc8111668"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668">HeatTransferBoundaryType</a> { <br />
+&#160;&#160;<a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668a0c072613d3a455a20f2a80d22865825e">noflux</a>
+, <a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668aeef438f7e448aa48c1f8db568d27b591">temperature</a>
+, <a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668aa4ce007979d6464c66498b96d4ce5b74">convection_radiation</a>
+, <a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668ae6ffdec5e14fce371eb7ae99edebbbee">periodic</a>
 , <br />
-&#160;&#160;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad">cls_dirichlet</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a1940f9f2a34c8894367379761bf6ae11">cahn_hilliard_noflux</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">cahn_hilliard_dirichlet_phase_order</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">cahn_hilliard_angle_of_contact</a>
+&#160;&#160;<a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668a526a99532e70736e1153dec9f45ff924">periodic_neighbor</a>
+<br />
+ }</td></tr>
+<tr class="memitem:aba900ffb33339cb032b11a54a257b884" id="r_aba900ffb33339cb032b11a54a257b884"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aba900ffb33339cb032b11a54a257b884">QMOMBoundaryType</a> { <a class="el" href="#aba900ffb33339cb032b11a54a257b884a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="#aba900ffb33339cb032b11a54a257b884a503b9bc8f55d2a048f0cb35ddf3fb4ec">dirichlet</a>
+, <a class="el" href="#aba900ffb33339cb032b11a54a257b884ab0ba1623558e169131cb513037504286">outlet</a>
+ }</td></tr>
+<tr class="memitem:a01aca7576c2c136de1c354a89009944b" id="r_a01aca7576c2c136de1c354a89009944b"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01aca7576c2c136de1c354a89009944b">TimeHarmonicMaxwellBoundaryType</a> { <br />
+&#160;&#160;<a class="el" href="#a01aca7576c2c136de1c354a89009944bac3592ad763cac73a15466c0d3c10a77d">pec</a>
+, <a class="el" href="#a01aca7576c2c136de1c354a89009944ba04130da60e65c7800006cd7886515b56">pmc</a>
+, <a class="el" href="#a01aca7576c2c136de1c354a89009944bae00c4bcecdb269fd409e0a19d07b0dc9">silver_muller</a>
+, <a class="el" href="#a01aca7576c2c136de1c354a89009944baa79864cf485f38be6b1076d4b73e51b2">electric_field</a>
 , <br />
-&#160;&#160;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517">cahn_hilliard_free_angle</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d">pec</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56">pmc</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">silver_muller</a>
+&#160;&#160;<a class="el" href="#a01aca7576c2c136de1c354a89009944ba8732c340b849ed4f600a10f719097755">magnetic_field</a>
+, <a class="el" href="#a01aca7576c2c136de1c354a89009944bab7c1e17b9ed3e1002ff5b1057421da05">impedance_boundary</a>
+, <a class="el" href="#a01aca7576c2c136de1c354a89009944ba805dc066461856ae03531d14d90b9045">waveguide_port</a>
+<br />
+ }</td></tr>
+<tr class="memitem:a1767b10c8ae7c44ac842247d7a5eac5b" id="r_a1767b10c8ae7c44ac842247d7a5eac5b"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5b">TracerBoundaryType</a> { <br />
+&#160;&#160;<a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5ba334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5ba503b9bc8f55d2a048f0cb35ddf3fb4ec">dirichlet</a>
+, <a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5bab0ba1623558e169131cb513037504286">outlet</a>
+, <a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5bae6ffdec5e14fce371eb7ae99edebbbee">periodic</a>
 , <br />
-&#160;&#160;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">electric_field</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">magnetic_field</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">impedance_boundary</a>
-, <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">waveguide_port</a>
+&#160;&#160;<a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5ba526a99532e70736e1153dec9f45ff924">periodic_neighbor</a>
 <br />
  }</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:ac6da75409361b86e447a2906be9cba01" id="r_ac6da75409361b86e447a2906be9cba01"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt; <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6da75409361b86e447a2906be9cba01">deprecated_boundary_type_names</a></td></tr>
-<tr class="memitem:a14d7f161008141a183d1b0c2e0752f05" id="r_a14d7f161008141a183d1b0c2e0752f05"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14d7f161008141a183d1b0c2e0752f05">fluid_dynamics_boundary_types</a></td></tr>
-<tr class="memitem:aea91675c2815e26d8b090adedb3d80a2" id="r_aea91675c2815e26d8b090adedb3d80a2"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea91675c2815e26d8b090adedb3d80a2">heat_transfer_boundary_types</a></td></tr>
-<tr class="memitem:a4ee06a8c9daff0fcf6090fddfdad5da9" id="r_a4ee06a8c9daff0fcf6090fddfdad5da9"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ee06a8c9daff0fcf6090fddfdad5da9">time_harmonic_maxwell_boundary_types</a></td></tr>
+<tr class="memitem:a2c8e43d59ec96e1d187b53a7a12e83c3" id="r_a2c8e43d59ec96e1d187b53a7a12e83c3"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#a214ae6b94c31028f22f241afc3198170">CahnHilliardBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c8e43d59ec96e1d187b53a7a12e83c3">cahn_hilliard_boundary_types</a></td></tr>
+<tr class="memitem:a671e9df4ce95d94ad228472e02c1cdf4" id="r_a671e9df4ce95d94ad228472e02c1cdf4"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236">CLSBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a671e9df4ce95d94ad228472e02c1cdf4">cls_boundary_types</a></td></tr>
+<tr class="memitem:a718836a3f5b8e042eeaed197df27e32d" id="r_a718836a3f5b8e042eeaed197df27e32d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt; <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81e">FluidDynamicsBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a718836a3f5b8e042eeaed197df27e32d">deprecated_fluid_dynamics_boundary_type_names</a></td></tr>
+<tr class="memitem:ae78567e6f5dbf10b072f54078c642e8b" id="r_ae78567e6f5dbf10b072f54078c642e8b"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81e">FluidDynamicsBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae78567e6f5dbf10b072f54078c642e8b">fluid_dynamics_boundary_types</a></td></tr>
+<tr class="memitem:af9a5d3be29600540fe9881d74a58be0d" id="r_af9a5d3be29600540fe9881d74a58be0d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt; <a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668">HeatTransferBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9a5d3be29600540fe9881d74a58be0d">deprecated_heat_transfer_boundary_type_names</a></td></tr>
+<tr class="memitem:a7b6bfb38a9d6073cef7ce0aa676269f1" id="r_a7b6bfb38a9d6073cef7ce0aa676269f1"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668">HeatTransferBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b6bfb38a9d6073cef7ce0aa676269f1">heat_transfer_boundary_types</a></td></tr>
+<tr class="memitem:ab4f0391af2b651901c6ea1afd770af16" id="r_ab4f0391af2b651901c6ea1afd770af16"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt; <a class="el" href="#a01aca7576c2c136de1c354a89009944b">TimeHarmonicMaxwellBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4f0391af2b651901c6ea1afd770af16">deprecated_time_harmonic_maxwell_boundary_type_names</a></td></tr>
+<tr class="memitem:a60a5dbd682ef4ad59c85ef19dfcc5ea7" id="r_a60a5dbd682ef4ad59c85ef19dfcc5ea7"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5b">TracerBoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60a5dbd682ef4ad59c85ef19dfcc5ea7">tracer_boundary_types</a></td></tr>
 </table>
 <a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
-<a id="a07df76d63cde5cb5bcbea0d9c25a54b8" name="a07df76d63cde5cb5bcbea0d9c25a54b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8">&#9670;&#160;</a></span>BoundaryType</h2>
+<a id="a214ae6b94c31028f22f241afc3198170" name="a214ae6b94c31028f22f241afc3198170"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a214ae6b94c31028f22f241afc3198170">&#9670;&#160;</a></span>CahnHilliardBoundaryType</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,7 +199,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum class <a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a></td>
+          <td class="memname">enum class <a class="el" href="#a214ae6b94c31028f22f241afc3198170">BoundaryConditions::CahnHilliardBoundaryType</a></td>
         </tr>
       </table>
   </td>
@@ -176,44 +208,223 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Boundary condition types of the Cahn-Hilliard equations. periodic_neighbor is not a user choice: it is assigned to the boundary matching a periodic boundary. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286" name="a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286"></a>outlet&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee" name="a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee"></a>periodic&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a526a99532e70736e1153dec9f45ff924" name="a07df76d63cde5cb5bcbea0d9c25a54b8a526a99532e70736e1153dec9f45ff924"></a>periodic_neighbor&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16" name="a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16"></a>noslip&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8" name="a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8"></a>slip&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14" name="a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14"></a>function&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38" name="a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38"></a>function_weak&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d" name="a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d"></a>partial_slip&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093" name="a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093"></a>pressure&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42" name="a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42"></a>neumann_traction&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e" name="a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e"></a>noflux&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591" name="a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591"></a>temperature&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74" name="a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74"></a>convection_radiation&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f" name="a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f"></a>tracer_dirichlet&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a064f4a0cc1502c45e75b9b91ccdb7adf" name="a07df76d63cde5cb5bcbea0d9c25a54b8a064f4a0cc1502c45e75b9b91ccdb7adf"></a>qmom_dirichlet&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad" name="a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad"></a>cls_dirichlet&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a1940f9f2a34c8894367379761bf6ae11" name="a07df76d63cde5cb5bcbea0d9c25a54b8a1940f9f2a34c8894367379761bf6ae11"></a>cahn_hilliard_noflux&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf" name="a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf"></a>cahn_hilliard_dirichlet_phase_order&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3" name="a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3"></a>cahn_hilliard_angle_of_contact&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517" name="a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517"></a>cahn_hilliard_free_angle&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d" name="a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d"></a>pec&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56" name="a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56"></a>pmc&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9" name="a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9"></a>silver_muller&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2" name="a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2"></a>electric_field&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755" name="a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755"></a>magnetic_field&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05" name="a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05"></a>impedance_boundary&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045" name="a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045"></a>waveguide_port&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a214ae6b94c31028f22f241afc3198170a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a214ae6b94c31028f22f241afc3198170a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a214ae6b94c31028f22f241afc3198170a0c072613d3a455a20f2a80d22865825e" name="a214ae6b94c31028f22f241afc3198170a0c072613d3a455a20f2a80d22865825e"></a>noflux&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a214ae6b94c31028f22f241afc3198170a503b9bc8f55d2a048f0cb35ddf3fb4ec" name="a214ae6b94c31028f22f241afc3198170a503b9bc8f55d2a048f0cb35ddf3fb4ec"></a>dirichlet&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a214ae6b94c31028f22f241afc3198170ad1e32e642b02af7fe46972d7721535ae" name="a214ae6b94c31028f22f241afc3198170ad1e32e642b02af7fe46972d7721535ae"></a>angle_of_contact&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a214ae6b94c31028f22f241afc3198170a244db0d38f4916b33ce2f6be6fee2fb8" name="a214ae6b94c31028f22f241afc3198170a244db0d38f4916b33ce2f6be6fee2fb8"></a>free_angle&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a214ae6b94c31028f22f241afc3198170ae6ffdec5e14fce371eb7ae99edebbbee" name="a214ae6b94c31028f22f241afc3198170ae6ffdec5e14fce371eb7ae99edebbbee"></a>periodic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a214ae6b94c31028f22f241afc3198170a526a99532e70736e1153dec9f45ff924" name="a214ae6b94c31028f22f241afc3198170a526a99532e70736e1153dec9f45ff924"></a>periodic_neighbor&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00016">16</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__boundary__conditions_8h_source.html#l00025">25</a> of file <a class="el" href="cahn__hilliard__boundary__conditions_8h_source.html">cahn_hilliard_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="ab3abd0d0760f0ca525a7717519b0a236" name="ab3abd0d0760f0ca525a7717519b0a236"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3abd0d0760f0ca525a7717519b0a236">&#9670;&#160;</a></span>CLSBoundaryType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236">BoundaryConditions::CLSBoundaryType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Boundary condition types of the CLS. periodic_neighbor is not a user choice: it is assigned to the boundary matching a periodic boundary. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab3abd0d0760f0ca525a7717519b0a236a334c4a4c42fdb79d7ebc3e73b517e6f8" name="ab3abd0d0760f0ca525a7717519b0a236a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab3abd0d0760f0ca525a7717519b0a236a503b9bc8f55d2a048f0cb35ddf3fb4ec" name="ab3abd0d0760f0ca525a7717519b0a236a503b9bc8f55d2a048f0cb35ddf3fb4ec"></a>dirichlet&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab3abd0d0760f0ca525a7717519b0a236ae6ffdec5e14fce371eb7ae99edebbbee" name="ab3abd0d0760f0ca525a7717519b0a236ae6ffdec5e14fce371eb7ae99edebbbee"></a>periodic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab3abd0d0760f0ca525a7717519b0a236a526a99532e70736e1153dec9f45ff924" name="ab3abd0d0760f0ca525a7717519b0a236a526a99532e70736e1153dec9f45ff924"></a>periodic_neighbor&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="cls__boundary__conditions_8h_source.html#l00023">23</a> of file <a class="el" href="cls__boundary__conditions_8h_source.html">cls_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="a6b254e6f36b7a5d01c0cc9f02e77a81e" name="a6b254e6f36b7a5d01c0cc9f02e77a81e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81e">&#9670;&#160;</a></span>FluidDynamicsBoundaryType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81e">BoundaryConditions::FluidDynamicsBoundaryType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Boundary condition types of the fluid dynamics. periodic_neighbor is not a user choice: it is assigned to the boundary matching a periodic boundary. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81ea334c4a4c42fdb79d7ebc3e73b517e6f8" name="a6b254e6f36b7a5d01c0cc9f02e77a81ea334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81ea38404c8a4847911c5e63eabe9a294b16" name="a6b254e6f36b7a5d01c0cc9f02e77a81ea38404c8a4847911c5e63eabe9a294b16"></a>noslip&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81ea3daec8dea85232fa2baef18aeb2334d8" name="a6b254e6f36b7a5d01c0cc9f02e77a81ea3daec8dea85232fa2baef18aeb2334d8"></a>slip&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81eac1c425268e68385d1ab5074c17a94f14" name="a6b254e6f36b7a5d01c0cc9f02e77a81eac1c425268e68385d1ab5074c17a94f14"></a>function&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38" name="a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38"></a>function_weak&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81eac6bda74f8a2d6e410535eaa3dca28e9d" name="a6b254e6f36b7a5d01c0cc9f02e77a81eac6bda74f8a2d6e410535eaa3dca28e9d"></a>partial_slip&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81ead99fad96a5d0a7cb2eb41341ea556093" name="a6b254e6f36b7a5d01c0cc9f02e77a81ead99fad96a5d0a7cb2eb41341ea556093"></a>pressure&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81eaf5fae52f1253e4395a1d37275074bd42" name="a6b254e6f36b7a5d01c0cc9f02e77a81eaf5fae52f1253e4395a1d37275074bd42"></a>neumann_traction&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81eab0ba1623558e169131cb513037504286" name="a6b254e6f36b7a5d01c0cc9f02e77a81eab0ba1623558e169131cb513037504286"></a>outlet&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81eae6ffdec5e14fce371eb7ae99edebbbee" name="a6b254e6f36b7a5d01c0cc9f02e77a81eae6ffdec5e14fce371eb7ae99edebbbee"></a>periodic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6b254e6f36b7a5d01c0cc9f02e77a81ea526a99532e70736e1153dec9f45ff924" name="a6b254e6f36b7a5d01c0cc9f02e77a81ea526a99532e70736e1153dec9f45ff924"></a>periodic_neighbor&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00026">26</a> of file <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html">fluid_dynamics_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="aa8a0d27aca36ebdd1a6b62ddc8111668" name="aa8a0d27aca36ebdd1a6b62ddc8111668"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8a0d27aca36ebdd1a6b62ddc8111668">&#9670;&#160;</a></span>HeatTransferBoundaryType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668">BoundaryConditions::HeatTransferBoundaryType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Boundary condition types of the heat transfer. periodic_neighbor is not a user choice: it is assigned to the boundary matching a periodic boundary. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa8a0d27aca36ebdd1a6b62ddc8111668a0c072613d3a455a20f2a80d22865825e" name="aa8a0d27aca36ebdd1a6b62ddc8111668a0c072613d3a455a20f2a80d22865825e"></a>noflux&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa8a0d27aca36ebdd1a6b62ddc8111668aeef438f7e448aa48c1f8db568d27b591" name="aa8a0d27aca36ebdd1a6b62ddc8111668aeef438f7e448aa48c1f8db568d27b591"></a>temperature&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa8a0d27aca36ebdd1a6b62ddc8111668aa4ce007979d6464c66498b96d4ce5b74" name="aa8a0d27aca36ebdd1a6b62ddc8111668aa4ce007979d6464c66498b96d4ce5b74"></a>convection_radiation&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa8a0d27aca36ebdd1a6b62ddc8111668ae6ffdec5e14fce371eb7ae99edebbbee" name="aa8a0d27aca36ebdd1a6b62ddc8111668ae6ffdec5e14fce371eb7ae99edebbbee"></a>periodic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa8a0d27aca36ebdd1a6b62ddc8111668a526a99532e70736e1153dec9f45ff924" name="aa8a0d27aca36ebdd1a6b62ddc8111668a526a99532e70736e1153dec9f45ff924"></a>periodic_neighbor&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00023">23</a> of file <a class="el" href="heat__transfer__boundary__conditions_8h_source.html">heat_transfer_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="aba900ffb33339cb032b11a54a257b884" name="aba900ffb33339cb032b11a54a257b884"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba900ffb33339cb032b11a54a257b884">&#9670;&#160;</a></span>QMOMBoundaryType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#aba900ffb33339cb032b11a54a257b884">BoundaryConditions::QMOMBoundaryType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Boundary condition types of the QMOM physics. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aba900ffb33339cb032b11a54a257b884a334c4a4c42fdb79d7ebc3e73b517e6f8" name="aba900ffb33339cb032b11a54a257b884a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aba900ffb33339cb032b11a54a257b884a503b9bc8f55d2a048f0cb35ddf3fb4ec" name="aba900ffb33339cb032b11a54a257b884a503b9bc8f55d2a048f0cb35ddf3fb4ec"></a>dirichlet&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aba900ffb33339cb032b11a54a257b884ab0ba1623558e169131cb513037504286" name="aba900ffb33339cb032b11a54a257b884ab0ba1623558e169131cb513037504286"></a>outlet&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="qmom__boundary__conditions_8h_source.html#l00020">20</a> of file <a class="el" href="qmom__boundary__conditions_8h_source.html">qmom_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="a01aca7576c2c136de1c354a89009944b" name="a01aca7576c2c136de1c354a89009944b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01aca7576c2c136de1c354a89009944b">&#9670;&#160;</a></span>TimeHarmonicMaxwellBoundaryType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a01aca7576c2c136de1c354a89009944b">BoundaryConditions::TimeHarmonicMaxwellBoundaryType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Boundary condition types of the time-harmonic Maxwell equations. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a01aca7576c2c136de1c354a89009944bac3592ad763cac73a15466c0d3c10a77d" name="a01aca7576c2c136de1c354a89009944bac3592ad763cac73a15466c0d3c10a77d"></a>pec&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a01aca7576c2c136de1c354a89009944ba04130da60e65c7800006cd7886515b56" name="a01aca7576c2c136de1c354a89009944ba04130da60e65c7800006cd7886515b56"></a>pmc&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a01aca7576c2c136de1c354a89009944bae00c4bcecdb269fd409e0a19d07b0dc9" name="a01aca7576c2c136de1c354a89009944bae00c4bcecdb269fd409e0a19d07b0dc9"></a>silver_muller&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a01aca7576c2c136de1c354a89009944baa79864cf485f38be6b1076d4b73e51b2" name="a01aca7576c2c136de1c354a89009944baa79864cf485f38be6b1076d4b73e51b2"></a>electric_field&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a01aca7576c2c136de1c354a89009944ba8732c340b849ed4f600a10f719097755" name="a01aca7576c2c136de1c354a89009944ba8732c340b849ed4f600a10f719097755"></a>magnetic_field&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a01aca7576c2c136de1c354a89009944bab7c1e17b9ed3e1002ff5b1057421da05" name="a01aca7576c2c136de1c354a89009944bab7c1e17b9ed3e1002ff5b1057421da05"></a>impedance_boundary&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a01aca7576c2c136de1c354a89009944ba805dc066461856ae03531d14d90b9045" name="a01aca7576c2c136de1c354a89009944ba805dc066461856ae03531d14d90b9045"></a>waveguide_port&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00023">23</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="a1767b10c8ae7c44ac842247d7a5eac5b" name="a1767b10c8ae7c44ac842247d7a5eac5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1767b10c8ae7c44ac842247d7a5eac5b">&#9670;&#160;</a></span>TracerBoundaryType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5b">BoundaryConditions::TracerBoundaryType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Boundary condition types of the tracer. periodic_neighbor is not a user choice: it is assigned to the boundary matching a periodic boundary. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1767b10c8ae7c44ac842247d7a5eac5ba334c4a4c42fdb79d7ebc3e73b517e6f8" name="a1767b10c8ae7c44ac842247d7a5eac5ba334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1767b10c8ae7c44ac842247d7a5eac5ba503b9bc8f55d2a048f0cb35ddf3fb4ec" name="a1767b10c8ae7c44ac842247d7a5eac5ba503b9bc8f55d2a048f0cb35ddf3fb4ec"></a>dirichlet&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1767b10c8ae7c44ac842247d7a5eac5bab0ba1623558e169131cb513037504286" name="a1767b10c8ae7c44ac842247d7a5eac5bab0ba1623558e169131cb513037504286"></a>outlet&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1767b10c8ae7c44ac842247d7a5eac5bae6ffdec5e14fce371eb7ae99edebbbee" name="a1767b10c8ae7c44ac842247d7a5eac5bae6ffdec5e14fce371eb7ae99edebbbee"></a>periodic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1767b10c8ae7c44ac842247d7a5eac5ba526a99532e70736e1153dec9f45ff924" name="a1767b10c8ae7c44ac842247d7a5eac5ba526a99532e70736e1153dec9f45ff924"></a>periodic_neighbor&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8h_source.html#l00023">23</a> of file <a class="el" href="tracer__boundary__conditions_8h_source.html">tracer_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
 <a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
-<a id="ac6da75409361b86e447a2906be9cba01" name="ac6da75409361b86e447a2906be9cba01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6da75409361b86e447a2906be9cba01">&#9670;&#160;</a></span>deprecated_boundary_type_names</h2>
+<a id="a2c8e43d59ec96e1d187b53a7a12e83c3" name="a2c8e43d59ec96e1d187b53a7a12e83c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c8e43d59ec96e1d187b53a7a12e83c3">&#9670;&#160;</a></span>cahn_hilliard_boundary_types</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -222,7 +433,44 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a>&gt; BoundaryConditions::deprecated_boundary_type_names</td>
+          <td class="memname">const std::vector&lt;<a class="el" href="#a214ae6b94c31028f22f241afc3198170">CahnHilliardBoundaryType</a>&gt; BoundaryConditions::cahn_hilliard_boundary_types</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {<a class="code hl_enumvalue" href="#a214ae6b94c31028f22f241afc3198170a334c4a4c42fdb79d7ebc3e73b517e6f8">CahnHilliardBoundaryType::none</a>,</div>
+<div class="line">                                    <a class="code hl_enumvalue" href="#a214ae6b94c31028f22f241afc3198170a0c072613d3a455a20f2a80d22865825e">CahnHilliardBoundaryType::noflux</a>,</div>
+<div class="line">                                    <a class="code hl_enumvalue" href="#a214ae6b94c31028f22f241afc3198170a503b9bc8f55d2a048f0cb35ddf3fb4ec">CahnHilliardBoundaryType::dirichlet</a>,</div>
+<div class="line">                                    <a class="code hl_enumvalue" href="#a214ae6b94c31028f22f241afc3198170ad1e32e642b02af7fe46972d7721535ae">CahnHilliardBoundaryType::angle_of_contact</a>,</div>
+<div class="line">                                    <a class="code hl_enumvalue" href="#a214ae6b94c31028f22f241afc3198170a244db0d38f4916b33ce2f6be6fee2fb8">CahnHilliardBoundaryType::free_angle</a>,</div>
+<div class="line">                                    <a class="code hl_enumvalue" href="#a214ae6b94c31028f22f241afc3198170ae6ffdec5e14fce371eb7ae99edebbbee">CahnHilliardBoundaryType::periodic</a>}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a214ae6b94c31028f22f241afc3198170a0c072613d3a455a20f2a80d22865825e"><div class="ttname"><a href="#a214ae6b94c31028f22f241afc3198170a0c072613d3a455a20f2a80d22865825e">BoundaryConditions::CahnHilliardBoundaryType::noflux</a></div><div class="ttdeci">@ noflux</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard__boundary__conditions_8h_source.html#l00028">cahn_hilliard_boundary_conditions.h:28</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a214ae6b94c31028f22f241afc3198170a244db0d38f4916b33ce2f6be6fee2fb8"><div class="ttname"><a href="#a214ae6b94c31028f22f241afc3198170a244db0d38f4916b33ce2f6be6fee2fb8">BoundaryConditions::CahnHilliardBoundaryType::free_angle</a></div><div class="ttdeci">@ free_angle</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard__boundary__conditions_8h_source.html#l00031">cahn_hilliard_boundary_conditions.h:31</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a214ae6b94c31028f22f241afc3198170a334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="#a214ae6b94c31028f22f241afc3198170a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::CahnHilliardBoundaryType::none</a></div><div class="ttdeci">@ none</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard__boundary__conditions_8h_source.html#l00027">cahn_hilliard_boundary_conditions.h:27</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a214ae6b94c31028f22f241afc3198170a503b9bc8f55d2a048f0cb35ddf3fb4ec"><div class="ttname"><a href="#a214ae6b94c31028f22f241afc3198170a503b9bc8f55d2a048f0cb35ddf3fb4ec">BoundaryConditions::CahnHilliardBoundaryType::dirichlet</a></div><div class="ttdeci">@ dirichlet</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard__boundary__conditions_8h_source.html#l00029">cahn_hilliard_boundary_conditions.h:29</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a214ae6b94c31028f22f241afc3198170ad1e32e642b02af7fe46972d7721535ae"><div class="ttname"><a href="#a214ae6b94c31028f22f241afc3198170ad1e32e642b02af7fe46972d7721535ae">BoundaryConditions::CahnHilliardBoundaryType::angle_of_contact</a></div><div class="ttdeci">@ angle_of_contact</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard__boundary__conditions_8h_source.html#l00030">cahn_hilliard_boundary_conditions.h:30</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a214ae6b94c31028f22f241afc3198170ae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="#a214ae6b94c31028f22f241afc3198170ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::CahnHilliardBoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard__boundary__conditions_8h_source.html#l00032">cahn_hilliard_boundary_conditions.h:32</a></div></div>
+</div><!-- fragment --><p>Boundary condition types of the Cahn-Hilliard equations which can be selected in the parameter file </p>
+
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__boundary__conditions_8h_source.html#l00039">39</a> of file <a class="el" href="cahn__hilliard__boundary__conditions_8h_source.html">cahn_hilliard_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="a671e9df4ce95d94ad228472e02c1cdf4" name="a671e9df4ce95d94ad228472e02c1cdf4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a671e9df4ce95d94ad228472e02c1cdf4">&#9670;&#160;</a></span>cls_boundary_types</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;<a class="el" href="#ab3abd0d0760f0ca525a7717519b0a236">CLSBoundaryType</a>&gt; BoundaryConditions::cls_boundary_types</td>
         </tr>
       </table>
   </td>
@@ -232,32 +480,20 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">      {<span class="stringliteral">&quot;function weak&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryType::function_weak</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;partial slip&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryType::partial_slip</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;neumann traction&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42">BoundaryType::neumann_traction</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;convection-radiation-flux&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">BoundaryType::convection_radiation</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;silver muller&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryType::silver_muller</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;electric field&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">BoundaryType::electric_field</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;magnetic field&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryType::magnetic_field</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;impedance boundary&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryType::impedance_boundary</a>},</div>
-<div class="line">      {<span class="stringliteral">&quot;waveguide port&quot;</span>, <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryType::waveguide_port</a>}}</div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryConditions::BoundaryType::waveguide_port</a></div><div class="ttdeci">@ waveguide_port</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00056">boundary_conditions.h:56</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryConditions::BoundaryType::magnetic_field</a></div><div class="ttdeci">@ magnetic_field</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00054">boundary_conditions.h:54</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">BoundaryConditions::BoundaryType::convection_radiation</a></div><div class="ttdeci">@ convection_radiation</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00037">boundary_conditions.h:37</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">BoundaryConditions::BoundaryType::electric_field</a></div><div class="ttdeci">@ electric_field</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00053">boundary_conditions.h:53</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryConditions::BoundaryType::impedance_boundary</a></div><div class="ttdeci">@ impedance_boundary</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00055">boundary_conditions.h:55</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::BoundaryType::partial_slip</a></div><div class="ttdeci">@ partial_slip</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00031">boundary_conditions.h:31</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::BoundaryType::function_weak</a></div><div class="ttdeci">@ function_weak</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00030">boundary_conditions.h:30</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryConditions::BoundaryType::silver_muller</a></div><div class="ttdeci">@ silver_muller</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00052">boundary_conditions.h:52</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42">BoundaryConditions::BoundaryType::neumann_traction</a></div><div class="ttdeci">@ neumann_traction</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00033">boundary_conditions.h:33</a></div></div>
-</div><!-- fragment --><p>Deprecated strings of the boundary condition "type" parameters, which remain accepted in parameter files </p>
+<div class="line">    <a class="code hl_enumvalue" href="#ab3abd0d0760f0ca525a7717519b0a236a334c4a4c42fdb79d7ebc3e73b517e6f8">CLSBoundaryType::none</a>,</div>
+<div class="line">    <a class="code hl_enumvalue" href="#ab3abd0d0760f0ca525a7717519b0a236a503b9bc8f55d2a048f0cb35ddf3fb4ec">CLSBoundaryType::dirichlet</a>,</div>
+<div class="line">    <a class="code hl_enumvalue" href="#ab3abd0d0760f0ca525a7717519b0a236ae6ffdec5e14fce371eb7ae99edebbbee">CLSBoundaryType::periodic</a>}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_ab3abd0d0760f0ca525a7717519b0a236a334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="#ab3abd0d0760f0ca525a7717519b0a236a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::CLSBoundaryType::none</a></div><div class="ttdeci">@ none</div><div class="ttdef"><b>Definition</b> <a href="cls__boundary__conditions_8h_source.html#l00025">cls_boundary_conditions.h:25</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_ab3abd0d0760f0ca525a7717519b0a236a503b9bc8f55d2a048f0cb35ddf3fb4ec"><div class="ttname"><a href="#ab3abd0d0760f0ca525a7717519b0a236a503b9bc8f55d2a048f0cb35ddf3fb4ec">BoundaryConditions::CLSBoundaryType::dirichlet</a></div><div class="ttdeci">@ dirichlet</div><div class="ttdef"><b>Definition</b> <a href="cls__boundary__conditions_8h_source.html#l00026">cls_boundary_conditions.h:26</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_ab3abd0d0760f0ca525a7717519b0a236ae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="#ab3abd0d0760f0ca525a7717519b0a236ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::CLSBoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div><div class="ttdef"><b>Definition</b> <a href="cls__boundary__conditions_8h_source.html#l00027">cls_boundary_conditions.h:27</a></div></div>
+</div><!-- fragment --><p>Boundary condition types of the CLS which can be selected in the parameter file </p>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00062">62</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls__boundary__conditions_8h_source.html#l00033">33</a> of file <a class="el" href="cls__boundary__conditions_8h_source.html">cls_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<a id="a14d7f161008141a183d1b0c2e0752f05" name="a14d7f161008141a183d1b0c2e0752f05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14d7f161008141a183d1b0c2e0752f05">&#9670;&#160;</a></span>fluid_dynamics_boundary_types</h2>
+<a id="a718836a3f5b8e042eeaed197df27e32d" name="a718836a3f5b8e042eeaed197df27e32d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a718836a3f5b8e042eeaed197df27e32d">&#9670;&#160;</a></span>deprecated_fluid_dynamics_boundary_type_names</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -266,7 +502,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a>&gt; BoundaryConditions::fluid_dynamics_boundary_types</td>
+          <td class="memname">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt;<a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81e">FluidDynamicsBoundaryType</a>&gt; BoundaryConditions::deprecated_fluid_dynamics_boundary_type_names</td>
         </tr>
       </table>
   </td>
@@ -276,32 +512,20 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryType::none</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16">BoundaryType::noslip</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8">BoundaryType::slip</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14">BoundaryType::function</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryType::periodic</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryType::pressure</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8af5fae52f1253e4395a1d37275074bd42">BoundaryType::neumann_traction</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryType::function_weak</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryType::partial_slip</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryType::outlet</a>}</div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a></div><div class="ttdeci">@ none</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00019">boundary_conditions.h:19</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16">BoundaryConditions::BoundaryType::noslip</a></div><div class="ttdeci">@ noslip</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00027">boundary_conditions.h:27</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8">BoundaryConditions::BoundaryType::slip</a></div><div class="ttdeci">@ slip</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00028">boundary_conditions.h:28</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::BoundaryType::outlet</a></div><div class="ttdeci">@ outlet</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00020">boundary_conditions.h:20</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14">BoundaryConditions::BoundaryType::function</a></div><div class="ttdeci">@ function</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00029">boundary_conditions.h:29</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::BoundaryType::pressure</a></div><div class="ttdeci">@ pressure</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00032">boundary_conditions.h:32</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00022">boundary_conditions.h:22</a></div></div>
-</div><!-- fragment -->
-<p>Boundary condition types of the fluid dynamics. </p>
+<div class="line">      {<span class="stringliteral">&quot;function weak&quot;</span>, <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38">FluidDynamicsBoundaryType::function_weak</a>},</div>
+<div class="line">      {<span class="stringliteral">&quot;partial slip&quot;</span>, <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eac6bda74f8a2d6e410535eaa3dca28e9d">FluidDynamicsBoundaryType::partial_slip</a>},</div>
+<div class="line">      {<span class="stringliteral">&quot;neumann traction&quot;</span>, <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eaf5fae52f1253e4395a1d37275074bd42">FluidDynamicsBoundaryType::neumann_traction</a>}}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81eac6bda74f8a2d6e410535eaa3dca28e9d"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81eac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::FluidDynamicsBoundaryType::partial_slip</a></div><div class="ttdeci">@ partial_slip</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00033">fluid_dynamics_boundary_conditions.h:33</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::FluidDynamicsBoundaryType::function_weak</a></div><div class="ttdeci">@ function_weak</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00032">fluid_dynamics_boundary_conditions.h:32</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81eaf5fae52f1253e4395a1d37275074bd42"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81eaf5fae52f1253e4395a1d37275074bd42">BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction</a></div><div class="ttdeci">@ neumann_traction</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00035">fluid_dynamics_boundary_conditions.h:35</a></div></div>
+</div><!-- fragment --><p>Deprecated strings of the fluid dynamics boundary condition "type" parameter, which remain accepted in parameter files </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00023">23</a> of file <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html">fluid_dynamics_boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00044">44</a> of file <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html">fluid_dynamics_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<a id="aea91675c2815e26d8b090adedb3d80a2" name="aea91675c2815e26d8b090adedb3d80a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea91675c2815e26d8b090adedb3d80a2">&#9670;&#160;</a></span>heat_transfer_boundary_types</h2>
+<a id="af9a5d3be29600540fe9881d74a58be0d" name="af9a5d3be29600540fe9881d74a58be0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9a5d3be29600540fe9881d74a58be0d">&#9670;&#160;</a></span>deprecated_heat_transfer_boundary_type_names</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -310,7 +534,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a>&gt; BoundaryConditions::heat_transfer_boundary_types</td>
+          <td class="memname">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt;<a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668">HeatTransferBoundaryType</a>&gt; BoundaryConditions::deprecated_heat_transfer_boundary_type_names</td>
         </tr>
       </table>
   </td>
@@ -320,21 +544,17 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e">BoundaryType::noflux</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591">BoundaryType::temperature</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">BoundaryType::convection_radiation</a>,</div>
-<div class="line">    <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryType::periodic</a>}</div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e">BoundaryConditions::BoundaryType::noflux</a></div><div class="ttdeci">@ noflux</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00035">boundary_conditions.h:35</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591">BoundaryConditions::BoundaryType::temperature</a></div><div class="ttdeci">@ temperature</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00036">boundary_conditions.h:36</a></div></div>
-</div><!-- fragment -->
-<p>Boundary condition types of the heat transfer. </p>
+<div class="line">      {<span class="stringliteral">&quot;convection-radiation-flux&quot;</span>,</div>
+<div class="line">       <a class="code hl_enumvalue" href="#aa8a0d27aca36ebdd1a6b62ddc8111668aa4ce007979d6464c66498b96d4ce5b74">HeatTransferBoundaryType::convection_radiation</a>}}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_aa8a0d27aca36ebdd1a6b62ddc8111668aa4ce007979d6464c66498b96d4ce5b74"><div class="ttname"><a href="#aa8a0d27aca36ebdd1a6b62ddc8111668aa4ce007979d6464c66498b96d4ce5b74">BoundaryConditions::HeatTransferBoundaryType::convection_radiation</a></div><div class="ttdeci">@ convection_radiation</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__boundary__conditions_8h_source.html#l00027">heat_transfer_boundary_conditions.h:27</a></div></div>
+</div><!-- fragment --><p>Deprecated strings of the heat transfer boundary condition "type" parameter, which remain accepted in parameter files </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00021">21</a> of file <a class="el" href="heat__transfer__boundary__conditions_8h_source.html">heat_transfer_boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00035">35</a> of file <a class="el" href="heat__transfer__boundary__conditions_8h_source.html">heat_transfer_boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<a id="a4ee06a8c9daff0fcf6090fddfdad5da9" name="a4ee06a8c9daff0fcf6090fddfdad5da9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ee06a8c9daff0fcf6090fddfdad5da9">&#9670;&#160;</a></span>time_harmonic_maxwell_boundary_types</h2>
+<a id="ab4f0391af2b651901c6ea1afd770af16" name="ab4f0391af2b651901c6ea1afd770af16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4f0391af2b651901c6ea1afd770af16">&#9670;&#160;</a></span>deprecated_time_harmonic_maxwell_boundary_type_names</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -343,7 +563,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;<a class="el" href="#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a>&gt; BoundaryConditions::time_harmonic_maxwell_boundary_types</td>
+          <td class="memname">const <a class="el" href="core_2utilities_8h.html#a531b11144471be78ff65a91c9847127f">DeprecatedEnumNames</a>&lt;<a class="el" href="#a01aca7576c2c136de1c354a89009944b">TimeHarmonicMaxwellBoundaryType</a>&gt; BoundaryConditions::deprecated_time_harmonic_maxwell_boundary_type_names</td>
         </tr>
       </table>
   </td>
@@ -352,20 +572,131 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">=</div>
-<div class="line">    {<a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d">BoundaryType::pec</a>,</div>
-<div class="line">     <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56">BoundaryType::pmc</a>,</div>
-<div class="line">     <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryType::silver_muller</a>,</div>
-<div class="line">     <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">BoundaryType::electric_field</a>,</div>
-<div class="line">     <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryType::magnetic_field</a>,</div>
-<div class="line">     <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryType::impedance_boundary</a>,</div>
-<div class="line">     <a class="code hl_enumvalue" href="#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryType::waveguide_port</a>}</div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56">BoundaryConditions::BoundaryType::pmc</a></div><div class="ttdeci">@ pmc</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00051">boundary_conditions.h:51</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d"><div class="ttname"><a href="#a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d">BoundaryConditions::BoundaryType::pec</a></div><div class="ttdeci">@ pec</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00050">boundary_conditions.h:50</a></div></div>
-</div><!-- fragment -->
-<p>Boundary condition types of the time-harmonic Maxwell equations. </p>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">      {<span class="stringliteral">&quot;silver muller&quot;</span>, <a class="code hl_enumvalue" href="#a01aca7576c2c136de1c354a89009944bae00c4bcecdb269fd409e0a19d07b0dc9">TimeHarmonicMaxwellBoundaryType::silver_muller</a>},</div>
+<div class="line">      {<span class="stringliteral">&quot;electric field&quot;</span>, <a class="code hl_enumvalue" href="#a01aca7576c2c136de1c354a89009944baa79864cf485f38be6b1076d4b73e51b2">TimeHarmonicMaxwellBoundaryType::electric_field</a>},</div>
+<div class="line">      {<span class="stringliteral">&quot;magnetic field&quot;</span>, <a class="code hl_enumvalue" href="#a01aca7576c2c136de1c354a89009944ba8732c340b849ed4f600a10f719097755">TimeHarmonicMaxwellBoundaryType::magnetic_field</a>},</div>
+<div class="line">      {<span class="stringliteral">&quot;impedance boundary&quot;</span>,</div>
+<div class="line">       <a class="code hl_enumvalue" href="#a01aca7576c2c136de1c354a89009944bab7c1e17b9ed3e1002ff5b1057421da05">TimeHarmonicMaxwellBoundaryType::impedance_boundary</a>},</div>
+<div class="line">      {<span class="stringliteral">&quot;waveguide port&quot;</span>, <a class="code hl_enumvalue" href="#a01aca7576c2c136de1c354a89009944ba805dc066461856ae03531d14d90b9045">TimeHarmonicMaxwellBoundaryType::waveguide_port</a>}}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a01aca7576c2c136de1c354a89009944ba805dc066461856ae03531d14d90b9045"><div class="ttname"><a href="#a01aca7576c2c136de1c354a89009944ba805dc066461856ae03531d14d90b9045">BoundaryConditions::TimeHarmonicMaxwellBoundaryType::waveguide_port</a></div><div class="ttdeci">@ waveguide_port</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00031">time_harmonic_maxwell_boundary_conditions.h:31</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a01aca7576c2c136de1c354a89009944ba8732c340b849ed4f600a10f719097755"><div class="ttname"><a href="#a01aca7576c2c136de1c354a89009944ba8732c340b849ed4f600a10f719097755">BoundaryConditions::TimeHarmonicMaxwellBoundaryType::magnetic_field</a></div><div class="ttdeci">@ magnetic_field</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00029">time_harmonic_maxwell_boundary_conditions.h:29</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a01aca7576c2c136de1c354a89009944baa79864cf485f38be6b1076d4b73e51b2"><div class="ttname"><a href="#a01aca7576c2c136de1c354a89009944baa79864cf485f38be6b1076d4b73e51b2">BoundaryConditions::TimeHarmonicMaxwellBoundaryType::electric_field</a></div><div class="ttdeci">@ electric_field</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00028">time_harmonic_maxwell_boundary_conditions.h:28</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a01aca7576c2c136de1c354a89009944bab7c1e17b9ed3e1002ff5b1057421da05"><div class="ttname"><a href="#a01aca7576c2c136de1c354a89009944bab7c1e17b9ed3e1002ff5b1057421da05">BoundaryConditions::TimeHarmonicMaxwellBoundaryType::impedance_boundary</a></div><div class="ttdeci">@ impedance_boundary</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00030">time_harmonic_maxwell_boundary_conditions.h:30</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a01aca7576c2c136de1c354a89009944bae00c4bcecdb269fd409e0a19d07b0dc9"><div class="ttname"><a href="#a01aca7576c2c136de1c354a89009944bae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryConditions::TimeHarmonicMaxwellBoundaryType::silver_muller</a></div><div class="ttdeci">@ silver_muller</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00027">time_harmonic_maxwell_boundary_conditions.h:27</a></div></div>
+</div><!-- fragment --><p>Deprecated strings of the time-harmonic Maxwell boundary condition "type" parameter, which remain accepted in parameter files </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00022">22</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00037">37</a> of file <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html">time_harmonic_maxwell_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="ae78567e6f5dbf10b072f54078c642e8b" name="ae78567e6f5dbf10b072f54078c642e8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae78567e6f5dbf10b072f54078c642e8b">&#9670;&#160;</a></span>fluid_dynamics_boundary_types</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;<a class="el" href="#a6b254e6f36b7a5d01c0cc9f02e77a81e">FluidDynamicsBoundaryType</a>&gt; BoundaryConditions::fluid_dynamics_boundary_types</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea334c4a4c42fdb79d7ebc3e73b517e6f8">FluidDynamicsBoundaryType::none</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea38404c8a4847911c5e63eabe9a294b16">FluidDynamicsBoundaryType::noslip</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea3daec8dea85232fa2baef18aeb2334d8">FluidDynamicsBoundaryType::slip</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eac1c425268e68385d1ab5074c17a94f14">FluidDynamicsBoundaryType::function</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eae6ffdec5e14fce371eb7ae99edebbbee">FluidDynamicsBoundaryType::periodic</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81ead99fad96a5d0a7cb2eb41341ea556093">FluidDynamicsBoundaryType::pressure</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eaf5fae52f1253e4395a1d37275074bd42">FluidDynamicsBoundaryType::neumann_traction</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eadd95ffdcea64b1eaaa9244611678ed38">FluidDynamicsBoundaryType::function_weak</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eac6bda74f8a2d6e410535eaa3dca28e9d">FluidDynamicsBoundaryType::partial_slip</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#a6b254e6f36b7a5d01c0cc9f02e77a81eab0ba1623558e169131cb513037504286">FluidDynamicsBoundaryType::outlet</a>}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81ea334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::FluidDynamicsBoundaryType::none</a></div><div class="ttdeci">@ none</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00028">fluid_dynamics_boundary_conditions.h:28</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81ea38404c8a4847911c5e63eabe9a294b16"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea38404c8a4847911c5e63eabe9a294b16">BoundaryConditions::FluidDynamicsBoundaryType::noslip</a></div><div class="ttdeci">@ noslip</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00029">fluid_dynamics_boundary_conditions.h:29</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81ea3daec8dea85232fa2baef18aeb2334d8"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81ea3daec8dea85232fa2baef18aeb2334d8">BoundaryConditions::FluidDynamicsBoundaryType::slip</a></div><div class="ttdeci">@ slip</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00030">fluid_dynamics_boundary_conditions.h:30</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81eab0ba1623558e169131cb513037504286"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81eab0ba1623558e169131cb513037504286">BoundaryConditions::FluidDynamicsBoundaryType::outlet</a></div><div class="ttdeci">@ outlet</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00036">fluid_dynamics_boundary_conditions.h:36</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81eac1c425268e68385d1ab5074c17a94f14"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81eac1c425268e68385d1ab5074c17a94f14">BoundaryConditions::FluidDynamicsBoundaryType::function</a></div><div class="ttdeci">@ function</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00031">fluid_dynamics_boundary_conditions.h:31</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81ead99fad96a5d0a7cb2eb41341ea556093"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81ead99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::FluidDynamicsBoundaryType::pressure</a></div><div class="ttdeci">@ pressure</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00034">fluid_dynamics_boundary_conditions.h:34</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a6b254e6f36b7a5d01c0cc9f02e77a81eae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="#a6b254e6f36b7a5d01c0cc9f02e77a81eae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::FluidDynamicsBoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__boundary__conditions_8h_source.html#l00037">fluid_dynamics_boundary_conditions.h:37</a></div></div>
+</div><!-- fragment --><p>Boundary condition types of the fluid dynamics which can be selected in the parameter file </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00052">52</a> of file <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html">fluid_dynamics_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="a7b6bfb38a9d6073cef7ce0aa676269f1" name="a7b6bfb38a9d6073cef7ce0aa676269f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b6bfb38a9d6073cef7ce0aa676269f1">&#9670;&#160;</a></span>heat_transfer_boundary_types</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;<a class="el" href="#aa8a0d27aca36ebdd1a6b62ddc8111668">HeatTransferBoundaryType</a>&gt; BoundaryConditions::heat_transfer_boundary_types</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">      <a class="code hl_enumvalue" href="#aa8a0d27aca36ebdd1a6b62ddc8111668a0c072613d3a455a20f2a80d22865825e">HeatTransferBoundaryType::noflux</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#aa8a0d27aca36ebdd1a6b62ddc8111668aeef438f7e448aa48c1f8db568d27b591">HeatTransferBoundaryType::temperature</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#aa8a0d27aca36ebdd1a6b62ddc8111668aa4ce007979d6464c66498b96d4ce5b74">HeatTransferBoundaryType::convection_radiation</a>,</div>
+<div class="line">      <a class="code hl_enumvalue" href="#aa8a0d27aca36ebdd1a6b62ddc8111668ae6ffdec5e14fce371eb7ae99edebbbee">HeatTransferBoundaryType::periodic</a>}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_aa8a0d27aca36ebdd1a6b62ddc8111668a0c072613d3a455a20f2a80d22865825e"><div class="ttname"><a href="#aa8a0d27aca36ebdd1a6b62ddc8111668a0c072613d3a455a20f2a80d22865825e">BoundaryConditions::HeatTransferBoundaryType::noflux</a></div><div class="ttdeci">@ noflux</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__boundary__conditions_8h_source.html#l00025">heat_transfer_boundary_conditions.h:25</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_aa8a0d27aca36ebdd1a6b62ddc8111668ae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="#aa8a0d27aca36ebdd1a6b62ddc8111668ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::HeatTransferBoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__boundary__conditions_8h_source.html#l00028">heat_transfer_boundary_conditions.h:28</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_aa8a0d27aca36ebdd1a6b62ddc8111668aeef438f7e448aa48c1f8db568d27b591"><div class="ttname"><a href="#aa8a0d27aca36ebdd1a6b62ddc8111668aeef438f7e448aa48c1f8db568d27b591">BoundaryConditions::HeatTransferBoundaryType::temperature</a></div><div class="ttdeci">@ temperature</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__boundary__conditions_8h_source.html#l00026">heat_transfer_boundary_conditions.h:26</a></div></div>
+</div><!-- fragment --><p>Boundary condition types of the heat transfer which can be selected in the parameter file </p>
+
+<p class="definition">Definition at line <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00042">42</a> of file <a class="el" href="heat__transfer__boundary__conditions_8h_source.html">heat_transfer_boundary_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="a60a5dbd682ef4ad59c85ef19dfcc5ea7" name="a60a5dbd682ef4ad59c85ef19dfcc5ea7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60a5dbd682ef4ad59c85ef19dfcc5ea7">&#9670;&#160;</a></span>tracer_boundary_types</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;<a class="el" href="#a1767b10c8ae7c44ac842247d7a5eac5b">TracerBoundaryType</a>&gt; BoundaryConditions::tracer_boundary_types</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    <a class="code hl_enumvalue" href="#a1767b10c8ae7c44ac842247d7a5eac5ba334c4a4c42fdb79d7ebc3e73b517e6f8">TracerBoundaryType::none</a>,</div>
+<div class="line">    <a class="code hl_enumvalue" href="#a1767b10c8ae7c44ac842247d7a5eac5ba503b9bc8f55d2a048f0cb35ddf3fb4ec">TracerBoundaryType::dirichlet</a>,</div>
+<div class="line">    <a class="code hl_enumvalue" href="#a1767b10c8ae7c44ac842247d7a5eac5bab0ba1623558e169131cb513037504286">TracerBoundaryType::outlet</a>,</div>
+<div class="line">    <a class="code hl_enumvalue" href="#a1767b10c8ae7c44ac842247d7a5eac5bae6ffdec5e14fce371eb7ae99edebbbee">TracerBoundaryType::periodic</a>}</div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a1767b10c8ae7c44ac842247d7a5eac5ba334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="#a1767b10c8ae7c44ac842247d7a5eac5ba334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::TracerBoundaryType::none</a></div><div class="ttdeci">@ none</div><div class="ttdef"><b>Definition</b> <a href="tracer__boundary__conditions_8h_source.html#l00025">tracer_boundary_conditions.h:25</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a1767b10c8ae7c44ac842247d7a5eac5ba503b9bc8f55d2a048f0cb35ddf3fb4ec"><div class="ttname"><a href="#a1767b10c8ae7c44ac842247d7a5eac5ba503b9bc8f55d2a048f0cb35ddf3fb4ec">BoundaryConditions::TracerBoundaryType::dirichlet</a></div><div class="ttdeci">@ dirichlet</div><div class="ttdef"><b>Definition</b> <a href="tracer__boundary__conditions_8h_source.html#l00026">tracer_boundary_conditions.h:26</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a1767b10c8ae7c44ac842247d7a5eac5bab0ba1623558e169131cb513037504286"><div class="ttname"><a href="#a1767b10c8ae7c44ac842247d7a5eac5bab0ba1623558e169131cb513037504286">BoundaryConditions::TracerBoundaryType::outlet</a></div><div class="ttdeci">@ outlet</div><div class="ttdef"><b>Definition</b> <a href="tracer__boundary__conditions_8h_source.html#l00027">tracer_boundary_conditions.h:27</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a1767b10c8ae7c44ac842247d7a5eac5bae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="#a1767b10c8ae7c44ac842247d7a5eac5bae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::TracerBoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div><div class="ttdef"><b>Definition</b> <a href="tracer__boundary__conditions_8h_source.html#l00028">tracer_boundary_conditions.h:28</a></div></div>
+</div><!-- fragment --><p>Boundary condition types of the tracer which can be selected in the parameter file </p>
+
+<p class="definition">Definition at line <a class="el" href="tracer__boundary__conditions_8h_source.html#l00034">34</a> of file <a class="el" href="tracer__boundary__conditions_8h_source.html">tracer_boundary_conditions.h</a>.</p>
 
 </div>
 </div>

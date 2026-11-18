@@ -1,17 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="5,270,166,314"/>
-<area shape="rect" id="Node000001" href="$classBoundaryConditions_1_1CLSBoundaryConditions.html" title="This class manages the boundary conditions for CLS solver It introduces the boundary functions and de..." alt="" coords="250,5,434,67"/>
-<area shape="poly" id="edge21_Node000000_Node000001" title=" " alt="" coords="97,254,114,213,139,165,172,118,212,77,252,56,248,60,215,81,176,121,144,168,119,215,102,256"/>
-<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html" title="This class manages the boundary conditions for the Cahn&#45;Hilliard solver It introduces the boundary fu..." alt="" coords="222,91,462,152"/>
-<area shape="poly" id="edge22_Node000000_Node000002" title=" " alt="" coords="111,256,155,208,183,183,212,162,236,151,233,155,215,166,186,187,159,211,115,259"/>
-<area shape="rect" id="Node000003" href="$classBoundaryConditions_1_1FluidDynamicsBoundaryConditions.html" title="This class manages the boundary conditions forhe fluid dynamics solver It introduces the boundary fun..." alt="" coords="214,176,471,238"/>
-<area shape="poly" id="edge23_Node000000_Node000003" title=" " alt="" coords="167,262,213,247,249,237,245,240,215,252,170,267"/>
-<area shape="rect" id="Node000004" href="$classBoundaryConditions_1_1HeatTransferBoundaryConditions.html" title="This class manages the boundary conditions for Heat&#45;Transfer solver It introduces the boundary functi..." alt="" coords="221,261,464,323"/>
-<area shape="poly" id="edge24_Node000000_Node000004" title=" " alt="" coords="180,290,223,291,218,294,183,295"/>
-<area shape="rect" id="Node000005" href="$classBoundaryConditions_1_1QMOMBoundaryConditions.html" title="Boundary conditions of the QMOM physics. They apply to the advective flux of all the QMOM fields (sca..." alt="" coords="240,347,444,408"/>
-<area shape="poly" id="edge25_Node000000_Node000005" title=" " alt="" coords="168,317,215,332,250,345,245,347,213,337,169,322"/>
-<area shape="rect" id="Node000006" href="$classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html" title="This class manages the boundary conditions for Time Harmonic Maxwell solver. It introduces the bounda..." alt="" coords="221,432,464,494"/>
-<area shape="poly" id="edge26_Node000000_Node000006" title=" " alt="" coords="113,324,159,373,186,397,215,418,237,431,232,432,212,422,183,401,155,377,113,329"/>
-<area shape="rect" id="Node000007" href="$classBoundaryConditions_1_1TracerBoundaryConditions.html" title="This class manages the boundary conditions for Tracer solver It introduces the boundary functions and..." alt="" coords="243,517,442,579"/>
-<area shape="poly" id="edge27_Node000000_Node000007" title=" " alt="" coords="100,327,119,369,144,416,176,463,215,503,245,523,239,523,212,508,172,466,139,419,114,371,99,332"/>
+<area shape="rect" id="Node000000" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="5,5,166,67"/>
 </map>

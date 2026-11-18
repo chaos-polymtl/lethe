@@ -1,5 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classParticleWallContactForceBase.html" title="Base class for the particle&#45;wall contact force models This class does not implement any of the models..." alt="" coords="5,22,224,67"/>
-<area shape="rect" id="Node000001" href="$classParticleWallContactForce.html" title="Execute calculation of particle&#45;wall contacts." alt="" coords="272,5,454,84"/>
-<area shape="poly" id="edge117_Node000000_Node000001" title=" " alt="" coords="239,42,274,44,269,45,240,47"/>
+<area shape="rect" id="Node000000" href="$structparticle__wall__contact__info.html" title="Handle the information related to the calculation of the particle&#45;wall contact forces." alt="" coords="5,5,165,50"/>
 </map>

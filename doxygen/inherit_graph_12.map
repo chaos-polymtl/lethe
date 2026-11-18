@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html" title="This class manages the functions associated with both imposed electric and magnetic fields boundary c..." alt="" coords="5,5,248,67"/>
+<area shape="rect" id="Node000000" href="$classBoundaryConditions_1_1BoundaryConditions.html" title=" " alt="" coords="5,5,246,67"/>
+<area shape="rect" id="Node000001" href="$classBoundaryConditions_1_1FluidDynamicsBoundaryConditions.html" title="This class manages the boundary conditions forhe fluid dynamics solver It introduces the boundary fun..." alt="" coords="294,5,551,67"/>
+<area shape="poly" id="edge23_Node000000_Node000001" title=" " alt="" coords="261,34,296,36,291,36,261,39"/>
 </map>

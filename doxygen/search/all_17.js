@@ -13,7 +13,7 @@ var searchData=
   ['waveguide_5fboundary_5fids_10',['waveguide_boundary_ids',['../structParameters_1_1TimeHarmonicMaxwell.html#a431ed966e330ee824ff949dc7f86268f',1,'Parameters::TimeHarmonicMaxwell']]],
   ['waveguide_5fcorners_11',['waveguide_corners',['../structParameters_1_1TimeHarmonicMaxwell.html#a3dc2a007d2932b3b12dddb0a42e84fca',1,'Parameters::TimeHarmonicMaxwell']]],
   ['waveguide_5fmode_12',['waveguide_mode',['../structParameters_1_1TimeHarmonicMaxwell.html#a79dccedd0710d6998becd7df5e4ebd4e',1,'Parameters::TimeHarmonicMaxwell']]],
-  ['waveguide_5fport_13',['waveguide_port',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045',1,'BoundaryConditions']]],
+  ['waveguide_5fport_13',['waveguide_port',['../namespaceBoundaryConditions.html#a01aca7576c2c136de1c354a89009944ba805dc066461856ae03531d14d90b9045',1,'BoundaryConditions']]],
   ['waveguide_5fports_5felectric_5famplitudes_14',['waveguide_ports_electric_amplitudes',['../classTimeHarmonicMaxwell.html#a6397d270ce6e1b0dbd340c8cf090137c',1,'TimeHarmonicMaxwell']]],
   ['waveguide_5fports_5frelative_5famplitudes_15',['waveguide_ports_relative_amplitudes',['../classTimeHarmonicMaxwellAssemblerRobinBC.html#a23593d3cea8f85b99d038fe9dcba904b',1,'TimeHarmonicMaxwellAssemblerRobinBC']]],
   ['waveguide_5fpower_16',['waveguide_power',['../structParameters_1_1TimeHarmonicMaxwell.html#ad1b34565996151b57f8dd56839901357',1,'Parameters::TimeHarmonicMaxwell']]],

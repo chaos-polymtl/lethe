@@ -1,21 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,291,189,319"/>
-<area shape="rect" id="Node000001" href="$classBoundaryPostprocessor.html" title="BoundaryPostprocessor Post&#45;processor class used to attach the boundary id to the faces when outputtin..." alt="" coords="268,5,442,50"/>
-<area shape="poly" id="edge35_Node000000_Node000001" title=" " alt="" coords="104,276,121,229,148,171,186,111,209,84,235,60,269,43,266,47,238,64,213,88,190,114,153,173,126,231,109,278"/>
-<area shape="rect" id="Node000002" href="$classDensityPostprocessor.html" title="Compute the density scalar field of a material within a domain." alt="" coords="274,75,436,119"/>
-<area shape="poly" id="edge36_Node000000_Node000002" title=" " alt="" coords="110,277,159,203,194,163,235,129,276,112,272,115,238,134,198,167,164,206,115,279"/>
-<area shape="rect" id="Node000003" href="$classDivergencePostprocessor.html" title="Compute the velocity divergence scalar field within a domain." alt="" coords="262,144,448,189"/>
-<area shape="poly" id="edge37_Node000000_Node000003" title=" " alt="" coords="123,279,173,238,235,199,266,187,262,191,238,203,176,242,127,282"/>
-<area shape="rect" id="Node000004" href="$classDynamicViscosityPostprocessor.html" title="Compute the dynamic viscosity scalar field of a fluid within a domain." alt="" coords="241,213,470,258"/>
-<area shape="poly" id="edge38_Node000000_Node000004" title=" " alt="" coords="165,284,271,257,268,261,167,289"/>
-<area shape="rect" id="Node000005" href="$classKinematicViscosityPostprocessor.html" title="Compute the kinematic viscosity scalar field of a fluid within a domain." alt="" coords="237,283,474,327"/>
-<area shape="poly" id="edge39_Node000000_Node000005" title=" " alt="" coords="203,303,238,304,234,306,205,307"/>
-<area shape="rect" id="Node000006" href="$classLevelsetPostprocessor.html" title="Compute level set field for a given shape within a domain." alt="" coords="272,352,439,397"/>
-<area shape="poly" id="edge40_Node000000_Node000006" title=" " alt="" coords="166,321,274,351,269,353,166,326"/>
-<area shape="rect" id="Node000007" href="$classQCriterionPostprocessor.html" title="Compute the Q&#45;criterion scalar field within a domain." alt="" coords="266,421,444,466"/>
-<area shape="poly" id="edge41_Node000000_Node000007" title=" " alt="" coords="125,327,176,368,238,407,268,421,263,422,235,411,173,372,125,332"/>
-<area shape="rect" id="Node000008" href="$classScalarFunctionPostprocessor.html" title="Compute a scalar field for a given function within a domain." alt="" coords="252,491,459,535"/>
-<area shape="poly" id="edge42_Node000000_Node000008" title=" " alt="" coords="113,329,164,404,198,443,238,476,261,490,256,490,235,481,194,447,159,407,112,335"/>
-<area shape="rect" id="Node000009" href="$classShearRatePostprocessor.html" title="Compute the shear rate scalar field within a domain." alt="" coords="266,560,445,605"/>
-<area shape="poly" id="edge43_Node000000_Node000009" title=" " alt="" coords="107,331,126,379,153,437,190,496,213,522,238,546,268,564,262,564,235,550,209,526,186,499,148,439,121,381,106,336"/>
+<area shape="rect" id="Node000000" href="$classConservativeLevelSetFilterBase.html" title="Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations." alt="" coords="5,36,234,64"/>
+<area shape="rect" id="Node000001" href="$classConservativeLevelSetNoFilter.html" title="Default filter applied to phase indicator. The ConservativeLevelSetNoFilter filter does not modify th..." alt="" coords="282,5,496,33"/>
+<area shape="poly" id="edge31_Node000000_Node000001" title=" " alt="" coords="249,32,284,31,279,32,250,38"/>
+<area shape="rect" id="Node000002" href="$classConservativeLevelSetTanhFilter.html" title="Filter phase indicator with a hyperbolic tangent function for CLS simulations." alt="" coords="292,57,486,102"/>
+<area shape="poly" id="edge32_Node000000_Node000002" title=" " alt="" coords="249,61,294,69,289,69,249,67"/>
 </map>
