@@ -19,7 +19,7 @@ All the scalars and moments are discretized with the same scalar discontinuous G
 
 .. warning::
 
-  The QMOM physics is under development. Only the transport of the moments in physical space, with their source terms, is implemented. The following features are not available yet and stop the simulation with an error: the scalars (``number of scalars`` must be 0), the ``strang`` splitting scheme and the evolution of the moments in phase space (``enable nucleation``, ``enable coalescence`` and ``enable growth`` must be ``false``).
+  The QMOM physics is under development. Only the transport of the moments in physical space, with their source terms, and their growth in phase space are implemented. The following features are not available yet and stop the simulation with an error: the scalars (``number of scalars`` must be 0), the ``strang`` splitting scheme, the nucleation and the coalescence (``enable nucleation`` and ``enable coalescence`` must be ``false``).
 
 Discretization
 --------------
@@ -35,6 +35,14 @@ Every component :math:`\zeta_c`, scalar or moment, is transported by the velocit
 The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c` smaller than the ``number of scalars``, and the moment :math:`M_{c - n_s}` otherwise, where :math:`n_s` is the ``number of scalars``.
 
 This equation is discretized with an upwind discontinuous Galerkin method and integrated in time with the BDF scheme of the ``method`` of the :doc:`simulation_control` subsection, which must be ``bdf1``, ``bdf2`` or ``bdf3``. The steady and SDIRK methods are not supported. Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every scalar and moment. The linear systems are solved with the parameters of the ``qmom`` subsection of the :doc:`linear_solver_control` subsection, with the GMRES method and an ``ilu`` or ``amg`` preconditioner. The QMOM physics has no ``non-linear solver`` subsection. Since the moments have very different magnitudes, the tolerance of each scalar and moment is the ``relative residual`` times its initial residual, computed with the solution at the beginning of the time step as initial guess, but at least the ``minimum residual``. The ``minimum residual`` should therefore be much smaller than the initial residual of the smallest moment.
+
+The evolution in phase space is done by QMOMKit, independently at every degree of freedom: since the element is nodal and discontinuous, the moments of a degree of freedom are the moments at its support point. They are inverted into a quadrature of :math:`N` nodes with the Wheeler algorithm, the quadrature is evolved over the time step, and the moments are rebuilt from it. Degrees of freedom without particles (:math:`M_0` below :math:`10^{-30}`) are left unchanged. With the growth enabled, the abscissas :math:`\xi_i` of the quadrature move with the growth rate :math:`G`, while the weights are unchanged:
+
+.. math::
+
+  \frac{\mathrm{d} \xi_i}{\mathrm{d} t} = G(\xi_i, t)
+
+The trajectories are integrated with an adaptive Runge-Kutta method, with the tolerances of the ``phase evolution`` subsection. Without growth, the quadrature does not evolve and the moments are unchanged, up to the round-off of the inversion. The moments must nevertheless be realizable, i.e. be the moments of a distribution of positive sizes: the simulation stops with an error at the first time step where they cannot be inverted, for example because of the oscillations of the transport near steep gradients.
 
 Parameters
 ----------
@@ -53,8 +61,16 @@ The default values of the QMOM parameters are given in the text box below:
     set enable coalescence = false
     set enable growth      = false
 
+    subsection growth
+      set model               = constant
+      set growth coefficient  = 0
+      set Function expression = 0
+    end
+
     subsection phase evolution
       set enable adaptive node count = false
+      set relative tolerance         = 1e-08
+      set absolute tolerance         = 1e-20
     end
 
     subsection lipid nanoparticle production
@@ -109,11 +125,24 @@ The default values of the QMOM parameters are given in the text box below:
   * ``lie``: :math:`T(\Delta t)` followed by :math:`P(\Delta t)`. This scheme is first-order accurate in time.
   * ``strang``: :math:`P(\Delta t / 2)`, then :math:`T(\Delta t)`, then :math:`P(\Delta t / 2)`. This scheme is second-order accurate in time when both parts are at least second-order accurate.
 
-* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space mecanisms. They are disabled by default, so that the moments are only transported.
+* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space mechanisms. They are disabled by default, so that the moments are only transported. Only the growth is implemented so far.
+
+* ``growth``: growth of the particles in phase space, used if ``enable growth`` is ``true``. The growth rate :math:`G` is the velocity of the particle size :math:`\xi` in phase space, in m/s.
+
+  * ``model``: model of the growth rate. The choices are:
+
+    * ``constant``: :math:`G = a`, with :math:`a` the ``growth coefficient`` in m/s. All the sizes increase by the same amount.
+    * ``linear``: :math:`G = a \xi`, with :math:`a` the ``growth coefficient`` in 1/s. All the sizes are multiplied by :math:`\exp(a t)`, so that a log-normal distribution stays log-normal, with the mean of the logarithm of the size increased by :math:`a t`, and :math:`M_k(t) = M_k(0) \exp(k a t)`.
+    * ``function``: :math:`G` is the ``Function expression``. This generic model is slower than the ``constant`` and ``linear`` models, since the expression is evaluated by a parser for every quadrature node, at every stage of the integration and at every degree of freedom: use it only for a growth rate that no other model provides.
+
+  * ``growth coefficient``: coefficient :math:`a` of the ``constant`` and ``linear`` models.
+  * ``Function expression``: growth rate of the ``function`` model, in m/s, as an expression of the particle size ``xi``, in m, and of the time ``t``, in s (e.g. ``set Function expression = 2 * xi``). The expression cannot depend on the position.
 
 * ``phase evolution``: options of the phase-space evolution in QMOMKit.
 
-  * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set.
+  * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set, instead of stopping the simulation with an error.
+  * ``relative tolerance``: relative tolerance of the adaptive Runge-Kutta integration of the trajectories of the quadrature nodes in phase space.
+  * ``absolute tolerance``: absolute tolerance of this integration, in m. The default value is much smaller than the particle sizes, so that the ``relative tolerance`` controls the integration.
 
 * ``lipid nanoparticle production``: process parameters of the production of lipid nanoparticles (LNP), in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
 
