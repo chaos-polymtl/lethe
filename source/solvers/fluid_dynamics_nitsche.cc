@@ -108,7 +108,9 @@ FluidDynamicsNitsche<dim, spacedim>::assemble_nitsche_restriction()
           double       h_cell = compute_cell_diameter<dim>(cell->measure(),
                                                      this->velocity_fem_degree);
           const double penalty_parameter =
-            1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
+            1. /
+            std::pow(h_cell * h_cell,
+                     static_cast<double>(dim) / static_cast<double>(spacedim));
           const auto &dh_cell =
             typename DoFHandler<spacedim>::cell_iterator(*cell,
                                                          &(*this->dof_handler));
@@ -341,7 +343,8 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_forces_on_solid(
       double      h_cell =
         compute_cell_diameter<dim>(cell->measure(), this->velocity_fem_degree);
       const double penalty_parameter =
-        1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
+        1. / std::pow(h_cell * h_cell,
+                      static_cast<double>(dim) / static_cast<double>(spacedim));
       const auto &dh_cell =
         typename DoFHandler<spacedim>::cell_iterator(*cell,
                                                      &(*this->dof_handler));
@@ -423,7 +426,8 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_torque_on_solid(
       double      h_cell =
         compute_cell_diameter<dim>(cell->measure(), this->velocity_fem_degree);
       const double penalty_parameter =
-        1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
+        1. / std::pow(h_cell * h_cell,
+                      static_cast<double>(dim) / static_cast<double>(spacedim));
       const auto &dh_cell =
         typename DoFHandler<spacedim>::cell_iterator(*cell,
                                                      &(*this->dof_handler));

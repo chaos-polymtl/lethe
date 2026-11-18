@@ -327,7 +327,7 @@ AdaptiveSparseContacts<dim, PropertiesIndex>::identify_mobility_status(
       bool has_active_nodes = false;
       for (auto node_id : local_dofs_indices)
         {
-          if (mobility_at_nodes(node_id) == (int)active_status)
+          if (mobility_at_nodes(node_id) == static_cast<int>(active_status))
             {
               has_active_nodes = true;
               break;

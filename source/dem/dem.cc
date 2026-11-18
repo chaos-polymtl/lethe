@@ -1014,7 +1014,7 @@ DEMSolver<dim, PropertiesIndex>::report_statistics()
 {
   // Update statistics on the contact list
   double number_of_list_built_since_last_log =
-    double(contact_build_number) - contact_list.total;
+    static_cast<double>(contact_build_number) - contact_list.total;
   contact_list.max =
     std::max(number_of_list_built_since_last_log, contact_list.max);
   contact_list.min =

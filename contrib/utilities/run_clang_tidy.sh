@@ -47,20 +47,19 @@ ARGS=("-D" "CMAKE_EXPORT_COMPILE_COMMANDS=ON" "-D" "CMAKE_BUILD_TYPE=Debug" "-D"
 # for a list of checks, see /.clang-tidy
 cat "$SRC/.clang-tidy"
 
-if ! [ -x "$(command -v run-clang-tidy)" ] || ! [ -x "$(command -v clang++)" ]; then
-    echo "make sure clang, clang++, and run-clang-tidy (part of clang) are in the path"
+if ! [ -x "$(command -v run-clang-tidy)" ] || ! [ -x "$(command -v clang-tidy)" ] || ! [ -x "$(command -v clang++)" ]; then
+    echo "make sure clang, clang++, clang-tidy and run-clang-tidy (part of clang) are in the path"
     exit 2
 fi
 
+# Check that every check name and option in .clang-tidy exists. Otherwise a
+# misspelled check or option is silently ignored and its warnings are lost.
+(cd "$SRC" && clang-tidy --verify-config) || (echo "invalid .clang-tidy!"; false) || exit 3
+
 CC=clang CXX=clang++ cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
-# Build only the static libraries. Linking the applications and the tests is
-# unnecessary for static analysis, and it fails whenever deal.II was built with
-# a compiler other than clang: GCC and clang mangle deal.II's enable_if-based
-# template signatures (e.g. TrilinosWrappers::SparseMatrix::vmult) differently,
-# so the explicit instantiations shipped in libdeal_II cannot be resolved.
-CXXFLAGS="-Wno-unknown-warning-option";  cmake --build . -j "$(nproc)" \
-  --target lethe-core lethe-dem lethe-solvers lethe-fem-dem
+# Nothing is built. clang-tidy only needs compile_commands.json, which the
+# configure step writes, and Lethe generates no source file at build time.
 
 # generate allheaders.h
 #(cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
@@ -71,6 +70,7 @@ CXXFLAGS="-Wno-unknown-warning-option";  cmake --build . -j "$(nproc)" \
 # pipe away stderr (just contains nonsensical "x warnings generated")
 # pipe output to output.txt
 run-clang-tidy -p . -quiet -extra-arg='-DCLANG_TIDY' 2>error.txt >output.txt
+tidy_status=$?
 
 # grep interesting errors and make sure we remove duplicates:
 grep -E '(warning|error): ' output.txt | sort | uniq >clang-tidy.log
@@ -79,6 +79,15 @@ grep -E '(warning|error): ' output.txt | sort | uniq >clang-tidy.log
 if [ -s clang-tidy.log ]; then
     cat clang-tidy.log
     exit 4
+fi
+
+# run-clang-tidy also fails when clang-tidy crashes or cannot process a file,
+# which may leave no diagnostic in output.txt
+if [ "$tidy_status" -ne 0 ]; then
+    echo "run-clang-tidy failed with exit status $tidy_status. End of its output:"
+    tail -n 50 output.txt
+    tail -n 50 error.txt
+    exit 5
 fi
 
 echo "OK"

@@ -29,6 +29,7 @@
 
 #include <boost/signals2/connection.hpp>
 
+#include <cmath>
 #include <numbers>
 
 // Constructor for class FluidDynamicsSharp
@@ -1593,7 +1594,12 @@ FluidDynamicsSharp<dim>::force_on_ib()
 
                                   auto force = viscous_force + pressure_force;
 
-                                  if (force != force)
+                                  bool force_is_nan = false;
+                                  for (unsigned int d = 0; d < dim; ++d)
+                                    force_is_nan =
+                                      force_is_nan || std::isnan(force[d]);
+
+                                  if (force_is_nan)
                                     {
                                       // The force is nan; this happens when the
                                       // face projection is a line. This
