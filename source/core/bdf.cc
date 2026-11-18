@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2022, 2024, 2026 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2022, 2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -46,6 +46,7 @@ calculate_bdf_coefficients(
   switch (method)
     {
       case Parameters::SimulationControl::TimeSteppingMethod::bdf1:
+        return bdf_coefficients(1, time_steps);
       case Parameters::SimulationControl::TimeSteppingMethod::steady_bdf:
         return bdf_coefficients(1, time_steps);
       case Parameters::SimulationControl::TimeSteppingMethod::bdf2:

@@ -93,10 +93,6 @@ FlowControl<dim>::calculate_beta(const double       &average_velocity_n,
     }
 
   double new_beta = 0.0;
-  // The first time step and the force-free deceleration both apply no force,
-  // but their branches are kept apart: merging them would move the force-free
-  // test before the step_number == 1 test.
-  // NOLINTBEGIN(bugprone-branch-clone)
   if (step_number == 0)
     {
       // No force applied at first time step.
@@ -137,7 +133,6 @@ FlowControl<dim>::calculate_beta(const double       &average_velocity_n,
       // Main controller
       new_beta = main_flow_controller(average_velocity_n, dt);
     }
-  // NOLINTEND(bugprone-branch-clone)
 
   // If the new beta is in the user defined threshold of the old beta, the new
   // beta is kept as the previous beta. This could allow avoiding unnecessary

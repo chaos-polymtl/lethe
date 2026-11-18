@@ -161,9 +161,15 @@ NavierStokesOperatorBase<dim, number>::reinit(
             update_values | update_gradients | update_quadrature_points |
             update_JxW_values | update_normal_vectors;
         }
-      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet ||
-               type == BoundaryConditions::FluidDynamicsBoundaryType::
-                         neumann_traction)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet)
+        {
+          this->enable_face_terms = true;
+          additional_data.mapping_update_flags_boundary_faces =
+            update_values | update_quadrature_points | update_JxW_values |
+            update_normal_vectors;
+        }
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =

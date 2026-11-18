@@ -100,10 +100,8 @@ SimulationControl::update_assembly_method()
   if (bdf_start_method ==
       Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf)
     {
-      // BDF2 and BDF3 both start with a BDF1 step
       if (iteration_number <= 1 &&
-          (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3))
+          method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
         {
           assembly_method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf1;
@@ -125,6 +123,14 @@ SimulationControl::update_assembly_method()
           assembly_method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf2;
           set_current_time_step(initial_time_step);
+        }
+      else if (iteration_number <= 1 &&
+               method ==
+                 Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+          set_current_time_step(initial_time_step * startup_timestep_scaling);
         }
       else if (iteration_number == 2 &&
                method ==

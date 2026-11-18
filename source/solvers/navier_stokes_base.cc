@@ -1987,21 +1987,37 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
                                                  periodic_boundary.direction,
                                                  this->zero_constraints);
         }
-      else if (type ==
-                 BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
-               type ==
-                 BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
-               type ==
-                 BoundaryConditions::FluidDynamicsBoundaryType::partial_slip ||
-               type == BoundaryConditions::FluidDynamicsBoundaryType::outlet ||
-               type == BoundaryConditions::FluidDynamicsBoundaryType::
-                         neumann_traction ||
-               type == BoundaryConditions::FluidDynamicsBoundaryType::none)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::pressure)
         {
-          /*The pressure, function weak, partial slip, directional do-nothing
-           * (outlet) and Neumann traction boundary conditions are implemented
-           * in the matrix-based assemblers and, except partial slip, in the
-           * matrix-free operators. None is the default boundary condition*/
+          /*The pressure boundary condition is implemented in the matrix-based
+           * assemblers*/
+        }
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
+        {
+          /*The function weak boundary condition is implemented in the
+           * matrix-based assemblers and the matrix-free operators*/
+        }
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
+        {
+          /*The partial slip boundary condition is implemented in the
+           * matrix-based assemblers*/
+        }
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet)
+        {
+          /*The directional do-nothing boundary condition is implemented
+           * in the matrix-based assemblers and the matrix-free operators*/
+        }
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
+        {
+          /*The Neumann traction boundary condition is implemented
+           * in the  matrix-based assemblers and the matrix-free operators*/
+        }
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::none)
+        {
+          /*Default boundary condition*/
         }
       /// TODO ADD ASSERTION for the default case here.
     }
