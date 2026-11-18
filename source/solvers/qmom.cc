@@ -368,6 +368,7 @@ QMOM<dim>::post_mesh_adaptation()
     n_components * (1 + maximum_number_of_previous_solutions()),
     GlobalVectorType(locally_owned_dofs, mpi_communicator));
   std::vector<GlobalVectorType *> output_vectors;
+  output_vectors.reserve(distributed_solutions.size());
   for (GlobalVectorType &distributed_solution : distributed_solutions)
     output_vectors.emplace_back(&distributed_solution);
 
@@ -430,6 +431,7 @@ QMOM<dim>::read_checkpoint()
     n_components * (1 + maximum_number_of_previous_solutions()),
     GlobalVectorType(locally_owned_dofs, mpi_communicator));
   std::vector<GlobalVectorType *> input_vectors;
+  input_vectors.reserve(distributed_solutions.size());
   for (GlobalVectorType &distributed_solution : distributed_solutions)
     input_vectors.emplace_back(&distributed_solution);
 
