@@ -1007,7 +1007,7 @@ CahnHilliard<dim>::gather_tables()
 
 template <int dim>
 void
-CahnHilliard<dim>::write_checkpoint(const std::string &checkpoint_suffix)
+CahnHilliard<dim>::write_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1027,13 +1027,13 @@ CahnHilliard<dim>::write_checkpoint(const std::string &checkpoint_suffix)
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
   serialize_tables_vector(table_output_structs,
-                          checkpoint_suffix,
+                          checkpoint_slot_label,
                           mpi_communicator);
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::read_checkpoint(const std::string &checkpoint_suffix)
+CahnHilliard<dim>::read_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading Cahn Hilliard checkpoint" << std::endl;
@@ -1065,7 +1065,7 @@ CahnHilliard<dim>::read_checkpoint(const std::string &checkpoint_suffix)
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   deserialize_tables_vector(table_output_structs,
-                            checkpoint_suffix,
+                            checkpoint_slot_label,
                             mpi_communicator);
 }
 

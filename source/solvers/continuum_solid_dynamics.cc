@@ -194,7 +194,7 @@ ContinuumSolidDynamics<dim>::compute_error_estimate(
 template <int dim>
 void
 ContinuumSolidDynamics<dim>::write_checkpoint(
-  const std::string & /*checkpoint_suffix*/)
+  const std::string & /*checkpoint_slot_label*/)
 {
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
@@ -211,7 +211,7 @@ ContinuumSolidDynamics<dim>::write_checkpoint(
 template <int dim>
 void
 ContinuumSolidDynamics<dim>::read_checkpoint(
-  const std::string & /*checkpoint_suffix*/)
+  const std::string & /*checkpoint_slot_label*/)
 {
   const auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading solid phase checkpoint" << std::endl;

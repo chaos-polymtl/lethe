@@ -15,11 +15,10 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set time step         = 0.01 # Time step
-  set number mesh adapt = 0    # If steady, nb mesh adaptation
-  set time end          = 0.06 # End time of simulation
-  set output frequency  = 0    # Frequency of simulation output
+  set method           = bdf1
+  set time step        = 0.01
+  set time end         = 0.06
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -29,14 +28,6 @@ end
 subsection FEM
   set velocity degree = 1
   set pressure degree = 1
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none # <none|iteration|end>
 end
 
 #---------------------------------------------------
@@ -79,14 +70,10 @@ end
 #---------------------------------------------------
 
 subsection restart
-  # Enable checkpointing
   set checkpoint = false
-  # Prefix for the filename of checkpoints
-  set filename = restart
-  # Frequency for checkpointing
-  set frequency = 1
-  # Enable restart from checkpoint
-  set restart = true
+  set filename   = restart
+  set frequency  = 1
+  set restart    = true
 end
 
 #---------------------------------------------------
@@ -107,15 +94,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = 0 : 6.28318530718 : true
-  set initial refinement = 3 # initial mesh refinement
-end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
+  set initial refinement = 3
 end
 
 #---------------------------------------------------

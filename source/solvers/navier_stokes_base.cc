@@ -2222,13 +2222,13 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       this->flow_control.read(prefix);
     }
 
-  multiphysics->read_checkpoint(this->get_checkpoint_suffix());
+  multiphysics->read_checkpoint(this->get_checkpoint_slot_label());
 
   // Deserialize all post-processing tables that are currently used
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   deserialize_tables_vector(table_output_structs,
-                            this->get_checkpoint_suffix(),
+                            this->get_checkpoint_slot_label(),
                             this->mpi_communicator);
 }
 
@@ -3113,7 +3113,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  multiphysics->write_checkpoint(this->get_checkpoint_suffix());
+  multiphysics->write_checkpoint(this->get_checkpoint_slot_label());
 
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
@@ -3125,7 +3125,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
   serialize_tables_vector(table_output_structs,
-                          this->get_checkpoint_suffix(),
+                          this->get_checkpoint_slot_label(),
                           this->mpi_communicator);
 }
 
@@ -3168,12 +3168,12 @@ NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_prefix() const
 {
   return this->simulation_parameters.simulation_control.output_folder +
          this->simulation_parameters.restart_parameters.filename +
-         this->get_checkpoint_suffix();
+         this->get_checkpoint_slot_label();
 }
 
 template <int dim, typename VectorType, typename DofsType>
 std::string
-NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_suffix() const
+NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_slot_label() const
 {
   return "_" + Utilities::int_to_string(
                  this->checkpoint_controller.get_next_checkpoint_id());

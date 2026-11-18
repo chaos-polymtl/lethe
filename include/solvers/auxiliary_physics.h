@@ -153,18 +153,18 @@ public:
   /**
    * @brief Prepares auxiliary physics to write checkpoint
    *
-   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  write_checkpoint(const std::string &checkpoint_suffix) = 0;
+  write_checkpoint(const std::string &checkpoint_slot_label) = 0;
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
    *
-   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  read_checkpoint(const std::string &checkpoint_suffix) = 0;
+  read_checkpoint(const std::string &checkpoint_slot_label) = 0;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to

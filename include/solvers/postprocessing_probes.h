@@ -145,30 +145,30 @@ public:
   /**
    * @brief Serializes all probe tables.
    *
-   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   inline void
-  write_checkpoint(const std::string &checkpoint_suffix)
+  write_checkpoint(const std::string &checkpoint_slot_label)
   {
     const std::vector<OutputStructTableHandler> &table_output_structs =
       this->gather_tables();
     serialize_tables_vector(table_output_structs,
-                            checkpoint_suffix,
+                            checkpoint_slot_label,
                             MPI_COMM_WORLD);
   }
 
   /**
    * @brief Deserializes all probe tables.
    *
-   * @param[in] checkpoint_suffix Suffix of the checkpoint slot.
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   inline void
-  read_checkpoint(const std::string &checkpoint_suffix)
+  read_checkpoint(const std::string &checkpoint_slot_label)
   {
     std::vector<OutputStructTableHandler> table_output_structs =
       this->gather_tables();
     deserialize_tables_vector(table_output_structs,
-                              checkpoint_suffix,
+                              checkpoint_slot_label,
                               MPI_COMM_WORLD);
   }
 

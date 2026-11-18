@@ -825,17 +825,18 @@ protected:
 
   /**
    * @brief Return the prefix of the checkpoint files: the output path, the
-   * restart file name and the suffix of the checkpoint id.
+   * restart file name and the label of the checkpoint slot.
    */
   std::string
   get_checkpoint_prefix() const;
 
   /**
-   * @brief Return the suffix of the checkpoint files, "_" followed by the
-   * checkpoint id.
+   * @brief Return the label of the checkpoint slot, "_" followed by the
+   * checkpoint id, which is appended to the restart file name in the prefix
+   * and to the name of the table checkpoints.
    */
   std::string
-  get_checkpoint_suffix() const;
+  get_checkpoint_slot_label() const;
 
   /**
    * @brief Gather and return vector of output structs that are particular to some applications.

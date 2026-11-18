@@ -1723,7 +1723,8 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::write_checkpoint(const std::string &checkpoint_suffix)
+TimeHarmonicMaxwell<dim>::write_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -1758,13 +1759,14 @@ TimeHarmonicMaxwell<dim>::write_checkpoint(const std::string &checkpoint_suffix)
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
   serialize_tables_vector(table_output_structs,
-                          checkpoint_suffix,
+                          checkpoint_slot_label,
                           mpi_communicator);
 }
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::read_checkpoint(const std::string &checkpoint_suffix)
+TimeHarmonicMaxwell<dim>::read_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading time-harmonic Maxwell checkpoint" << std::endl;
@@ -1816,7 +1818,7 @@ TimeHarmonicMaxwell<dim>::read_checkpoint(const std::string &checkpoint_suffix)
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   deserialize_tables_vector(table_output_structs,
-                            checkpoint_suffix,
+                            checkpoint_slot_label,
                             mpi_communicator);
 }
 

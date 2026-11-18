@@ -1403,12 +1403,10 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
         "checkpoint file of the checkpoint controller, given by "
         "'subsection initial conditions' - 'subsection average "
         "velocity profile' - 'set checkpoint file name'");
-      std::ifstream iss_checkpoint_controller_obj(
-        checkpoint_controller_object_filename);
-      boost::archive::text_iarchive ia_checkpoint_controller_obj(
-        iss_checkpoint_controller_obj, boost::archive::no_header);
-      unsigned int checkpoint_id;
-      ia_checkpoint_controller_obj >> checkpoint_id;
+      std::ifstream input(checkpoint_controller_object_filename);
+      boost::archive::text_iarchive archive(input, boost::archive::no_header);
+      unsigned int                  checkpoint_id;
+      archive >> checkpoint_id;
       checkpoint_file_name += "_" + Utilities::int_to_string(checkpoint_id);
 
       // The average velocity profile needs to come from the results of a
