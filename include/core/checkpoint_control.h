@@ -29,7 +29,7 @@ public:
 
   /**
    * @brief Return true if a checkpoint should be made at the current time step:
-   * every checkpointing frequency time steps and at the last time step.
+   * at each checkpointing frequency time step and at the last time step.
    * @param time_step_number Current time step.
    * @param is_last_time_step Whether the current time step is the last one.
    */

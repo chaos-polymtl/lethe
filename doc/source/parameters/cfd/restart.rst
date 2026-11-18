@@ -33,7 +33,7 @@ The default parameters are:
   Checkpointing is very intensive from an I/O point of view, consequently it should not be done at every iteration. The checkpointing frequency is in accordance to the number of ``time step`` (see :doc:`simulation_control`).
 
 .. note::
-  Checkpoints alternate between two slots, so a simulation interrupted while writing a checkpoint can restart from the previous one. Their files end with ``_0`` or ``_1`` (``<filename>_0.triangulation``, ``force_00_0.checkpoint``, ...), and ``<filename>.checkpoint_controller`` gives the slot of the last checkpoint, from which a restart starts.
+  Checkpoints alternate between two slots, so a simulation interrupted while writing a checkpoint can restart from the previous one. Their files end with ``_0`` or ``_1`` (e.g., ``<filename>_0.triangulation``, ``force_00_0.checkpoint``, ...), and ``<filename>.checkpoint_controller`` gives the slot of the last checkpoint, from which a simulation restarts.
 
 * ``filename``: prefix for the files. This parameter is used to output checkpoint files as well as to load files during a restart.
 
