@@ -536,6 +536,16 @@ namespace Parameters
     /// Enable the adaptive number of quadrature nodes
     bool enable_adaptive_node_count = false;
 
+    /// Relative tolerance of the adaptive Runge-Kutta integration of the
+    /// trajectories of the quadrature nodes in phase space [-]
+    double relative_tolerance = 1e-8;
+
+    /// Absolute tolerance of the adaptive Runge-Kutta integration of the
+    /// trajectories of the quadrature nodes in phase space, in the unit of the
+    /// abscissas [m]. It is much smaller than the particle sizes, so that the
+    /// relative tolerance controls the integration.
+    double absolute_tolerance = 1e-20;
+
     /**
      * @brief Declare the "phase evolution" subsection.
      *
@@ -546,6 +556,54 @@ namespace Parameters
 
     /**
      * @brief Parse the "phase evolution" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Model of the growth rate G, the velocity of the particle size xi in
+   * phase space, in m/s:
+   *  - constant: G = a, with a the growth coefficient in m/s;
+   *  - linear: G = a xi, with a the growth coefficient in 1/s;
+   *  - function: G is a function expression of the size xi and of the time t.
+   */
+  enum class QMOMGrowthModel : std::int8_t
+  {
+    constant,
+    linear,
+    function
+  };
+
+  /**
+   * @brief Parameters of the growth of the particles in phase space, declared
+   * in the "growth" subsection of the "QMOM" subsection. They are only used
+   * if the growth is enabled. All of them are in SI units.
+   */
+  struct QMOMGrowth
+  {
+    /// Model of the growth rate
+    QMOMGrowthModel model = QMOMGrowthModel::constant;
+
+    /// Coefficient of the constant [m/s] and linear [1/s] growth models
+    double growth_coefficient = 0.;
+
+    /// Expression of the growth rate [m/s] of the function model, in terms of
+    /// the particle size xi [m] and of the time t [s]
+    std::string function_expression = "0";
+
+    /**
+     * @brief Declare the "growth" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "growth" subsection.
      *
      * @param[in] prm Parameter handler.
      */
@@ -812,6 +870,10 @@ namespace Parameters
     bool enable_coalescence = false;
     /// Include the growth source
     bool enable_growth = false;
+
+    /// Growth of the particles ("growth" subsection), used if enable_growth
+    /// is true
+    QMOMGrowth growth;
 
     /// Phase-space evolution ("phase evolution" subsection)
     QMOMPhaseEvolution phase_evolution;

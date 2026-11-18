@@ -45,6 +45,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/qmom_field_function.h>
 #include <solvers/qmom_scratch_data.h>
+#include <solvers/qmom_source_terms.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -438,10 +439,21 @@ private:
 
   /**
    * @brief Evolve the moments in phase space (nucleation, growth and
-   * coalescence) at every locally owned degree of freedom. Not implemented
-   * yet: the moments are constant in phase space.
+   * coalescence) at every locally owned degree of freedom, with QMOMKit.
    *
-   * @param[in] time_step Duration of the phase-space step.
+   * Since the element is nodal and discontinuous, the moments of a degree of
+   * freedom are the moments at its support point: they are inverted into a
+   * quadrature (Wheeler algorithm), the quadrature is evolved over the time
+   * step by qmomkit::advance_qmom_phase_space(), and the moments are rebuilt
+   * from it. Degrees of freedom without particles (zeroth moment below the
+   * cutoff of QMOMKit) are left unchanged. The nodes move with the growth
+   * velocity of phase_space_source_terms, which is zero if the growth is
+   * disabled. Nucleation and coalescence are not implemented yet, so the
+   * moment source is zero. If the moments of any degree of freedom cannot be
+   * inverted or evolved, an exception is thrown on every rank.
+   *
+   * @param[in] time_step Duration of the phase-space step, which ends at the
+   * current time of the simulation control.
    */
   void
   advance_phase_space(const double time_step);
@@ -506,6 +518,9 @@ private:
   /// Analytical solution of all the components, used to compute the L2
   /// errors
   std::shared_ptr<QMOMFieldFunction<dim>> analytical_solution;
+
+  /// Growth, nucleation and coalescence of the particles in phase space
+  std::unique_ptr<QMOMSourceTerms> phase_space_source_terms;
 
   /// Locally owned and locally relevant DoFs
   IndexSet locally_owned_dofs;

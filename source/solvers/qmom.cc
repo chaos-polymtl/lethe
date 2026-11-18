@@ -45,12 +45,22 @@
 #include <deal.II/numerics/data_component_interpretation.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#ifdef LETHE_WITH_QMOMKIT
+#  include <qmomkit/moment_set.hpp>
+#  include <qmomkit/moment_source.hpp>
+#  include <qmomkit/node_advection.hpp>
+#  include <qmomkit/phase_space_evolution.hpp>
+#  include <qmomkit/qmom.hpp>
+#endif
+
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <fstream>
 #include <iomanip>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -144,12 +154,14 @@ QMOM<dim>::QMOM(
                          "not implemented yet. Set \"splitting scheme\" to lie "
                          "in the QMOM subsection."));
   AssertThrow(!qmom_parameters.enable_nucleation &&
-                !qmom_parameters.enable_coalescence &&
-                !qmom_parameters.enable_growth,
-              ExcMessage("The evolution of the moments in phase space is not "
-                         "implemented yet. Set \"enable nucleation\", \"enable "
-                         "coalescence\" and \"enable growth\" to false in the "
-                         "QMOM subsection."));
+                !qmom_parameters.enable_coalescence,
+              ExcMessage("The nucleation and the coalescence of the QMOM "
+                         "physics are not implemented yet. Set \"enable "
+                         "nucleation\" and \"enable coalescence\" to false in "
+                         "the QMOM subsection."));
+
+  // Growth, nucleation and coalescence of the particles in phase space
+  phase_space_source_terms = std::make_unique<QMOMSourceTerms>(qmom_parameters);
 
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
@@ -1187,9 +1199,130 @@ template <int dim>
 void
 QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
 {
-  // The evolution of the moments in phase space is not implemented yet: the
-  // constructor rejects nucleation, growth and coalescence, so the moments
-  // are constant in phase space.
+#ifdef LETHE_WITH_QMOMKIT
+  TimerOutput::Scope t(computing_timer, "Phase-space evolution");
+
+  const Parameters::QMOM &qmom_parameters =
+    simulation_parameters.multiphysics.qmom_parameters;
+
+  // The phase-space step starts where the physical-space transport started,
+  // at the beginning of the time step
+  const double phase_space_start_time =
+    simulation_control->get_current_time() - time_step;
+
+  // Phase-space velocity of the quadrature nodes, which is the growth rate
+  // selected by the growth model. QMOMPhaseSpaceVelocity has the type of
+  // qmomkit::PhaseSpaceVelocity, so it is passed to QMOMKit as is.
+  static_assert(
+    std::is_same_v<QMOMPhaseSpaceVelocity, qmomkit::PhaseSpaceVelocity>,
+    "QMOMPhaseSpaceVelocity must have the type of qmomkit::PhaseSpaceVelocity");
+  const qmomkit::PhaseSpaceVelocity &phase_space_velocity =
+    phase_space_source_terms->get_growth_velocity();
+
+  // Rate of change of the moments in phase space (nucleation and
+  // coalescence). The constructor rejects both, so the rate is zero.
+  const qmomkit::QmomMomentSource moment_source =
+    [](const double /*time*/, const qmomkit::QmomSourceContext &context) {
+      return qmomkit::QmomMomentRate{std::vector<double>(context.size(), 0.)};
+    };
+
+  // Node count and inversion options shared by all the degrees of freedom.
+  // The moments of the case are not used: each degree of freedom builds its
+  // own state from its moments.
+  qmomkit::QmomCase qmom_case;
+  qmom_case.node_count = qmom_parameters.number_of_nodes;
+  qmom_case.qmom_options.adaptive =
+    qmom_parameters.phase_evolution.enable_adaptive_node_count;
+
+  // Tolerances of the adaptive Runge-Kutta integration of the trajectories
+  // of the nodes
+  qmomkit::QmomPhaseSpaceEvolutionOptions evolution_options;
+  evolution_options.node_options.adaptive_options.relative_tolerance =
+    qmom_parameters.phase_evolution.relative_tolerance;
+  evolution_options.node_options.adaptive_options.absolute_tolerance =
+    qmom_parameters.phase_evolution.absolute_tolerance;
+
+  // The moments are read from the ghosted present solutions and written into
+  // locally owned (non-ghosted) vectors, which are copied back at the end
+  std::vector<GlobalVectorType> evolved_moments(n_moments);
+  for (GlobalVectorType &evolved_moment : evolved_moments)
+    evolved_moment.reinit(locally_owned_dofs,
+                          triangulation->get_mpi_communicator());
+
+  // The discontinuous elements are nodal and no degree of freedom is shared
+  // between cells, so the moments of each degree of freedom are the moments
+  // at its support point and are evolved independently of the others
+  std::vector<double> local_moments(n_moments);
+  bool                evolution_failed = false;
+  for (const types::global_dof_index dof : locally_owned_dofs)
+    {
+      // The moments are left unchanged unless they are evolved below
+      for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+        {
+          local_moments[i_moment] =
+            present_solutions[n_scalars + i_moment][dof];
+          evolved_moments[i_moment][dof] = local_moments[i_moment];
+        }
+
+      const qmomkit::QmomStateCandidate candidate =
+        qmom_case.state_candidate(qmomkit::MomentSet(local_moments),
+                                  evolution_options.realizability_policy);
+
+      // Without particles (zeroth moment below the cutoff of QMOMKit), there
+      // is no quadrature to evolve and the moments are left unchanged
+      if (candidate.status == qmomkit::StateCandidateStatus::empty)
+        continue;
+
+      // The moments cannot be inverted into a quadrature
+      if (!candidate.ok())
+        {
+          evolution_failed = true;
+          break;
+        }
+
+      const qmomkit::QmomPhaseSpaceEvolutionResult result =
+        qmomkit::advance_qmom_phase_space(*candidate.state,
+                                          phase_space_start_time,
+                                          time_step,
+                                          phase_space_velocity,
+                                          moment_source,
+                                          evolution_options);
+
+      // The evolved quadrature cannot be rebuilt into moments
+      if (!result.ok())
+        {
+          evolution_failed = true;
+          break;
+        }
+
+      const std::vector<double> &moment_values = result.state.moment_values();
+      for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+        evolved_moments[i_moment][dof] = moment_values[i_moment];
+    }
+
+  // A rank that throws alone would leave the others waiting in the next
+  // collective call, so the failure is shared by all the ranks
+  AssertThrow(
+    !Utilities::MPI::logical_or(evolution_failed,
+                                triangulation->get_mpi_communicator()),
+    ExcMessage(
+      "The QMOM phase-space evolution failed: the moments of at least one "
+      "degree of freedom are not realizable and cannot be inverted or "
+      "evolved by QMOMKit. Refine the mesh or reduce the time step to limit "
+      "the oscillations of the transport in physical space, or set \"enable "
+      "adaptive node count\" to true in the \"phase evolution\" subsection "
+      "of the QMOM subsection."));
+
+  for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+    {
+      evolved_moments[i_moment].compress(VectorOperation::insert);
+      present_solutions[n_scalars + i_moment] = evolved_moments[i_moment];
+    }
+#else
+  // The constructor of the multiphysics interface already stops the
+  // simulation in this case
+  AssertThrow(false, QMOMWithoutQMOMKitError());
+#endif
 }
 
 template <int dim>

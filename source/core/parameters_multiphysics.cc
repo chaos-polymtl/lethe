@@ -830,6 +830,22 @@ Parameters::QMOMPhaseEvolution::declare_parameters(ParameterHandler &prm) const
                         defaults.enable_adaptive_node_count),
                       Patterns::Bool(),
                       "Enable adaptive quadrature node count <true|false>");
+
+    prm.declare_entry("relative tolerance",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.relative_tolerance),
+                      Patterns::Double(0.),
+                      "Relative tolerance of the adaptive Runge-Kutta "
+                      "integration of the trajectories of the quadrature "
+                      "nodes in phase space");
+
+    prm.declare_entry("absolute tolerance",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.absolute_tolerance),
+                      Patterns::Double(0.),
+                      "Absolute tolerance, in m, of the adaptive Runge-Kutta "
+                      "integration of the trajectories of the quadrature "
+                      "nodes in phase space");
   }
   prm.leave_subsection();
 }
@@ -840,6 +856,57 @@ Parameters::QMOMPhaseEvolution::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("phase evolution");
   {
     enable_adaptive_node_count = prm.get_bool("enable adaptive node count");
+    relative_tolerance         = prm.get_double("relative tolerance");
+    absolute_tolerance         = prm.get_double("absolute tolerance");
+    AssertThrow(relative_tolerance > 0. && absolute_tolerance > 0.,
+                ExcMessage("The \"relative tolerance\" (" +
+                           std::to_string(relative_tolerance) +
+                           ") and the \"absolute tolerance\" (" +
+                           std::to_string(absolute_tolerance) +
+                           ") of the \"phase evolution\" subsection of the "
+                           "QMOM subsection must be strictly positive."));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMGrowth::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMGrowth defaults;
+  prm.enter_subsection("growth");
+  {
+    declare_enum_entry(prm,
+                       "model",
+                       defaults.model,
+                       "Model of the growth rate G of the particle size xi: "
+                       "constant (G = a), linear (G = a xi) or function (G "
+                       "given by an expression of xi and t)");
+
+    prm.declare_entry("growth coefficient",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.growth_coefficient),
+                      Patterns::Double(),
+                      "Coefficient a of the constant (in m/s) and linear (in "
+                      "1/s) growth models");
+
+    prm.declare_entry("Function expression",
+                      defaults.function_expression,
+                      Patterns::Anything(),
+                      "Growth rate G, in m/s, of the function model, as an "
+                      "expression of the particle size xi, in m, and of the "
+                      "time t, in s");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMGrowth::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("growth");
+  {
+    model               = string_to_enum<QMOMGrowthModel>(prm.get("model"));
+    growth_coefficient  = prm.get_double("growth coefficient");
+    function_expression = prm.get("Function expression");
   }
   prm.leave_subsection();
 }
@@ -901,6 +968,7 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Include the growth source <true|false>");
 
+    growth.declare_parameters(prm);
     phase_evolution.declare_parameters(prm);
     lipid_nanoparticle_production.declare_parameters(prm);
     physical_constants.declare_parameters(prm);
@@ -971,6 +1039,7 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
     enable_coalescence = prm.get_bool("enable coalescence");
     enable_growth      = prm.get_bool("enable growth");
 
+    growth.parse_parameters(prm);
     phase_evolution.parse_parameters(prm);
     lipid_nanoparticle_production.parse_parameters(prm);
     physical_constants.parse_parameters(prm);
