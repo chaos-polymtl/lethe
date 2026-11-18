@@ -678,12 +678,15 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       error_table.set_scientific("error_phase_order", true);
       error_table.set_scientific("error_chemical_potential", true);
 
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.analytical_solution->get_filename() +
-        "_cahn_hilliard.dat";
-      std::ofstream output(filename.c_str());
-      error_table.write_text(output);
+      if (this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_cahn_hilliard.dat";
+          std::ofstream output(filename.c_str());
+          error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)

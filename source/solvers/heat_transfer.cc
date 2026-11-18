@@ -1070,6 +1070,18 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
       error_table.add_value("error_temperature", temperature_error);
+      error_table.set_scientific("error_temperature", true);
+
+      if (Utilities::MPI::this_mpi_process(
+            this->triangulation->get_mpi_communicator()) == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_heat_transfer.dat";
+          std::ofstream output(filename.c_str());
+          error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)

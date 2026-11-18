@@ -1024,6 +1024,22 @@ TimeHarmonicMaxwell<dim>::postprocess(bool first_iteration)
       this->error_table.add_value("error_H_real", H_real_error);
       this->error_table.add_value("error_H_imag", H_imag_error);
 
+      this->error_table.set_scientific("error_E_real", true);
+      this->error_table.set_scientific("error_E_imag", true);
+      this->error_table.set_scientific("error_H_real", true);
+      this->error_table.set_scientific("error_H_imag", true);
+
+      if (Utilities::MPI::this_mpi_process(
+            triangulation->get_mpi_communicator()) == 0)
+        {
+          const std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_time_harmonic_maxwell.dat";
+          std::ofstream output(filename.c_str());
+          this->error_table.write_text(output);
+        }
+
       if (simulation_parameters.analytical_solution->verbosity !=
           Parameters::Verbosity::quiet)
         {
