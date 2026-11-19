@@ -343,7 +343,7 @@ Multiphysics Post-processing
 
   .. math::
 
-      P_\text{net} = -\frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}\times\mathbf{H}^*\right)\cdot\mathbf{n} = \frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}_T \cdot (\mathbf{n}\times\mathbf{H})^*\right)
+      P_\text{net} = -\frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}\times\mathbf{H}^*\right)\cdot\mathbf{n} \,\mathrm{d}\Gamma = \frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}_T \cdot (\mathbf{n}\times\mathbf{H})^*\right) \mathrm{d}\Gamma
 
   For each boundary with a ``pec``, ``pmc``, ``electric_field`` or ``magnetic_field`` boundary condition, the output table is appended with one column, named ``net_power_bc_i``, where ``i`` is the boundary id.
 
@@ -354,7 +354,7 @@ Multiphysics Post-processing
 
   .. math::
 
-      P_\text{in} = \frac{\mathrm{Re}(Y)}{2}\int_\Gamma |\mathbf{E}_\text{in}|^2 \qquad P_\text{out} = \frac{\mathrm{Re}(Y)}{2}\int_\Gamma |\mathbf{E}_\text{out}|^2 \qquad P_\text{cross} = \mathrm{Im}(Y)\int_\Gamma \mathrm{Im}\left(\mathbf{E}_\text{out}\cdot\mathbf{E}_\text{in}^*\right)
+      P_\text{in} = \frac{1}{2}\int_\Gamma \mathrm{Re}(Y)|\mathbf{E}_\text{in}|^2 \,\mathrm{d}\Gamma \qquad P_\text{out} = \frac{1}{2}\int_\Gamma \mathrm{Re}(Y)|\mathbf{E}_\text{out}|^2 \,\mathrm{d}\Gamma \qquad P_\text{cross} = \int_\Gamma \mathrm{Im}(Y)\,\mathrm{Im}\left(\mathbf{E}_\text{out}\cdot\mathbf{E}_\text{in}^*\right) \mathrm{d}\Gamma
 
   such that the net power entering the domain through the boundary is :math:`P_\text{net} = P_\text{in} - P_\text{out} + P_\text{cross}`. The output table is appended with the columns ``incident_power_bc_i``, ``outgoing_power_bc_i`` and ``cross_power_bc_i``, where ``i`` is the boundary id.
 
@@ -362,7 +362,7 @@ Multiphysics Post-processing
 
   .. math::
 
-      P_\text{abs} = \frac{\omega}{2}\int_{\Omega_m} \left((\varepsilon_r'' + \sigma_r)|\mathbf{E}|^2 + \mu_r''|\mathbf{H}|^2\right)
+      P_\text{abs} = \frac{\omega}{2}\int_{\Omega_m} \left((\varepsilon_r'' + \sigma_r)|\mathbf{E}|^2 + \mu_r''|\mathbf{H}|^2\right) \mathrm{d}\Omega
 
   where :math:`\omega` is the non-dimensional angular frequency, :math:`\varepsilon_r''` and :math:`\mu_r''` are the imaginary parts of the relative electric permittivity and magnetic permeability, and :math:`\sigma_r` is the dimensionless electric conductivity (see :doc:`physical properties <physical_properties>`). The output table is appended with one column per material, named ``absorbed_power_material_i``, where ``i`` is the material id (``0`` for the fluid and ``i`` for the i-th solid). With an effective medium (e.g., the ``bruggeman`` model of the unresolved CFD-DEM solvers), the fluid and the unresolved dispersed phase form a single mixture, so the power absorbed by the particles is included in the power of the fluid (material ``0``).
 

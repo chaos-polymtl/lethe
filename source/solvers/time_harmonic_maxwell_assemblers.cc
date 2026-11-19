@@ -454,8 +454,8 @@ compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
 {
   BoundaryPowerType densities;
 
-  // The power entering the domain is the negative of the flux of the Poynting
-  // vector 0.5 * Re(E x H*) through the boundary, since the normal points
+  // The power density entering the domain is the negative of the normal
+  // component of the Poynting vector 0.5 * Re(E x H*), since the normal points
   // outward from the domain. Using (E x H*) . n = -E . (n x H)*, it is
   // 0.5 * Re(E . (n x H)*), with n x H = g - Y E_T given by the Robin boundary
   // condition.
@@ -465,11 +465,12 @@ compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
   // and an outgoing wave, which satisfy n x H_inc = Y E_inc and n x H_out =
   // -Y E_out. The Robin boundary condition then gives g = 2 Y E_inc, so E_inc =
   // g / (2Y) and E_out = E_T - E_inc. On a waveguide port, E_inc is the field
-  // of the incident mode. The Poynting flux of each wave gives the incident and
-  // outgoing powers 0.5 Re(Y) |E_inc|^2 and 0.5 Re(Y) |E_out|^2, and the net
-  // power is P_net = P_inc - P_out + Im(Y) Im(E_out . E_inc*). The waves cannot
-  // be separated if Y = 0, in which case the whole net power is counted as
-  // cross power.
+  // of the incident mode. The normal Poynting vector of each wave gives the
+  // incident and outgoing power densities p_inc = 0.5 Re(Y) |E_inc|^2 and
+  // p_out = 0.5 Re(Y) |E_out|^2, and the net power density is
+  // p_net = p_inc - p_out + Im(Y) Im(E_out . E_inc*). The waves cannot be
+  // separated if Y = 0, in which case the whole net power density is counted
+  // as cross power density.
   if (Y == 0.)
     {
       densities.cross = densities.net;

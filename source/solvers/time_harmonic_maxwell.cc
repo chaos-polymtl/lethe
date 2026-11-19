@@ -813,7 +813,7 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
   std::vector<double> absorbed_powers(
     physical_properties_manager.get_number_of_solids() + 1, 0.);
 
-  // The interior solution is used for the power dissipated in the cells and
+  // The interior solution is used for the power absorbed in the cells and
   // the skeleton solution (the traces) for the power through the boundaries
   FEValues<dim>      fe_values_trial_interior(*this->mapping,
                                          *this->fe_trial_interior,
@@ -919,9 +919,11 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                                              material_id,
                                              field::void_fraction);
 
-      // Power absorbed in the cell, 0.5 * omega * (Im(eps) |E|^2 + Im(mu)
-      // |H|^2), which is the electromagnetic heat source of the heat transfer
-      // physics (the conductivity is included in Im(eps)).
+      // Absorbed power density 0.5 * omega * (Im(eps) |E|^2 + Im(mu) |H|^2),
+      // the power per unit volume, which is the electromagnetic heat source of
+      // the heat transfer physics (the conductivity is included in Im(eps)).
+      // It is integrated over the cell and added to the power absorbed in the
+      // material of the cell.
       AssertIndexRange(material_id, absorbed_powers.size());
       fe_values_trial_interior.reinit(
         cell->as_dof_handler_iterator(*this->dof_handler_trial_interior));
@@ -1108,9 +1110,10 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                 }
               else
                 {
-                  // The power entering the domain is the negative of the flux
-                  // of the Poynting vector 0.5 * Re(E x H*) through the face,
-                  // since the normal points outward from the domain. Using
+                  // The power density entering the domain is the negative of
+                  // the normal component of the Poynting vector
+                  // 0.5 * Re(E x H*) at the face, since the normal points
+                  // outward from the domain. Using
                   // (E x H*) . n = -E . (n x H*), it is 0.5 * Re(E . (n x H*)).
                   const Tensor<1, dim, std::complex<double>> n_cross_conj_H =
                     cross_product_3d(normal,
@@ -1119,6 +1122,8 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                   densities.net = 0.5 * std::real(E_hat * n_cross_conj_H);
                 }
 
+              // Integrate the power densities over the face to obtain the
+              // powers through the boundary
               boundary_powers[boundary_id].net += densities.net * JxW;
               boundary_powers[boundary_id].incident += densities.incident * JxW;
               boundary_powers[boundary_id].outgoing += densities.outgoing * JxW;

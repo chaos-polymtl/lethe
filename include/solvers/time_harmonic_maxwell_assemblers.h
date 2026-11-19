@@ -211,23 +211,27 @@ compute_robin_boundary_data(
   const std::complex<double> &effective_magnetic_permeability);
 
 /**
- * @brief Power densities through a boundary such that net = incident - outgoing + cross.
+ * @brief Net, incident, outgoing and cross components of the electromagnetic
+ * power through a boundary, such that net = incident - outgoing + cross. It
+ * holds either the power densities at a point of the boundary (powers per unit
+ * area) or the powers integrated over a boundary.
  */
 struct BoundaryPowerType
 {
-  /// Net power entering the domain
+  /// Net component, entering the domain
   double net = 0.;
-  /// Power of the incident wave
+  /// Component of the incident wave
   double incident = 0.;
-  /// Power of the outgoing wave
+  /// Component of the outgoing wave
   double outgoing = 0.;
-  /// Cross power of the incident and outgoing waves
+  /// Cross component of the incident and outgoing waves
   double cross = 0.;
 };
 
 /**
- * @brief Compute the densities of the net, incident, outgoing and cross power densities
- * at a point of a boundary with a Robin boundary condition
+ * @brief Compute the net, incident, outgoing and cross power densities (powers
+ * per unit area of the boundary) at a point of a boundary with a Robin
+ * boundary condition
  * \f$\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}\f$.
  *
  * @tparam dim Number of spatial dimensions.
