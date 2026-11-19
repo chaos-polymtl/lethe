@@ -25,7 +25,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 - Parameter file template for the Reynolds number sweep: ``backward-facing-step.tpl``
 - Python script for generating the cases of the Reynolds number sweep: ``generate_cases_locally.py``
 - Python script for launching the cases of the Reynolds number sweep: ``launch_lethe_locally.py``
-- Postprocessing Python script for computing the reattachment length at :math:`\mathrm{Re} = 100`: ``reattachment_length.py``
+- Postprocessing Python script for computing the reattachment length at :math:`\mathrm{Re} = 100`: ``compute_reattachment_length.py``
 - Postprocessing Python script for computing the reattachment length of the Reynolds number sweep: ``postprocess_reynolds_sweep.py``
 - Benchmark data for the reattachment length: ``benchmark-data.txt``
 
@@ -291,7 +291,7 @@ The ``velocity_gradient`` field is written in the ``.vtu`` files, and its :math:
 .. code-block:: text
   :class: copy-button
 
-  python3 reattachment_length.py
+  python3 compute_reattachment_length.py
 
 The final value of :math:`x_r` is :math:`2.892` with a relative error of :math:`1.0\%`.  The reference value used to compute the error is the one given by Erturk (2008) [#erturk2008]_.
 

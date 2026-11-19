@@ -15,7 +15,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
-from reattachment_length import output_files, reattachment_length
+from compute_reattachment_length import output_files, reattachment_length
 
 # Plot font and colors
 font = {'weight' : 'normal',
