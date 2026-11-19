@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Test description: Verify the `packed` insertion method with a solid surface. A total of 200 particles are inserted into a tight insertion box inside a hyper_cube. A square solid surface made of triangles crosses the middle of the insertion box. Since the particles initially overlap each other and the solid surface, the insertion algorithm shifts them apart iteratively until they no longer overlap. The solid surface has a translational velocity, which must be ignored: the solid surface does not move during the packed insertion. The packed overlap factors and clearance ratio differ from their default values to verify that they are used.
+# Test description: Verify the `packed` insertion method with a solid surface. A total of 200 particles are inserted into an insertion box that lies between a square solid surface made of triangles, at z = 0, and the top wall of the domain, at z = 0.01. Since the particles initially overlap each other, the solid surface and the top wall, the insertion algorithm shifts them apart iteratively until they no longer overlap. The other particles must not push a particle through the solid surface or the top wall, so every particle remains in the domain with 0.0025 <= z <= 0.0075. The solid surface has a translational velocity, which must be ignored: the solid surface does not move during the packed insertion. The packed overlap factors and clearance ratio differ from their default values to verify that they are used.
 
 # Listing of Parameters
 #----------------------
@@ -82,7 +82,7 @@ subsection insertion info
   set insertion method                               = packed
   set inserted number of particles at each time step = 200
   set insertion frequency                            = 2000000
-  set insertion box points coordinates               = -0.01, -0.01, -0.01 : 0.01, 0.01, 0.01
+  set insertion box points coordinates               = -0.02, -0.02, 0 : 0.02, 0.02, 0.01
   set insertion distance threshold                   = 1.5
   set insertion maximum offset                       = 0.2
   set insertion prn seed                             = 19
@@ -97,9 +97,9 @@ end
 
 subsection mesh
   set type                                = dealii
-  set grid type                           = hyper_cube
-  set grid arguments                      = -0.04 : 0.04 : false
-  set initial refinement                  = 3
+  set grid type                           = subdivided_hyper_rectangle
+  set grid arguments                      = 8, 8, 5 : -0.04, -0.04, -0.04 : 0.04, 0.04, 0.01 : false
+  set initial refinement                  = 0
   set expand particle-wall contact search = false
 end
 
