@@ -148,9 +148,6 @@ GridPipeAndWaveguide<dim, spacedim>::detailed_circle(Triangulation<2, 2> &tria,
                                                   std::end(vertices)),
                             cells,
                             SubCellData()); // no boundary information
-  tria.set_all_manifold_ids_on_boundary(0);
-  tria.set_manifold(0, SphericalManifold<2, 2>(p));
-  tria.set_manifold(1, FlatManifold<2, 2>());
 }
 
 
@@ -306,41 +303,6 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
                                            top_height,
                                            extruded_top);
 
-      // MANIFOLD
-
-      // Lambda function that places the id of the cylindrical manifold in the
-      // inside of the cylinder
-      auto attach_cylindrical_manifold_id = [&](Triangulation<3> &tria,
-                                                double            height) {
-        for (const auto &cell : tria.active_cell_iterators())
-          if (cell->center()[0] >= rectangle_length - 1e-6)
-            // Concerns only the cylinder because every cell of the
-            // waveguide verifies the condition : x >= rectangle_length
-            for (const auto f : cell->face_indices())
-              if (cell->face(f)->at_boundary())
-                {
-                  const Point<3> face_center = cell->face(f)->center();
-                  if (std::abs(face_center[2]) > 1e-10 &&
-                      std::abs(face_center[2] - height) > 1e-10)
-                    // Does not take into account the the flat faces
-                    // at z=0 and z=height because we do not want a manifold
-                    // applied there.
-                    cell->set_all_manifold_ids(1);
-                }
-      };
-
-      attach_cylindrical_manifold_id(extruded_base, bottom_height);
-      attach_cylindrical_manifold_id(extruded_middle, middle_height);
-      attach_cylindrical_manifold_id(extruded_top, top_height);
-
-      // Now that we have the IDs in the right place, we can install the
-      // manifolds
-      const Point<3>     center_3d(center[0], center[1], 0.0);
-      const Tensor<1, 3> axis({0.0, 0.0, 1.0});
-      extruded_base.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
-      extruded_middle.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
-      extruded_top.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
-
       // MERGING THE 3D MESHES
 
       // Move the cylinders in the right positions to prepare the merge
@@ -365,15 +327,8 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
                                                         &extruded_middle,
                                                         &extruded_top};
 
-      GridGenerator::merge_triangulations(
-        parts,
-        triangulation,
-        1e-12,
-        true); // “true” is used here to preserve the cell IDs; this is useful
-               // for attaching the manifold right after
-
-      // Attach the manifolds that we previously set on each part
-      triangulation.set_manifold(1, CylindricalManifold<3>(axis, center_3d));
+      // The manifold ids are not copied since they are set on the merged mesh
+      GridGenerator::merge_triangulations(parts, triangulation, 1e-12, false);
 
 
       // BOUNDARY AND MATERIAL IDs
@@ -421,6 +376,53 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
                 cell->face(f)->set_boundary_id(cylinder_wall_boundary_id);
             }
         }
+
+
+      // MANIFOLD
+
+      /*
+      The cylindrical manifold is attached to every cell of the cylinder that
+      has a face on its lateral wall, that is a face whose vertices are all at a
+      distance outer_radius from the axis of the cylinder. The manifold id is
+      set on the whole cell, so that its interior lines and faces also follow
+      the cylinder when the mesh is refined. This includes the cells of the
+      middle section that are next to the waveguide: their face shared with the
+      waveguide is an interior face of the mesh, but it lies on the lateral
+      wall of the cylinder. The manifold ids are set on the merged mesh so that
+      they are the same in the three sections. The cells of the waveguide keep
+      the flat manifold, so that the walls of the waveguide stay planar.
+      */
+      const double distance_to_axis_tolerance = 1e-8 * outer_radius;
+      for (const auto &cell : triangulation.active_cell_iterators())
+        {
+          if (cell->material_id() != cylinder_material_id)
+            continue;
+
+          for (const auto f : cell->face_indices())
+            {
+              bool face_is_on_lateral_wall = true;
+              for (const auto v : cell->face(f)->vertex_indices())
+                {
+                  const Point<3> &vertex = cell->face(f)->vertex(v);
+                  const double    distance_to_axis =
+                    center.distance(Point<2>(vertex[0], vertex[1]));
+                  if (std::abs(distance_to_axis - outer_radius) >
+                      distance_to_axis_tolerance)
+                    face_is_on_lateral_wall = false;
+                }
+
+              if (face_is_on_lateral_wall)
+                {
+                  cell->set_all_manifold_ids(cylindrical_manifold_id);
+                  break;
+                }
+            }
+        }
+
+      const Point<3>     center_3d(center[0], center[1], 0.0);
+      const Tensor<1, 3> axis({0.0, 0.0, 1.0});
+      triangulation.set_manifold(cylindrical_manifold_id,
+                                 CylindricalManifold<3>(axis, center_3d));
     }
 }
 

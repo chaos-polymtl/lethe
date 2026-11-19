@@ -370,4 +370,4 @@ Material IDs are assigned as follows:
 * ``0``: cylinder;
 * ``1``: waveguide (paving stone).
 
-A ``CylindricalManifold`` is attached to the curved lateral surfaces of the cylinder so that mesh refinement preserves the shape of the fluid channel.
+A ``CylindricalManifold`` (manifold id ``1``) is attached to every cell of the cylinder that has a face on its lateral wall, so that mesh refinement preserves the shape of the cylinder. The face shared by the cylinder and the waveguide also follows this manifold: the cylinder stays a full cylinder and the waveguide ends on its lateral wall.

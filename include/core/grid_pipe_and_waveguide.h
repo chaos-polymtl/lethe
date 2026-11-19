@@ -37,9 +37,12 @@ using namespace dealii;
  * -0: Cylinder
  * -1: Waveguide (paving stone)
  *
- * A CylindricalManifold is attached to the curved lateral surfaces of the
- * cylinder so that mesh refinement preserves the shape of the fluid
- * channel.
+ * A CylindricalManifold (manifold id 1) is attached to every cell of the
+ * cylinder that has a face on its lateral wall, so that mesh refinement
+ * preserves the shape of the cylinder. In the middle section, this includes
+ * the face shared by the cylinder and the waveguide, which therefore follows
+ * the lateral wall of the cylinder. The cells of the waveguide keep the flat
+ * manifold.
  *
  * @tparam dim The dimension of the mesh, must be 3.
  * @tparam spacedim The dimension of the space, must be 3.
@@ -109,6 +112,9 @@ public:
 
   /// Material id of the cells of the waveguide
   static constexpr types::material_id waveguide_material_id = 1;
+
+  /// Manifold id of the CylindricalManifold of the cylinder
+  static constexpr types::manifold_id cylindrical_manifold_id = 1;
 
 private:
   /**
