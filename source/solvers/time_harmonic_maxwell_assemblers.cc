@@ -18,12 +18,13 @@ template <int dim>
 std::pair<Tensor<1, dim, std::complex<double>>,
           Tensor<1, dim, std::complex<double>>>
 compute_waveguide_port_incident_fields(
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
-  const Point<dim>                           &p,
-  const Tensor<1, dim>                       &normal,
-  const std::complex<double>                 &effective_electric_permittivity,
-  const std::complex<double>                 &effective_magnetic_permeability,
-  const unsigned int                          waveguide_port_index)
+  [[maybe_unused]] const Parameters::TimeHarmonicMaxwell<dim>
+                                              &time_harmonic_maxwell_parameters,
+  [[maybe_unused]] const Point<dim>           &p,
+  [[maybe_unused]] const Tensor<1, dim>       &normal,
+  [[maybe_unused]] const std::complex<double> &effective_electric_permittivity,
+  [[maybe_unused]] const std::complex<double> &effective_magnetic_permeability,
+  [[maybe_unused]] const unsigned int          waveguide_port_index)
 {
   // The waveguide port excitation would be completely different in 2D as curls
   // and cross products are not defined the same way as in 3D. Therefore, we do
@@ -31,12 +32,6 @@ compute_waveguide_port_incident_fields(
   // version.
   if constexpr (dim != 3)
     {
-      (void)time_harmonic_maxwell_parameters;
-      (void)p;
-      (void)normal;
-      (void)effective_electric_permittivity;
-      (void)effective_magnetic_permeability;
-      (void)waveguide_port_index;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
       return std::pair<Tensor<1, dim, std::complex<double>>,
                        Tensor<1, dim, std::complex<double>>>();
@@ -304,13 +299,14 @@ namespace
 template <int dim>
 std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
 compute_waveguide_port_excitation(
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters,
-  const Point<dim>                           &p,
-  const Tensor<1, dim>                       &normal,
-  const std::complex<double>                 &effective_electric_permittivity,
-  const std::complex<double>                 &effective_magnetic_permeability,
-  const unsigned int                          waveguide_port_index,
-  const double                                relative_amplitude)
+  [[maybe_unused]] const Parameters::TimeHarmonicMaxwell<dim>
+                                              &time_harmonic_maxwell_parameters,
+  [[maybe_unused]] const Point<dim>           &p,
+  [[maybe_unused]] const Tensor<1, dim>       &normal,
+  [[maybe_unused]] const std::complex<double> &effective_electric_permittivity,
+  [[maybe_unused]] const std::complex<double> &effective_magnetic_permeability,
+  [[maybe_unused]] const unsigned int          waveguide_port_index,
+  [[maybe_unused]] const double                relative_amplitude)
 {
   // The waveguide port excitation would be completely different in 2D as curls
   // and cross products are not defined the same way as in 3D. Therefore, we do
@@ -318,13 +314,6 @@ compute_waveguide_port_excitation(
   // version.
   if constexpr (dim != 3)
     {
-      (void)time_harmonic_maxwell_parameters;
-      (void)p;
-      (void)normal;
-      (void)effective_electric_permittivity;
-      (void)effective_magnetic_permeability;
-      (void)waveguide_port_index;
-      (void)relative_amplitude;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
       return std::pair<Tensor<1, dim, std::complex<double>>,
                        std::complex<double>>();
@@ -458,12 +447,12 @@ compute_robin_boundary_data(
 }
 
 template <int dim>
-BoundaryPowerTypes
+BoundaryPowerType
 compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
                               const Tensor<1, dim, std::complex<double>> &g_T,
                               const std::complex<double>                 &Y)
 {
-  BoundaryPowerTypes densities;
+  BoundaryPowerType densities;
 
   // The power entering the domain is the negative of the flux of the Poynting
   // vector 0.5 * Re(E x H*) through the boundary, since the normal points
@@ -1339,11 +1328,11 @@ compute_robin_boundary_data<3>(
   const std::complex<double> &effective_electric_permittivity,
   const std::complex<double> &effective_magnetic_permeability);
 
-template BoundaryPowerTypes
+template BoundaryPowerType
 compute_robin_power_densities<2>(const Tensor<1, 2, std::complex<double>> &E_T,
                                  const Tensor<1, 2, std::complex<double>> &g_T,
                                  const std::complex<double>               &Y);
-template BoundaryPowerTypes
+template BoundaryPowerType
 compute_robin_power_densities<3>(const Tensor<1, 3, std::complex<double>> &E_T,
                                  const Tensor<1, 3, std::complex<double>> &g_T,
                                  const std::complex<double>               &Y);

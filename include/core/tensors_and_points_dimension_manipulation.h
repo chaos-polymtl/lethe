@@ -152,7 +152,7 @@ tangential_component(const Tensor<1, dim, Number> &tensor,
  * \mathbf{a} \cdot \mathbf{b}^* = \sum_i a_i b_i^*
  * \f]
  *
- * @tparam dim Spatial dimension
+ * @tparam dim Number of spatial dimensions
  * @tparam Number Type of the real and imaginary parts of the components
  *
  * @param[in] a First vector.

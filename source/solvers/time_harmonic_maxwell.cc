@@ -804,9 +804,9 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
 
   // Powers through each boundary id. All the entries are initialized on every
   // process for the MPI sums.
-  std::map<types::boundary_id, BoundaryPowerTypes> boundary_powers;
+  std::map<types::boundary_id, BoundaryPowerType> boundary_powers;
   for (const auto &[boundary_id, type] : boundary_conditions.type)
-    boundary_powers[boundary_id] = BoundaryPowerTypes();
+    boundary_powers[boundary_id] = BoundaryPowerType();
 
   // Power absorbed in each material. The material id is 0 for the fluid and i
   // for the i-th solid.
@@ -1085,7 +1085,7 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
                                        imag * E_hat_imag_values[q],
                                      normal);
 
-              BoundaryPowerTypes densities;
+              BoundaryPowerType densities;
               if (robin_face)
                 {
                   // Robin boundary condition: n x H + Y E_T = g. Only the
@@ -1170,8 +1170,8 @@ TimeHarmonicMaxwell<dim>::compute_power_balance()
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::write_electromagnetic_power_table(
-  const std::map<types::boundary_id, BoundaryPowerTypes> &boundary_powers,
-  const std::vector<double>                              &absorbed_powers)
+  const std::map<types::boundary_id, BoundaryPowerType> &boundary_powers,
+  const std::vector<double>                             &absorbed_powers)
 {
   const auto &boundary_conditions =
     this->simulation_parameters
@@ -1197,8 +1197,8 @@ TimeHarmonicMaxwell<dim>::write_electromagnetic_power_table(
   std::vector<std::pair<std::string, double>> power_columns;
   for (const auto &[boundary_id, type] : boundary_conditions.type)
     {
-      const BoundaryPowerTypes &powers = boundary_powers.at(boundary_id);
-      const std::string         id     = std::to_string(boundary_id);
+      const BoundaryPowerType &powers = boundary_powers.at(boundary_id);
+      const std::string        id     = std::to_string(boundary_id);
       if (is_robin_boundary_type(type))
         {
           power_columns.emplace_back("incident_power_bc_" + id,
@@ -1241,8 +1241,8 @@ TimeHarmonicMaxwell<dim>::write_electromagnetic_power_table(
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
-  const std::map<types::boundary_id, BoundaryPowerTypes> &boundary_powers,
-  const std::vector<double>                              &absorbed_powers) const
+  const std::map<types::boundary_id, BoundaryPowerType> &boundary_powers,
+  const std::vector<double>                             &absorbed_powers) const
 {
   const auto &boundary_conditions =
     this->simulation_parameters
@@ -1267,7 +1267,7 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
   double entering_power    = 0.;
   for (const auto &[boundary_id, type] : boundary_conditions.type)
     {
-      const BoundaryPowerTypes &powers = boundary_powers.at(boundary_id);
+      const BoundaryPowerType &powers = boundary_powers.at(boundary_id);
       total_net_power += powers.net;
       entering_power += std::max(powers.net, 0.);
       if (is_robin_boundary_type(type))
@@ -1325,7 +1325,7 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
           << "cross" << std::setw(power_width) << "net entering" << '\n';
   for (const auto &[boundary_id, type] : boundary_conditions.type)
     {
-      const BoundaryPowerTypes &powers = boundary_powers.at(boundary_id);
+      const BoundaryPowerType &powers = boundary_powers.at(boundary_id);
       summary << std::left << std::setw(10) << boundary_id << std::setw(20)
               << enum_to_string(type) << std::right << std::scientific
               << std::setprecision(precision);

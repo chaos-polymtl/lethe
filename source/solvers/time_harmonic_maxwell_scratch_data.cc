@@ -418,16 +418,15 @@ TimeHarmonicMaxwellScratchData<dim>::enable_void_fraction(
 template <int dim>
 void
 TimeHarmonicMaxwellScratchData<dim>::reinit(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_test)
+  [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator &cell,
+  [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator
+    &cell_test)
 {
   // The curl of the test functions and the cross products are only defined in
   // 3D. The dimension is checked at compile time so the 3D operations are not
   // compiled when dim = 2.
   if constexpr (dim != 3)
     {
-      (void)cell;
-      (void)cell_test;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
     }
   else
@@ -484,15 +483,14 @@ TimeHarmonicMaxwellScratchData<dim>::reinit(
 template <int dim>
 void
 TimeHarmonicMaxwellScratchData<dim>::reinit_face(
-  const typename DoFHandler<dim>::active_cell_iterator &cell_skeleton,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_test,
-  const unsigned int                                    face_no)
+  [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator
+    &cell_skeleton,
+  [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator
+                                     &cell_test,
+  [[maybe_unused]] const unsigned int face_no)
 {
   if constexpr (dim != 3)
     {
-      (void)cell_skeleton;
-      (void)cell_test;
-      (void)face_no;
       AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(dim));
     }
   else

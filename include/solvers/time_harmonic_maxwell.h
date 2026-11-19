@@ -672,27 +672,27 @@ private:
    * @brief Add the electromagnetic powers to the electromagnetic power table
    * and write this table in the electromagnetic power output file.
    *
-   * @param[in] boundary_powers Powers through each boundary id.
+   * @param[in] boundary_powers Power through each boundary id.
    *
    * @param[in] absorbed_powers Power absorbed in each material.
    */
   void
   write_electromagnetic_power_table(
-    const std::map<types::boundary_id, BoundaryPowerTypes> &boundary_powers,
-    const std::vector<double>                              &absorbed_powers);
+    const std::map<types::boundary_id, BoundaryPowerType> &boundary_powers,
+    const std::vector<double>                             &absorbed_powers);
 
   /**
    * @brief Print in the terminal a summary of the powers through the
    * boundaries, of the powers absorbed in the materials and of the power
    * balance.
    *
-   * @param[in] boundary_powers Powers through each boundary id.
+   * @param[in] boundary_powers Power through each boundary id.
    *
    * @param[in] absorbed_powers Power absorbed in each material.
    */
   void
   print_electromagnetic_power_summary(
-    const std::map<types::boundary_id, BoundaryPowerTypes> &boundary_powers,
+    const std::map<types::boundary_id, BoundaryPowerType> &boundary_powers,
     const std::vector<double> &absorbed_powers) const;
 
   /**

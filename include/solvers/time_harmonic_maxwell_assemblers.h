@@ -23,7 +23,7 @@
  * @brief A pure virtual class that serves as an interface for all the cell
  * assemblers of the time-harmonic Maxwell equations.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Number of spatial dimensions.
  *
  * @ingroup assemblers
  */
@@ -35,7 +35,7 @@ using TimeHarmonicMaxwellAssemblerBase =
  * @brief A pure virtual class that serves as an interface for all the face
  * assemblers of the time-harmonic Maxwell equations.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Number of spatial dimensions.
  *
  * @ingroup assemblers
  */
@@ -70,7 +70,7 @@ is_robin_boundary_type(
  * waveguide port from the input parameters. It is only implemented for 3D
  * problems.
  *
- * @tparam dim Spatial dimension.
+ * @tparam dim Number of spatial dimensions.
  *
  * @param[in] time_harmonic_maxwell_parameters Parameters of the time-harmonic
  * Maxwell physics, which contain the waveguide port definitions.
@@ -108,7 +108,7 @@ compute_waveguide_port_incident_fields(
  * that is the index of the waveguide inlet whose port boundary id is this
  * boundary id.
  *
- * @tparam dim Spatial dimension.
+ * @tparam dim Number of spatial dimensions.
  *
  * @param[in] time_harmonic_maxwell_parameters Parameters of the time-harmonic
  * Maxwell physics, which contain the waveguide port definitions.
@@ -130,7 +130,7 @@ get_waveguide_port_index(
  * parameters. The excitation used is the normalized one across all the
  * waveguide ports. This function is only implemented for 3D problems.
  *
- * @tparam dim Spatial dimension.
+ * @tparam dim Number of spatial dimensions.
  *
  * @param[in] time_harmonic_maxwell_parameters Parameters of the time-harmonic
  * Maxwell physics, which contain the waveguide port definitions.
@@ -171,7 +171,7 @@ compute_waveguide_port_excitation(
  * \mathbf{E}_T = \mathbf{g}\f$ at a point of a boundary with a Robin boundary
  * condition (silver_muller, impedance_boundary or waveguide_port).
  *
- * @tparam dim Spatial dimension.
+ * @tparam dim Number of spatial dimensions.
  *
  * @param[in] time_harmonic_maxwell_parameters Parameters of the time-harmonic
  * Maxwell physics, which contain the waveguide port definitions.
@@ -211,9 +211,9 @@ compute_robin_boundary_data(
   const std::complex<double> &effective_magnetic_permeability);
 
 /**
- * @brief Powers through a boundary such that net = incident - outgoing + cross.
+ * @brief Power densities through a boundary such that net = incident - outgoing + cross.
  */
-struct BoundaryPowerTypes
+struct BoundaryPowerType
 {
   /// Net power entering the domain
   double net = 0.;
@@ -226,11 +226,11 @@ struct BoundaryPowerTypes
 };
 
 /**
- * @brief Compute the densities of the net, incident, outgoing and cross powers
+ * @brief Compute the densities of the net, incident, outgoing and cross power densities
  * at a point of a boundary with a Robin boundary condition
  * \f$\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}\f$.
  *
- * @tparam dim Spatial dimension.
+ * @tparam dim Number of spatial dimensions.
  *
  * @param[in] E_T Tangential electric field at the point.
  *
@@ -243,7 +243,7 @@ struct BoundaryPowerTypes
  * power density.
  */
 template <int dim>
-BoundaryPowerTypes
+BoundaryPowerType
 compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
                               const Tensor<1, dim, std::complex<double>> &g_T,
                               const std::complex<double>                 &Y);
@@ -267,7 +267,7 @@ compute_robin_power_densities(const Tensor<1, dim, std::complex<double>> &E_T,
  * - the interior load vector \f$l\f$, which is zero since no volume source
  *   term is considered at the moment.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Number of spatial dimensions.
  *
  * @ingroup assemblers
  */
@@ -321,7 +321,7 @@ public:
  * Robin faces, the latter term is replaced by the Robin boundary condition
  * (see TimeHarmonicMaxwellAssemblerRobinBC).
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Number of spatial dimensions.
  *
  * @ingroup assemblers
  */
@@ -394,7 +394,7 @@ private:
  * is conjugated in its first argument. Again, this term only involves the
  * tangential traces of the test functions.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Number of spatial dimensions.
  *
  * @ingroup assemblers
  */
