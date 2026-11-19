@@ -183,6 +183,28 @@ InsertionPacked<dim, PropertiesIndex>::insert(
 
 template <int dim, typename PropertiesIndex>
 void
+InsertionPacked<dim, PropertiesIndex>::
+  limit_particle_particle_shift_displacement(
+    const Particles::ParticleHandler<dim>        &particle_handler,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
+{
+  for (const auto &particle : particle_handler)
+    {
+      Tensor<1, 3> &particle_particle_displacement =
+        contact_outcome.force[particle.get_local_index()];
+
+      // A displacement no larger than the radius cannot carry the center of a
+      // particle through a wall or a triangle that pushes it back
+      const double particle_radius =
+        0.5 * particle.get_properties()[PropertiesIndex::dp];
+      const double displacement_norm = particle_particle_displacement.norm();
+      if (displacement_norm > particle_radius)
+        particle_particle_displacement *= particle_radius / displacement_norm;
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
 InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
   Particles::ParticleHandler<dim>              &particle_handler,
   const double                                  max_displacement,
@@ -210,7 +232,9 @@ InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
       if (displacement_norm == 0.)
         continue;
 
-      // Limit the displacement to prevent particles from crossing each other
+      // Limit the displacement to prevent particles from crossing each other.
+      // Shortening the displacement along its direction cannot carry a
+      // particle through a wall or a solid surface.
       if (displacement_norm > max_displacement)
         particle_displacement *= max_displacement / displacement_norm;
 

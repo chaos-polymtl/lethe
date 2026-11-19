@@ -775,10 +775,12 @@ namespace Parameters
           "packed particle-wall overlap factor",
           Patterns::Tools::Convert<double>::to_string(
             defaults.packed_particle_wall_overlap_factor),
-          Patterns::Double(0.),
+          Patterns::Double(1.),
           "Fraction of the normal overlap of a contact with a wall or a solid "
           "surface by which the particle is shifted at each pseudo-time step "
-          "of the packed insertion method");
+          "of the packed insertion method. It is at least 1, so that the "
+          "other particles cannot push a particle through a wall or a solid "
+          "surface");
         prm.declare_entry(
           "packed clearance ratio",
           Patterns::Tools::Convert<double>::to_string(
@@ -969,17 +971,14 @@ namespace Parameters
           prm.get_double("packed particle-wall overlap factor");
         packed_clearance_ratio = prm.get_double("packed clearance ratio");
 
-        // A shift without an overlap term or without a clearance would not
-        // move the particles far enough to separate them.
-        AssertThrow(packed_particle_particle_overlap_factor > 0. &&
-                      packed_particle_wall_overlap_factor > 0.,
+        // A particle-particle shift without an overlap term would not move
+        // the particles far enough to separate them.
+        AssertThrow(packed_particle_particle_overlap_factor > 0.,
                     ExcMessage(
                       "The packed particle-particle overlap factor (" +
                       std::to_string(packed_particle_particle_overlap_factor) +
-                      ") and the packed particle-wall overlap factor (" +
-                      std::to_string(packed_particle_wall_overlap_factor) +
-                      ") must be strictly positive. Increase them, for "
-                      "example to their default values of 0.501 and 1.02."));
+                      ") must be strictly positive. Increase it, for example "
+                      "to its default value of 0.501."));
 
         initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =

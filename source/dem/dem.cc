@@ -12,6 +12,7 @@
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/input_parameter_inspection.h>
+#include <dem/insertion_packed.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/multiphysics_integrator.h>
 #include <dem/output_force_torque_calculation.h>
@@ -795,6 +796,17 @@ DEMSolver<dim, PropertiesIndex>::compute_contact_forces()
     contact_manager.get_ghost_local_periodic_adjacent_particles(),
     simulation_control->get_time_step(),
     contact_outcome);
+
+  // With the packed insertion method, the force container now holds only the
+  // displacements of the particle-particle contacts. They are limited to the
+  // particle radius before the particle-wall and particle-solid contacts add
+  // theirs, so that the other particles cannot push a particle through a wall
+  // or a solid surface.
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
+    InsertionPacked<dim, PropertiesIndex>::
+      limit_particle_particle_shift_displacement(particle_handler,
+                                                 contact_outcome);
 
   // Update the boundary points and vectors (if grid motion)
   // We have to update the positions of the points on boundary faces and
