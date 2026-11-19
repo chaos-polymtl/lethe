@@ -89,6 +89,15 @@ DeclException1(
   << ". The QMOM physics solver only supports 1 fluid.");
 
 /**
+ * @brief Exception raised when a PhysicsSolver function that requires a single
+ * solution vector, or a Newton update, is called on the QMOM physics.
+ */
+DeclExceptionMsg(
+  QMOMSingleVectorFunctionCalled,
+  "The QMOM physics stores one solution vector per component and is solved "
+  "with the linear solver strategy: this function should not be called.");
+
+/**
  * @brief Quadrature method of moments (QMOM), solved as an auxiliary physics
  * coupled to the fluid dynamics solver.
  *
@@ -267,7 +276,7 @@ public:
   GlobalVectorType &
   get_evaluation_point() override
   {
-    AssertThrow(false, ExcMessage(single_vector_error_message));
+    AssertThrow(false, QMOMSingleVectorFunctionCalled());
   }
 
   /**
@@ -279,7 +288,7 @@ public:
   GlobalVectorType &
   get_local_evaluation_point() override
   {
-    AssertThrow(false, ExcMessage(single_vector_error_message));
+    AssertThrow(false, QMOMSingleVectorFunctionCalled());
   }
 
   /**
@@ -291,7 +300,7 @@ public:
   GlobalVectorType &
   get_newton_update() override
   {
-    AssertThrow(false, ExcMessage(single_vector_error_message));
+    AssertThrow(false, QMOMSingleVectorFunctionCalled());
   }
 
   /**
@@ -303,7 +312,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    AssertThrow(false, ExcMessage(single_vector_error_message));
+    AssertThrow(false, QMOMSingleVectorFunctionCalled());
   }
 
   /**
@@ -315,7 +324,7 @@ public:
   GlobalVectorType &
   get_system_rhs() override
   {
-    AssertThrow(false, ExcMessage(single_vector_error_message));
+    AssertThrow(false, QMOMSingleVectorFunctionCalled());
   }
 
   /**
@@ -338,7 +347,7 @@ public:
   void
   output_newton_update_norms() override
   {
-    AssertThrow(false, ExcMessage(single_vector_error_message));
+    AssertThrow(false, QMOMSingleVectorFunctionCalled());
   }
 
   /**
@@ -441,12 +450,6 @@ private:
    */
   std::vector<double>
   calculate_L2_errors();
-
-  /// Error message of the PhysicsSolver functions that require a single
-  /// solution vector
-  static constexpr const char *single_vector_error_message =
-    "The QMOM physics stores one solution vector per component and is solved "
-    "with the linear solver strategy: this function should not be called.";
 
   /// Number of regular scalars
   const unsigned int n_scalars;
