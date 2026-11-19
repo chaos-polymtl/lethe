@@ -27,14 +27,15 @@ using namespace dealii;
  * of the deal.II library.
  *
  * Boundary IDs are assigned as follows:
- * -0: Microwaves (MW) inlet
- * -1: Fluid flow inlet (bottom surface of the cylinder)
- * -2: Fluid flow outlet (top surface of the cylinder)
- * -3: Walls
+ * -0: Waveguide port (end face of the waveguide at x = 0)
+ * -1: Bottom surface of the cylinder (z = -bottom_height)
+ * -2: Top surface of the cylinder (z = middle_height + top_height)
+ * -3: Lateral wall of the cylinder
+ * -4: Lateral walls of the waveguide
  *
  * Material IDs are assigned as follows:
- * -0: Fluid in the channel (cylinder)
- * -1: Air in the waveguide (paving stone)
+ * -0: Cylinder
+ * -1: Waveguide (paving stone)
  *
  * A CylindricalManifold is attached to the curved lateral surfaces of the
  * cylinder so that mesh refinement preserves the shape of the fluid
@@ -87,6 +88,27 @@ public:
 
   void
   make_grid(Triangulation<dim, spacedim> &triangulation);
+
+  /// Boundary id of the waveguide port (end face of the waveguide at x = 0)
+  static constexpr types::boundary_id waveguide_port_boundary_id = 0;
+
+  /// Boundary id of the bottom surface of the cylinder
+  static constexpr types::boundary_id bottom_boundary_id = 1;
+
+  /// Boundary id of the top surface of the cylinder
+  static constexpr types::boundary_id top_boundary_id = 2;
+
+  /// Boundary id of the lateral wall of the cylinder
+  static constexpr types::boundary_id cylinder_wall_boundary_id = 3;
+
+  /// Boundary id of the lateral walls of the waveguide
+  static constexpr types::boundary_id waveguide_wall_boundary_id = 4;
+
+  /// Material id of the cells of the cylinder
+  static constexpr types::material_id cylinder_material_id = 0;
+
+  /// Material id of the cells of the waveguide
+  static constexpr types::material_id waveguide_material_id = 1;
 
 private:
   /**

@@ -379,41 +379,47 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
       // BOUNDARY AND MATERIAL IDs
 
       /*
-      //Boundary
-      0: MW Inlet (x=0)
-      1: Fluid Inlet  (y = -bottom_height)
-      2: Fluid Outlet (y = middle_height + top_height)
-      3: PEC walls (every other wall)
+      Material ids:
+      - cylinder_material_id: cells of the cylinder (x > rectangle_length)
+      - waveguide_material_id: cells of the waveguide (x <= rectangle_length)
 
-      //Material
-      0: Fluid part (x> rectangle_length)
-      1: Waveguide paving stone (x<=  rectangle_length)
+      Boundary ids:
+      - waveguide_port_boundary_id: end face of the waveguide (x = 0)
+      - waveguide_wall_boundary_id: other boundary faces of the waveguide
+      - bottom_boundary_id: bottom surface of the cylinder
+        (z = -bottom_height)
+      - top_boundary_id: top surface of the cylinder
+        (z = middle_height + top_height)
+      - cylinder_wall_boundary_id: lateral wall of the cylinder
+
+      The material id of a cell is set first, since it is used to distinguish
+      the walls of the waveguide from the walls of the cylinder.
       */
 
       for (auto &cell : triangulation.active_cell_iterators())
         {
-          // Boundary ids
+          const bool cell_is_in_waveguide =
+            cell->center()[0] <= rectangle_length;
+          cell->set_material_id(cell_is_in_waveguide ? waveguide_material_id :
+                                                       cylinder_material_id);
+
           for (const auto f : cell->face_indices())
             {
-              if (cell->face(f)->at_boundary())
-                {
-                  const Point<3> face_center = cell->face(f)->center();
-                  if (face_center[0] <= 1e-6)
-                    cell->face(f)->set_boundary_id(0); // MW Inlet
-                  else if (face_center[2] <= -bottom_height + 1e-6)
-                    cell->face(f)->set_boundary_id(1); // Fluid Inlet
-                  else if (face_center[2] >= middle_height + top_height - 1e-6)
-                    cell->face(f)->set_boundary_id(2); // Fluid Outlet
-                  else
-                    cell->face(f)->set_boundary_id(
-                      3); // PEC Walls (Perfect Electric Conductors)
-                }
+              if (!cell->face(f)->at_boundary())
+                continue;
+
+              const Point<3> face_center = cell->face(f)->center();
+              if (face_center[0] <= 1e-6)
+                cell->face(f)->set_boundary_id(waveguide_port_boundary_id);
+              else if (cell_is_in_waveguide)
+                cell->face(f)->set_boundary_id(waveguide_wall_boundary_id);
+              else if (face_center[2] <= -bottom_height + 1e-6)
+                cell->face(f)->set_boundary_id(bottom_boundary_id);
+              else if (face_center[2] >= middle_height + top_height - 1e-6)
+                cell->face(f)->set_boundary_id(top_boundary_id);
+              else
+                cell->face(f)->set_boundary_id(cylinder_wall_boundary_id);
             }
-          // Material ids
-          if (cell->center()[0] <= rectangle_length)
-            cell->set_material_id(1); // waveguide (Paving stone)
-          else
-            cell->set_material_id(0); // Fluid (cylinder)
         }
     }
 }

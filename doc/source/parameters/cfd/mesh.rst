@@ -359,14 +359,15 @@ This three-dimensional mesh is a waveguide embedded in a cylindrical cavity. The
 
 Boundary IDs are assigned as follows:
 
-* ``0``: Microwaves (MW) inlet
-* ``1``: Fluid flow inlet (bottom surface of the cylinder)
-* ``2``: Fluid flow outlet (top surface of the cylinder)
-* ``3``: Walls
+* ``0``: waveguide port (end face of the waveguide at ``x = 0``);
+* ``1``: bottom surface of the cylinder (at ``z = -bottom_height``);
+* ``2``: top surface of the cylinder (at ``z = middle_height + top_height``);
+* ``3``: lateral wall of the cylinder;
+* ``4``: lateral walls of the waveguide.
 
 Material IDs are assigned as follows:
 
-* ``0``: Fluid in the channel (cylinder)
-* ``1``: Air in the waveguide (paving stone)
+* ``0``: cylinder;
+* ``1``: waveguide (paving stone).
 
 A ``CylindricalManifold`` is attached to the curved lateral surfaces of the cylinder so that mesh refinement preserves the shape of the fluid channel.
