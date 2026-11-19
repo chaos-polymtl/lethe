@@ -161,17 +161,141 @@ GridPipeAndWaveguide<dim, spacedim>::GridPipeAndWaveguide(
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
 
-  rectangle_width   = std::stod(arguments[0]);
-  rectangle_length  = std::stod(arguments[1]);
-  outer_radius      = std::stod(arguments[2]);
-  inner_length      = std::stod(arguments[3]);
-  bottom_height     = std::stod(arguments[4]);
-  middle_height     = std::stod(arguments[5]);
-  top_height        = std::stod(arguments[6]);
-  bottom_resolution = std::stoi(arguments[7]);
-  middle_resolution = std::stoi(arguments[8]);
-  top_resolution    = std::stoi(arguments[9]);
-  inner_circle      = (arguments[10] == "true");
+  AssertThrow(
+    arguments.size() == 10 || arguments.size() == 11,
+    ExcMessage(
+      "The pipe_and_waveguide grid needs 10 or 11 grid arguments, but " +
+      Utilities::to_string(arguments.size()) +
+      " were given. The grid arguments are rectangle_width : "
+      "rectangle_length : outer_radius : inner_length : bottom_height : "
+      "middle_height : top_height : bottom_resolution : middle_resolution : "
+      "top_resolution : inner_circle, where inner_circle is optional and is "
+      "true by default."));
+
+  // Lengths
+  rectangle_width  = Utilities::string_to_double(arguments[0]);
+  rectangle_length = Utilities::string_to_double(arguments[1]);
+  outer_radius     = Utilities::string_to_double(arguments[2]);
+  inner_length     = Utilities::string_to_double(arguments[3]);
+  bottom_height    = Utilities::string_to_double(arguments[4]);
+  middle_height    = Utilities::string_to_double(arguments[5]);
+  top_height       = Utilities::string_to_double(arguments[6]);
+
+  AssertThrow(
+    rectangle_width > 0. && rectangle_length > 0. && outer_radius > 0. &&
+      inner_length > 0. && bottom_height > 0. && middle_height > 0. &&
+      top_height > 0.,
+    ExcMessage(
+      "The lengths of the pipe_and_waveguide grid must be positive, but "
+      "rectangle_width = " +
+      Utilities::to_string(rectangle_width) +
+      ", rectangle_length = " + Utilities::to_string(rectangle_length) +
+      ", outer_radius = " + Utilities::to_string(outer_radius) +
+      ", inner_length = " + Utilities::to_string(inner_length) +
+      ", bottom_height = " + Utilities::to_string(bottom_height) +
+      ", middle_height = " + Utilities::to_string(middle_height) +
+      " and top_height = " + Utilities::to_string(top_height) +
+      ". Give a positive value to each of them."));
+
+  // Resolutions. They are read as signed integers so that a negative value is
+  // reported instead of being converted to a large unsigned integer.
+  const int n_bottom_slices = Utilities::string_to_int(arguments[7]);
+  const int n_middle_slices = Utilities::string_to_int(arguments[8]);
+  const int n_top_slices    = Utilities::string_to_int(arguments[9]);
+
+  AssertThrow(
+    n_bottom_slices >= 2 && n_middle_slices >= 2 && n_top_slices >= 2,
+    ExcMessage(
+      "bottom_resolution, middle_resolution and top_resolution are the "
+      "numbers of slices of the extrusion of the three sections of the "
+      "pipe_and_waveguide grid, so each of them must be at least 2, but they "
+      "are " +
+      Utilities::to_string(n_bottom_slices) + ", " +
+      Utilities::to_string(n_middle_slices) + " and " +
+      Utilities::to_string(n_top_slices) + ". Set each of them to 2 or more."));
+
+  bottom_resolution = n_bottom_slices;
+  middle_resolution = n_middle_slices;
+  top_resolution    = n_top_slices;
+
+  // Inner shape. inner_circle is optional and is true by default.
+  inner_circle = true;
+  if (arguments.size() == 11)
+    {
+      AssertThrow(arguments[10] == "true" || arguments[10] == "false",
+                  ExcMessage(
+                    "The last grid argument of the pipe_and_waveguide grid, "
+                    "inner_circle, must be true or false, but it is \"" +
+                    arguments[10] + "\"."));
+      inner_circle = (arguments[10] == "true");
+    }
+
+  /*
+  Geometric conditions that prevent the generation of inverted cells.
+
+  A band of width rectangle_width crosses the cylinder along the x-axis, in
+  line with the waveguide. The inner shape must contain this band and must be
+  strictly inside the outer circle.
+  - Inner circle of radius inner_length: the points where the edges of the band
+    (y = +/- rectangle_width / 2) cross the inner circle must lie between the
+    vertices of the inner circle at +/- 45 degrees from the x-axis, hence
+    rectangle_width / 2 < inner_length / sqrt(2). Together with
+    inner_length < outer_radius, this also ensures that the band crosses the
+    outer circle between its vertices at +/- 45 degrees.
+  - Inner square of vertices (+/- inner_length, +/- inner_length): the band
+    must be narrower than the square, hence rectangle_width / 2 < inner_length,
+    and the corners of the square must be inside the outer circle, hence
+    inner_length < outer_radius / sqrt(2).
+  */
+  if (inner_circle)
+    {
+      AssertThrow(
+        inner_length < outer_radius,
+        ExcMessage(
+          "With an inner circle, inner_length (the radius of the inner "
+          "circle) must be smaller than outer_radius, but inner_length = " +
+          Utilities::to_string(inner_length) +
+          " and outer_radius = " + Utilities::to_string(outer_radius) +
+          ". Decrease inner_length or increase outer_radius."));
+
+      AssertThrow(
+        rectangle_width < std::numbers::sqrt2 * inner_length,
+        ExcMessage(
+          "With an inner circle, the inner circle must contain the band of "
+          "width rectangle_width that crosses the cylinder, which requires "
+          "rectangle_width < sqrt(2) * inner_length, but rectangle_width = " +
+          Utilities::to_string(rectangle_width) +
+          " and inner_length = " + Utilities::to_string(inner_length) +
+          ". Increase inner_length above rectangle_width / sqrt(2) = " +
+          Utilities::to_string(rectangle_width / std::numbers::sqrt2) +
+          " or decrease rectangle_width."));
+    }
+  else
+    {
+      AssertThrow(
+        rectangle_width / 2. < inner_length,
+        ExcMessage(
+          "With an inner square, the inner square must contain the band of "
+          "width rectangle_width that crosses the cylinder, which requires "
+          "rectangle_width / 2 < inner_length, but rectangle_width = " +
+          Utilities::to_string(rectangle_width) +
+          " and inner_length = " + Utilities::to_string(inner_length) +
+          ". Increase inner_length above rectangle_width / 2 = " +
+          Utilities::to_string(rectangle_width / 2.) +
+          " or decrease rectangle_width."));
+
+      AssertThrow(
+        inner_length < outer_radius / std::numbers::sqrt2,
+        ExcMessage(
+          "With an inner square, the corners of the inner square must be "
+          "inside the outer circle, which requires inner_length < "
+          "outer_radius / sqrt(2), but inner_length = " +
+          Utilities::to_string(inner_length) +
+          " and outer_radius = " + Utilities::to_string(outer_radius) +
+          ". Decrease inner_length below outer_radius / sqrt(2) = " +
+          Utilities::to_string(outer_radius / std::numbers::sqrt2) +
+          " or increase outer_radius."));
+    }
 }
 
 template <int dim, int spacedim>
@@ -179,47 +303,7 @@ void
 GridPipeAndWaveguide<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> &triangulation)
 {
-  /*
-  Two geometric conditions that need to be verified to prevent the generation of
-  inverted cells.
-
-  The first condition concerns the inner shape. To improve mesh quality, a
-  central rectangle of width equal to the waveguide width is introduced. After
-  extrusion, the cells within this rectangle are nearly hexahedral, which
-  minimizes aspect ratio. However, this rectangle imposes a geometric
-  constraint: the inner shape must be large enough to fully contain it,
-  otherwise inverted cells are generated.
-
-  Then, the inner shape have to be strictly inscribed in the outer shape.
-  */
-
-  // Tests when the inner shape is a circle
-  if (inner_circle)
-    {
-      AssertThrow(
-        inner_length > rectangle_width / 2,
-        ExcMessage(
-          "The inner shape is not bigger than the rectangle that crosses the cylinder along the x-axis. This situations leads to the generation of inverted cells"));
-
-      AssertThrow(
-        inner_length < outer_radius,
-        ExcMessage(
-          "The internal radius is greater than the external radius. This situations leads to the generation of inverted cells"));
-    }
-
-  // Tests when the inner shape is a square
-  else
-    {
-      AssertThrow(
-        inner_length > rectangle_width / 2,
-        ExcMessage(
-          "The square side is too small compared to the width of the waveguide. This situations leads to the generation of inverted cells"));
-
-      AssertThrow(
-        inner_length < outer_radius / (std::sqrt(2)),
-        ExcMessage(
-          "The inner square length is greater than the external radius. This situations leads to the generation of inverted cells"));
-    }
+  // The grid arguments are checked in the constructor
 
   // Dimension Test
   if constexpr (!(dim == 3 && spacedim == 3))
