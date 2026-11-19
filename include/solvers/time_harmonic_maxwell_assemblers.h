@@ -454,60 +454,6 @@ public:
 
 private:
   /**
-   * @brief Compute the excitation and the surface admittance of the Robin
-   * boundary condition at a quadrature point of the current face.
-   *
-   * @param[in] scratch_data Scratch data reinitialized on the current face.
-   *
-   * @param[in] q Index of the face quadrature point.
-   *
-   * @param[in] bc_type Type of the Robin boundary condition of the face.
-   *
-   * @param[in] waveguide_port_index Index of the waveguide port condition of
-   * the face. Only used if bc_type is waveguide_port.
-   *
-   * @return A pair containing the excitation and the surface admittance.
-   */
-  std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
-  compute_robin_boundary_data(
-    const TimeHarmonicMaxwellScratchData<dim>                &scratch_data,
-    const unsigned int                                        q,
-    const BoundaryConditions::TimeHarmonicMaxwellBoundaryType bc_type,
-    const unsigned int waveguide_port_index) const;
-
-  /**
-   * @brief Compute the excitation and the surface admittance of the Robin
-   * boundary condition of a rectangular waveguide port from the input
-   * parameters. The excitation used is the normalized one across all the
-   * waveguide ports. This function is only implemented for 3D problems.
-   *
-   * @param[in] p Position where the excitation is computed.
-   *
-   * @param[in] normal Unit normal vector of the waveguide port face.
-   *
-   * @param[in] effective_electric_permittivity Effective electric permittivity
-   * at the point p.
-   *
-   * @param[in] effective_magnetic_permeability Effective magnetic permeability
-   * at the point p.
-   *
-   * @param[in] waveguide_port_index Index of the waveguide port condition
-   * within the waveguide port parameters.
-   *
-   * @return A pair containing the excitation of the Robin boundary condition
-   * and the surface admittance at the point p. The excitation is scaled by the
-   * ratio of the port amplitude to the maximum amplitude of all the ports.
-   */
-  std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
-  compute_waveguide_port_excitation(
-    const Point<dim>           &p,
-    const Tensor<1, dim>       &normal,
-    const std::complex<double> &effective_electric_permittivity,
-    const std::complex<double> &effective_magnetic_permeability,
-    const unsigned int          waveguide_port_index) const;
-
-  /**
-faces)
    * Parameters of the time-harmonic Maxwell physics.
    */
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters;
