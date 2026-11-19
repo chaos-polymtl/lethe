@@ -1122,6 +1122,8 @@ QMOM<dim>::advance_physical_space()
 
   GlobalVectorType completely_distributed_solution(
     locally_owned_dofs, triangulation->get_mpi_communicator());
+  GlobalVectorType initial_residual(locally_owned_dofs,
+                                    triangulation->get_mpi_communicator());
 
   const auto preconditioner_type = linear_solver_parameters.preconditioner;
 
@@ -1129,10 +1131,18 @@ QMOM<dim>::advance_physical_space()
   // right-hand side changes
   for (unsigned int component = 0; component < n_components; ++component)
     {
+      // The solution at the beginning of the time step is the initial guess
+      completely_distributed_solution = present_solutions[component];
+
       // The components have very different magnitudes, so the tolerance is
-      // relative to the right-hand side of each component
+      // relative to the initial residual of each component. Unlike in a Newton
+      // iteration, the right-hand side is not this residual, since the initial
+      // guess is not zero.
       const double current_residual =
-        system_rhs[component].l2_norm() / rescale_metric;
+        system_matrix.residual(initial_residual,
+                               completely_distributed_solution,
+                               system_rhs[component]) /
+        rescale_metric;
       const double linear_solver_tolerance =
         std::max(linear_solver_parameters.relative_residual * current_residual,
                  linear_solver_parameters.minimum_residual);
@@ -1149,8 +1159,6 @@ QMOM<dim>::advance_physical_space()
         false, linear_solver_parameters.max_krylov_vectors);
       TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
-      // The solution at the beginning of the time step is the initial guess
-      completely_distributed_solution = present_solutions[component];
       if (preconditioner_type ==
           Parameters::LinearSolver::PreconditionerType::ilu)
         solver.solve(system_matrix,
