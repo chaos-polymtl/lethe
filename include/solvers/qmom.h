@@ -84,7 +84,7 @@ DeclException1(QMOMDimensionalityError,
 
 DeclException1(
   QMOMInvalidNumberOfFluids,
-  int,
+  unsigned int,
   << "The QMOM physics is enabled, but the number of fluids is set to " << arg1
   << ". The QMOM physics solver only supports 1 fluid.");
 

@@ -35,7 +35,7 @@
 
 DeclException1(
   InvalidNumberOfFluid,
-  int,
+  unsigned int,
   << "The CLS physics is enabled, but the number of fluids is set to " << arg1
   << ". The CLS solver only supports 2 fluids.");
 
