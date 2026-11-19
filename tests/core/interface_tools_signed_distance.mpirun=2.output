@@ -1,0 +1,4 @@
+ref. level cells   dofs   error_volume  error_distance_L2 error_distance_Linf 
+         4   4096   4913 1.879e-03    - 7.171e-03       - 4.356e-02         - 
+         5  32740  35909 4.705e-04 2.00 3.119e-03    1.20 2.345e-02      0.89 
+         6 153658 164231 1.176e-04 2.00 1.112e-03    1.49 1.217e-02      0.95
