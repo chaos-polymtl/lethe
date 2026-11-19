@@ -388,7 +388,7 @@ Multiphysics Post-processing
   The percentages are relative to the incident power. If no Robin boundary is excited, for instance when the excitation is imposed with an ``electric_field`` boundary condition, there is no incident power and the percentages are relative to the power entering the domain, i.e. the sum of the positive net powers of the boundaries. If this power is also zero, the percentages are not defined and are written as ``-``.
 
   .. Tip::
-    The power imbalance, which vanishes for the exact solution by the Poynting theorem, can be used as a proxy to measure the numerical error. It includes both the discretization error and the error of the linear solver, since the linear system is only solved up to the ``relative residual`` of the ``electromagnetics`` linear solver. If the imbalance does not decrease when the mesh is refined, the tolerance of the linear solver is likely too loose.
+    The power imbalance, which vanishes for the exact solution by the Poynting theorem, can be used as a proxy to measure the numerical error. It includes both the discretization error and the error of the linear solver, since the linear system is only solved up to the ``relative residual`` or the ``absolute residual`` (which ever is the biggest) of the ``electromagnetics`` linear solver. If the imbalance does not decrease when the mesh is refined, the tolerance of the linear solver is likely too loose.
 
   * ``electromagnetic power name``: output filename for the electromagnetic power calculations.
 
