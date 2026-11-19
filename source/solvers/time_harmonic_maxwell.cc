@@ -1308,10 +1308,12 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
     reference_is_incident ? "incident" : "entering";
 
   // The summary is written with fixed column widths. The powers are written in
-  // scientific notation and the percentages in the default notation, both with
-  // the log precision. The percentages are not defined, and "-" is written, if
-  // the reference power is not positive.
-  const unsigned int power_width = precision + 10;
+  // scientific notation with the log precision. The percentages are written in
+  // fixed notation with three decimals, which is enough for a power balance and
+  // makes them insensitive to round-off errors. The percentages are not
+  // defined, and "-" is written, if the reference power is not positive.
+  const unsigned int     power_width          = precision + 10;
+  constexpr unsigned int percentage_precision = 3;
 
   std::ostringstream summary;
   summary << "+------------------------------------------+\n"
@@ -1355,7 +1357,7 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
               << std::scientific << std::setprecision(precision)
               << std::setw(power_width) << absorbed_powers[material_id];
       if (reference_power > 0.)
-        summary << std::defaultfloat << std::setprecision(precision)
+        summary << std::fixed << std::setprecision(percentage_precision)
                 << std::setw(power_width)
                 << 100. * absorbed_powers[material_id] / reference_power
                 << " %";
@@ -1381,7 +1383,7 @@ TimeHarmonicMaxwell<dim>::print_electromagnetic_power_summary(
               << std::scientific << std::setprecision(precision)
               << std::setw(power_width) << power << "  ";
       if (reference_power > 0.)
-        summary << std::defaultfloat << std::setprecision(precision)
+        summary << std::fixed << std::setprecision(percentage_precision)
                 << 100. * power / reference_power << " %";
       else
         summary << "-";
