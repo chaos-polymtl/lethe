@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
+#include <deal.II/base/convergence_table.h>
 #include <deal.II/base/function_signed_distance.h>
 
-#include <deal.II/distributed/tria.h>
 #include <deal.II/distributed/grid_refinement.h>
+#include <deal.II/distributed/tria.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
@@ -17,6 +18,7 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/tria.h>
+
 #include <deal.II/lac/affine_constraints.h>
 
 #include <deal.II/numerics/error_estimator.h>
@@ -47,20 +49,24 @@ test()
 
 
 
-
   // Discretize the domain as in an arbitrary background solver
   std::shared_ptr<FiniteElement<dim>> background_fe =
     std::make_shared<FE_Q<dim>>(1);
   std::shared_ptr<MappingQ<dim>> background_mapping =
     std::make_shared<MappingQ<dim>>(background_fe->degree);
 
-  Vector<double> error(6);
-  Vector<double> error_volume(6);
+  const unsigned int number_of_mesh_ref = 3;
 
+  ConvergenceTable error_table;
 
-  for (unsigned int m = 0; m < 6; m++)
+  for (unsigned int mesh_ref = 0; mesh_ref < 3; mesh_ref++)
     {
-        // Triangulation (as a shared_ptr to reproduce an arbitrary background solver
+      unsigned int max_ref = 4 + mesh_ref;
+      unsigned int min_ref = max_ref - 3;
+
+
+      // Triangulation (as a shared_ptr to reproduce an arbitrary background
+      // solver
       // architecture)
       std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
         background_triangulation =
@@ -78,7 +84,7 @@ test()
           p_1[n] = 1.0;
         }
       GridGenerator::hyper_rectangle(*background_triangulation, p_0, p_1);
-      background_triangulation->refine_global(4+m);
+      background_triangulation->refine_global(min_ref);
 
       DoFHandler<dim> background_dof_handler =
         DoFHandler(*background_triangulation);
@@ -103,92 +109,102 @@ test()
           sphere_center[n] = 0.51;
         }
 
-        auto sphere_function =
+      auto sphere_function =
         Functions::SignedDistance::Sphere<dim>(sphere_center, sphere_radius);
 
-        double h    = 1.0 / std::pow(2, (4 + m));
-      double band = 8.0 * h;
-      double max_reinitialization_distance = band * 2;
+      double h                             = 1.0 / std::pow(2.0, (max_ref));
+      double band                          = 8.0 * h;
+      double max_reinitialization_distance = 2 * band;
 
-  for (unsigned int i = 0; i < 4; ++i)
-    {  
-      
-      VectorTools::interpolate(*background_mapping,
-                               background_dof_handler,
-                               sphere_function,
-                               background_level_set_owned);
+      for (unsigned int i = 0; i < (max_ref - min_ref + 1); ++i)
+        {
+          VectorTools::interpolate(*background_mapping,
+                                   background_dof_handler,
+                                   sphere_function,
+                                   background_level_set_owned);
 
-      
+          background_level_set = background_level_set_owned;
 
-      background_level_set = background_level_set_owned;
+          GlobalVectorType background_phase_indicator(
+            background_locally_owned_dofs,
+            background_locally_relevant_dofs,
+            mpi_communicator);
+          GlobalVectorType background_phase_indicator_owned(
+            background_locally_owned_dofs, mpi_communicator);
 
-      GlobalVectorType background_phase_indicator(background_locally_owned_dofs,
-                                            background_locally_relevant_dofs,
+          for (auto p : background_locally_relevant_dofs)
+            {
+              /* We need to have the ghost values in distance for future
+              compress(VectorOperation::min) operation*/
+              double dist = background_level_set(p);
+              if (std::abs(dist) > max_reinitialization_distance)
+                dist = max_reinitialization_distance * dist / std::abs(dist);
+
+              background_phase_indicator_owned(p) =
+                0.5 - 0.5 * tanh(dist / (band));
+            }
+
+          background_phase_indicator = background_phase_indicator_owned;
+
+
+          Vector<float> estimated_error_per_cell(
+            background_triangulation->n_active_cells());
+
+
+          KellyErrorEstimator<dim>::estimate(
+            *background_mapping,
+            background_dof_handler,
+            QGauss<dim - 1>(background_fe->degree + 1),
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            background_phase_indicator,
+            estimated_error_per_cell,
+            ComponentMask(),
+            nullptr,
+            0,
+            background_triangulation->locally_owned_subdomain());
+
+          parallel::distributed::GridRefinement::
+            refine_and_coarsen_fixed_fraction(*background_triangulation,
+                                              estimated_error_per_cell,
+                                              0.99,
+                                              0.001);
+
+          if (background_triangulation->n_levels() > max_ref)
+            for (auto &cell :
+                 background_triangulation->active_cell_iterators_on_level(
+                   max_ref))
+              cell->clear_refine_flag();
+
+          for (auto &cell :
+               background_triangulation->active_cell_iterators_on_level(
+                 min_ref))
+            cell->clear_coarsen_flag();
+
+          background_triangulation->prepare_coarsening_and_refinement();
+
+          background_triangulation->execute_coarsening_and_refinement();
+
+          background_dof_handler.distribute_dofs(*background_fe);
+
+          background_locally_owned_dofs =
+            background_dof_handler.locally_owned_dofs();
+          background_locally_relevant_dofs =
+            DoFTools::extract_locally_relevant_dofs(background_dof_handler);
+
+          background_level_set.reinit(background_locally_owned_dofs,
+                                      background_locally_relevant_dofs,
+                                      mpi_communicator);
+          background_level_set_owned.reinit(background_locally_owned_dofs,
                                             mpi_communicator);
-      GlobalVectorType background_phase_indicator_owned(background_locally_owned_dofs,
-                                                  mpi_communicator);
 
-      for (auto p : background_locally_relevant_dofs)
-      {
-        /* We need to have the ghost values in distance for future
-        compress(VectorOperation::min) operation*/
-        double dist = background_level_set(p);
-        if (std::abs(dist) >  max_reinitialization_distance)
-          dist = max_reinitialization_distance*dist/std::abs(dist);
+          VectorTools::interpolate(*background_mapping,
+                                   background_dof_handler,
+                                   sphere_function,
+                                   background_level_set_owned);
 
-        background_phase_indicator_owned(p) = 0.5 - 0.5 * tanh(dist / (band));
-      }                                            
-
-      background_phase_indicator = background_phase_indicator_owned;
-
-
-       Vector<float> estimated_error_per_cell(background_triangulation->n_active_cells());
-
-
-      KellyErrorEstimator<dim>::estimate(
-          *background_mapping,
-          background_dof_handler,
-          QGauss<dim - 1>(background_fe->degree + 1),
-          typename std::map<types::boundary_id, const Function<dim, double> *>(),
-          background_phase_indicator,
-          estimated_error_per_cell,
-          ComponentMask(),
-          nullptr,
-          0,
-          background_triangulation->locally_owned_subdomain());
-
-        parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
-          *background_triangulation, estimated_error_per_cell, 0.99, 0.01);
-
-        if (background_triangulation->n_levels() > m+4)
-          for (auto &cell : background_triangulation->active_cell_iterators_on_level(
-                 m+4))
-            cell->clear_refine_flag();
-
-        for (auto &cell : background_triangulation->active_cell_iterators_on_level(
-              m+1))
-          cell->clear_coarsen_flag();
-
-        background_triangulation->prepare_coarsening_and_refinement();
-
-        background_triangulation->execute_coarsening_and_refinement();  
-        
-      background_dof_handler.distribute_dofs(*background_fe);
-
-      background_locally_owned_dofs    = background_dof_handler.locally_owned_dofs();
-      background_locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(background_dof_handler);
-
-      background_level_set.reinit(background_locally_owned_dofs, background_locally_relevant_dofs, mpi_communicator);
-      background_level_set_owned.reinit(background_locally_owned_dofs,
-                                                  mpi_communicator);
-
-      VectorTools::interpolate(*background_mapping,
-                               background_dof_handler,
-                               sphere_function,
-                               background_level_set_owned);
-
-      background_level_set = background_level_set_owned;
-    }
+          background_level_set = background_level_set_owned;
+        }
 
       // Instanciate the SignedDistanceSolver as it would as a member of the
       // background solver class
@@ -220,78 +236,50 @@ test()
                                                      background_level_set,
                                                      0);
 
-      pcout << "volume_0 = " << volume_0 << std::endl;
+      signed_distance_solver->set_level_set_from_background_mesh(
+        background_dof_handler, background_level_set);
 
-      std::vector<std::pair<double, std::string>> times_and_names;
-      std::string                                 filename =
-        (dim == 2 ? "solution_2d_ref0" + std::to_string(m) :
-                    "solution_3d_ref0" + std::to_string(m));
+      // Solve the signed_distance field.
+      signed_distance_solver->solve();
 
+      // Get the signed_distance field from the SignedDistanceSolver
+      auto &signed_distance = signed_distance_solver->get_signed_distance();
 
-          signed_distance_solver->set_level_set_from_background_mesh(
-            background_dof_handler, background_level_set);
+      // Interpolate the signed_distance solution from the
+      // SignedDistanceSolver DoFHandler to the main solver DoFHandler.
+      TrilinosWrappers::MPI::Vector tmp_background_signed_distance(
+        background_locally_owned_dofs, mpi_communicator);
 
-          // Solve the signed_distance field.
-          signed_distance_solver->solve();
+      FETools::interpolate(signed_distance_solver->dof_handler,
+                           signed_distance,
+                           background_dof_handler,
+                           tmp_background_signed_distance);
 
-          // Get the signed_distance field from the SignedDistanceSolver
-          auto &signed_distance = signed_distance_solver->get_signed_distance();
+      background_signed_distance = tmp_background_signed_distance;
 
-          // Interpolate the signed_distance solution from the
-          // SignedDistanceSolver DoFHandler to the main solver DoFHandler.
-          TrilinosWrappers::MPI::Vector tmp_background_signed_distance(
-            background_locally_owned_dofs, mpi_communicator);
+      background_level_set = background_signed_distance;
 
-          FETools::interpolate(signed_distance_solver->dof_handler,
-                               signed_distance,
-                               background_dof_handler,
-                               tmp_background_signed_distance);
-
-          background_signed_distance = tmp_background_signed_distance;
-
-          DataOut<dim> data_out;
-          data_out.attach_dof_handler(background_dof_handler);
-          data_out.add_data_vector(background_signed_distance, "solution");
-
-          data_out.build_patches();
-
-
-          const std::string pvtu_filename = data_out.write_vtu_with_pvtu_record(
-            "./", filename, 0, mpi_communicator, 4);
-
-
-          // times_and_names.emplace_back(k, pvtu_filename);
-
-          background_level_set = background_signed_distance;
-
-          double volume_n, surface_n;
-
-
-          std::tie(volume_n, surface_n) =
-            InterfaceTools::integrate_volume_and_surface(background_dof_handler,
-                                                         *background_fe,
-                                                         background_level_set,
-                                                         0);
+      double volume_n, surface_n;
+      std::tie(volume_n, surface_n) =
+        InterfaceTools::integrate_volume_and_surface(background_dof_handler,
+                                                     *background_fe,
+                                                     background_level_set,
+                                                     0);
 
       double volume_1, surface_1;
-
       std::tie(volume_1, surface_1) =
         InterfaceTools::integrate_volume_and_surface(background_dof_handler,
                                                      *background_fe,
                                                      background_level_set,
                                                      0);
 
-      pcout << "volume_1 = " << volume_1 << ", volume_0 = " << volume_0
-            << std::endl;
+      double exact_volume;
       if (dim == 3)
-        error_volume[m] =
-          std::abs(volume_1 - 4.0 * M_PI * std::pow(sphere_radius, 3) / 3.0);
+        exact_volume = 4.0 * M_PI * std::pow(sphere_radius, 3) / 3.0;
 
       if (dim == 2)
-        error_volume[m] =
-          std::abs(volume_1 - M_PI * std::pow(sphere_radius, 2));
+        exact_volume = M_PI * std::pow(sphere_radius, 2);
 
-      error_volume[m] = std::abs(volume_1 - volume_0);
       QGauss<dim> quadrature(background_fe->degree + 1);
 
       FEValues<dim>  fe_values(*background_mapping,
@@ -306,9 +294,9 @@ test()
       std::vector<double> cell_quadrature_values_analytical(
         fe_values.n_quadrature_points);
 
-      double error_L2 = 0.0;
+      double error_L2   = 0.0;
       double error_Linf = 0.0;
-      double volume   = 0.0;
+      double volume     = 0.0;
 
       for (const auto &cell : background_dof_handler.active_cell_iterators())
         {
@@ -327,9 +315,11 @@ test()
 
               for (unsigned int j = 0; j < background_fe->dofs_per_cell; ++j)
                 {
-                  if (std::abs(cell_dof_values[j]) > max_reinitialization_distance - 1e-12)
+                  if (std::abs(cell_dof_values_analytical[j]) >=
+                      max_reinitialization_distance)
                     {
                       in_band = false;
+                      break;
                     }
                 }
 
@@ -352,60 +342,61 @@ test()
 
                   volume += fe_values.JxW(q);
 
-                  error_Linf = std::max(std::abs(cell_quadrature_values[q] - extact_distance), error_Linf);
+                  error_Linf = std::max(std::abs(cell_quadrature_values[q] -
+                                                 extact_distance),
+                                        error_Linf);
                 }
             }
         }
 
-      error_L2 = Utilities::MPI::sum(error_L2, mpi_communicator);
-      volume   = Utilities::MPI::sum(volume, mpi_communicator);
-      error_Linf   = Utilities::MPI::max(error_Linf, mpi_communicator);
+      error_L2   = Utilities::MPI::sum(error_L2, mpi_communicator);
+      volume     = Utilities::MPI::sum(volume, mpi_communicator);
+      error_Linf = Utilities::MPI::max(error_Linf, mpi_communicator);
 
 
       error_L2 = sqrt(error_L2 / volume);
 
-      // Compute the L2 norm of the error.
-      // Vector<float> error_per_cell(background_triangulation->n_active_cells());
-
-      // VectorTools::integrate_difference(
-      //   *background_mapping,
-      //   background_dof_handler,
-      //   background_signed_distance,
-      //   Functions::SignedDistance::Sphere<dim>(sphere_center, sphere_radius),
-      //   error_per_cell,
-      //   QGauss<dim>(background_fe->degree + 1),
-      //   VectorTools::L2_norm);
-
-      // double error_L2_ff =
-      //   VectorTools::compute_global_error(*background_triangulation,
-      //                                     error_per_cell,
-      //                                     VectorTools::L2_norm);
-
-      deallog << "The L2 norm of the signed distance error in " << dim
-              << "D is: " << error_L2 << std::endl;
-
-      pcout << "The L2 norm of the signed distance error in " << dim
-            << "D is: " << error_L2 << std::endl;
-      pcout << "The Linf norm of the signed distance error in " << dim
-            << "D is: " << error_Linf << std::endl;
-      pcout << "The volume error in " << dim << "D is: " << error_volume[m]
-            << std::endl;
-
-      error[m] = error_L2;
-
-      // background_triangulation->refine_global(1);
-
-                                                                           
+      error_table.add_value("ref. level", max_ref);
+      error_table.add_value("cells",
+                            background_triangulation->n_global_active_cells());
+      error_table.add_value("dofs", background_dof_handler.n_dofs());
+      error_table.add_value("error_volume", std::abs(volume_1 - exact_volume));
+      error_table.add_value("error_distance_L2", error_L2);
+      error_table.add_value("error_distance_Linf", error_Linf);
     }
 
-  double convergence_order = log(error[4] / error[3]) / log(0.5);
+  // double convergence_order = log(error[number_of_mesh_ref-1] /
+  // error[number_of_mesh_ref-1]) / log(0.5);
 
-  deallog << "The convergence is: " << convergence_order << std::endl;
-  pcout << "The convergence is: " << convergence_order << std::endl;
+  // deallog << "The convergence is: " << convergence_order << std::endl;
+  // pcout << "The convergence is: " << convergence_order << std::endl;
 
-  convergence_order = log(error_volume[4] / error_volume[3]) / log(0.5);
-  pcout << "The convergence of the volume is: " << convergence_order
-        << std::endl;
+  // convergence_order = log(error_volume[number_of_mesh_ref-1] /
+  // error_volume[number_of_mesh_ref-1]) / log(0.5); pcout << "The convergence
+  // of the volume is: " << convergence_order
+  //       << std::endl;
+
+  error_table.set_precision("error_volume", 3);
+  error_table.set_scientific("error_volume", true);
+
+  error_table.set_precision("error_distance_L2", 3);
+  error_table.set_scientific("error_distance_L2", true);
+
+  error_table.set_precision("error_distance_Linf", 3);
+  error_table.set_scientific("error_distance_Linf", true);
+
+  error_table.omit_column_from_convergence_rate_evaluation("ref. level");
+  error_table.omit_column_from_convergence_rate_evaluation("cells");
+  error_table.omit_column_from_convergence_rate_evaluation("dofs");
+
+  // Compute the rate of convergence
+  error_table.evaluate_all_convergence_rates(
+    ConvergenceTable::reduction_rate_log2);
+
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+  if (this_mpi_process == 0)
+    error_table.write_text(std::cout);
 }
 
 int
@@ -413,9 +404,7 @@ main(int argc, char *argv[])
 {
   try
     {
-      initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-      // test<2>();
       test<3>();
     }
   catch (std::exception &exc)
