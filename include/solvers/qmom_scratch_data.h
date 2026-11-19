@@ -67,7 +67,7 @@ public:
    * fluid velocity at the same quadrature points.
    * @param[in] fe_fluid FESystem of the fluid dynamics (velocity and
    * pressure).
-   * @param[in] n_components Number of QMOM components (scalars and moments).
+   * @param[in] n_components Number of QMOM components (n_scalars + n_moments).
    */
   QMOMScratchData(const FiniteElement<dim>  &fe_qmom,
                   const Quadrature<dim>     &quadrature,
