@@ -102,12 +102,11 @@ public:
          Function<dim>                 *source_function);
 
   /**
-   * @brief Reinitialize the velocity, calculated by the Fluid Dynamics.
+   * @brief Reinitialize the content of the scratch data for the velocity
    *
-   * @tparam VectorType The Vector type used for the solvers.
-   *
-   * @param[in] cell The cell for which the velocity is reinitialized. This cell
-   * must be compatible with the Fluid Dynamics FE.
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the void fraction FE and not the
+   * Navier-Stokes FE
    *
    * @param[in] current_solution The present value of the solution for
    * \f$[u,p]\f$.
