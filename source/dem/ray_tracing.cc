@@ -3,6 +3,7 @@
 
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
+#include <core/utilities.h>
 
 #include <dem/find_cell_neighbors.h>
 #include <dem/insertion_file.h>
@@ -13,6 +14,8 @@
 #include <deal.II/particles/data_out.h>
 
 #include <sys/stat.h>
+
+#include <random>
 
 template <int dim>
 RayTracingSolver<dim>::RayTracingSolver(
@@ -288,28 +291,28 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   std::vector<double> random_number_angular_2; // From 0 to max_angular_offset
   std::vector<double> random_number_position;  // From 0 to max_insertion_offset
 
-  // Reserve the size of the vectors
-  random_number_angular_1.reserve(n_photons_to_insert_this_proc);
-  random_number_angular_2.reserve(n_photons_to_insert_this_proc);
-  random_number_position.reserve(3 * n_photons_to_insert_this_proc);
-
-  create_random_number_container(
-    random_number_angular_1,
-    n_photons_to_insert_this_proc,
-    2.0 * M_PI,
+  // One prn engine per seed. The two angular containers are drawn successively
+  // from the same engine, so they are independent of each other
+  std::mt19937 displacement_generator(
     parameters.ray_tracing_info.prn_seed_photon_displacement);
+  std::mt19937 insertion_generator(
+    parameters.ray_tracing_info.prn_seed_photon_insertion);
 
-  create_random_number_container(
-    random_number_angular_2,
-    n_photons_to_insert_this_proc,
-    parameters.ray_tracing_info.max_angular_offset,
-    parameters.ray_tracing_info.prn_seed_photon_displacement);
+  create_random_number_container(random_number_angular_1,
+                                 n_photons_to_insert_this_proc,
+                                 2.0 * M_PI,
+                                 displacement_generator);
+
+  create_random_number_container(random_number_angular_2,
+                                 n_photons_to_insert_this_proc,
+                                 parameters.ray_tracing_info.max_angular_offset,
+                                 displacement_generator);
 
   create_random_number_container(
     random_number_position,
     3 * n_photons_to_insert_this_proc,
     parameters.ray_tracing_info.max_insertion_offset,
-    parameters.ray_tracing_info.prn_seed_photon_insertion);
+    insertion_generator);
 
   // For the displacement direction randomness, we need to find two vectors
   // normal to ref_displacement_dir.

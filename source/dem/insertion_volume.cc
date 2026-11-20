@@ -5,6 +5,10 @@
 
 #include <dem/insertion_volume.h>
 
+#include <boost/archive/archive_exception.hpp>
+
+#include <random>
+
 using namespace DEM;
 
 // The constructor of the volume insertion class. In the constructor, we
@@ -24,6 +28,7 @@ InsertionVolume<dim, PropertiesIndex>::InsertionVolume(
                                     dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
+  , insertion_counter(0)
   , acceptance_fct(dem_parameters.insertion_info.insertion_acceptance_fct)
   , maximum_diameter(maximum_particle_diameter)
 {
@@ -86,14 +91,19 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      // Call the random number generator for the offsets
+      std::seed_seq seq{static_cast<unsigned int>(
+                          dem_parameters.insertion_info.seed_for_insertion),
+                        insertion_counter++};
+      std::mt19937  generator(seq);
+
+      // Call the random number generator for the offsets, generating a random
+      // number for each axis of dim
       std::vector<double> random_number_vector;
-      random_number_vector.reserve(filted_box_index.size());
       create_random_number_container(
         random_number_vector,
-        filted_box_index.size(),
+        dim * inserted_this_step,
         dem_parameters.insertion_info.insertion_maximum_offset,
-        dem_parameters.insertion_info.seed_for_insertion);
+        generator);
 
       Point<dim>              insertion_location;
       std::vector<Point<dim>> insertion_points_on_proc;
@@ -107,12 +117,15 @@ InsertionVolume<dim, PropertiesIndex>::insert(
            global_index < inserted_this_step;
            ++global_index, ++particle_counter)
         {
+          // The random numbers are identical on every process, so each particle
+          // uses the offsets associated with its global index
+          Tensor<1, dim> offsets;
+          for (int d = 0; d < dim; ++d)
+            offsets[d] = random_number_vector.at(dim * global_index + d);
+
           find_insertion_location(insertion_location,
                                   filted_box_index.at(particle_counter),
-                                  random_number_vector.at(particle_counter),
-                                  random_number_vector.at(
-                                    filted_box_index.size() - particle_counter -
-                                    1),
+                                  offsets,
                                   dem_parameters.insertion_info);
 
           insertion_points_on_proc.push_back(insertion_location);
@@ -143,14 +156,39 @@ InsertionVolume<dim, PropertiesIndex>::insert(
     }
 }
 
+
+template <int dim, typename PropertiesIndex>
+void
+InsertionVolume<dim, PropertiesIndex>::deserialize(
+  boost::archive::text_iarchive &ar)
+{
+  ar &particles_of_each_type_remaining &current_inserting_particle_type;
+
+  // Checkpoint written before the insertion counter was introduced do not
+  // contain it. Reading it then reaches the end of the archive, in which case
+  // the counter restarts from zero.
+  try
+    {
+      ar &insertion_counter;
+    }
+  catch (const boost::archive::archive_exception &exception)
+    {
+      if (exception.code !=
+          boost::archive::archive_exception::input_stream_error)
+        throw;
+
+      insertion_counter = 0;
+    }
+}
+
+
 // This function assigns the insertion points of the inserted particles
 template <int dim, typename PropertiesIndex>
 void
 InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
   Point<dim>                                       &insertion_location,
   const unsigned int                                id,
-  const double                                      random_number1,
-  const double                                      random_number2,
+  const Tensor<1, dim>                             &offsets,
   const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information)
 {
   std::vector<int> insertion_index;
@@ -163,7 +201,7 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
   insertion_location[axis_0] =
     axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
                           insertion_information.distance_threshold -
-                        random_number1) *
+                        offsets[axis_0]) *
                          maximum_diameter;
 
   // Second direction (axis) to have particles inserted
@@ -175,7 +213,7 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
       insertion_location[axis_1] =
         axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
                               insertion_information.distance_threshold -
-                            random_number2) *
+                            offsets[axis_1]) *
                              maximum_diameter;
     }
   else
@@ -188,7 +226,7 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
       insertion_location[axis_1] =
         axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
                               insertion_information.distance_threshold -
-                            random_number2) *
+                            offsets[axis_1]) *
                              maximum_diameter;
 
       // Third direction (axis) to have particles inserted
@@ -198,7 +236,7 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
       insertion_location[axis_2] =
         axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
                               insertion_information.distance_threshold -
-                            random_number1) *
+                            offsets[axis_2]) *
                              maximum_diameter;
     }
 }
@@ -292,8 +330,10 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
     {
       // Create the insertion point, associated with the current index, with
       // no offset
-      find_insertion_location(
-        insertion_location, index, 0., 0., insertion_information);
+      find_insertion_location(insertion_location,
+                              index,
+                              Tensor<1, dim>(),
+                              insertion_information);
 
       // If the point respects the acceptance function, we insert the index in
       // the vector.
