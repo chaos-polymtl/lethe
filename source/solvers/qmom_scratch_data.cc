@@ -9,7 +9,6 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/numbers.h>
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -41,11 +40,6 @@ QMOMScratchData<dim>::QMOMScratchData(
                          "element given to the scratch data has " +
                          std::to_string(fe_qmom.n_components()) +
                          " components."));
-
-  // Hanging nodes, and therefore subfaces, only exist on hypercube meshes
-  if (fe_qmom.reference_cell().is_hyper_cube())
-    fe_subface_values_fluid = std::make_unique<FESubfaceValues<dim>>(
-      mapping, fe_fluid, face_quadrature, update_values);
 
   allocate();
 }
@@ -200,25 +194,23 @@ void
 QMOMScratchData<dim>::reinit_face_velocity(
   const typename DoFHandler<dim>::active_cell_iterator &fluid_cell,
   const unsigned int                                    face_no,
-  const unsigned int                                    sub_face_no,
+  [[maybe_unused]] const unsigned int                   sub_face_no,
   const VectorType                                     &fluid_solution)
 {
+  // MeshWorker::mesh_loop() calls the face worker from the fine side of a
+  // refined face, where it is a whole face: its quadrature points are those of
+  // the subface of the coarse neighbor in fe_interface_values. Only
+  // assemble_own_interior_faces_both would also call it from the coarse side.
+  Assert(sub_face_no == numbers::invalid_unsigned_int,
+         ExcMessage("The QMOM face assembly expects to be called from the "
+                    "fine side of a refined face. Use "
+                    "assemble_own_interior_faces_once in mesh_loop()."));
+
   // The fluid velocity is continuous: evaluating it from the first side of
-  // the face, at the quadrature points of fe_interface_values, is sufficient.
-  // On a refined face, these points lie on the subface.
-  if (sub_face_no == numbers::invalid_unsigned_int)
-    {
-      fe_face_values_fluid.reinit(fluid_cell, face_no);
-      fe_face_values_fluid[velocities].get_function_values(
-        fluid_solution, face_velocity_values);
-    }
-  else
-    {
-      Assert(fe_subface_values_fluid != nullptr, ExcInternalError());
-      fe_subface_values_fluid->reinit(fluid_cell, face_no, sub_face_no);
-      (*fe_subface_values_fluid)[velocities].get_function_values(
-        fluid_solution, face_velocity_values);
-    }
+  // the face, at the quadrature points of fe_interface_values, is sufficient
+  fe_face_values_fluid.reinit(fluid_cell, face_no);
+  fe_face_values_fluid[velocities].get_function_values(fluid_solution,
+                                                       face_velocity_values);
 }
 
 template class QMOMScratchData<2>;

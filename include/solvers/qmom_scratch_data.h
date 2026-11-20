@@ -35,7 +35,6 @@
 
 #include <deal.II/lac/vector.h>
 
-#include <memory>
 #include <vector>
 
 using namespace dealii;
@@ -179,8 +178,10 @@ public:
    * @param[in] fluid_cell Cell of the fluid dynamics DoFHandler on the "here"
    * side of the face.
    * @param[in] face_no Face number in fluid_cell.
-   * @param[in] sub_face_no Subface number in fluid_cell, or
-   * numbers::invalid_unsigned_int if the face is not refined from this side.
+   * @param[in] sub_face_no Subface number in fluid_cell, which must be
+   * numbers::invalid_unsigned_int: with assemble_own_interior_faces_once,
+   * MeshWorker::mesh_loop() calls the face worker from the fine side of a
+   * refined face, where it is a whole face.
    * @param[in] fluid_solution Present (ghosted) fluid dynamics solution.
    */
   template <typename VectorType>
@@ -202,10 +203,6 @@ public:
 
   /// FEFaceValues of the fluid dynamics on faces
   FEFaceValues<dim> fe_face_values_fluid;
-
-  /// FESubfaceValues of the fluid dynamics on refined faces. Only allocated
-  /// for hypercube meshes, since simplex meshes have no hanging nodes.
-  std::unique_ptr<FESubfaceValues<dim>> fe_subface_values_fluid;
 
   /// Extractor of the velocity in the fluid dynamics FESystem
   const FEValuesExtractors::Vector velocities;
