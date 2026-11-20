@@ -63,6 +63,7 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
+#include <utility>
 
 /// Polynomial degree of the velocity and of the pressure.
 constexpr unsigned int fe_degree = 2;
@@ -330,7 +331,7 @@ test()
   // and has no boundary condition for the second one.
   BoundaryConditions::FluidDynamicsBoundaryConditions<dim> outlet_conditions;
   BoundaryConditions::FluidDynamicsBoundaryConditions<dim> no_conditions;
-  for (types::boundary_id id = 0; id < 2 * dim; ++id)
+  for (types::boundary_id id = 0; std::cmp_less(id, 2 * dim); ++id)
     {
       outlet_conditions.type[id] =
         BoundaryConditions::FluidDynamicsBoundaryType::outlet;
