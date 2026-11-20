@@ -7,7 +7,7 @@
  * with the quadrature method of moments (QMOM), coupled to the QMOMKit
  * library.
  *
- * The unknowns are regular scalars and the first raw moments of the particle
+ * The unknowns are user-defined scalars and the moments of the particle
  * size distribution, called the components of the QMOM physics. All the
  * components are discretized with the same scalar discontinuous Galerkin
  * element, on a single DoFHandler, and each component is stored in its own
@@ -102,7 +102,7 @@ DeclExceptionMsg(
  * coupled to the fluid dynamics solver.
  *
  * Component layout: component i < n_scalars is the scalar i and component
- * n_scalars + k is the raw moment M_k of the particle size distribution,
+ * n_scalars + k is the moment M_k of the particle size distribution,
  * k < n_moments. This is the ordering of the components of the
  * QMOMFieldFunction of the initial conditions, boundary conditions, source
  * term and analytical solution.
@@ -451,7 +451,7 @@ private:
   std::vector<double>
   calculate_L2_errors();
 
-  /// Number of regular scalars
+  /// Number of user-defined scalars
   const unsigned int n_scalars;
 
   /// Number of transported moments

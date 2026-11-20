@@ -874,7 +874,7 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.number_of_moments),
                       Patterns::Integer(1),
-                      "Number of transported raw moments. The quadrature has "
+                      "Number of transported moments. The quadrature has "
                       "half as many nodes, rounded up.");
 
     declare_enum_entry(prm,

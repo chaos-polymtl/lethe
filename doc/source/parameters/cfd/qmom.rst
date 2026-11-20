@@ -9,8 +9,8 @@ This subsection defines the parameters of the quadrature method of moments (QMOM
 
 The QMOM physics transports:
 
-* ``number of scalars`` regular scalars;
-* the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
+* ``number of scalars`` user-defined scalar fields;
+* the moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
 All the scalars and moments are discretized with the same scalar discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), on a single set of degrees of freedom, and each of them is stored in its own vector. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
 
@@ -98,11 +98,11 @@ The default values of the QMOM parameters are given in the text box below:
 
   A process other than ``generic`` ignores ``number of scalars``, ``scalar names`` and ``number of moments``, and stops the simulation with an error if they contradict it.
 
-* ``number of scalars``: number of regular scalars transported together with the moments.
+* ``number of scalars``: number of user-defined scalars transported together with the moments.
 
 * ``scalar names``: comma-separated list of scalars names, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). The names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
 
-* ``number of moments``: number :math:`K` of transported raw moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
+* ``number of moments``: number :math:`K` of transported moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
@@ -140,7 +140,7 @@ The default values of the QMOM parameters are given in the text box below:
 Functions of the QMOM fields
 ----------------------------
 
-The initial conditions (see :doc:`initial_conditions`), the values of the ``dirichlet`` boundary conditions (see :doc:`boundary_conditions_multiphysics`), the analytical solution (see :doc:`analytical_solution`) and the source terms (see :doc:`source_term`) of the QMOM fields are all given in the same way. The scalars are given as a list of expressions, while the moments are not given one by one: they are the raw moments of a particle size distribution. The default values are:
+The initial conditions (see :doc:`initial_conditions`), the values of the ``dirichlet`` boundary conditions (see :doc:`boundary_conditions_multiphysics`), the analytical solution (see :doc:`analytical_solution`) and the source terms (see :doc:`source_term`) of the QMOM fields are all given in the same way. The scalars are given as a list of expressions, while the moments are not given one by one: they are the moments of a particle size distribution. The default values are:
 
 .. code-block:: text
 
@@ -164,7 +164,7 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
 
 * ``distribution``: particle size distribution from which the moments are computed.
 
-  * ``type``: family of the particle size distribution. The raw moments of each family are computed analytically by QMOMKit. The choices are:
+  * ``type``: family of the particle size distribution. The moments of each family are computed analytically by QMOMKit. The choices are:
 
     * ``none``: no particles. All the moments are zero and the ``Function expression`` of the distribution is ignored.
     * ``normal``: normal distribution, with parameters the mean and the standard deviation of the size, in m. It is only meaningful when the standard deviation is much smaller than the mean, since the normal distribution extends to negative sizes.
