@@ -160,6 +160,10 @@ public:
       {
         announce_string(pcout, "Continuum Solid Dynamics");
       }
+    else if (physics_id == PhysicsID::qmom)
+      {
+        announce_string(pcout, "QMOM");
+      }
     else
       {
         AssertThrow(
