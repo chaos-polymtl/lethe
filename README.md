@@ -10,6 +10,7 @@
 [![Documentation](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml)
 [![Docker Image](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0%20OR%20LGPL--2.1-blue.svg)](LICENSE-APACHE)
+[![Lethe 1.0 paper](https://img.shields.io/badge/DOI-10.1016%2Fj.cpc.2025.109880-blue.svg)](https://doi.org/10.1016/j.cpc.2025.109880)
 
 Lethe (pronounced /ˈliːθiː/) is an open-source computational fluid dynamics
 (CFD), discrete element method (DEM) and coupled CFD-DEM
@@ -32,7 +33,9 @@ Lethe is named after the river of forgetfulness, which, according to
 > The shades of the dead were required to drink the waters of the Lethe
 > in order to forget their earthly life.
 
-Lethe is described [here](https://doi.org/10.1016/j.cpc.2025.109880).
+Lethe is described in the
+[Lethe 1.0 paper](https://doi.org/10.1016/j.cpc.2025.109880) published in
+*Computer Physics Communications* (see [Citing Lethe](#citing-lethe)).
 It originally began as a weekend project, but slowly grew into a CFD, DEM and CFD-DEM
 software used in actual research. Lethe is under active development. 
 
@@ -54,6 +57,34 @@ Developer documentation based on Doxygen can be found
 
 Follow the instructions in the
 [documentation](https://chaos-polymtl.github.io/lethe/documentation/installation/installation.html).
+
+## Citing Lethe
+
+If you use Lethe in your research, please cite the Lethe 1.0 paper:
+
+> A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont,
+> J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira,
+> H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant,
+> "Lethe 1.0: An open-source parallel high-order computational fluid dynamics
+> software framework for single and multiphase flows", *Computer Physics
+> Communications*, 318, 109880, 2026.
+> [doi:10.1016/j.cpc.2025.109880](https://doi.org/10.1016/j.cpc.2025.109880)
+
+```bibtex
+@article{lethe2026,
+  title   = {Lethe 1.0: An open-source parallel high-order computational fluid dynamics software framework for single and multiphase flows},
+  author  = {Alphonius, Amishga and Barbeau, Lucka and Blais, Bruno and Gaboriault, Olivier and Gu{\'e}vremont, Olivier and Lamouche, Justin and Laurentin, Pierre and Marquis, Oreste and Munch, Peter and Oliveira Ferreira, Victor and Papillon-Laroche, H{\'e}l{\`e}ne and Patience, Paul Alexander and Prieto Saavedra, Laura and Vaillant, Mikael},
+  journal = {Computer Physics Communications},
+  volume  = {318},
+  pages   = {109880},
+  year    = {2026},
+  doi     = {10.1016/j.cpc.2025.109880}
+}
+```
+
+Please also cite the papers for the features you use, as well as deal.II. They
+are listed in the
+[documentation](https://chaos-polymtl.github.io/lethe/documentation/referencing.html).
 
 ## Authors
 
