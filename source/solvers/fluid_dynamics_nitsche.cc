@@ -925,10 +925,9 @@ FluidDynamicsNitsche<dim, spacedim>::gather_tables()
   // tables that are additional in this solver and their associated filenames
   std::vector<OutputStructTableHandler> table_output_structs;
 
-  // Prefix and suffix for the table checkpoint file name
+  // Prefix for the table checkpoint file name
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   // Add the tables of the forces and torques calculated on each solid, one
   // table per solid
@@ -944,7 +943,7 @@ FluidDynamicsNitsche<dim, spacedim>::gather_tables()
             prefix +
               this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                 ->force_output_name +
-              "_" + Utilities::int_to_string(i_solid, 2) + suffix);
+              "_" + Utilities::int_to_string(i_solid, 2));
         }
       if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
             ->calculate_torque_on_solid)
@@ -954,7 +953,7 @@ FluidDynamicsNitsche<dim, spacedim>::gather_tables()
             prefix +
               this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                 ->torque_output_name +
-              "_" + Utilities::int_to_string(i_solid, 2) + suffix);
+              "_" + Utilities::int_to_string(i_solid, 2));
         }
     }
   return table_output_structs;

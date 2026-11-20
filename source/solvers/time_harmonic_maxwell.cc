@@ -1830,13 +1830,12 @@ TimeHarmonicMaxwell<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_THM" + suffix);
+        "_THM");
 
   if (this->simulation_parameters.post_processing
         .calculate_electromagnetic_power)

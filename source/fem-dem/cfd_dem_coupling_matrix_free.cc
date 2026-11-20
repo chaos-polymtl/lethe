@@ -379,11 +379,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::gather_tables()
     this->simulation_parameters.post_processing;
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
   if (post_processing.calculate_phase_volumes)
     table_output_structs.emplace_back(
       this->table_phase_volumes,
-      prefix + post_processing.phase_volumes_output_name + suffix);
+      prefix + post_processing.phase_volumes_output_name);
   return table_output_structs;
 }
 

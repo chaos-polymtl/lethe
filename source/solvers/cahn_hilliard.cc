@@ -974,33 +974,29 @@ CahnHilliard<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix);
+        "_CH");
 
   if (this->simulation_parameters.post_processing.calculate_phase_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing.phase_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     table_output_structs.emplace_back(
       this->barycenter_table,
       prefix +
-        this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.barycenter_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_phase_energy)
     table_output_structs.emplace_back(
       this->phase_energy_table,
       prefix +
-        this->simulation_parameters.post_processing.phase_energy_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.phase_energy_output_name);
 
   return table_output_structs;
 }

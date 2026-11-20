@@ -29,7 +29,6 @@
 #include <magic_enum.hpp>
 
 #include <algorithm>
-#include <filesystem>
 #include <fstream>
 #include <map>
 #include <optional>
@@ -591,29 +590,9 @@ deserialize_table(TableHandler      &table,
 }
 
 /**
- * @brief Return the name of the file in which a table is checkpointed in a
- * given checkpoint slot. The label of the slot is inserted between the stem
- * and the extension of the table file name, e.g. "output/force.checkpoint"
- * becomes "output/force_0.checkpoint".
- *
- * @param[in] table_filename Name of the checkpoint file of the table, without
- * checkpoint slot.
- * @param[in] checkpoint_slot_label Label of the checkpoint slot.
- *
- * @return Name of the checkpoint file of the table in the checkpoint slot.
- */
-inline std::string
-get_checkpoint_table_filename(const std::string &table_filename,
-                              const std::string &checkpoint_slot_label)
-{
-  const std::filesystem::path path(table_filename);
-  return (path.parent_path() / (path.stem().string() + checkpoint_slot_label +
-                                path.extension().string()))
-    .string();
-}
-
-/**
- * @brief Serializes all the TableHandler objects in table_output_structs.
+ * @brief Serializes all the TableHandler objects in table_output_structs. Each
+ * table is written in the file
+ * <table_filename><checkpoint_slot_label>.checkpoint.
  *
  * @param[in] table_output_structs Vector of structures containing references
  * to TableHandler objects that need to be serialized/deserialized for a
@@ -632,14 +611,16 @@ serialize_tables_vector(
   for (const auto &output_table : table_output_structs)
     {
       serialize_table(output_table.table,
-                      get_checkpoint_table_filename(output_table.table_filename,
-                                                    checkpoint_slot_label),
+                      output_table.table_filename + checkpoint_slot_label +
+                        ".checkpoint",
                       mpi_communicator);
     }
 }
 
 /**
  * @brief Deserializes all the TableHandler objects in table_output_structs.
+ * Each table is read from the file
+ * <table_filename><checkpoint_slot_label>.checkpoint.
  *
  * @param[in,out] table_output_structs Vector of structures containing
  * references to TableHandler objects that needs to be serialized/deserialized
@@ -658,8 +639,8 @@ deserialize_tables_vector(
   for (auto &output_table : table_output_structs)
     {
       deserialize_table(output_table.table,
-                        get_checkpoint_table_filename(
-                          output_table.table_filename, checkpoint_slot_label),
+                        output_table.table_filename + checkpoint_slot_label +
+                          ".checkpoint",
                         mpi_communicator);
     }
 }

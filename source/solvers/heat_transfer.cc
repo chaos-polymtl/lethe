@@ -1369,46 +1369,39 @@ HeatTransfer<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_HT" + suffix);
+        "_HT");
 
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
     table_output_structs.emplace_back(
       this->heat_flux_table,
       prefix +
-        this->simulation_parameters.post_processing.heat_flux_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.heat_flux_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_temperature_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
       prefix +
-        this->simulation_parameters.post_processing.temperature_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.temperature_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_algebraic_melt_volume)
     table_output_structs.emplace_back(
       this->melt_volume_alge_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .algebraic_melt_volume_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .algebraic_melt_volume_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_geometric_melt_volume)
     table_output_structs.emplace_back(
       this->melt_volume_geo_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .geometric_melt_volume_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .geometric_melt_volume_output_name);
 
   if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
         .ids_and_isocontours_per_variable.contains(Variable::temperature))
@@ -1429,7 +1422,7 @@ HeatTransfer<dim>::gather_tables()
 
           table_output_structs.emplace_back(
             this->temperature_isocontour_bounding_values_tables[i],
-            prefix + isocontour_output_name + suffix);
+            prefix + isocontour_output_name);
         }
     }
 
