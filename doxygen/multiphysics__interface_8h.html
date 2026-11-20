@@ -121,7 +121,7 @@ Include dependency graph for multiphysics_interface.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="multiphysics__interface_8h__dep__incl.svg" width="4763" height="546"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="multiphysics__interface_8h__dep__incl.svg" width="5219" height="546"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="multiphysics__interface_8h_source.html">Go to the source code of this file.</a></p>
@@ -133,6 +133,7 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a4ee56d005e4a68feb5516d2630e364fb" id="r_a4ee56d005e4a68feb5516d2630e364fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ee56d005e4a68feb5516d2630e364fb">DeclException1</a> (PhysicsIDNotAvailable, int,&lt;&lt; &quot; The physics with ID &quot;&lt;&lt; arg1&lt;&lt; &quot; required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected particle fields to be available. The projected particle temperature <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> is only available in thermal CFD-<a class="el" href="namespaceDEM.html">DEM</a> simulations (solver type = dem_mp). &quot;)</td></tr>
+<tr class="memitem:abe0bfdce15f538cfb1b3297a47193fdf" id="r_abe0bfdce15f538cfb1b3297a47193fdf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe0bfdce15f538cfb1b3297a47193fdf">DeclExceptionMsg</a> (QMOMSolutionNotAvailable, &quot;The <a class="el" href="classQMOM.html">QMOM</a> physics does not provide its solution through the multiphysics &quot; &quot;interface, since it stores one solution vector per component (scalars and &quot; &quot;moments).&quot;)</td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="a4ee56d005e4a68feb5516d2630e364fb" name="a4ee56d005e4a68feb5516d2630e364fb"></a>
@@ -155,6 +156,32 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&lt;&lt; &quot; The physics with ID &quot;&lt;&lt; arg1&lt;&lt; &quot; required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected particle fields to be available. The projected particle temperature <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> is only available in thermal CFD-<a class="el" href="namespaceDEM.html">DEM</a> simulations (solver type = dem_mp). &quot;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abe0bfdce15f538cfb1b3297a47193fdf" name="abe0bfdce15f538cfb1b3297a47193fdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe0bfdce15f538cfb1b3297a47193fdf">&#9670;&#160;</a></span>DeclExceptionMsg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclExceptionMsg </td>
+          <td>(</td>
+          <td class="paramtype">QMOMSolutionNotAvailable</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;The <a class="el" href="classQMOM.html">QMOM</a> physics does not provide its solution through the multiphysics &quot; &quot;</td>          <td class="paramname"><span class="paramname"><em>interface</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">since it stores one solution vector per component(scalars and &quot; &quot;moments).&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

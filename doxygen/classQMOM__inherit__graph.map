@@ -1,0 +1,7 @@
+<map id="QMOM&lt; dim &gt;" name="QMOM&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Quadrature method of moments (QMOM), solved as an auxiliary physics coupled to the fluid dynamics sol..." alt="" coords="50,191,170,218"/>
+<area shape="rect" id="Node000002" href="$classAuxiliaryPhysics.html" title=" " alt="" coords="24,98,196,143"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,157,112,191,108,189,108,160"/>
+<area shape="rect" id="Node000003" href="$classPhysicsSolver.html" title=" " alt="" coords="5,5,215,50"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="111,63,113,99,107,97,109,68"/>
+</map>

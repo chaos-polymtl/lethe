@@ -579,13 +579,13 @@ end
 </section>
 <section id="qmom">
 <h2>QMOM<a class="headerlink" href="#qmom" title="Link to this heading">#</a></h2>
-<p>The boundary conditions of the quadrature method of moments (see <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>) apply to the scalars and the moments. The possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">none</span></code> (default), <code class="docutils literal notranslate"><span class="pre">outlet</span></code> and <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code>. The parameters for each type of QMOM boundary conditions are:</p>
+<p>The boundary conditions of the quadrature method of moments (see <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>) apply to the scalars and the moments. The possible <code class="docutils literal notranslate"><span class="pre">types</span></code> are <code class="docutils literal notranslate"><span class="pre">noflux</span></code> (default), <code class="docutils literal notranslate"><span class="pre">outlet</span></code> and <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code>. The parameters for each type of QMOM boundary conditions are:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions qmom
   set number         = 3
   set time dependent = false
   subsection bc 0
     set id   = 0
-    set type = none
+    set type = noflux
   end
   subsection bc 1
     set id   = 1
@@ -608,19 +608,15 @@ end
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">dependent</span></code> and <code class="docutils literal notranslate"><span class="pre">id</span></code> are as for the tracer boundary conditions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">dependent</span></code> and <code class="docutils literal notranslate"><span class="pre">id</span></code> are as for the tracer boundary conditions. Every boundary of the mesh must have a QMOM boundary condition, including the walls (type <code class="docutils literal notranslate"><span class="pre">noflux</span></code>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: This is the type of boundary condition being imposed:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> (default): the advective flux is zero (no flux). This is the natural choice for walls.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">noflux</span></code> (default): the advective flux is zero, as with the <code class="docutils literal notranslate"><span class="pre">none</span></code> type of the tracer. This is the natural choice for walls; use <code class="docutils literal notranslate"><span class="pre">outlet</span></code> where the flow leaves the domain.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">outlet</span></code>: a natural boundary condition that prevents backflow.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dirichlet</span></code>: the scalars and the particle size distribution are imposed, as functions of space and time, in the <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code> subsection. The format of this subsection is described in <a class="reference internal" href="qmom.html"><span class="doc">Quadrature Method of Moments</span></a>.</p></li>
 </ul>
 </li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The solver of the QMOM physics is not implemented yet: the boundary conditions are parsed, but not applied.</p>
-</div>
 </section>
 <section id="cls">
 <h2>CLS<a class="headerlink" href="#cls" title="Link to this heading">#</a></h2>

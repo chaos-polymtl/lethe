@@ -124,14 +124,14 @@ Private Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class QMOMFieldFunction&lt; dim &gt;</div><p>Function of all the QMOM fields, built from the functions of the scalars and from the particle size distribution. </p>
+class QMOMFieldFunction&lt; dim &gt;</div><p>Function of all the <a class="el" href="classQMOM.html" title="Quadrature method of moments (QMOM), solved as an auxiliary physics coupled to the fluid dynamics sol...">QMOM</a> fields, built from the functions of the scalars and from the particle size distribution. </p>
 <p>It has one component per field, n_scalars + n_moments components in total. The scalars come first, then the moments:</p><ul>
 <li>components 0 to n_scalars - 1 are the scalars: component c is scalar c;</li>
 <li>components n_scalars to n_scalars + n_moments - 1 are the moments: component c is the moment M_k, with k = c - n_scalars.</li>
 </ul>
 <p>For example, with 2 scalars and 4 moments, components 0 and 1 are the scalars 0 and 1, and components 2, 3, 4 and 5 are the moments M_0, M_1, M_2 and M_3. Without scalars, component c is the moment M_c.</p>
 <p>Scalar c is given by expression c of the scalars function, so the scalar expressions must be given in the same order as the scalar names.</p>
-<p>The moments are the raw moments of the particle size distribution, scaled by the number density: M_k = n E[L^k], where n is the number density in particles per m^3 and L the particle size in m. They are computed analytically by QMOMKit, and are all zero if the distribution type is none.</p>
+<p>The moments of the particle size distribution are scaled by the number density: M_k = n E[L^k], where n is the number density in particles per m^3 and L the particle size in m. They are computed analytically by QMOMKit, and are all zero if the distribution type is none.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>Number of spatial dimensions. </td></tr>
@@ -176,8 +176,8 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">functions</td><td>Functions of the scalars and particle size distribution. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_scalars</td><td>Number of scalars transported by the QMOM physics. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_moments</td><td>Number of moments transported by the QMOM physics. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">n_scalars</td><td>Number of scalars transported by the <a class="el" href="classQMOM.html" title="Quadrature method of moments (QMOM), solved as an auxiliary physics coupled to the fluid dynamics sol...">QMOM</a> physics. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">n_moments</td><td>Number of moments transported by the <a class="el" href="classQMOM.html" title="Quadrature method of moments (QMOM), solved as an auxiliary physics coupled to the fluid dynamics sol...">QMOM</a> physics. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">description</td><td>Description of the functions (e.g. "initial
 conditions"), used in the error message. </td></tr>
   </table>
@@ -216,14 +216,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Compute the raw moments of the particle size distribution at a point. </p>
+<p>Compute the moments of the particle size distribution at a point. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td>Point at which the distribution is evaluated.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Raw moments M_0 to M_{n_moments - 1}. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Moments M_0 to M_{n_moments - 1}. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="qmom__field__function_8cc_source.html#l00126">126</a> of file <a class="el" href="qmom__field__function_8cc_source.html">qmom_field_function.cc</a>.</p>
 

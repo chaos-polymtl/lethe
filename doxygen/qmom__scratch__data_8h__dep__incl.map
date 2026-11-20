@@ -1,0 +1,12 @@
+<map id="/home/runner/work/lethe/lethe/include/solvers/qmom_scratch_data.h" name="/home/runner/work/lethe/lethe/include/solvers/qmom_scratch_data.h">
+<area shape="rect" id="Node000001" title="Scratch data used to assemble the discontinuous Galerkin transport of the QMOM components." alt="" coords="221,5,402,67"/>
+<area shape="rect" id="Node000002" href="$qmom_8h.html" title="Auxiliary physics for the transport of a particle size distribution with the quadrature method of mom..." alt="" coords="93,115,274,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="266,76,221,117,218,113,262,79"/>
+<area shape="rect" id="Node000004" href="$qmom_8cc.html" title=" " alt="" coords="221,225,402,286"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="314,81,314,225,309,223,310,84"/>
+<area shape="rect" id="Node000005" href="$qmom__scratch__data_8cc.html" title=" " alt="" coords="349,115,530,177"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="360,75,407,115,401,115,359,80"/>
+<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,225,197,286"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="154,187,126,226,122,222,149,190"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="232,184,279,224,273,224,230,189"/>
+</map>

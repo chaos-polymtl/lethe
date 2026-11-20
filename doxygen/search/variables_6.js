@@ -45,7 +45,7 @@ var searchData=
   ['grad_5fdiv_42',['grad_div',['../structParameters_1_1CFDDEM.html#a00b7fa0994c5cf465b5ba9fc3dec9f83',1,'Parameters::CFDDEM']]],
   ['grad_5fdiv_5fgamma_43',['grad_div_gamma',['../classVANSOperator.html#a3259e11505baf670d385fffcad8e83d2',1,'VANSOperator']]],
   ['grad_5fkinematic_5fviscosity_5fshear_5frate_44',['grad_kinematic_viscosity_shear_rate',['../classNavierStokesOperatorBase.html#ae1e5713c60284c7ba0ba7483f425f7a8',1,'NavierStokesOperatorBase::grad_kinematic_viscosity_shear_rate'],['../classNavierStokesScratchData.html#ae7754a9f031d997877e37f788f749fdb',1,'NavierStokesScratchData::grad_kinematic_viscosity_shear_rate']]],
-  ['grad_5fphi_45',['grad_phi',['../classCLSScratchData.html#a5822bf2d4c4ab8a7f3846f1e39f2664a',1,'CLSScratchData::grad_phi'],['../classTracerScratchData.html#ad608b0881f2a737df5540e974832ae07',1,'TracerScratchData::grad_phi']]],
+  ['grad_5fphi_45',['grad_phi',['../classCLSScratchData.html#a5822bf2d4c4ab8a7f3846f1e39f2664a',1,'CLSScratchData::grad_phi'],['../classQMOMScratchData.html#a6aff9820e9556a8e84e35d12da43d4b7',1,'QMOMScratchData::grad_phi'],['../classTracerScratchData.html#ad608b0881f2a737df5540e974832ae07',1,'TracerScratchData::grad_phi']]],
   ['grad_5fphi_5fface_5fphase_46',['grad_phi_face_phase',['../classCahnHilliardScratchData.html#ac4accd482b9a8ad6f620145d6904711b',1,'CahnHilliardScratchData']]],
   ['grad_5fphi_5fp_47',['grad_phi_p',['../classNavierStokesScratchData.html#ae38cfc270e721ef6a4de6db34dbe7e12',1,'NavierStokesScratchData']]],
   ['grad_5fphi_5fphase_48',['grad_phi_phase',['../classCahnHilliardScratchData.html#a9f32b3dfea0571f15ba81662e8a3255b',1,'CahnHilliardScratchData']]],
