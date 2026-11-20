@@ -905,7 +905,6 @@ CFDDEMSolver<dim, PropertiesIndex>::load_balance()
   this->vertices_cell_mapping();
 }
 
-// ADAM
 template <int dim, typename PropertiesIndex>
 void
 CFDDEMSolver<dim, PropertiesIndex>::connect_lost_particles_signal()
@@ -933,8 +932,8 @@ CFDDEMSolver<dim, PropertiesIndex>::track_lost_particles(
                                   particle->get_properties().end());
   this->lost_particles_data.push_back(lost_particle);
 }
-// DLH
 
+// WIP JACOB
 template <int dim, typename PropertiesIndex>
 void
 CFDDEMSolver<dim, PropertiesIndex>::insert_particles()
