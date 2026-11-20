@@ -143,8 +143,23 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   typename MatrixFree<dim, number>::AdditionalData additional_data;
   additional_data.mapping_update_flags =
-    (update_values | update_gradients | update_JxW_values |
-     update_quadrature_points | update_hessians);
+    (update_values | update_gradients | update_JxW_values);
+
+  // The second derivatives of the mapping are only computed and stored when
+  // the hessians of the solution are evaluated: by the Jacobian and the
+  // residual when enabled, and by the non-Newtonian operator, which reads the
+  // hessians of the linearization point to compute the gradient of the shear
+  // rate.
+  if (enable_hessians_jacobian || enable_hessians_residual ||
+      (physical_properties_manager &&
+       physical_properties_manager->is_non_newtonian()))
+    additional_data.mapping_update_flags |= update_hessians;
+
+  // The quadrature points of the cells are only used to evaluate the forcing
+  // function and the ALE velocity of the mortar method.
+  if (forcing_function || enable_mortar)
+    additional_data.mapping_update_flags |= update_quadrature_points;
+
   additional_data.mg_level = mg_level;
 
   // Loop over all boundary conditions to establish if one of them has face
@@ -317,6 +332,15 @@ NavierStokesOperatorBase<dim, number>::initialize_time_stepping_data() const
       data.is_transient = false;
       return data;
     }
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::update_kernel_data() const
+{
+  this->kernel_time_stepping_data = this->initialize_time_stepping_data();
+  this->kernel_kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
 }
 
 template <int dim, typename number>
@@ -504,6 +528,8 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
 {
   this->timer.enter_subsection("operator::vmult");
 
+  this->update_kernel_data();
+
   // save values for edge constrained dofs and set them to 0 in src vector
   for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
     {
@@ -575,6 +601,8 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   VectorType       &dst,
   VectorType const &src) const
 {
+  this->update_kernel_data();
+
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
@@ -602,6 +630,8 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   VectorType const &src) const
 {
   this->timer.enter_subsection("operator::vmult_interface_up");
+
+  this->update_kernel_data();
 
   if (has_edge_constrained_indices == false)
     {
@@ -658,6 +688,8 @@ const TrilinosWrappers::SparseMatrix &
 NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 {
   this->timer.enter_subsection("operator::get_system_matrix");
+
+  this->update_kernel_data();
 
   if (system_matrix.m() == 0 && system_matrix.n() == 0)
     {
@@ -852,7 +884,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix_free() const
 }
 
 template <int dim, typename number>
-const AlignedVector<VectorizedArray<number>>
+const AlignedVector<VectorizedArray<number>> &
 NavierStokesOperatorBase<dim, number>::get_element_size() const
 {
   return this->element_size;
@@ -938,19 +970,37 @@ NavierStokesOperatorBase<dim, number>::
 
   // 1. Precompute values on cells:
 
-  // Set appropriate size for tables
+  const bool is_non_newtonian = this->properties_manager->is_non_newtonian();
+  const bool is_gls           = this->stabilization ==
+                      Parameters::Stabilization::NavierStokesStabilization::gls;
+  const bool store_hessian_diagonal = this->enable_hessians_jacobian;
+  const bool store_hessian =
+    this->enable_hessians_jacobian && this->store_previous_hessian;
+
+  // Set appropriate size for tables. Only the tables read by the operator are
+  // allocated and filled: they are rewritten at every Newton iteration on
+  // every multigrid level, and an unused table costs both memory and memory
+  // bandwidth. Without mortar, the advective velocity is the velocity of the
+  // linearization point, which is read from nonlinear_previous_values.
+  const auto reinit_if = [&](auto &table, const bool is_used) {
+    if (is_used)
+      table.reinit(n_cells, integrator.n_q_points);
+    else
+      table.clear();
+  };
+
   nonlinear_previous_values.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_gradient.reinit(n_cells, integrator.n_q_points);
-  nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
-  nonlinear_previous_hessian.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
-  stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
-  kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
-  grad_kinematic_viscosity_shear_rate.reinit(n_cells, integrator.n_q_points);
-  kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
-  previous_shear_rate.reinit(n_cells, integrator.n_q_points);
-  previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
-  nonlinear_previous_advective_values.reinit(n_cells, integrator.n_q_points);
+  reinit_if(nonlinear_previous_hessian_diagonal, store_hessian_diagonal);
+  reinit_if(nonlinear_previous_hessian, store_hessian);
+  reinit_if(stabilization_parameter_lsic, is_gls);
+  reinit_if(kinematic_viscosity_vector, is_non_newtonian);
+  reinit_if(grad_kinematic_viscosity_shear_rate, is_non_newtonian);
+  reinit_if(kinematic_viscosity_gradient, is_non_newtonian);
+  reinit_if(previous_shear_rate, is_non_newtonian);
+  reinit_if(previous_shear_rate_magnitude, is_non_newtonian);
+  reinit_if(nonlinear_previous_advective_values, this->enable_mortar);
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -981,32 +1031,31 @@ NavierStokesOperatorBase<dim, number>::
                             EvaluationFlags::gradients);
 
       // Get previously calculated element size needed for tau
-      const auto h = integrator.read_cell_data(this->get_element_size());
+      const auto h = integrator.read_cell_data(this->element_size);
 
       for (const auto q : integrator.quadrature_point_indices())
         {
           nonlinear_previous_values(cell, q)   = integrator.get_value(q);
           nonlinear_previous_gradient(cell, q) = integrator.get_gradient(q);
-          nonlinear_previous_advective_values(cell, q) =
-            integrator.get_value(q);
 
           // If mortar is enabled, subtract u_ALE from the advective velocity
+          auto advective_value = integrator.get_value(q);
           if (this->enable_mortar)
-            nonlinear_previous_advective_values(cell, q) -=
-              this->velocity_ale(cell, q);
-
-          if (this->enable_hessians_jacobian)
             {
-              nonlinear_previous_hessian_diagonal(cell, q) =
-                integrator.get_hessian_diagonal(q);
-              nonlinear_previous_hessian(cell, q) = integrator.get_hessian(q);
+              advective_value -= this->velocity_ale(cell, q);
+              nonlinear_previous_advective_values(cell, q) = advective_value;
             }
+
+          if (store_hessian_diagonal)
+            nonlinear_previous_hessian_diagonal(cell, q) =
+              integrator.get_hessian_diagonal(q);
+          if (store_hessian)
+            nonlinear_previous_hessian(cell, q) = integrator.get_hessian(q);
 
           // Calculate tau
           VectorizedArray<number> u_mag_squared = 1e-12;
           for (int k = 0; k < dim; ++k)
-            u_mag_squared += Utilities::fixed_power<2>(
-              this->nonlinear_previous_advective_values(cell, q)[k]);
+            u_mag_squared += Utilities::fixed_power<2>(advective_value[k]);
 
           stabilization_parameter(cell, q) =
             1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
@@ -1014,13 +1063,14 @@ NavierStokesOperatorBase<dim, number>::
                            9. * Utilities::fixed_power<2>(
                                   4. * kinematic_viscosity / (h * h)));
 
-          stabilization_parameter_lsic(cell, q) =
-            std::sqrt(u_mag_squared) * h * 0.5;
+          if (is_gls)
+            stabilization_parameter_lsic(cell, q) =
+              std::sqrt(u_mag_squared) * h * 0.5;
         }
 
       // Compute kinematic viscosity-related entries for non-Newtonian fluids
       // according to the rheological model
-      if (this->properties_manager->is_non_newtonian())
+      if (is_non_newtonian)
         {
           typename FECellIntegrator::gradient_type shear_rate;
           typename FECellIntegrator::value_type    grad_shear_rate = {};
@@ -1352,6 +1402,8 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
 {
   this->timer.enter_subsection("operator::evaluate_residual");
 
+  this->update_kernel_data();
+
   if (enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::local_evaluate_residual,
@@ -1374,6 +1426,8 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
   VectorType &diagonal) const
 {
   this->timer.enter_subsection("operator::compute_inverse_diagonal");
+
+  this->update_kernel_data();
 
   std::function<void(FEFaceIntegrator &)> boundary_function;
 
@@ -1509,8 +1563,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   const auto         face       = integrator.get_current_cell_index();
   const unsigned int face_index = face - matrix_free.n_inner_face_batches();
 
-  const double kinematic_viscosity =
-    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+  const double kinematic_viscosity = this->kernel_kinematic_viscosity;
 
   const auto penalty_parameter = this->effective_beta_face[face_index];
 
@@ -1612,9 +1665,11 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
             }
           else
             {
-              // Only use the previous velocity values for the Jacobian
+              // Only use the previous velocity values for the Jacobian. Like
+              // the other face tables, this table only holds the boundary
+              // faces, which come after the inner faces.
               for (int d = 0; d < dim; ++d)
-                velocity[d] = face_nonlinear_previous_values[face][q][d];
+                velocity[d] = face_nonlinear_previous_values[face_index][q][d];
             }
 
           // (u·n)_=min(0,u·n)
@@ -1748,21 +1803,37 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       cell_mask = this->solid_cell_mask[cell];
     }
 
-  // Time stepping data information structure.
-  // We create a small helper structure that contains everything related to
-  // the time-stepping process and carries out all the flag checking.
-  const TimeSteppingData time_stepping_data =
-    this->initialize_time_stepping_data();
+  // Time stepping data information structure, gathered once per operator
+  // application by update_kernel_data().
+  const TimeSteppingData &time_stepping_data = this->kernel_time_stepping_data;
 
-  const double          a_ii             = time_stepping_data.a_ii;
-  const double          dt               = time_stepping_data.dt;
-  const bool            is_bdf           = time_stepping_data.is_bdf;
-  const bool            is_sdirk         = time_stepping_data.is_sdirk;
-  const bool            transient        = time_stepping_data.is_transient;
-  const Vector<double> *bdf_coefficients = time_stepping_data.bdf_coefficients;
+  const bool transient = time_stepping_data.is_transient;
 
-  const double kinematic_viscosity =
-    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+  // Coefficient multiplying the present solution in the discrete time
+  // derivative: the first BDF coefficient or 1/(dt a_ii) for SDIRK methods.
+  double time_derivative_coefficient = 0.;
+  if (time_stepping_data.is_bdf)
+    time_derivative_coefficient = (*time_stepping_data.bdf_coefficients)[0];
+  else if (time_stepping_data.is_sdirk)
+    time_derivative_coefficient =
+      1.0 / (time_stepping_data.dt * time_stepping_data.a_ii);
+
+  const double kinematic_viscosity = this->kernel_kinematic_viscosity;
+
+  // Without mortar, the advective velocity is the velocity of the
+  // linearization point.
+  const auto &advective_values = this->enable_mortar ?
+                                   this->nonlinear_previous_advective_values :
+                                   this->nonlinear_previous_values;
+
+  const bool is_gls = this->stabilization ==
+                      Parameters::Stabilization::NavierStokesStabilization::gls;
+
+  // The hessians of the trial function are evaluated whenever they are
+  // enabled, since the laplacian of the velocity appears in the PSPG and SUPG
+  // terms. The hessians of the test functions only appear in the GLS term,
+  // which is the only term that fills hessian_result.
+  const bool integrate_hessians = this->enable_hessians_jacobian && is_gls;
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -1795,10 +1866,11 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       // Gather previous values of the velocity and the pressure
       auto previous_values   = this->nonlinear_previous_values(cell, q);
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
-      auto previous_hessian_diagonal =
-        this->nonlinear_previous_hessian_diagonal(cell, q);
-      auto previous_advective_values =
-        this->nonlinear_previous_advective_values(cell, q);
+      typename FECellIntegrator::gradient_type previous_hessian_diagonal;
+      if (this->enable_hessians_jacobian)
+        previous_hessian_diagonal =
+          this->nonlinear_previous_hessian_diagonal(cell, q);
+      auto previous_advective_values = advective_values(cell, q);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -1806,174 +1878,132 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
           this->time_derivatives_previous_solutions(cell, q);
 
       // Get stabilization parameter
-      const auto tau      = this->stabilization_parameter[cell][q];
-      const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+      const auto tau = this->stabilization_parameter[cell][q];
+
+      // The SUPG, PSPG and GLS terms share two strong forms of the momentum
+      // equation, which are computed once per quadrature point:
+      // - the strong residual linearized around the previous Newton iterate
+      //   and applied to the increment (δu, δp):
+      //   (u_adv·∇)δu + (δu·∇)u - ν∆δu + ∇δp + ∂t δu,
+      // - the strong residual of the previous Newton iterate:
+      //   (u_adv·∇)u - ν∆u + ∇p - f + ∂t u.
+      // The laplacian terms are zero when the hessians are disabled.
+      Tensor<1, dim, VectorizedArray<number>> linearized_strong_residual;
+      Tensor<1, dim, VectorizedArray<number>> previous_strong_residual;
 
       // Weak form Jacobian
       for (int i = 0; i < dim; ++i)
         {
+          // (u_adv·∇)δu + (δu·∇)u
+          VectorizedArray<number> linearized_advection = 0.;
+          // (u_adv·∇)u
+          VectorizedArray<number> previous_advection = 0.;
+          // ∆δu and ∆u
+          VectorizedArray<number> laplacian          = 0.;
+          VectorizedArray<number> previous_laplacian = 0.;
+          for (int k = 0; k < dim; ++k)
+            {
+              linearized_advection +=
+                gradient[i][k] * previous_advective_values[k] +
+                previous_gradient[i][k] * value[k];
+              previous_advection +=
+                previous_gradient[i][k] * previous_advective_values[k];
+              laplacian += hessian_diagonal[i][k];
+              previous_laplacian += previous_hessian_diagonal[i][k];
+            }
+
+          linearized_strong_residual[i] = linearized_advection -
+                                          kinematic_viscosity * laplacian +
+                                          gradient[dim][i];
+          previous_strong_residual[i] =
+            previous_advection - kinematic_viscosity * previous_laplacian +
+            previous_gradient[dim][i] - source_value[i];
+
+          // +(v,(u_adv·∇)δu + (δu·∇)u)
+          value_result[i] = linearized_advection;
+
+          if (transient)
+            {
+              // +(v,∂t δu)
+              value_result[i] += time_derivative_coefficient * value[i];
+              linearized_strong_residual[i] +=
+                time_derivative_coefficient * value[i];
+              previous_strong_residual[i] +=
+                time_derivative_coefficient * previous_values[i] +
+                previous_time_derivatives[i];
+            }
+
           // ν(∇v,∇δu)
           gradient_result[i] = kinematic_viscosity * gradient[i];
           // -(∇·v,δp)
           gradient_result[i][i] += -value[dim];
           // +(q,∇δu)
           value_result[dim] += gradient[i][i];
-
-          for (int k = 0; k < dim; ++k)
-            {
-              // +(v,(u_adv·∇)δu + (δu·∇)u)
-              value_result[i] += gradient[i][k] * previous_advective_values[k] +
-                                 previous_gradient[i][k] * value[k];
-            }
-          // +(v,∂t δu)
-          if (is_bdf)
-            value_result[i] += (*bdf_coefficients)[0] * value[i];
-          if (is_sdirk)
-            {
-              value_result[i] += (1.0 / (dt * a_ii)) * value[i];
-            }
         }
 
       // PSPG Jacobian
-      for (int i = 0; i < dim; ++i)
-        {
-          for (int k = 0; k < dim; ++k)
-            {
-              // (-ν∆δu + (u_adv·∇)δu + (δu·∇)u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                       gradient[i][k] * previous_advective_values[k] +
-                       previous_gradient[i][k] * value[k]);
-            }
-          // +(∂t δu)·τ∇q
-          if (is_bdf)
-            gradient_result[dim][i] += tau * (*bdf_coefficients)[0] * value[i];
-
-          if (is_sdirk)
-            gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
-        }
-      // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
+      // ((u_adv·∇)δu + (δu·∇)u - ν∆δu + ∇δp + ∂t δu)·τ∇q
+      gradient_result[dim] = tau * linearized_strong_residual;
 
       // SUPG Jacobian
       for (int i = 0; i < dim; ++i)
         {
+          const VectorizedArray<number> tau_linearized_strong_residual =
+            tau * linearized_strong_residual[i];
+          const VectorizedArray<number> tau_previous_strong_residual =
+            tau * previous_strong_residual[i];
           for (int k = 0; k < dim; ++k)
             {
               // Part 1
-              for (int l = 0; l < dim; ++l)
-                {
-                  // +((u_adv·∇)δu + (δu·∇)u - ν∆δu)τ(u_adv·∇)v
-                  gradient_result[i][k] +=
-                    tau * previous_advective_values[k] *
-                    (gradient[i][l] * previous_advective_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     kinematic_viscosity * hessian_diagonal[i][l]);
-                }
-              // +(∇δp)τ(u_adv·∇)v
-              gradient_result[i][k] +=
-                tau * previous_advective_values[k] * (gradient[dim][i]);
-
-              // +(∂t δu)τ(u_adv·∇)v
-              if (is_bdf)
-                gradient_result[i][k] += tau * previous_advective_values[k] *
-                                         ((*bdf_coefficients)[0] * value[i]);
-
-              if (is_sdirk)
-                {
-                  gradient_result[i][k] += tau * previous_advective_values[k] *
-                                           ((1.0 / (dt * a_ii)) * value[i]);
-                }
-
+              // +((u_adv·∇)δu + (δu·∇)u - ν∆δu + ∇δp + ∂t δu)τ(u_adv·∇)v
               // Part 2
-              for (int l = 0; l < dim; ++l)
-                {
-                  // +((u·∇)u - ν∆u)τ(δu·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] *
-                    (previous_gradient[i][l] * previous_advective_values[l] -
-                     kinematic_viscosity * previous_hessian_diagonal[i][l]);
-                }
-              // +(∇p - f)τ(δu·∇)v
+              // +((u_adv·∇)u - ν∆u + ∇p - f + ∂t u)τ(δu·∇)v
               gradient_result[i][k] +=
-                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
-
-              // +(∂t u)τ(δu·∇)v
-              if (is_bdf)
-                gradient_result[i][k] +=
-                  tau * value[k] *
-                  ((*bdf_coefficients)[0] * previous_values[i] +
-                   previous_time_derivatives[i]);
-              if (is_sdirk)
-                {
-                  gradient_result[i][k] +=
-                    tau * value[k] *
-                    ((1.0 / (dt * a_ii)) * previous_values[i] +
-                     previous_time_derivatives[i]);
-                }
+                tau_linearized_strong_residual * previous_advective_values[k] +
+                tau_previous_strong_residual * value[k];
             }
         }
 
-      if (this->stabilization ==
-          Parameters::Stabilization::NavierStokesStabilization::gls)
+      if (is_gls)
         {
+          const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+
           // GLS Jacobian
+          // +((u_adv·∇)δu + (δu·∇)u - ν∆δu + ∇δp + ∂t δu)τ(−ν∆v)
+          if (this->enable_hessians_jacobian)
+            for (int i = 0; i < dim; ++i)
+              {
+                const VectorizedArray<number> gls_term =
+                  tau * -kinematic_viscosity * linearized_strong_residual[i];
+                for (int k = 0; k < dim; ++k)
+                  hessian_result[i][k][k] = gls_term;
+              }
+
+          // LSIC term
+          // (∇·δu)τ'(∇·v)
+          VectorizedArray<number> divergence = 0.;
+          for (int k = 0; k < dim; ++k)
+            divergence += gradient[k][k];
           for (int i = 0; i < dim; ++i)
-            {
-              for (int k = 0; k < dim; ++k)
-                {
-                  if (this->enable_hessians_jacobian)
-                    {
-                      for (int l = 0; l < dim; ++l)
-                        {
-                          // +((u_adv·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
-                          hessian_result[i][k][k] +=
-                            tau * -kinematic_viscosity *
-                            (gradient[i][l] * previous_advective_values[l] +
-                             previous_gradient[i][l] * value[l] -
-                             kinematic_viscosity * hessian_diagonal[i][l]);
-                        }
-
-                      // +(∇δp)τ(−ν∆v)
-                      hessian_result[i][k][k] +=
-                        tau * -kinematic_viscosity * (gradient[dim][i]);
-
-                      // +(∂t δu)τ(−ν∆v)
-                      if (is_bdf)
-                        hessian_result[i][k][k] +=
-                          tau * -kinematic_viscosity *
-                          ((*bdf_coefficients)[0] * value[i]);
-                      if (is_sdirk)
-                        {
-                          hessian_result[i][k][k] +=
-                            tau * -kinematic_viscosity *
-                            ((1.0 / (dt * a_ii)) * value[i]);
-                        }
-                    }
-
-                  // LSIC term
-                  // (∇·δu)τ'(∇·v)
-                  gradient_result[i][i] += tau_lsic * gradient[k][k];
-                }
-            }
+            gradient_result[i][i] += tau_lsic * divergence;
         }
 
       if (this->has_solids)
         {
           gradient_result = gradient_result * cell_mask;
           value_result    = value_result * cell_mask;
-          if (this->enable_hessians_jacobian)
+          if (integrate_hessians)
             hessian_result = hessian_result * cell_mask;
         }
 
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
 
-      if (this->enable_hessians_jacobian)
+      if (integrate_hessians)
         integrator.submit_hessian(hessian_result, q);
     }
 
-  if (this->enable_hessians_jacobian)
+  if (integrate_hessians)
     integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients |
                          EvaluationFlags::hessians);
   else
@@ -2004,8 +2034,36 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 {
   FECellIntegrator integrator(matrix_free);
 
-  const double kinematic_viscosity =
-    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+  const double kinematic_viscosity = this->kernel_kinematic_viscosity;
+
+  // Without mortar, the advective velocity is the velocity of the
+  // linearization point.
+  const auto &advective_values = this->enable_mortar ?
+                                   this->nonlinear_previous_advective_values :
+                                   this->nonlinear_previous_values;
+
+  const bool is_gls = this->stabilization ==
+                      Parameters::Stabilization::NavierStokesStabilization::gls;
+
+  // The hessians of the solution are evaluated whenever they are enabled,
+  // since the laplacian of the velocity appears in the PSPG and SUPG terms. The
+  // hessians of the test functions only appear in the GLS term, which is the
+  // only term that fills hessian_result.
+  const bool integrate_hessians = this->enable_hessians_residual && is_gls;
+
+  // Time stepping data information structure, gathered once per operator
+  // application by update_kernel_data().
+  const TimeSteppingData &time_stepping_data = this->kernel_time_stepping_data;
+  const bool              transient          = time_stepping_data.is_transient;
+
+  // Coefficient multiplying the present solution in the discrete time
+  // derivative: the first BDF coefficient or 1/(dt a_ii) for SDIRK methods.
+  double time_derivative_coefficient = 0.;
+  if (time_stepping_data.is_bdf)
+    time_derivative_coefficient = (*time_stepping_data.bdf_coefficients)[0];
+  else if (time_stepping_data.is_sdirk)
+    time_derivative_coefficient =
+      1.0 / (time_stepping_data.dt * time_stepping_data.a_ii);
 
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
@@ -2028,19 +2086,6 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           cell_mask = this->solid_cell_mask[cell];
         }
 
-      // Time stepping data information structure.
-      // We create a small helper structure that contains everything related to
-      // the time-stepping process and carries out all the flag checking.
-      const TimeSteppingData time_stepping_data =
-        this->initialize_time_stepping_data();
-
-      const double          a_ii      = time_stepping_data.a_ii;
-      const double          dt        = time_stepping_data.dt;
-      const bool            is_bdf    = time_stepping_data.is_bdf;
-      const bool            is_sdirk  = time_stepping_data.is_sdirk;
-      const bool            transient = time_stepping_data.is_transient;
-      const Vector<double> *bdf_coefficients =
-        time_stepping_data.bdf_coefficients;
 
       for (const auto q : integrator.quadrature_point_indices())
         {
@@ -2061,8 +2106,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::gradient_type gradient =
             integrator.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal;
-          const auto                               advective_value =
-            this->nonlinear_previous_advective_values(cell, q);
+          const auto advective_value = advective_values(cell, q);
 
           if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
@@ -2074,163 +2118,110 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               this->time_derivatives_previous_solutions(cell, q);
 
           // Get stabilization parameter
-          const auto tau      = this->stabilization_parameter[cell][q];
-          const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+          const auto tau = this->stabilization_parameter[cell][q];
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
           typename FECellIntegrator::gradient_type gradient_result;
           typename FECellIntegrator::hessian_type  hessian_result;
 
+          // The SUPG, PSPG and GLS terms share the strong residual of the
+          // momentum equation, which is computed once per quadrature point:
+          // (u_adv·∇)u - ν∆u + ∇p - f + ∂t u.
+          // The laplacian term is zero when the hessians are disabled.
+          Tensor<1, dim, VectorizedArray<number>> strong_residual;
+
           // Weak form
           for (int i = 0; i < dim; ++i)
             {
+              // (u_adv·∇)u
+              VectorizedArray<number> advection = 0.;
+              // ∆u
+              VectorizedArray<number> laplacian = 0.;
+              for (int k = 0; k < dim; ++k)
+                {
+                  advection += gradient[i][k] * advective_value[k];
+                  laplacian += hessian_diagonal[i][k];
+                }
+
+              // +(v,(u·∇)u - f)
+              value_result[i] = advection - source_value[i];
+
+              strong_residual[i] = advection - kinematic_viscosity * laplacian +
+                                   gradient[dim][i] - source_value[i];
+
+              // +(v,∂t u)
+              if (transient)
+                {
+                  const VectorizedArray<number> time_derivative =
+                    time_derivative_coefficient * value[i] +
+                    previous_time_derivatives[i];
+                  value_result[i] += time_derivative;
+                  strong_residual[i] += time_derivative;
+                }
+
               // ν(∇v,∇u)
               gradient_result[i] = kinematic_viscosity * gradient[i];
               // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
-              // +(v,-f)
-              value_result[i] = -source_value[i];
-
-              // +(v,∂t u)
-              if (is_bdf)
-                value_result[i] += (*bdf_coefficients)[0] * value[i] +
-                                   previous_time_derivatives[i];
-              if (is_sdirk)
-                {
-                  value_result[i] += (1.0 / (dt * a_ii)) * value[i] +
-                                     previous_time_derivatives[i];
-                }
-
               // +(q,∇·u)
               value_result[dim] += gradient[i][i];
-              for (int k = 0; k < dim; ++k)
-                {
-                  // +(v,(u·∇)u)
-                  value_result[i] += gradient[i][k] * advective_value[k];
-                }
             }
 
           // PSPG term
-          for (int i = 0; i < dim; ++i)
-            {
-              for (int k = 0; k < dim; ++k)
-                {
-                  // (-ν∆u + (u_adv·∇)u)·τ∇q
-                  gradient_result[dim][i] +=
-                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                           gradient[i][k] * advective_value[k]);
-                }
-              // +(-f)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
-
-              // +(∂t u)·τ∇q
-              if (is_bdf)
-                gradient_result[dim][i] +=
-                  tau * ((*bdf_coefficients)[0] * value[i] +
-                         previous_time_derivatives[i]);
-              if (is_sdirk)
-                gradient_result[dim][i] +=
-                  tau * ((1.0 / (dt * a_ii)) * value[i] +
-                         previous_time_derivatives[i]);
-            }
-          // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
+          // ((u_adv·∇)u - ν∆u + ∇p - f + ∂t u)·τ∇q
+          gradient_result[dim] = tau * strong_residual;
 
           // SUPG term
+          // ((u_adv·∇)u - ν∆u + ∇p - f + ∂t u)τ(u_adv·∇)v
           for (int i = 0; i < dim; ++i)
             {
+              const VectorizedArray<number> tau_strong_residual =
+                tau * strong_residual[i];
               for (int k = 0; k < dim; ++k)
-                {
-                  for (int l = 0; l < dim; ++l)
-                    {
-                      // (-ν∆u)τ(u_adv·∇)v
-                      gradient_result[i][k] += -tau * kinematic_viscosity *
-                                               advective_value[k] *
-                                               hessian_diagonal[i][l];
-
-                      // + ((u_adv·∇)u)τ(u_adv·∇)v
-                      gradient_result[i][k] += tau * advective_value[k] *
-                                               gradient[i][l] *
-                                               advective_value[l];
-                    }
-                  // + (∇p - f)τ(u_adv·∇)v
-                  gradient_result[i][k] += tau * advective_value[k] *
-                                           (gradient[dim][i] - source_value[i]);
-
-                  // + (∂t u)τ(u_adv·∇)v
-                  if (is_bdf)
-                    gradient_result[i][k] +=
-                      tau * advective_value[k] *
-                      ((*bdf_coefficients)[0] * value[i] +
-                       previous_time_derivatives[i]);
-
-                  if (is_sdirk)
-                    gradient_result[i][k] += tau * advective_value[k] *
-                                             ((1.0 / (dt * a_ii)) * value[i] +
-                                              previous_time_derivatives[i]);
-                }
+                gradient_result[i][k] +=
+                  tau_strong_residual * advective_value[k];
             }
 
-          if (this->stabilization ==
-              Parameters::Stabilization::NavierStokesStabilization::gls)
+          if (is_gls)
             {
+              const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+
               // GLS term
+              // ((u_adv·∇)u - ν∆u + ∇p - f + ∂t u)τ(−ν∆v)
+              if (this->enable_hessians_residual)
+                for (int i = 0; i < dim; ++i)
+                  {
+                    const VectorizedArray<number> gls_term =
+                      tau * -kinematic_viscosity * strong_residual[i];
+                    for (int k = 0; k < dim; ++k)
+                      hessian_result[i][k][k] = gls_term;
+                  }
+
+              // LSIC term
+              // (∇·u)τ'(∇·v)
+              VectorizedArray<number> divergence = 0.;
+              for (int k = 0; k < dim; ++k)
+                divergence += gradient[k][k];
               for (int i = 0; i < dim; ++i)
-                {
-                  for (int k = 0; k < dim; ++k)
-                    {
-                      if (this->enable_hessians_residual)
-                        {
-                          for (int l = 0; l < dim; ++l)
-                            {
-                              // (-ν∆u + (u_adv·∇)u)τ(−ν∆v)
-                              hessian_result[i][k][k] +=
-                                tau * -kinematic_viscosity *
-                                (-kinematic_viscosity * hessian_diagonal[i][l] +
-                                 gradient[i][l] * advective_value[l]);
-                            }
-                          // + (∇p - f)τ(−ν∆v)
-                          hessian_result[i][k][k] +=
-                            tau * -kinematic_viscosity *
-                            (gradient[dim][i] - source_value[i]);
-
-                          // + (∂t u)τ(−ν∆v)
-                          if (is_bdf)
-                            hessian_result[i][k][k] +=
-                              tau * -kinematic_viscosity *
-                              ((*bdf_coefficients)[0] * value[i] +
-                               previous_time_derivatives[i]);
-
-                          if (is_sdirk)
-                            hessian_result[i][k][k] +=
-                              tau * -kinematic_viscosity *
-                              ((1.0 / (dt * a_ii)) * value[i] +
-                               previous_time_derivatives[i]);
-                        }
-
-                      // LSIC term
-                      // (∇·u)τ'(∇·v)
-                      gradient_result[i][i] += tau_lsic * gradient[k][k];
-                    }
-                }
+                gradient_result[i][i] += tau_lsic * divergence;
             }
 
           if (this->has_solids)
             {
               gradient_result = gradient_result * cell_mask;
               value_result    = value_result * cell_mask;
-              if (this->enable_hessians_residual)
+              if (integrate_hessians)
                 hessian_result = hessian_result * cell_mask;
             }
 
           integrator.submit_gradient(gradient_result, q);
           integrator.submit_value(value_result, q);
-          if (this->enable_hessians_residual)
+          if (integrate_hessians)
             integrator.submit_hessian(hessian_result, q);
         }
 
-      if (this->enable_hessians_residual)
+      if (integrate_hessians)
         integrator.integrate_scatter(EvaluationFlags::values |
                                        EvaluationFlags::gradients |
                                        EvaluationFlags::hessians,
@@ -2290,11 +2281,9 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       cell_mask = this->solid_cell_mask[cell];
     }
 
-  // Time stepping data information structure.
-  // We create a small helper structure that contains everything related to
-  // the time-stepping process and carries out all the flag checking.
-  const TimeSteppingData time_stepping_data =
-    this->initialize_time_stepping_data();
+  // Time stepping data information structure, gathered once per operator
+  // application by update_kernel_data().
+  const TimeSteppingData &time_stepping_data = this->kernel_time_stepping_data;
 
   const double          a_ii             = time_stepping_data.a_ii;
   const double          dt               = time_stepping_data.dt;
@@ -2302,6 +2291,12 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
   const bool            is_sdirk         = time_stepping_data.is_sdirk;
   const bool            transient        = time_stepping_data.is_transient;
   const Vector<double> *bdf_coefficients = time_stepping_data.bdf_coefficients;
+
+  // Without mortar, the advective velocity is the velocity of the
+  // linearization point.
+  const auto &advective_values = this->enable_mortar ?
+                                   this->nonlinear_previous_advective_values :
+                                   this->nonlinear_previous_values;
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -2324,18 +2319,20 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       if (this->enable_hessians_jacobian)
         hessian_diagonal = integrator.get_hessian_diagonal(q);
 
-      // Result value/gradient we will use
+      // Result value/gradient we will use. The non-Newtonian Jacobian has no
+      // term with the hessians of the test functions, so no hessian is
+      // submitted.
       typename FECellIntegrator::value_type    value_result;
       typename FECellIntegrator::gradient_type gradient_result;
-      typename FECellIntegrator::hessian_type  hessian_result;
 
       // Gather previous values of the velocity and the pressure
       auto previous_values   = this->nonlinear_previous_values(cell, q);
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
-      auto previous_hessian_diagonal =
-        this->nonlinear_previous_hessian_diagonal(cell, q);
-      auto previous_advective_values =
-        this->nonlinear_previous_advective_values(cell, q);
+      typename FECellIntegrator::gradient_type previous_hessian_diagonal;
+      if (this->enable_hessians_jacobian)
+        previous_hessian_diagonal =
+          this->nonlinear_previous_hessian_diagonal(cell, q);
+      auto previous_advective_values = advective_values(cell, q);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -2500,22 +2497,13 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         {
           gradient_result = gradient_result * cell_mask;
           value_result    = value_result * cell_mask;
-          if (this->enable_hessians_jacobian)
-            hessian_result = hessian_result * cell_mask;
         }
 
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
-
-      if (this->enable_hessians_jacobian)
-        integrator.submit_hessian(hessian_result, q);
     }
 
-  if (this->enable_hessians_jacobian)
-    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients |
-                         EvaluationFlags::hessians);
-  else
-    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
 /**
@@ -2541,6 +2529,12 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
 {
   FECellIntegrator integrator(matrix_free);
 
+  // Without mortar, the advective velocity is the velocity of the
+  // linearization point.
+  const auto &advective_values = this->enable_mortar ?
+                                   this->nonlinear_previous_advective_values :
+                                   this->nonlinear_previous_values;
+
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
       integrator.reinit(cell);
@@ -2562,11 +2556,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
           cell_mask = this->solid_cell_mask[cell];
         }
 
-      // Time stepping data information structure.
-      // We create a small helper structure that contains everything related to
-      // the time-stepping process and carries out all the flag checking.
-      const TimeSteppingData time_stepping_data =
-        this->initialize_time_stepping_data();
+      // Time stepping data information structure, gathered once per operator
+      // application by update_kernel_data().
+      const TimeSteppingData &time_stepping_data =
+        this->kernel_time_stepping_data;
 
       const double          a_ii      = time_stepping_data.a_ii;
       const double          dt        = time_stepping_data.dt;
@@ -2593,8 +2586,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
           typename FECellIntegrator::gradient_type gradient =
             integrator.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal;
-          const auto                               advective_value =
-            this->nonlinear_previous_advective_values(cell, q);
+          const auto advective_value = advective_values(cell, q);
 
           if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
@@ -2616,10 +2608,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
           const auto kinematic_viscosity_gradient =
             this->kinematic_viscosity_gradient[cell][q];
 
-          // Result value/gradient we will use
+          // Result value/gradient we will use. The non-Newtonian residual has
+          // no term with the hessians of the test functions, so no hessian is
+          // submitted.
           typename FECellIntegrator::value_type    value_result;
           typename FECellIntegrator::gradient_type gradient_result;
-          typename FECellIntegrator::hessian_type  hessian_result;
 
           // Additional values/gradients needed
           typename FECellIntegrator::gradient_type shear_rate;
@@ -2724,25 +2717,15 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
             {
               gradient_result = gradient_result * cell_mask;
               value_result    = value_result * cell_mask;
-              if (this->enable_hessians_residual)
-                hessian_result = hessian_result * cell_mask;
             }
 
           integrator.submit_gradient(gradient_result, q);
           integrator.submit_value(value_result, q);
-          if (this->enable_hessians_residual)
-            integrator.submit_hessian(hessian_result, q);
         }
 
-      if (this->enable_hessians_residual)
-        integrator.integrate_scatter(EvaluationFlags::values |
-                                       EvaluationFlags::gradients |
-                                       EvaluationFlags::hessians,
-                                     dst);
-      else
-        integrator.integrate_scatter(EvaluationFlags::values |
-                                       EvaluationFlags::gradients,
-                                     dst);
+      integrator.integrate_scatter(EvaluationFlags::values |
+                                     EvaluationFlags::gradients,
+                                   dst);
     }
 }
 

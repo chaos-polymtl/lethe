@@ -1262,7 +1262,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            true,
+            // The residual is never evaluated on the multigrid levels
+            false,
             this->simulation_parameters.mortar_parameters.enable);
 
           this->ls_mg_operators[level].initialize(*(this->mg_operators)[level]);
@@ -1491,7 +1492,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             {
               this->dof_handlers[l].distribute_dofs(
                 FESystem<dim>(FE_Q<dim>(levels[l].second), dim + 1));
-              DoFRenumbering::Cuthill_McKee(this->dof_handlers[l]);
+
+              // The Cuthill-McKee renumbering only benefits the matrix-based
+              // coarse-grid solvers and preconditioners. It is expensive on
+              // fine levels and is therefore only applied to the coarsest
+              // level. The finest level keeps the numbering of distribute_dofs,
+              // like the DoF handler of the solver, since the transfer to the
+              // finest level assumes that both numberings are identical.
+              if (l == this->minlevel && this->minlevel != this->maxlevel)
+                DoFRenumbering::Cuthill_McKee(this->dof_handlers[l]);
             }
         }
 
@@ -1790,7 +1799,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            true,
+            // The residual is never evaluated on the multigrid levels
+            false,
             enable_mortar_on_level);
 
           this->mg_setup_timer.leave_subsection("Set up operators");
@@ -2086,12 +2096,18 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
         std::make_shared<SolverGMRES<TrilinosVectorType>>(
           *this->coarse_grid_solver_control, solver_parameters);
 
+      // The matrix of the coarse level is assembled once and shared by the
+      // GMRES solver and its preconditioner, since get_system_matrix()
+      // reassembles it at every call.
+      const TrilinosWrappers::SparseMatrix &coarse_matrix =
+        this->mg_operators[this->minlevel]->get_system_matrix();
+
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_gmres_preconditioner ==
           Parameters::LinearSolver::PreconditionerType::amg)
         {
-          setup_AMG();
+          setup_AMG(coarse_matrix);
 
           this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
             MGVectorType,
@@ -2099,7 +2115,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
             TrilinosWrappers::SparseMatrix,
             PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
-            this->mg_operators[this->minlevel]->get_system_matrix(),
+            coarse_matrix,
             *this->coarse_grid_precondition);
         }
       else if (this->simulation_parameters.linear_solver
@@ -2107,7 +2123,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
                  .mg_gmres_preconditioner ==
                Parameters::LinearSolver::PreconditionerType::ilu)
         {
-          setup_ILU();
+          setup_ILU(coarse_matrix);
 
           this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
             MGVectorType,
@@ -2115,7 +2131,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
             TrilinosWrappers::SparseMatrix,
             PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
-            this->mg_operators[this->minlevel]->get_system_matrix(),
+            coarse_matrix,
             *this->coarse_grid_precondition);
         }
     }
@@ -2124,7 +2140,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
              .mg_coarse_grid_solver ==
            Parameters::LinearSolver::CoarseGridSolverType::amg)
     {
-      setup_AMG();
+      setup_AMG(this->mg_operators[this->minlevel]->get_system_matrix());
 
       this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
@@ -2134,7 +2150,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
              .mg_coarse_grid_solver ==
            Parameters::LinearSolver::CoarseGridSolverType::ilu)
     {
-      setup_ILU();
+      setup_ILU(this->mg_operators[this->minlevel]->get_system_matrix());
 
       this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
@@ -2468,13 +2484,10 @@ MFNavierStokesPreconditionGMGBase<dim>::get_mg_smoother_preconditioners() const
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
+MFNavierStokesPreconditionGMGBase<dim>::setup_AMG(
+  const TrilinosWrappers::SparseMatrix &min_level_matrix)
 {
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-
-  // Extract matrix of the minlevel to avoid building it twice
-  const TrilinosWrappers::SparseMatrix &min_level_matrix =
-    this->mg_operators[this->minlevel]->get_system_matrix();
 
   if (!this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .mg_amg_use_default_parameters)
@@ -2577,7 +2590,8 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMGBase<dim>::setup_ILU()
+MFNavierStokesPreconditionGMGBase<dim>::setup_ILU(
+  const TrilinosWrappers::SparseMatrix &min_level_matrix)
 {
   int current_preconditioner_fill_level =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -2593,9 +2607,7 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_ILU()
 
   auto precondition_ilu = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  precondition_ilu->initialize(
-    this->mg_operators[this->minlevel]->get_system_matrix(),
-    preconditionerOptions);
+  precondition_ilu->initialize(min_level_matrix, preconditionerOptions);
 
   coarse_grid_precondition =
     std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
@@ -2744,38 +2756,44 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
       const unsigned int min_level = this->minlevel;
       const unsigned int max_level = this->maxlevel;
 
-      this->temperature_dof_handlers.resize(min_level, max_level);
-
-      for (unsigned int l = min_level; l <= max_level; l++)
+      // The level DoF handlers and the transfer only depend on the mesh, they
+      // are built once for this preconditioner object.
+      if (!this->mg_transfer_gc_temperature)
         {
-          this->temperature_dof_handlers[l].reinit(
-            this->dof_handlers[l].get_triangulation());
-          this->temperature_dof_handlers[l].distribute_dofs(
-            temperature_dof_handler.get_fe());
-          DoFRenumbering::Cuthill_McKee(this->temperature_dof_handlers[l]);
+          this->temperature_dof_handlers.resize(min_level, max_level);
+
+          for (unsigned int l = min_level; l <= max_level; l++)
+            {
+              this->temperature_dof_handlers[l].reinit(
+                this->dof_handlers[l].get_triangulation());
+              this->temperature_dof_handlers[l].distribute_dofs(
+                temperature_dof_handler.get_fe());
+              DoFRenumbering::Cuthill_McKee(this->temperature_dof_handlers[l]);
+            }
+
+          this->transfers_temperature.resize(min_level, max_level);
+
+          for (unsigned int l = min_level; l < max_level; l++)
+            {
+              this->transfers_temperature[l + 1].reinit(
+                this->temperature_dof_handlers[l + 1],
+                this->temperature_dof_handlers[l],
+                {},
+                {});
+            }
+
+          this->mg_transfer_gc_temperature =
+            std::make_shared<GCTransferType>(this->transfers_temperature);
+
+          this->mg_transfer_gc_temperature->build(
+            temperature_dof_handler, [&](const auto l, auto &vec) {
+              vec.reinit(
+                this->temperature_dof_handlers[l].locally_owned_dofs(),
+                DoFTools::extract_locally_active_dofs(
+                  this->temperature_dof_handlers[l]),
+                this->temperature_dof_handlers[l].get_mpi_communicator());
+            });
         }
-
-      this->transfers_temperature.resize(min_level, max_level);
-
-      for (unsigned int l = min_level; l < max_level; l++)
-        {
-          this->transfers_temperature[l + 1].reinit(
-            this->temperature_dof_handlers[l + 1],
-            this->temperature_dof_handlers[l],
-            {},
-            {});
-        }
-
-      this->mg_transfer_gc_temperature =
-        std::make_shared<GCTransferType>(this->transfers_temperature);
-
-      this->mg_transfer_gc_temperature->build(
-        temperature_dof_handler, [&](const auto l, auto &vec) {
-          vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
-                     DoFTools::extract_locally_active_dofs(
-                       this->temperature_dof_handlers[l]),
-                     this->temperature_dof_handlers[l].get_mpi_communicator());
-        });
 
       MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
                                                           this->maxlevel);
@@ -3066,9 +3084,14 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // Clear matrix free operator
   this->system_operator->clear();
 
-  // Fill the dof handler and initialize vectors
+  // Fill the dof handler and initialize vectors. The Cuthill-McKee
+  // renumbering is expensive and does not benefit the matrix-free operators, it
+  // is skipped with the global coarsening multigrid, whose finest level uses
+  // the numbering of distribute_dofs as well.
   this->dof_handler->distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner != Parameters::LinearSolver::PreconditionerType::gcmg)
+    DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -3899,8 +3922,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
     }
   const double non_rescaled_linear_solver_tolerance =
     linear_solver_tolerance * rescale_metric;
-  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
-                                                   this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
@@ -4034,8 +4055,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_BiCGStab(
     }
   const double non_rescaled_linear_solver_tolerance =
     linear_solver_tolerance * rescale_metric;
-  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
-                                                   this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)

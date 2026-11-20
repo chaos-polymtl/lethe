@@ -15,15 +15,15 @@ Fluid Dynamics
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 5.084268e-01
-    Minimum eigenvalue: 2.980078e+00
-    Maximum eigenvalue: 3.576094e+00
+    Relaxation parameter: 5.020171e-01
+    Minimum eigenvalue: 3.018127e+00
+    Maximum eigenvalue: 3.621753e+00
 
 Newton iteration: 0  - Residual:  4.648111e+00
   -Tolerance of iterative solver is : 4.648111e-04
-  -Iterative solver took : 1 steps to reach a residual norm of 0.000000e+00
-	alpha =      1	res = 2.594106e-14
+  -Iterative solver took : 1 steps to reach a residual norm of 6.926226e-08
+	alpha =      1	res = 2.680690e-14
 	  ||du||_L2 = 2.499035e-01	  ||du||_Linfty = 6.250000e-02
 	  ||dp||_L2 = 4.558646e+01	  ||dp||_Linfty = 1.000000e+01
 cells error_velocity error_pressure 
-    6 1.988898e-14 - 3.162424e-13 - 
+    6 2.233229e-14 - 3.624393e-13 - 
