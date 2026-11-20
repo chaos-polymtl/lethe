@@ -1841,10 +1841,8 @@ TimeHarmonicMaxwell<dim>::gather_tables()
         .calculate_electromagnetic_power)
     table_output_structs.emplace_back(
       this->electromagnetic_power_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .electromagnetic_power_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .electromagnetic_power_output_name);
 
   return table_output_structs;
 }
