@@ -61,8 +61,8 @@ test()
 
   for (unsigned int mesh_ref = 0; mesh_ref < 3; mesh_ref++)
     {
-      unsigned int max_ref = 4 + mesh_ref;
-      unsigned int min_ref = max_ref - 3;
+      unsigned int max_ref = 3 + mesh_ref;
+      unsigned int min_ref = max_ref - 2;
 
 
       // Triangulation (as a shared_ptr to reproduce an arbitrary background
