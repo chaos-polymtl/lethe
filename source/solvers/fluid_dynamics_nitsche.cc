@@ -967,8 +967,8 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
   // Write solid base checkpoint
   for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
-      std::string filename = this->get_checkpoint_prefix() + "_solid_" +
-                             Utilities::int_to_string(i_solid, 2);
+      const std::string filename = this->get_checkpoint_prefix() + "_solid_" +
+                                   Utilities::int_to_string(i_solid, 2);
 
       (*this->solids)[i_solid]->write_checkpoint(filename);
     }
@@ -976,7 +976,7 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
   // Call regular checkpointing routine
   this->FluidDynamicsMatrixBased<spacedim>::write_checkpoint();
 
-  std::string prefix = this->get_checkpoint_prefix();
+  const std::string prefix = this->get_checkpoint_prefix();
 
   // Write data about paraview format (pvd)
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
@@ -1024,15 +1024,15 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
   // after the triangulation is read.
   for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
-      std::string prefix = this->get_checkpoint_prefix() + "_solid_" +
-                           Utilities::int_to_string(i_solid, 2);
+      const std::string prefix = this->get_checkpoint_prefix() + "_solid_" +
+                                 Utilities::int_to_string(i_solid, 2);
 
       (*solids)[i_solid]->read_checkpoint(prefix);
     }
 
 
   // Reload particle and solid pvd handlers
-  std::string prefix = this->get_checkpoint_prefix();
+  const std::string prefix = this->get_checkpoint_prefix();
   for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
       // Load Paraview pvd handler for solid triangulation and particles

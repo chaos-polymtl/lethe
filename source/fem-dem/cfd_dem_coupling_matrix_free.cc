@@ -395,9 +395,9 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
 
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
 
-  std::string prefix           = this->get_checkpoint_prefix();
-  std::string prefix_particles = prefix + "_particles";
-  std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+  const std::string prefix           = this->get_checkpoint_prefix();
+  const std::string prefix_particles = prefix + "_particles";
+  const std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
 
   // Register the particles for serialization (all ranks)
   this->particle_handler.prepare_for_serialization();
@@ -502,10 +502,10 @@ void
 CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  using VectorType             = LinearAlgebra::distributed::Vector<double>;
-  std::string prefix           = this->get_checkpoint_prefix();
-  std::string prefix_particles = prefix + "_particles";
-  std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+  using VectorType         = LinearAlgebra::distributed::Vector<double>;
+  const std::string prefix = this->get_checkpoint_prefix();
+  const std::string prefix_particles = prefix + "_particles";
+  const std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
 
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);

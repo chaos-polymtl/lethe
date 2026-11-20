@@ -2204,13 +2204,14 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  std::string        prefix = this->get_checkpoint_prefix();
+  const std::string  prefix = this->get_checkpoint_prefix();
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
   if (this->simulation_control->get_output_boundaries())
     {
-      std::string prefix_boundary = this->get_checkpoint_prefix() + ".boundary";
+      const std::string prefix_boundary =
+        this->get_checkpoint_prefix() + ".boundary";
 
       this->pvdhandler_boundary.read(prefix_boundary);
     }
@@ -3074,7 +3075,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
-  std::string        prefix = this->get_checkpoint_prefix();
+  const std::string  prefix = this->get_checkpoint_prefix();
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);
@@ -3085,7 +3086,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 
       if (this->simulation_control->get_output_boundaries())
         {
-          std::string prefix_boundary =
+          const std::string prefix_boundary =
             this->get_checkpoint_prefix() + ".boundary";
 
           this->pvdhandler_boundary.save(prefix_boundary);
