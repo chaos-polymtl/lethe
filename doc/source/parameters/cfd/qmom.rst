@@ -9,17 +9,64 @@ This subsection defines the parameters of the quadrature method of moments (QMOM
 
 The QMOM physics transports:
 
-* ``number of scalars`` regular scalars;
-* the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
+* ``number of scalars`` user-defined scalar fields;
+* the moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
-All the fields are discretized with a discontinuous Galerkin finite elements of degree ``qmom degree`` (see :doc:`fem`). The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+All the scalars and moments are discretized with the same scalar discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), on a single set of degrees of freedom, and each of them is stored in its own vector. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
 
 .. caution::
     All the parameters of the QMOM physics are in SI units.
 
 .. warning::
 
-  The QMOM physics is under development. Only its parameters are available: enabling it in the :doc:`multiphysics` subsection stops the simulation with an error, since its solver is not implemented yet.
+  The QMOM physics is under development. Only the transport of the moments in physical space, with their source terms, and their growth, nucleation and coalescence in phase space are implemented. The following features are not available yet and stop the simulation with an error: the scalars (``number of scalars`` must be 0) and the ``strang`` splitting scheme.
+
+Discretization
+--------------
+
+Each time step of the fluid dynamics is split into the transport of the scalars and moments in physical space, followed by their evolution in phase space (``lie`` splitting).
+
+Transport in Physical Space
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Every component :math:`\zeta_c`, scalar or moment, is transported by the velocity :math:`\mathbf{u}` of the fluid at the end of the time step, which is solved before the QMOM physics, with the source term :math:`S_c` of the :doc:`source_term` subsection:
+
+.. math::
+
+  \frac{\partial \zeta_c}{\partial t} + \nabla \cdot (\mathbf{u} \zeta_c) = S_c
+
+The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c` smaller than the ``number of scalars``, and the moment :math:`M_{c - n_s}` otherwise, where :math:`n_s` is the ``number of scalars``.
+
+This equation is discretized with an upwind discontinuous Galerkin method and integrated in time with the BDF scheme of the ``method`` of the :doc:`simulation_control` subsection, which must be ``bdf1``, ``bdf2`` or ``bdf3``. The steady and SDIRK methods are not supported. If the growth, the nucleation or the coalescence is enabled, the method must be ``bdf1``: the previous solutions of the BDF scheme include the changes of the previous phase-space steps, which the ``bdf2`` and ``bdf3`` schemes would extrapolate and partly repeat. The ``lie`` splitting is first-order accurate anyway, so the ``bdf1`` scheme loses no accuracy. Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every scalar and moment. The linear systems are solved with the parameters of the ``qmom`` subsection of the :doc:`linear_solver_control` subsection, with the GMRES method and an ``ilu`` or ``amg`` preconditioner. The QMOM physics has no ``non-linear solver`` subsection. Since the moments have very different magnitudes, the tolerance of each scalar and moment is the ``relative residual`` times its initial residual, computed with the solution at the beginning of the time step as initial guess, but at least the ``minimum residual``. The ``minimum residual`` should therefore be much smaller than the initial residual of the smallest moment.
+
+Evolution in Phase Space
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The evolution in phase space is done by QMOMKit, independently at every degree of freedom: since the element is nodal and discontinuous, the moments of a degree of freedom are the moments at its support point. They are inverted into a quadrature of :math:`N` nodes, of weights :math:`w_i` and abscissas (sizes) :math:`\xi_i`, with the Wheeler algorithm, the quadrature is evolved over the time step, and the moments are rebuilt from it. Three mechanisms evolve the quadrature:
+
+* the growth moves the abscissas with the growth rate :math:`G`, while the weights are unchanged:
+
+  .. math::
+
+    \frac{\mathrm{d} \xi_i}{\mathrm{d} t} = G(\xi_i, t)
+
+  The trajectories are integrated with an adaptive Runge-Kutta method, with the tolerances of the ``phase evolution`` subsection.
+
+* the nucleation creates particles at the rate :math:`J`, whose sizes follow a log-normal distribution of mean :math:`m` and standard deviation :math:`\sigma`:
+
+  .. math::
+
+    \frac{\mathrm{d} M_k}{\mathrm{d} t} = J \exp\left(k \mu + \frac{k^2 s^2}{2}\right), \quad s^2 = \ln\left(1 + \frac{\sigma^2}{m^2}\right), \quad \mu = \ln(m) - \frac{s^2}{2}
+
+* the coalescence merges two particles of sizes :math:`\xi_i` and :math:`\xi_j` at the rate given by the kernel :math:`\beta`, into a particle of the same volume, of size :math:`(\xi_i^3 + \xi_j^3)^{1/3}`. The moment :math:`M_3`, proportional to the volume of the particles, is therefore conserved:
+
+  .. math::
+
+    \frac{\mathrm{d} M_k}{\mathrm{d} t} = \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} w_i w_j \beta(\xi_i, \xi_j, t) \left[ \left(\xi_i^3 + \xi_j^3\right)^{k/3} - \xi_i^k - \xi_j^k \right]
+
+The changes of the moments due to the nucleation and the coalescence are integrated with a third-order Runge-Kutta method, and combined with the growth within the phase-space step by a Strang splitting, the default of QMOMKit. This inner splitting is distinct from the ``splitting scheme`` of the transport and the phase-space evolution. QMOMKit also provides two first-order alternatives (growth then sources, or sources then growth), which are not exposed as parameters. The rates of the three mechanisms can depend on the scalars of the degree of freedom, which keep their values at the end of the transport during the phase-space step: none of the current models uses them. Without any mechanism enabled, the quadrature does not evolve and the moments are unchanged, up to the round-off of the inversion.
+
+Degrees of freedom without particles (:math:`M_0` below :math:`10^{-30}`) have no quadrature: only the nucleation changes their moments, with its rate integrated by the midpoint rule. The moments must nevertheless be realizable, i.e. be the moments of a distribution of positive sizes: the simulation stops with an error at the first time step where they cannot be inverted, for example because of the oscillations of the transport near steep gradients.
 
 Parameters
 ----------
@@ -38,8 +85,30 @@ The default values of the QMOM parameters are given in the text box below:
     set enable coalescence = false
     set enable growth      = false
 
+    subsection growth
+      set model               = constant
+      set growth coefficient  = 0
+      set Function expression = 0
+    end
+
+    subsection nucleation
+      set model                     = constant
+      set nucleation coefficient    = 0
+      set Function expression       = 0
+      set nuclei mean size          = 1e-09
+      set nuclei standard deviation = 1e-10
+    end
+
+    subsection coalescence
+      set model                   = constant
+      set coalescence coefficient = 0
+      set Function expression     = 0
+    end
+
     subsection phase evolution
       set enable adaptive node count = false
+      set relative tolerance         = 1e-08
+      set absolute tolerance         = 1e-20
     end
 
     subsection lipid nanoparticle production
@@ -76,6 +145,9 @@ The default values of the QMOM parameters are given in the text box below:
     end
   end
 
+General
+^^^^^^^
+
 * ``process``: process simulated. The choices are:
 
   * ``generic``: the scalars and the moments are given by ``number of scalars``, ``scalar names`` and ``number of moments``.
@@ -83,22 +155,63 @@ The default values of the QMOM parameters are given in the text box below:
 
   A process other than ``generic`` ignores ``number of scalars``, ``scalar names`` and ``number of moments``, and stops the simulation with an error if they contradict it.
 
-* ``number of scalars``: number of regular scalars transported together with the moments.
+* ``number of scalars``: number of user-defined scalars transported together with the moments.
 
 * ``scalar names``: comma-separated list of scalars names, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). The names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
 
-* ``number of moments``: number :math:`K` of transported raw moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
+* ``number of moments``: number :math:`K` of transported moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
   * ``lie``: :math:`T(\Delta t)` followed by :math:`P(\Delta t)`. This scheme is first-order accurate in time.
   * ``strang``: :math:`P(\Delta t / 2)`, then :math:`T(\Delta t)`, then :math:`P(\Delta t / 2)`. This scheme is second-order accurate in time when both parts are at least second-order accurate.
 
-* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space mecanisms. They are disabled by default, so that the moments are only transported.
+Phase-Space Source Terms
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space mechanisms. They are disabled by default, so that the moments are only transported.
+
+* ``growth``: growth of the particles in phase space, used if ``enable growth`` is ``true``. The growth rate :math:`G` is the velocity of the particle size :math:`\xi` in phase space, in m/s.
+
+  * ``model``: model of the growth rate. The choices are:
+
+    * ``constant``: :math:`G = a`, with :math:`a` the ``growth coefficient`` in m/s. All the sizes increase by the same amount.
+    * ``linear``: :math:`G = a \xi`, with :math:`a` the ``growth coefficient`` in 1/s. All the sizes are multiplied by :math:`\exp(a t)`, so that a log-normal distribution stays log-normal, with the mean of the logarithm of the size increased by :math:`a t`, and :math:`M_k(t) = M_k(0) \exp(k a t)`.
+    * ``function``: :math:`G` is the ``Function expression``. This generic model is slower than the ``constant`` and ``linear`` models, since the expression is evaluated by a parser for every quadrature node, at every stage of the integration and at every degree of freedom: use it only for a growth rate that no other model provides.
+
+  * ``growth coefficient``: coefficient :math:`a` of the ``constant`` and ``linear`` models.
+  * ``Function expression``: growth rate of the ``function`` model, in m/s, as an expression of the particle size ``xi``, in m, and of the time ``t``, in s (e.g. ``set Function expression = 2 * xi``). The expression cannot depend on the position.
+
+* ``nucleation``: nucleation of the particles in phase space, used if ``enable nucleation`` is ``true``. The nucleation rate :math:`J` is the number of particles created per unit volume and time, in 1/(m\ :sup:`3` s).
+
+  * ``model``: model of the nucleation rate. The choices are:
+
+    * ``constant``: :math:`J = a`, with :math:`a` the ``nucleation coefficient`` in 1/(m\ :sup:`3` s).
+    * ``function``: :math:`J` is the ``Function expression``. This generic model is slower than the ``constant`` model, since the expression is evaluated by a parser at every stage of the integration and at every degree of freedom.
+
+  * ``nucleation coefficient``: coefficient :math:`a` of the ``constant`` model.
+  * ``Function expression``: nucleation rate of the ``function`` model, in 1/(m\ :sup:`3` s), as an expression of the time ``t``, in s (e.g. ``set Function expression = 1e19 * exp(-t)``). The expression cannot depend on the position.
+  * ``nuclei mean size``: mean size :math:`m` of the log-normal distribution of the sizes of the nuclei, in m.
+  * ``nuclei standard deviation``: standard deviation :math:`\sigma` of this distribution, in m. It must be strictly positive: nuclei of a single size would have moments that can only be inverted into a single quadrature node.
+
+* ``coalescence``: coalescence of the particles in phase space, used if ``enable coalescence`` is ``true``. The coalescence kernel :math:`\beta` is the rate at which two particles merge, in m\ :sup:`3`/s.
+
+  * ``model``: model of the coalescence kernel. The choices are:
+
+    * ``constant``: :math:`\beta = a`, with :math:`a` the ``coalescence coefficient`` in m\ :sup:`3`/s. Then :math:`M_0` decreases as :math:`\mathrm{d} M_0 / \mathrm{d} t = -a M_0^2 / 2`.
+    * ``function``: :math:`\beta` is the ``Function expression``. This generic model is slower than the ``constant`` model, since the expression is evaluated by a parser for every pair of quadrature nodes, at every stage of the integration and at every degree of freedom.
+
+  * ``coalescence coefficient``: coefficient :math:`a` of the ``constant`` model.
+  * ``Function expression``: coalescence kernel of the ``function`` model, in m\ :sup:`3`/s, as an expression of the sizes ``xi_1`` and ``xi_2`` of the two particles, in m, and of the time ``t``, in s (e.g. ``set Function expression = 1e-18 * (xi_1 + xi_2) / 1e-7``). The expression cannot depend on the position.
 
 * ``phase evolution``: options of the phase-space evolution in QMOMKit.
 
-  * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set.
+  * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set, instead of stopping the simulation with an error.
+  * ``relative tolerance``: relative tolerance of the adaptive Runge-Kutta integration of the trajectories of the quadrature nodes in phase space.
+  * ``absolute tolerance``: absolute tolerance of this integration, in m. The default value is much smaller than the particle sizes, so that the ``relative tolerance`` controls the integration.
+
+Process Parameters
+^^^^^^^^^^^^^^^^^^
 
 * ``lipid nanoparticle production``: process parameters of the production of lipid nanoparticles (LNP), in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
 
@@ -125,7 +238,7 @@ The default values of the QMOM parameters are given in the text box below:
 Functions of the QMOM fields
 ----------------------------
 
-The initial conditions (see :doc:`initial_conditions`), the values of the ``dirichlet`` boundary conditions (see :doc:`boundary_conditions_multiphysics`), the analytical solution (see :doc:`analytical_solution`) and the source terms (see :doc:`source_term`) of the QMOM fields are all given in the same way. The scalars are given as a list of expressions, while the moments are not given one by one: they are the raw moments of a particle size distribution. The default values are:
+The initial conditions (see :doc:`initial_conditions`), the values of the ``dirichlet`` boundary conditions (see :doc:`boundary_conditions_multiphysics`), the analytical solution (see :doc:`analytical_solution`) and the source terms (see :doc:`source_term`) of the QMOM fields are all given in the same way. The scalars are given as a list of expressions, while the moments are not given one by one: they are the moments of a particle size distribution. The default values are:
 
 .. code-block:: text
 
@@ -149,7 +262,7 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
 
 * ``distribution``: particle size distribution from which the moments are computed.
 
-  * ``type``: family of the particle size distribution. The raw moments of each family are computed analytically by QMOMKit. The choices are:
+  * ``type``: family of the particle size distribution. The moments of each family are computed analytically by QMOMKit. The choices are:
 
     * ``none``: no particles. All the moments are zero and the ``Function expression`` of the distribution is ignored.
     * ``normal``: normal distribution, with parameters the mean and the standard deviation of the size, in m. It is only meaningful when the standard deviation is much smaller than the mean, since the normal distribution extends to negative sizes.

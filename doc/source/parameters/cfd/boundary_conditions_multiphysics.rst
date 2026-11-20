@@ -156,17 +156,13 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
     end
   end
 
-* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions.
+* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions. Every boundary of the mesh must have a QMOM boundary condition, including the walls (type ``none``).
 
 * ``type``: This is the type of boundary condition being imposed:
 
   * ``none`` (default): the advective flux is zero (no flux). This is the natural choice for walls.
   * ``outlet``: a natural boundary condition that prevents backflow.
   * ``dirichlet``: the scalars and the particle size distribution are imposed, as functions of space and time, in the ``dirichlet`` subsection. The format of this subsection is described in :doc:`qmom`.
-
-.. warning::
-
-  The solver of the QMOM physics is not implemented yet: the boundary conditions are parsed, but not applied.
 
 CLS
 ^^^
