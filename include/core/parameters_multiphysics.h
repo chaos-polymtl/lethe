@@ -612,6 +612,107 @@ namespace Parameters
   };
 
   /**
+   * @brief Model of the nucleation rate J, the number of particles created per
+   * unit volume and time, in 1/(m^3 s):
+   *  - constant: J = a, with a the nucleation coefficient in 1/(m^3 s);
+   *  - function: J is a function expression of the time t.
+   */
+  enum class QMOMNucleationModel : std::int8_t
+  {
+    constant,
+    function
+  };
+
+  /**
+   * @brief Parameters of the nucleation of the particles in phase space,
+   * declared in the "nucleation" subsection of the "QMOM" subsection. They are
+   * only used if the nucleation is enabled. All of them are in SI units.
+   */
+  struct QMOMNucleation
+  {
+    /// Model of the nucleation rate
+    QMOMNucleationModel model = QMOMNucleationModel::constant;
+
+    /// Coefficient of the constant nucleation model [1/(m^3 s)]
+    double nucleation_coefficient = 0.;
+
+    /// Expression of the nucleation rate [1/(m^3 s)] of the function model, in
+    /// terms of the time t [s]
+    std::string function_expression = "0";
+
+    /// Mean size of the nuclei [m], whose sizes follow a log-normal
+    /// distribution
+    double nuclei_mean_size = 1e-9;
+
+    /// Standard deviation of the size of the nuclei [m]
+    double nuclei_standard_deviation = 1e-10;
+
+    /**
+     * @brief Declare the "nucleation" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "nucleation" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Model of the coalescence kernel beta, the rate at which two
+   * particles of sizes xi_1 and xi_2 merge, in m^3/s:
+   *  - constant: beta = a, with a the coalescence coefficient in m^3/s;
+   *  - function: beta is a function expression of the sizes xi_1 and xi_2 of
+   *    the two particles and of the time t.
+   */
+  enum class QMOMCoalescenceModel : std::int8_t
+  {
+    constant,
+    function
+  };
+
+  /**
+   * @brief Parameters of the coalescence of the particles in phase space,
+   * declared in the "coalescence" subsection of the "QMOM" subsection. They
+   * are only used if the coalescence is enabled. All of them are in SI units.
+   */
+  struct QMOMCoalescence
+  {
+    /// Model of the coalescence kernel
+    QMOMCoalescenceModel model = QMOMCoalescenceModel::constant;
+
+    /// Coefficient of the constant coalescence model [m^3/s]
+    double coalescence_coefficient = 0.;
+
+    /// Expression of the coalescence kernel [m^3/s] of the function model, in
+    /// terms of the sizes xi_1 and xi_2 [m] of the two particles and of the
+    /// time t [s]
+    std::string function_expression = "0";
+
+    /**
+     * @brief Declare the "coalescence" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "coalescence" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Operator splitting scheme between the physical-space transport (T)
    * and the phase-space evolution (P) of the QMOM fields:
    *  - lie: T then P over the whole time step (first order);
@@ -874,6 +975,14 @@ namespace Parameters
     /// Growth of the particles ("growth" subsection), used if enable_growth
     /// is true
     QMOMGrowth growth;
+
+    /// Nucleation of the particles ("nucleation" subsection), used if
+    /// enable_nucleation is true
+    QMOMNucleation nucleation;
+
+    /// Coalescence of the particles ("coalescence" subsection), used if
+    /// enable_coalescence is true
+    QMOMCoalescence coalescence;
 
     /// Phase-space evolution ("phase evolution" subsection)
     QMOMPhaseEvolution phase_evolution;

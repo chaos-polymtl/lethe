@@ -441,12 +441,13 @@ private:
    * freedom are the moments at its support point: they are inverted into a
    * quadrature (Wheeler algorithm), the quadrature is evolved over the time
    * step by qmomkit::advance_qmom_phase_space(), and the moments are rebuilt
-   * from it. Degrees of freedom without particles (zeroth moment below the
-   * cutoff of QMOMKit) are left unchanged. The nodes move with the growth
-   * velocity of phase_space_source_terms, which is zero if the growth is
-   * disabled. Nucleation and coalescence are not implemented yet, so the
-   * moment source is zero. If the moments of any degree of freedom cannot be
-   * inverted or evolved, an exception is thrown on every rank.
+   * from it. The mechanisms are the callbacks of phase_space_source_terms:
+   * the nodes move with the growth rate, the coalescence changes the moments
+   * through the quadrature and the nucleation adds particles. They receive
+   * the scalars of the degree of freedom. Degrees of freedom without particles
+   * (zeroth moment below the cutoff of QMOMKit) only change by nucleation. If
+   * the moments of any degree of freedom cannot be inverted or evolved, an
+   * exception is thrown on every rank.
    *
    * @param[in] time_step Duration of the phase-space step, which ends at the
    * current time of the simulation control.

@@ -60,7 +60,6 @@
 #include <iomanip>
 #include <memory>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -168,12 +167,6 @@ QMOM<dim>::QMOM(
               ExcMessage("The strang splitting scheme of the QMOM physics is "
                          "not implemented yet. Set \"splitting scheme\" to lie "
                          "in the QMOM subsection."));
-  AssertThrow(!qmom_parameters.enable_nucleation &&
-                !qmom_parameters.enable_coalescence,
-              ExcMessage("The nucleation and the coalescence of the QMOM "
-                         "physics are not implemented yet. Set \"enable "
-                         "nucleation\" and \"enable coalescence\" to false in "
-                         "the QMOM subsection."));
 
   // Growth, nucleation and coalescence of the particles in phase space
   phase_space_source_terms = std::make_unique<QMOMSourceTerms>(qmom_parameters);
@@ -1234,21 +1227,16 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
   const double phase_space_start_time =
     simulation_control->get_current_time() - time_step;
 
-  // Phase-space velocity of the quadrature nodes, which is the growth rate
-  // selected by the growth model. QMOMPhaseSpaceVelocity has the type of
-  // qmomkit::PhaseSpaceVelocity, so it is passed to QMOMKit as is.
-  static_assert(
-    std::is_same_v<QMOMPhaseSpaceVelocity, qmomkit::PhaseSpaceVelocity>,
-    "QMOMPhaseSpaceVelocity must have the type of qmomkit::PhaseSpaceVelocity");
+  // Callbacks of QMOMKit, built once by the source terms: the growth moves
+  // the quadrature nodes, the coalescence changes the moments through the
+  // quadrature, and the nucleation adds particles. A disabled mechanism
+  // contributes zero.
   const qmomkit::PhaseSpaceVelocity &phase_space_velocity =
-    phase_space_source_terms->get_growth_velocity();
-
-  // Rate of change of the moments in phase space (nucleation and
-  // coalescence). The constructor rejects both, so the rate is zero.
-  const qmomkit::QmomMomentSource moment_source =
-    [](const double /*time*/, const qmomkit::QmomSourceContext &context) {
-      return qmomkit::QmomMomentRate{std::vector<double>(context.size(), 0.)};
-    };
+    phase_space_source_terms->get_phase_space_velocity();
+  const qmomkit::QmomMomentSource &moment_source =
+    phase_space_source_terms->get_moment_source();
+  const qmomkit::QmomMomentBoundaryContribution &boundary_contribution =
+    phase_space_source_terms->get_boundary_contribution();
 
   // Node count and inversion options shared by all the degrees of freedom.
   // The moments of the case are not used: each degree of freedom builds its
@@ -1276,10 +1264,20 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
   // The discontinuous elements are nodal and no degree of freedom is shared
   // between cells, so the moments of each degree of freedom are the moments
   // at its support point and are evolved independently of the others
+  std::vector<double> local_scalars(n_scalars);
   std::vector<double> local_moments(n_moments);
+  std::vector<double> nucleation_moment_rates(n_moments);
   bool                evolution_failed = false;
   for (const types::global_dof_index dof : locally_owned_dofs)
     {
+      // The models of the mechanisms may depend on the scalars at this degree
+      // of freedom (e.g. through the supersaturation of a process). The
+      // scalars are not evolved in phase space: they keep their values at the
+      // end of the transport in physical space during the whole step.
+      for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
+        local_scalars[i_scalar] = present_solutions[i_scalar][dof];
+      phase_space_source_terms->set_local_scalars(local_scalars);
+
       // The moments are left unchanged unless they are evolved below
       for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
         {
@@ -1293,9 +1291,22 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
                                   evolution_options.realizability_policy);
 
       // Without particles (zeroth moment below the cutoff of QMOMKit), there
-      // is no quadrature to evolve and the moments are left unchanged
+      // is no quadrature: nothing can grow or coalesce, and only the
+      // nucleation changes the moments. Its rate is integrated with the
+      // midpoint rule, which is exact for the constant model.
       if (candidate.status == qmomkit::StateCandidateStatus::empty)
-        continue;
+        {
+          if (phase_space_source_terms->nucleation_is_enabled())
+            {
+              phase_space_source_terms->compute_nucleation_moment_rates(
+                phase_space_start_time + 0.5 * time_step,
+                nucleation_moment_rates);
+              for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+                evolved_moments[i_moment][dof] +=
+                  time_step * nucleation_moment_rates[i_moment];
+            }
+          continue;
+        }
 
       // The moments cannot be inverted into a quadrature
       if (!candidate.ok())
@@ -1310,6 +1321,7 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
                                           time_step,
                                           phase_space_velocity,
                                           moment_source,
+                                          boundary_contribution,
                                           evolution_options);
 
       // The evolved quadrature cannot be rebuilt into moments
