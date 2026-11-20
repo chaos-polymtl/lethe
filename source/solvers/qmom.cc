@@ -1278,7 +1278,8 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
         local_scalars[i_scalar] = present_solutions[i_scalar][dof];
       phase_space_source_terms->set_local_scalars(local_scalars);
 
-      // The moments are left unchanged unless they are evolved below
+      // The moments are left unchanged unless they are evolved below. They
+      // are only inserted: switching to addition is a collective operation.
       for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
         {
           local_moments[i_moment] =
@@ -1302,7 +1303,8 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
                 phase_space_start_time + 0.5 * time_step,
                 nucleation_moment_rates);
               for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
-                evolved_moments[i_moment][dof] +=
+                evolved_moments[i_moment][dof] =
+                  local_moments[i_moment] +
                   time_step * nucleation_moment_rates[i_moment];
             }
           continue;
