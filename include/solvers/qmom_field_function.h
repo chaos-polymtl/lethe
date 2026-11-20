@@ -4,7 +4,7 @@
 /**
  * @file qmom_field_function.h
  * @brief Vector-valued function of the fields of the quadrature method of
- * moments (QMOM) physics: the scalars and the raw moments of a particle size
+ * moments (QMOM) physics: the scalars and the moments of a particle size
  * distribution, computed with the QMOMKit library.
  */
 
@@ -51,7 +51,7 @@ DeclExceptionMsg(
  * Scalar c is given by expression c of the scalars function, so the scalar
  * expressions must be given in the same order as the scalar names.
  *
- * The moments are the raw moments of the particle size distribution, scaled by
+ * The moments of the particle size distribution are scaled by
  * the number density: M_k = n E[L^k], where n is the number density in
  * particles per m^3 and L the particle size in m. They are computed
  * analytically by QMOMKit, and are all zero if the distribution type is none.
@@ -139,12 +139,12 @@ public:
 
 private:
   /**
-   * @brief Compute the raw moments of the particle size distribution at a
+   * @brief Compute the moments of the particle size distribution at a
    * point.
    *
    * @param[in] p Point at which the distribution is evaluated.
    *
-   * @return Raw moments M_0 to M_{n_moments - 1}.
+   * @return Moments M_0 to M_{n_moments - 1}.
    */
   std::vector<double>
   compute_moments(const Point<dim> &p) const;

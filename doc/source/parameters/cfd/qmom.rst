@@ -9,17 +9,32 @@ This subsection defines the parameters of the quadrature method of moments (QMOM
 
 The QMOM physics transports:
 
-* ``number of scalars`` regular scalars;
-* the raw moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
+* ``number of scalars`` user-defined scalar fields;
+* the moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, where :math:`K` is the ``number of moments``. The quadrature has :math:`N = \lceil K/2 \rceil` nodes, since :math:`N` nodes are defined by :math:`2N` moments.
 
-All the fields are discretized with a discontinuous Galerkin finite elements of degree ``qmom degree`` (see :doc:`fem`). The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+All the scalars and moments are discretized with the same scalar discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`), on a single set of degrees of freedom, and each of them is stored in its own vector. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
 
 .. caution::
     All the parameters of the QMOM physics are in SI units.
 
 .. warning::
 
-  The QMOM physics is under development. Only its parameters are available: enabling it in the :doc:`multiphysics` subsection stops the simulation with an error, since its solver is not implemented yet.
+  The QMOM physics is under development. Only the transport of the moments in physical space, with their source terms, is implemented. The following features are not available yet and stop the simulation with an error: the scalars (``number of scalars`` must be 0), the ``strang`` splitting scheme and the evolution of the moments in phase space (``enable nucleation``, ``enable coalescence`` and ``enable growth`` must be ``false``).
+
+Discretization
+--------------
+
+Each time step of the fluid dynamics is split into the transport of the scalars and moments in physical space, followed by their evolution in phase space (``lie`` splitting).
+
+Every component :math:`\zeta_c`, scalar or moment, is transported by the velocity :math:`\mathbf{u}` of the fluid at the end of the time step, which is solved before the QMOM physics, with the source term :math:`S_c` of the :doc:`source_term` subsection:
+
+.. math::
+
+  \frac{\partial \zeta_c}{\partial t} + \nabla \cdot (\mathbf{u} \zeta_c) = S_c
+
+The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c` smaller than the ``number of scalars`` :math:`n_s`, and the moment :math:`M_{c - n_s}` otherwise.
+
+This equation is discretized with an upwind discontinuous Galerkin method and integrated in time with the BDF scheme of the ``method`` of the :doc:`simulation_control` subsection, which must be ``bdf1``, ``bdf2`` or ``bdf3``. The steady and SDIRK methods are not supported. Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every scalar and moment. The linear systems are solved with the parameters of the ``qmom`` subsection of the :doc:`linear_solver_control` subsection, with the GMRES method and an ``ilu`` or ``amg`` preconditioner. The QMOM physics has no ``non-linear solver`` subsection. Since the moments have very different magnitudes, the tolerance of each scalar and moment is the ``relative residual`` times its initial residual, computed with the solution at the beginning of the time step as initial guess, but at least the ``minimum residual``. The ``minimum residual`` should therefore be much smaller than the initial residual of the smallest moment.
 
 Parameters
 ----------
@@ -83,11 +98,11 @@ The default values of the QMOM parameters are given in the text box below:
 
   A process other than ``generic`` ignores ``number of scalars``, ``scalar names`` and ``number of moments``, and stops the simulation with an error if they contradict it.
 
-* ``number of scalars``: number of regular scalars transported together with the moments.
+* ``number of scalars``: number of user-defined scalars transported together with the moments.
 
 * ``scalar names``: comma-separated list of scalars names, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). The names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
 
-* ``number of moments``: number :math:`K` of transported raw moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
+* ``number of moments``: number :math:`K` of transported moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
@@ -125,7 +140,7 @@ The default values of the QMOM parameters are given in the text box below:
 Functions of the QMOM fields
 ----------------------------
 
-The initial conditions (see :doc:`initial_conditions`), the values of the ``dirichlet`` boundary conditions (see :doc:`boundary_conditions_multiphysics`), the analytical solution (see :doc:`analytical_solution`) and the source terms (see :doc:`source_term`) of the QMOM fields are all given in the same way. The scalars are given as a list of expressions, while the moments are not given one by one: they are the raw moments of a particle size distribution. The default values are:
+The initial conditions (see :doc:`initial_conditions`), the values of the ``dirichlet`` boundary conditions (see :doc:`boundary_conditions_multiphysics`), the analytical solution (see :doc:`analytical_solution`) and the source terms (see :doc:`source_term`) of the QMOM fields are all given in the same way. The scalars are given as a list of expressions, while the moments are not given one by one: they are the moments of a particle size distribution. The default values are:
 
 .. code-block:: text
 
@@ -149,7 +164,7 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
 
 * ``distribution``: particle size distribution from which the moments are computed.
 
-  * ``type``: family of the particle size distribution. The raw moments of each family are computed analytically by QMOMKit. The choices are:
+  * ``type``: family of the particle size distribution. The moments of each family are computed analytically by QMOMKit. The choices are:
 
     * ``none``: no particles. All the moments are zero and the ``Function expression`` of the distribution is ignored.
     * ``normal``: normal distribution, with parameters the mean and the standard deviation of the size, in m. It is only meaningful when the standard deviation is much smaller than the mean, since the normal distribution extends to negative sizes.

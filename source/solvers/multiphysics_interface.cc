@@ -7,6 +7,7 @@
 #include <solvers/continuum_solid_dynamics.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/qmom.h>
 #include <solvers/qmom_field_function.h>
 #include <solvers/tracer.h>
 
@@ -237,11 +238,17 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 #ifndef LETHE_WITH_QMOMKIT
       AssertThrow(false, QMOMWithoutQMOMKitError());
 #endif
-      AssertThrow(false,
-                  ExcMessage("The \"qmom\" physics is enabled in the "
-                             "multiphysics subsection, but its solver is not "
-                             "implemented yet. Only its parameters are "
-                             "available. Set \"qmom\" to false."));
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("QMOM"));
+      verbosity[PhysicsID::qmom] =
+        (nsparam.linear_solver.at(PhysicsID::qmom).verbosity !=
+         Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+      active_physics.push_back(PhysicsID::qmom);
+      physics[PhysicsID::qmom] = std::make_shared<QMOM<dim>>(
+        this, nsparam, p_triangulation, p_simulation_control);
     }
 }
 

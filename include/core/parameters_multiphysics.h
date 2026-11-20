@@ -676,7 +676,7 @@ namespace Parameters
 
   /**
    * @brief Family of the particle size distribution from which the moments of
-   * the QMOM physics are computed. The raw moments of each family are computed
+   * the QMOM physics are computed. The moments of each family are computed
    * analytically by QMOMKit:
    *  - none: no particles, all the moments are zero;
    *  - normal: mean and standard deviation;
@@ -718,7 +718,7 @@ namespace Parameters
    *
    * The scalars are given as a list of expressions, one per scalar, in the
    * "scalars" subsection. The moments are not given one by one: they are the
-   * raw moments of a particle size distribution, defined in the "distribution"
+   * moments of a particle size distribution, defined in the "distribution"
    * subsection by its family and by a list of expressions whose first entry is
    * the number density, in particles per m^3, followed by the parameters of
    * the family.
@@ -793,7 +793,7 @@ namespace Parameters
     /// they are not given in the parameter file.
     std::vector<std::string> scalar_names;
 
-    /// Number of transported raw moments M_0 to M_{number_of_moments - 1}
+    /// Number of transported moments M_0 to M_{number_of_moments - 1}
     unsigned int number_of_moments = 4;
 
     /// Number of nodes of the quadrature that uses all the transported

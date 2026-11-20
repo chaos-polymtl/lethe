@@ -96,7 +96,7 @@ namespace
   }
 
   /**
-   * @brief Returns the raw moments of the three-node distribution of the test.
+   * @brief Returns the moments of the three-node distribution of the test.
    *
    * @param[in] count Number of moments.
    */
@@ -128,7 +128,7 @@ namespace
    * @brief Returns the QMOM state whose quadrature is reconstructed from
    * moments.
    *
-   * @param[in] moments Raw moments.
+   * @param[in] moments Moments.
    * @param[in] nodes Number of nodes of the quadrature.
    */
   qmomkit::QmomState

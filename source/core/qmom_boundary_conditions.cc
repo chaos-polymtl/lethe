@@ -27,7 +27,7 @@ namespace BoundaryConditions
   {
     declare_enum_entry(prm,
                        "type",
-                       QMOMBoundaryType::none,
+                       QMOMBoundaryType::noflux,
                        "Type of boundary condition for the QMOM fields.");
 
     prm.declare_entry("id",
