@@ -148,6 +148,21 @@ QMOM<dim>::QMOM(
                          enum_to_string(method) +
                          " in the simulation control subsection. Set it to "
                          "bdf1, bdf2 or bdf3."));
+  // With the Lie splitting, the previous solutions of the BDF scheme include
+  // the changes of the previous phase-space steps. A BDF scheme of order 2 or
+  // 3 extrapolates them, so that the transport repeats part of these changes,
+  // even without velocity. The Lie splitting is first-order accurate, so the
+  // bdf1 scheme loses no accuracy.
+  const bool phase_space_is_evolved = qmom_parameters.enable_growth ||
+                                      qmom_parameters.enable_nucleation ||
+                                      qmom_parameters.enable_coalescence;
+  AssertThrow(!phase_space_is_evolved || method == TimeSteppingMethod::bdf1,
+              ExcMessage("The growth, nucleation and coalescence of the QMOM "
+                         "physics only support the bdf1 time-stepping method, "
+                         "but \"method\" is " +
+                         enum_to_string(method) +
+                         " in the simulation control subsection. Set it to "
+                         "bdf1."));
   AssertThrow(qmom_parameters.splitting_scheme ==
                 Parameters::QMOMSplittingScheme::lie,
               ExcMessage("The strang splitting scheme of the QMOM physics is "
