@@ -3,8 +3,8 @@
 
 # Generates the checkpoints of the restart_last_checkpoint test. Run from the
 # generators folder. A checkpoint is written at every time step, alternately in
-# the slots 1 and 0, so that slot 1 holds the checkpoint at t = 0.03 and slot 0
-# the last one, at t = 0.04, which restart.checkpoint_controller records.
+# the slots 1 and 0, so that slot 0 holds the checkpoint at t = 0.02 and slot 1
+# the last one, at t = 0.03, which restart.checkpoint_controller records.
 
 # Listing of Parameters
 #----------------------
@@ -19,7 +19,7 @@ subsection simulation control
   set method           = bdf1
   set output path      = ../restart_last_checkpoint_files/
   set time step        = 0.01
-  set time end         = 0.04
+  set time end         = 0.03
   set output frequency = 0
 end
 

@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Restart from the last checkpoint recorded in restart.checkpoint_controller.
-# Slot 1 holds the checkpoint at t = 0.03 and slot 0 the last one, at t = 0.04,
-# so the simulation must restart at t = 0.04.
+# Slot 0 holds the checkpoint at t = 0.02 and slot 1 the last one, at t = 0.03,
+# so the simulation must restart at t = 0.03. A solver that does not read the
+# checkpoint controller restarts from slot 0, so this test then fails.
 
 # Listing of Parameters
 #----------------------
