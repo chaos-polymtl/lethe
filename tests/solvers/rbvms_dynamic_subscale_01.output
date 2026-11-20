@@ -1,0 +1,14 @@
+
+DEAL::[double]     steady limit tau_t = tau_s          : OK
+DEAL::[double]     BDF1 matches backward Euler         : OK
+DEAL::[vectorized] steady limit tau_t = tau_s          : OK
+DEAL::[vectorized] BDF1 matches backward Euler         : OK
+DEAL::bdf1 dt = 0.0100000 converges to -tau_s r_M : OK
+DEAL::bdf1 dt = 0.100000 converges to -tau_s r_M : OK
+DEAL::bdf1 dt = 1.00000 converges to -tau_s r_M : OK
+DEAL::bdf2 dt = 0.0100000 converges to -tau_s r_M : OK
+DEAL::bdf2 dt = 0.100000 converges to -tau_s r_M : OK
+DEAL::bdf2 dt = 1.00000 converges to -tau_s r_M : OK
+DEAL::bdf3 dt = 0.0100000 converges to -tau_s r_M : OK
+DEAL::bdf3 dt = 0.100000 converges to -tau_s r_M : OK
+DEAL::bdf3 dt = 1.00000 converges to -tau_s r_M : OK

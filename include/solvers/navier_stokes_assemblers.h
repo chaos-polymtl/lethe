@@ -5,12 +5,15 @@
 #define lethe_navier_stokes_assemblers_h
 
 #include <core/fluid_dynamics_boundary_conditions.h>
+#include <core/parameters.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/fine_scale_velocity_history.h>
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_assemblers.h>
 
+#include <memory>
 #include <utility>
 
 /*
@@ -124,6 +127,88 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
+};
+
+
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation with the
+ * residual-based variational multiscale (RBVMS) stabilization of Bazilevs,
+ * Calo, Cottrell, Hughes, Reali & Scovazzi, "Variational multiscale
+ * residual-based turbulence modeling for large eddy simulation of
+ * incompressible flows", CMAME 197 (2007) 173-201.
+ *
+ * All the stabilization terms are written in terms of the fine-scale velocity
+ * u' = -tau_M r_M, with r_M the strong momentum residual (eq. 62) and the
+ * metric-based stabilization parameter tau_M (eq. 64) built from the element
+ * metric tensor G (eq. 66). On top of the PSPG -(∇q, u') and SUPG
+ * -((u·∇)w, u') terms, it adds the LSIC/grad-div term with the metric-based
+ * tau_C (eq. 65) built from G and the metric vector g (eq. 69), and the two
+ * fine-scale terms that define RBVMS: the cross-stress term -(∇w, u ⊗ u') and
+ * the Reynolds-stress term -(∇w, u' ⊗ u') (eq. 72). This is the matrix-based
+ * counterpart of the matrix-free rbvms implementation.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class RBVMSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
+{
+public:
+  /**
+   * @brief Constructor.
+   *
+   * @param[in] simulation_control Simulation control, which provides the time
+   * step and the coefficients of the time-stepping scheme.
+   *
+   * @param[in] velocity_subscale Model of the fine-scale velocity. With the
+   * dynamic subscale, u' = -tau_t (r_M + m') with
+   * tau_t = (beta_0 + 1/tau_s)^(-1), where tau_s is the stabilization
+   * parameter tau_M without its transient term and m' is the memory of the
+   * fine-scale velocity.
+   *
+   * @param[in] fine_scale_velocity_history History of the fine-scale velocity
+   * of the dynamic subscale, from which the memory is calculated. It is a
+   * null pointer, or it holds no value, when there is no memory
+   * (quasi-static subscale and steady simulations).
+   */
+  RBVMSNavierStokesAssemblerCore(
+    const std::shared_ptr<SimulationControl>         &simulation_control,
+    const Parameters::Stabilization::VelocitySubscale velocity_subscale =
+      Parameters::Stabilization::VelocitySubscale::quasi_static,
+    const std::shared_ptr<FineScaleVelocityHistory<dim>>
+      &fine_scale_velocity_history = nullptr)
+    : simulation_control(simulation_control)
+    , velocity_subscale(velocity_subscale)
+    , fine_scale_velocity_history(fine_scale_velocity_history)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
+
+  /// Model of the fine-scale velocity.
+  const Parameters::Stabilization::VelocitySubscale velocity_subscale;
+
+  /// History of the fine-scale velocity of the dynamic subscale.
+  const std::shared_ptr<FineScaleVelocityHistory<dim>>
+    fine_scale_velocity_history;
 };
 
 

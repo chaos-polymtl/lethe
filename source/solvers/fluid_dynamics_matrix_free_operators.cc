@@ -5,12 +5,18 @@
 #include <core/time_integration_utilities.h>
 
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
+#include <solvers/stabilization.h>
+
+#include <deal.II/base/mpi.h>
 
 #include <deal.II/grid/grid_generator.h>
 
 #include <deal.II/lac/sparsity_tools.h>
 
 #include <deal.II/multigrid/mg_tools.h>
+
+#include <algorithm>
+#include <string>
 
 /**
  * @brief Creates and fills a table that works as bool dof mask object
@@ -88,7 +94,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>             &forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
@@ -105,7 +111,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                quadrature,
                forcing_function,
                physical_properties_manager,
-               stabilization,
+               stabilization_parameters,
                mg_level,
                simulation_control,
                boundary_conditions,
@@ -123,7 +129,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>             &forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
@@ -187,16 +193,51 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->properties_manager = physical_properties_manager;
 
+  const StabilizationType stabilization =
+    stabilization_parameters.stabilization;
+
   if (stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
       stabilization ==
-        Parameters::Stabilization::NavierStokesStabilization::gls)
+        Parameters::Stabilization::NavierStokesStabilization::gls ||
+      stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::rbvms)
     {
       this->stabilization = stabilization;
     }
   else
     throw std::runtime_error(
-      "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
+      "Only SUPG/PSPG, GLS and RBVMS stabilization is supported at the "
+      "moment.");
+
+  // The RBVMS stabilization parameters use the constant kinematic viscosity,
+  // hence it is only implemented for Newtonian flows.
+  AssertThrow(
+    stabilization !=
+        Parameters::Stabilization::NavierStokesStabilization::rbvms ||
+      !(this->properties_manager &&
+        this->properties_manager->is_non_newtonian()),
+    ExcMessage(
+      "The RBVMS stabilization is only supported for Newtonian flows."));
+
+  // The dynamic velocity subscale is a model of the RBVMS fine-scale velocity.
+  this->velocity_subscale = stabilization_parameters.velocity_subscale;
+  AssertThrow(
+    this->velocity_subscale !=
+        Parameters::Stabilization::VelocitySubscale::dynamic ||
+      stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::rbvms,
+    ExcMessage("The dynamic velocity subscale is only available with the rbvms "
+               "stabilization."));
+
+  // The history and memory of the dynamic fine-scale velocity are attached to
+  // the cells of the matrix-free object, so they are discarded here. Only the
+  // operator of the system allocates them again, through
+  // initialize_fine_scale_velocity_history(). On the multigrid levels, the
+  // tables stay empty and the memory is neglected, which only affects the
+  // preconditioner.
+  this->fine_scale_velocity_history.clear();
+  this->fine_scale_velocity_memory.reinit(0, 0);
 
   this->simulation_control = simulation_control;
 
@@ -967,6 +1008,35 @@ NavierStokesOperatorBase<dim, number>::
       sdt             = 1. / dt;
     }
 
+  // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
+  // (eq. 64) is 4/dt^2 = 4*sdt^2 (0 for steady). The inverse Jacobian is
+  // scaled by 2k (see calculate_rbvms_reference_scaling) and the
+  // inverse-estimate constant C_I (see paper text after eq. 70) is
+  // rbvms_inverse_estimate_constant.
+  const double four_over_dt_squared = 4. * sdt * sdt;
+  const double rbvms_reference_scaling =
+    calculate_rbvms_reference_scaling(this->fe_degree);
+  const bool is_rbvms =
+    this->stabilization ==
+    Parameters::Stabilization::NavierStokesStabilization::rbvms;
+
+  // Dynamic RBVMS velocity subscale. The steady parameter tau_s is
+  // calculate_rbvms_tau without the 4/dt^2 term, the continuity parameter
+  // tau_C is built from tau_s, and the momentum parameter is
+  // tau_t = (alpha + 1/tau_s)^(-1), where alpha is the coefficient of the
+  // current fine-scale velocity in its time derivative (beta_0 for BDF, 0 for
+  // steady problems).
+  const bool is_dynamic_subscale =
+    is_rbvms && this->velocity_subscale ==
+                  Parameters::Stabilization::VelocitySubscale::dynamic;
+  const double rbvms_transient_term =
+    is_dynamic_subscale ? 0. : four_over_dt_squared;
+  const double fine_scale_alpha =
+    (is_dynamic_subscale &&
+     time_stepping_is_bdf(simulation_control->get_assembly_method())) ?
+      this->simulation_control->get_bdf_coefficients()[0] :
+      0.;
+
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
       integrator.reinit(cell);
@@ -1002,20 +1072,24 @@ NavierStokesOperatorBase<dim, number>::
               nonlinear_previous_hessian(cell, q) = integrator.get_hessian(q);
             }
 
-          // Calculate tau
-          VectorizedArray<number> u_mag_squared = 1e-12;
-          for (int k = 0; k < dim; ++k)
-            u_mag_squared += Utilities::fixed_power<2>(
-              this->nonlinear_previous_advective_values(cell, q)[k]);
+          // Calculate tau (overwritten below by the metric-based values for
+          // RBVMS)
+          if (!is_rbvms)
+            {
+              VectorizedArray<number> u_mag_squared = 1e-12;
+              for (int k = 0; k < dim; ++k)
+                u_mag_squared += Utilities::fixed_power<2>(
+                  this->nonlinear_previous_advective_values(cell, q)[k]);
 
-          stabilization_parameter(cell, q) =
-            1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
-                           4. * u_mag_squared / h / h +
-                           9. * Utilities::fixed_power<2>(
-                                  4. * kinematic_viscosity / (h * h)));
+              stabilization_parameter(cell, q) =
+                1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
+                               4. * u_mag_squared / h / h +
+                               9. * Utilities::fixed_power<2>(
+                                      4. * kinematic_viscosity / (h * h)));
 
-          stabilization_parameter_lsic(cell, q) =
-            std::sqrt(u_mag_squared) * h * 0.5;
+              stabilization_parameter_lsic(cell, q) =
+                std::sqrt(u_mag_squared) * h * 0.5;
+            }
         }
 
       // Compute kinematic viscosity-related entries for non-Newtonian fluids
@@ -1115,6 +1189,53 @@ NavierStokesOperatorBase<dim, number>::
                 std::sqrt(
                   Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
                   9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
+            }
+        }
+
+      // RBVMS: overwrite tau_M and tau_C with the metric-based values of
+      // Bazilevs et al. 2007 (eqs. 64-65). The metric tensor G (eq. 66) and
+      // vector g (eq. 69) are built from the element inverse Jacobian, so tau
+      // becomes anisotropy-aware (it accounts for cell stretch and shear). The
+      // model branch is a single scalar test hoisted above this quadrature
+      // loop, so the inner arithmetic stays branch-free and SIMD-vectorized.
+      // RBVMS is Newtonian-only, so kinematic_viscosity is the constant nu.
+      if (is_rbvms)
+        {
+          for (const auto q : integrator.quadrature_point_indices())
+            {
+              // inverse_jacobian(q) returns J^{-T} (see compute_metric_tensor).
+              Tensor<2, dim, VectorizedArray<number>> metric_tensor;
+              Tensor<1, dim, VectorizedArray<number>> metric_vector;
+              compute_metric_tensor(integrator.inverse_jacobian(q),
+                                    rbvms_reference_scaling,
+                                    metric_tensor,
+                                    metric_vector);
+
+              // Extract the (advective) velocity components; the stored tensor
+              // also carries the pressure slot (component dim).
+              const auto &advective_value =
+                this->nonlinear_previous_advective_values(cell, q);
+              Tensor<1, dim, VectorizedArray<number>> velocity;
+              for (int d = 0; d < dim; ++d)
+                velocity[d] = advective_value[d];
+
+              VectorizedArray<number> tau_momentum;
+              VectorizedArray<number> tau_continuity;
+              calculate_rbvms_tau<dim, VectorizedArray<number>>(
+                metric_tensor,
+                metric_vector,
+                velocity,
+                VectorizedArray<number>(kinematic_viscosity),
+                VectorizedArray<number>(rbvms_transient_term),
+                rbvms_inverse_estimate_constant,
+                tau_momentum,
+                tau_continuity);
+
+              stabilization_parameter(cell, q) =
+                is_dynamic_subscale ?
+                  calculate_rbvms_dynamic_tau(tau_momentum, fine_scale_alpha) :
+                  tau_momentum;
+              stabilization_parameter_lsic(cell, q) = tau_continuity;
             }
         }
     }
@@ -1261,6 +1382,307 @@ NavierStokesOperatorBase<dim, number>::
 
   this->timer.leave_subsection(
     "operator::evaluate_time_derivative_previous_solutions");
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::initialize_fine_scale_velocity_history(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+{
+  this->fine_scale_velocity_history.clear();
+  this->fine_scale_velocity_memory.reinit(0, 0);
+
+  // Only a transient simulation with the dynamic velocity subscale needs the
+  // history. In a steady simulation, the memory would always be zero.
+  const unsigned int n_previous =
+    number_of_previous_solutions(time_stepping_method);
+  if (this->velocity_subscale !=
+        Parameters::Stabilization::VelocitySubscale::dynamic ||
+      n_previous == 0)
+    return;
+
+  // The fine-scale velocity starts from zero, which is the default value of
+  // the table entries.
+  const FECellIntegrator integrator(this->matrix_free);
+  const unsigned int     n_cells = this->matrix_free.n_cell_batches();
+  this->fine_scale_velocity_history.resize(n_previous);
+  for (auto &history : this->fine_scale_velocity_history)
+    history.reinit(n_cells, integrator.n_q_points);
+  this->fine_scale_velocity_memory.reinit(n_cells, integrator.n_q_points);
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::evaluate_fine_scale_velocity_memory()
+{
+  // The memory only exists if initialize_fine_scale_velocity_history()
+  // allocated it. The number of history entries does not depend on the
+  // locally owned cells, so every rank takes the same branch.
+  if (fine_scale_velocity_history.empty())
+    return;
+
+  this->timer.enter_subsection("operator::evaluate_fine_scale_velocity_memory");
+
+  const auto method = simulation_control->get_assembly_method();
+  AssertThrow(time_stepping_is_bdf(method),
+              ExcMessage("The dynamic velocity subscale is only implemented "
+                         "for BDF time-stepping schemes."));
+
+  // m' = sum_{j>=1} beta_j u'_{n+1-j}, with fine_scale_velocity_history[p]
+  // holding u'_{n-p}, mirroring calculate_time_derivative_previous_solutions.
+  const Vector<double> &bdf_coefs  = simulation_control->get_bdf_coefficients();
+  const unsigned int    n_previous = number_of_previous_solutions(method);
+  AssertThrow(n_previous <= fine_scale_velocity_history.size(),
+              ExcMessage(
+                "The time-stepping method uses " + std::to_string(n_previous) +
+                " previous solutions, but the history of the dynamic RBVMS "
+                "fine-scale velocity only stores " +
+                std::to_string(fine_scale_velocity_history.size()) +
+                ". Call initialize_fine_scale_velocity_history() with the "
+                "time-stepping method of the simulation."));
+
+  const unsigned int n_cells    = fine_scale_velocity_memory.size(0);
+  const unsigned int n_q_points = fine_scale_velocity_memory.size(1);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        Tensor<1, dim, VectorizedArray<number>> memory;
+        for (unsigned int p = 0; p < n_previous; ++p)
+          memory += VectorizedArray<number>(bdf_coefs[p + 1]) *
+                    fine_scale_velocity_history[p](cell, q);
+        fine_scale_velocity_memory(cell, q) = memory;
+      }
+
+  this->timer.leave_subsection("operator::evaluate_fine_scale_velocity_memory");
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::update_fine_scale_velocity_history(
+  const VectorType &solution)
+{
+  // The history only exists if initialize_fine_scale_velocity_history()
+  // allocated it.
+  if (fine_scale_velocity_history.empty())
+    return;
+
+  this->timer.enter_subsection("operator::update_fine_scale_velocity_history");
+
+  const auto method = simulation_control->get_assembly_method();
+  AssertThrow(time_stepping_is_bdf(method),
+              ExcMessage("The dynamic velocity subscale is only implemented "
+                         "for BDF time-stepping schemes."));
+  // The time derivatives of the previous solutions are part of the strong
+  // residual, so they must have been evaluated for this time step. The size of
+  // their table depends on the locally owned cells, so the check is reduced
+  // over the ranks to fail on all of them at once.
+  const bool time_derivatives_are_missing =
+    this->time_derivatives_previous_solutions.size(0) !=
+    this->matrix_free.n_cell_batches();
+  AssertThrow(!Utilities::MPI::logical_or(time_derivatives_are_missing,
+                                          solution.get_mpi_communicator()),
+              ExcMessage("The history of the dynamic RBVMS fine-scale velocity "
+                         "was updated before the time derivatives of the "
+                         "previous solutions were evaluated. Call "
+                         "evaluate_time_derivative_previous_solutions() at "
+                         "the beginning of every BDF time step."));
+
+  const double beta_0 = simulation_control->get_bdf_coefficients()[0];
+
+  const double kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
+  // Same reference scaling as in evaluate_non_linear_term_and_calculate_tau.
+  const double rbvms_reference_scaling =
+    calculate_rbvms_reference_scaling(this->fe_degree);
+
+  // Shift the history by one entry (e.g. [2] <- [1] <- [0] for BDF3), so that
+  // entry 0 can receive the fine-scale velocity of the time step that just
+  // converged. The oldest entry is overwritten below.
+  std::rotate(fine_scale_velocity_history.begin(),
+              fine_scale_velocity_history.end() - 1,
+              fine_scale_velocity_history.end());
+  auto &new_fine_scale_velocity = fine_scale_velocity_history[0];
+
+  // Evaluate the converged solution with the same flags as the residual, so
+  // that u' is computed from the same strong residual as in the last residual
+  // evaluation of the time step.
+  const EvaluationFlags::EvaluationFlags evaluation_flags =
+    this->enable_hessians_residual ?
+      (EvaluationFlags::values | EvaluationFlags::gradients |
+       EvaluationFlags::hessians) :
+      (EvaluationFlags::values | EvaluationFlags::gradients);
+
+  FECellIntegrator   integrator(matrix_free);
+  const unsigned int n_cells = matrix_free.n_cell_batches();
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      integrator.reinit(cell);
+      integrator.read_dof_values_plain(solution);
+      integrator.evaluate(evaluation_flags);
+
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          // Source term, as in the residual cell integral.
+          Tensor<1, dim, VectorizedArray<number>> source_value;
+          if (!this->thermal_buoyancy_term.empty())
+            source_value = this->thermal_buoyancy_term(cell, q);
+          else if (this->forcing_function)
+            source_value = this->forcing_terms(cell, q);
+          source_value += this->beta_force;
+
+          const auto value    = integrator.get_value(q);
+          const auto gradient = integrator.get_gradient(q);
+          typename FECellIntegrator::gradient_type hessian_diagonal;
+          if (this->enable_hessians_residual)
+            hessian_diagonal = integrator.get_hessian_diagonal(q);
+
+          // Advecting velocity at the converged solution.
+          Tensor<1, dim, VectorizedArray<number>> advective_velocity;
+          for (int d = 0; d < dim; ++d)
+            advective_velocity[d] = value[d];
+          if (this->enable_mortar)
+            for (int d = 0; d < dim; ++d)
+              advective_velocity[d] -= this->velocity_ale(cell, q)[d];
+
+          const auto &previous_time_derivatives =
+            this->time_derivatives_previous_solutions(cell, q);
+
+          // Strong momentum residual r_M (eq. 62) at the converged solution.
+          Tensor<1, dim, VectorizedArray<number>> r_m;
+          for (int i = 0; i < dim; ++i)
+            {
+              r_m[i] = gradient[dim][i] - source_value[i];
+              for (int l = 0; l < dim; ++l)
+                r_m[i] += gradient[i][l] * advective_velocity[l];
+              if (this->enable_hessians_residual)
+                for (int l = 0; l < dim; ++l)
+                  r_m[i] += -kinematic_viscosity * hessian_diagonal[i][l];
+              r_m[i] += beta_0 * value[i] + previous_time_derivatives[i];
+            }
+
+          // Stabilization parameter tau_t at the converged solution.
+          Tensor<2, dim, VectorizedArray<number>> metric_tensor;
+          Tensor<1, dim, VectorizedArray<number>> metric_vector;
+          compute_metric_tensor(integrator.inverse_jacobian(q),
+                                rbvms_reference_scaling,
+                                metric_tensor,
+                                metric_vector);
+          VectorizedArray<number> tau_static;
+          VectorizedArray<number> tau_continuity;
+          calculate_rbvms_tau<dim, VectorizedArray<number>>(
+            metric_tensor,
+            metric_vector,
+            advective_velocity,
+            VectorizedArray<number>(kinematic_viscosity),
+            VectorizedArray<number>(0.),
+            rbvms_inverse_estimate_constant,
+            tau_static,
+            tau_continuity);
+          const VectorizedArray<number> tau =
+            calculate_rbvms_dynamic_tau(tau_static, beta_0);
+
+          // u'_{n+1} = -tau_t (r_M + m')
+          new_fine_scale_velocity(cell, q) =
+            -tau * (r_m + fine_scale_velocity_memory(cell, q));
+        }
+    }
+
+  this->timer.leave_subsection("operator::update_fine_scale_velocity_history");
+}
+
+template <int dim, typename number>
+unsigned int
+NavierStokesOperatorBase<dim, number>::
+  n_fine_scale_velocity_history_values_per_cell() const
+{
+  if (this->fine_scale_velocity_history.empty())
+    return 0;
+
+  // The number of quadrature points is taken from the integrator, since the
+  // tables are empty on a process that owns no cell.
+  const FECellIntegrator integrator(this->matrix_free);
+  return static_cast<unsigned int>(this->fine_scale_velocity_history.size()) *
+         integrator.n_q_points * dim;
+}
+
+template <int dim, typename number>
+std::vector<std::vector<double>>
+NavierStokesOperatorBase<dim,
+                         number>::get_fine_scale_velocity_history_cell_data()
+  const
+{
+  const unsigned int n_values = n_fine_scale_velocity_history_values_per_cell();
+  const unsigned int n_active_cells =
+    this->matrix_free.get_dof_handler().get_triangulation().n_active_cells();
+  std::vector<std::vector<double>> cell_data(n_active_cells);
+  if (n_values == 0)
+    return cell_data;
+
+  const FECellIntegrator integrator(this->matrix_free);
+  const unsigned int     n_q_points = integrator.n_q_points;
+
+  for (unsigned int cell = 0; cell < this->matrix_free.n_cell_batches(); ++cell)
+    for (unsigned int lane = 0;
+         lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
+         ++lane)
+      {
+        const unsigned int active_cell_index =
+          this->matrix_free.get_cell_iterator(cell, lane)->active_cell_index();
+
+        // Values ordered by history entry, quadrature point and component.
+        std::vector<double> &values = cell_data[active_cell_index];
+        values.reserve(n_values);
+        for (const auto &history : this->fine_scale_velocity_history)
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            for (int d = 0; d < dim; ++d)
+              values.emplace_back(
+                static_cast<double>(history(cell, q)[d][lane]));
+      }
+
+  return cell_data;
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::
+  set_fine_scale_velocity_history_from_cell_data(
+    const std::vector<std::vector<double>> &cell_data)
+{
+  const unsigned int n_values = n_fine_scale_velocity_history_values_per_cell();
+  const unsigned int n_active_cells =
+    this->matrix_free.get_dof_handler().get_triangulation().n_active_cells();
+  AssertThrow(cell_data.size() == n_active_cells,
+              ExcMessage(
+                "The cell-wise data of the history of the dynamic RBVMS "
+                "fine-scale velocity holds " +
+                std::to_string(cell_data.size()) +
+                " cells, but the triangulation has " +
+                std::to_string(n_active_cells) + " active cells."));
+
+  const FECellIntegrator integrator(this->matrix_free);
+  const unsigned int     n_q_points = integrator.n_q_points;
+
+  for (unsigned int cell = 0; cell < this->matrix_free.n_cell_batches(); ++cell)
+    for (unsigned int lane = 0;
+         lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
+         ++lane)
+      {
+        const unsigned int active_cell_index =
+          this->matrix_free.get_cell_iterator(cell, lane)->active_cell_index();
+
+        // Values ordered by history entry, quadrature point and component, as
+        // in get_fine_scale_velocity_history_cell_data().
+        const std::vector<double> &values = cell_data[active_cell_index];
+        AssertDimension(values.size(), n_values);
+        unsigned int value = 0;
+        for (auto &history : this->fine_scale_velocity_history)
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            for (int d = 0; d < dim; ++d)
+              history(cell, q)[d][lane] = static_cast<number>(values[value++]);
+      }
 }
 
 template <int dim, typename number>
@@ -1720,6 +2142,13 @@ NavierStokesStabilizedOperator<dim, number>::NavierStokesStabilizedOperator() =
  * plus two additional terms in the case of full gls stabilization:
  * \+ (∂t δu +(u_adv·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
  * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
+ * In the case of RBVMS stabilization (Bazilevs et al. 2007, eq. 72), all the
+ * stabilization terms are written in terms of the fine-scale velocity
+ * u' = -τ_M r_M, with the metric-based τ_M frozen at the linearization point so
+ * that δu' = -τ_M δr_M. The PSPG and SUPG Jacobians become -(∇q, δu') and
+ * -((u_adv·∇)v, δu') - ((δu·∇)v, u'), the LSIC term is added with the
+ * metric-based τ_C, and the linearizations of the cross-stress term
+ * -(∇v, u_adv ⊗ u') and of the Reynolds-stress term -(∇v, u' ⊗ u') are added.
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
  * previously subtracted from u_adv at the function
@@ -1763,6 +2192,16 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
+  const bool is_rbvms =
+    this->stabilization ==
+    Parameters::Stabilization::NavierStokesStabilization::rbvms;
+
+  // The memory of the dynamic RBVMS fine-scale velocity is only stored by the
+  // operator of the system of a transient simulation with the dynamic
+  // velocity subscale. On the multigrid levels, it is neglected, which only
+  // affects the preconditioner.
+  const bool has_fine_scale_memory = !this->fine_scale_velocity_memory.empty();
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -1834,82 +2273,162 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             }
         }
 
-      // PSPG Jacobian
-      for (int i = 0; i < dim; ++i)
+      // RBVMS fine-scale velocity at the linearization point, u'_lin, and its
+      // increment δu' (only used for RBVMS).
+      Tensor<1, dim, VectorizedArray<number>> fine_scale_velocity;
+      Tensor<1, dim, VectorizedArray<number>> delta_fine_scale_velocity;
+
+      if (!is_rbvms)
         {
-          for (int k = 0; k < dim; ++k)
+          // PSPG Jacobian
+          for (int i = 0; i < dim; ++i)
             {
-              // (-ν∆δu + (u_adv·∇)δu + (δu·∇)u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                       gradient[i][k] * previous_advective_values[k] +
-                       previous_gradient[i][k] * value[k]);
+              for (int k = 0; k < dim; ++k)
+                {
+                  // (-ν∆δu + (u_adv·∇)δu + (δu·∇)u)·τ∇q
+                  gradient_result[dim][i] +=
+                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
+                           gradient[i][k] * previous_advective_values[k] +
+                           previous_gradient[i][k] * value[k]);
+                }
+              // +(∂t δu)·τ∇q
+              if (is_bdf)
+                gradient_result[dim][i] +=
+                  tau * (*bdf_coefficients)[0] * value[i];
+
+              if (is_sdirk)
+                gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
             }
-          // +(∂t δu)·τ∇q
-          if (is_bdf)
-            gradient_result[dim][i] += tau * (*bdf_coefficients)[0] * value[i];
+          // (∇δp)τ·∇q
+          gradient_result[dim] += tau * gradient[dim];
 
-          if (is_sdirk)
-            gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
-        }
-      // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
-
-      // SUPG Jacobian
-      for (int i = 0; i < dim; ++i)
-        {
-          for (int k = 0; k < dim; ++k)
+          // SUPG Jacobian
+          for (int i = 0; i < dim; ++i)
             {
-              // Part 1
-              for (int l = 0; l < dim; ++l)
+              for (int k = 0; k < dim; ++k)
                 {
-                  // +((u_adv·∇)δu + (δu·∇)u - ν∆δu)τ(u_adv·∇)v
+                  // Part 1
+                  for (int l = 0; l < dim; ++l)
+                    {
+                      // +((u_adv·∇)δu + (δu·∇)u - ν∆δu)τ(u_adv·∇)v
+                      gradient_result[i][k] +=
+                        tau * previous_advective_values[k] *
+                        (gradient[i][l] * previous_advective_values[l] +
+                         previous_gradient[i][l] * value[l] -
+                         kinematic_viscosity * hessian_diagonal[i][l]);
+                    }
+                  // +(∇δp)τ(u_adv·∇)v
                   gradient_result[i][k] +=
-                    tau * previous_advective_values[k] *
-                    (gradient[i][l] * previous_advective_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     kinematic_viscosity * hessian_diagonal[i][l]);
-                }
-              // +(∇δp)τ(u_adv·∇)v
-              gradient_result[i][k] +=
-                tau * previous_advective_values[k] * (gradient[dim][i]);
+                    tau * previous_advective_values[k] * (gradient[dim][i]);
 
-              // +(∂t δu)τ(u_adv·∇)v
-              if (is_bdf)
-                gradient_result[i][k] += tau * previous_advective_values[k] *
-                                         ((*bdf_coefficients)[0] * value[i]);
+                  // +(∂t δu)τ(u_adv·∇)v
+                  if (is_bdf)
+                    gradient_result[i][k] +=
+                      tau * previous_advective_values[k] *
+                      ((*bdf_coefficients)[0] * value[i]);
 
-              if (is_sdirk)
-                {
-                  gradient_result[i][k] += tau * previous_advective_values[k] *
-                                           ((1.0 / (dt * a_ii)) * value[i]);
-                }
+                  if (is_sdirk)
+                    {
+                      gradient_result[i][k] += tau *
+                                               previous_advective_values[k] *
+                                               ((1.0 / (dt * a_ii)) * value[i]);
+                    }
 
-              // Part 2
-              for (int l = 0; l < dim; ++l)
-                {
-                  // +((u·∇)u - ν∆u)τ(δu·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] *
-                    (previous_gradient[i][l] * previous_advective_values[l] -
-                     kinematic_viscosity * previous_hessian_diagonal[i][l]);
-                }
-              // +(∇p - f)τ(δu·∇)v
-              gradient_result[i][k] +=
-                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
-
-              // +(∂t u)τ(δu·∇)v
-              if (is_bdf)
-                gradient_result[i][k] +=
-                  tau * value[k] *
-                  ((*bdf_coefficients)[0] * previous_values[i] +
-                   previous_time_derivatives[i]);
-              if (is_sdirk)
-                {
+                  // Part 2
+                  for (int l = 0; l < dim; ++l)
+                    {
+                      // +((u·∇)u - ν∆u)τ(δu·∇)v
+                      gradient_result[i][k] +=
+                        tau * value[k] *
+                        (previous_gradient[i][l] *
+                           previous_advective_values[l] -
+                         kinematic_viscosity * previous_hessian_diagonal[i][l]);
+                    }
+                  // +(∇p - f)τ(δu·∇)v
                   gradient_result[i][k] +=
                     tau * value[k] *
-                    ((1.0 / (dt * a_ii)) * previous_values[i] +
-                     previous_time_derivatives[i]);
+                    (previous_gradient[dim][i] - source_value[i]);
+
+                  // +(∂t u)τ(δu·∇)v
+                  if (is_bdf)
+                    gradient_result[i][k] +=
+                      tau * value[k] *
+                      ((*bdf_coefficients)[0] * previous_values[i] +
+                       previous_time_derivatives[i]);
+                  if (is_sdirk)
+                    {
+                      gradient_result[i][k] +=
+                        tau * value[k] *
+                        ((1.0 / (dt * a_ii)) * previous_values[i] +
+                         previous_time_derivatives[i]);
+                    }
+                }
+            }
+        }
+      else
+        {
+          // RBVMS (Bazilevs et al. 2007, eq. 72), linearized with the
+          // stabilization parameter frozen at the linearization point. The
+          // fine-scale velocity u' = -τ r_M is then affine in the strong
+          // momentum residual r_M (eq. 62), so δu' = -τ δr_M.
+
+          // δr_M: linearization of r_M w.r.t. the trial (δu, δp).
+          Tensor<1, dim, VectorizedArray<number>> delta_r_m;
+          // r_M^{n}: frozen strong residual at the previous Newton step.
+          Tensor<1, dim, VectorizedArray<number>> r_m_previous;
+          for (int i = 0; i < dim; ++i)
+            {
+              // δr_M = ∇δp + (u_adv·∇)δu + (δu·∇)u [ - ν∆δu ] [ + ∂t δu ]
+              delta_r_m[i] = gradient[dim][i];
+              for (int l = 0; l < dim; ++l)
+                delta_r_m[i] += gradient[i][l] * previous_advective_values[l] +
+                                previous_gradient[i][l] * value[l];
+              if (this->enable_hessians_jacobian)
+                for (int l = 0; l < dim; ++l)
+                  delta_r_m[i] += -kinematic_viscosity * hessian_diagonal[i][l];
+              if (is_bdf)
+                delta_r_m[i] += (*bdf_coefficients)[0] * value[i];
+              if (is_sdirk)
+                delta_r_m[i] += (1.0 / (dt * a_ii)) * value[i];
+
+              // r_M^{n} = ∇p - f + (u·∇)u [ - ν∆u ] [ + ∂t u ]
+              r_m_previous[i] = previous_gradient[dim][i] - source_value[i];
+              for (int l = 0; l < dim; ++l)
+                r_m_previous[i] +=
+                  previous_gradient[i][l] * previous_advective_values[l];
+              if (this->enable_hessians_jacobian)
+                for (int l = 0; l < dim; ++l)
+                  r_m_previous[i] +=
+                    -kinematic_viscosity * previous_hessian_diagonal[i][l];
+              if (is_bdf)
+                r_m_previous[i] += (*bdf_coefficients)[0] * previous_values[i] +
+                                   previous_time_derivatives[i];
+              if (is_sdirk)
+                r_m_previous[i] += (1.0 / (dt * a_ii)) * previous_values[i] +
+                                   previous_time_derivatives[i];
+            }
+
+          // u'_lin includes the memory m' of the dynamic subscale, which does
+          // not depend on the trial (δu, δp), so δu' = -τ δr_M in both cases.
+          if (has_fine_scale_memory)
+            fine_scale_velocity =
+              -tau * (r_m_previous + this->fine_scale_velocity_memory(cell, q));
+          else
+            fine_scale_velocity = -tau * r_m_previous;
+          delta_fine_scale_velocity = -tau * delta_r_m;
+
+          for (int i = 0; i < dim; ++i)
+            {
+              // PSPG Jacobian -(∇q, δu')
+              gradient_result[dim][i] -= delta_fine_scale_velocity[i];
+
+              for (int k = 0; k < dim; ++k)
+                {
+                  // SUPG Jacobian, part 1: -((u_adv·∇)v, δu')
+                  gradient_result[i][k] -=
+                    previous_advective_values[k] * delta_fine_scale_velocity[i];
+                  // SUPG Jacobian, part 2: -((δu·∇)v, u'_lin)
+                  gradient_result[i][k] -= value[k] * fine_scale_velocity[i];
                 }
             }
         }
@@ -1950,12 +2469,47 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                             ((1.0 / (dt * a_ii)) * value[i]);
                         }
                     }
-
-                  // LSIC term
-                  // (∇·δu)τ'(∇·v)
-                  gradient_result[i][i] += tau_lsic * gradient[k][k];
                 }
             }
+        }
+
+      // LSIC / grad-div Jacobian (∇·δu)τ_C(∇·v). Present for GLS and RBVMS
+      // (Bazilevs et al. 2007, eq. 72). Accumulation order matches the
+      // historical GLS code so GLS remains bit-for-bit unchanged.
+      if (this->stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::gls ||
+          this->stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::rbvms)
+        {
+          for (int i = 0; i < dim; ++i)
+            for (int k = 0; k < dim; ++k)
+              gradient_result[i][i] += tau_lsic * gradient[k][k];
+        }
+
+      // RBVMS cross-stress and Reynolds-stress Jacobian (Bazilevs et al. 2007,
+      // eq. 72): linearization of -(∇v, u ⊗ u') - (∇v, u' ⊗ u') with the
+      // fine-scale velocity u'_lin and its increment δu' computed above with
+      // the SUPG/PSPG Jacobian.
+      if (is_rbvms)
+        {
+          // Physical velocity at the linearization point and trial increment.
+          // Only the SUPG weight uses the velocity relative to the mesh.
+          Tensor<1, dim, VectorizedArray<number>> velocity;
+          Tensor<1, dim, VectorizedArray<number>> delta_velocity;
+          for (int d = 0; d < dim; ++d)
+            {
+              velocity[d]       = previous_values[d];
+              delta_velocity[d] = value[d];
+            }
+
+          const auto fine_scale = rbvms_fine_scale_terms_linearization<dim>(
+            velocity,
+            delta_velocity,
+            fine_scale_velocity,
+            delta_fine_scale_velocity);
+          for (int i = 0; i < dim; ++i)
+            for (int j = 0; j < dim; ++j)
+              gradient_result[i][j] += fine_scale[i][j];
         }
 
       if (this->has_solids)
@@ -1989,6 +2543,13 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
  * plus two additional terms in the case of full gls stabilization:
  * \+ (∂t u +(u_adv·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
  * \+ (∇·u)τ'(∇·v) (LSIC term).
+ * In the case of RBVMS stabilization (Bazilevs et al. 2007, eq. 72), all the
+ * stabilization terms are written in terms of the fine-scale velocity
+ * u' = -τ_M r_M, with the metric-based τ_M and r_M the strong momentum residual
+ * (eq. 62). The PSPG and SUPG terms become -(∇q, u') and -((u_adv·∇)v, u'),
+ * the LSIC term is added with the metric-based τ_C, and two further fine-scale
+ * terms are added: the cross-stress term -(∇v, u_adv ⊗ u') and the
+ * Reynolds-stress term -(∇v, u' ⊗ u').
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
  * previously subtracted from u_adv at the function
@@ -2006,6 +2567,15 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
+  const bool is_rbvms =
+    this->stabilization ==
+    Parameters::Stabilization::NavierStokesStabilization::rbvms;
+
+  // The memory of the dynamic RBVMS fine-scale velocity is only stored by the
+  // operator of the system of a transient simulation with the dynamic
+  // velocity subscale.
+  const bool has_fine_scale_memory = !this->fine_scale_velocity_memory.empty();
 
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
@@ -2111,64 +2681,121 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                 }
             }
 
-          // PSPG term
-          for (int i = 0; i < dim; ++i)
-            {
-              for (int k = 0; k < dim; ++k)
-                {
-                  // (-ν∆u + (u_adv·∇)u)·τ∇q
-                  gradient_result[dim][i] +=
-                    tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                           gradient[i][k] * advective_value[k]);
-                }
-              // +(-f)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
+          // RBVMS fine-scale velocity u' (only used for RBVMS).
+          Tensor<1, dim, VectorizedArray<number>> fine_scale_velocity;
 
-              // +(∂t u)·τ∇q
-              if (is_bdf)
-                gradient_result[dim][i] +=
-                  tau * ((*bdf_coefficients)[0] * value[i] +
-                         previous_time_derivatives[i]);
-              if (is_sdirk)
-                gradient_result[dim][i] +=
-                  tau * ((1.0 / (dt * a_ii)) * value[i] +
-                         previous_time_derivatives[i]);
-            }
-          // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
-
-          // SUPG term
-          for (int i = 0; i < dim; ++i)
+          if (!is_rbvms)
             {
-              for (int k = 0; k < dim; ++k)
+              // PSPG term
+              for (int i = 0; i < dim; ++i)
                 {
-                  for (int l = 0; l < dim; ++l)
+                  for (int k = 0; k < dim; ++k)
                     {
-                      // (-ν∆u)τ(u_adv·∇)v
-                      gradient_result[i][k] += -tau * kinematic_viscosity *
-                                               advective_value[k] *
-                                               hessian_diagonal[i][l];
-
-                      // + ((u_adv·∇)u)τ(u_adv·∇)v
-                      gradient_result[i][k] += tau * advective_value[k] *
-                                               gradient[i][l] *
-                                               advective_value[l];
+                      // (-ν∆u + (u_adv·∇)u)·τ∇q
+                      gradient_result[dim][i] +=
+                        tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
+                               gradient[i][k] * advective_value[k]);
                     }
-                  // + (∇p - f)τ(u_adv·∇)v
-                  gradient_result[i][k] += tau * advective_value[k] *
-                                           (gradient[dim][i] - source_value[i]);
+                  // +(-f)·τ∇q
+                  gradient_result[dim][i] += tau * (-source_value[i]);
 
-                  // + (∂t u)τ(u_adv·∇)v
+                  // +(∂t u)·τ∇q
                   if (is_bdf)
-                    gradient_result[i][k] +=
-                      tau * advective_value[k] *
-                      ((*bdf_coefficients)[0] * value[i] +
-                       previous_time_derivatives[i]);
-
+                    gradient_result[dim][i] +=
+                      tau * ((*bdf_coefficients)[0] * value[i] +
+                             previous_time_derivatives[i]);
                   if (is_sdirk)
-                    gradient_result[i][k] += tau * advective_value[k] *
-                                             ((1.0 / (dt * a_ii)) * value[i] +
-                                              previous_time_derivatives[i]);
+                    gradient_result[dim][i] +=
+                      tau * ((1.0 / (dt * a_ii)) * value[i] +
+                             previous_time_derivatives[i]);
+                }
+              // +(∇p)τ∇·q
+              gradient_result[dim] += tau * gradient[dim];
+
+              // SUPG term
+              for (int i = 0; i < dim; ++i)
+                {
+                  for (int k = 0; k < dim; ++k)
+                    {
+                      for (int l = 0; l < dim; ++l)
+                        {
+                          // (-ν∆u)τ(u_adv·∇)v
+                          gradient_result[i][k] += -tau * kinematic_viscosity *
+                                                   advective_value[k] *
+                                                   hessian_diagonal[i][l];
+
+                          // + ((u_adv·∇)u)τ(u_adv·∇)v
+                          gradient_result[i][k] += tau * advective_value[k] *
+                                                   gradient[i][l] *
+                                                   advective_value[l];
+                        }
+                      // + (∇p - f)τ(u_adv·∇)v
+                      gradient_result[i][k] +=
+                        tau * advective_value[k] *
+                        (gradient[dim][i] - source_value[i]);
+
+                      // + (∂t u)τ(u_adv·∇)v
+                      if (is_bdf)
+                        gradient_result[i][k] +=
+                          tau * advective_value[k] *
+                          ((*bdf_coefficients)[0] * value[i] +
+                           previous_time_derivatives[i]);
+
+                      if (is_sdirk)
+                        gradient_result[i][k] +=
+                          tau * advective_value[k] *
+                          ((1.0 / (dt * a_ii)) * value[i] +
+                           previous_time_derivatives[i]);
+                    }
+                }
+            }
+          else
+            {
+              // RBVMS (Bazilevs et al. 2007, eq. 72). The strong momentum
+              // residual r_M (eq. 62) is assembled once from the current
+              // solution; the advecting velocity is the frozen
+              // advective_value, as in the Galerkin convective term. All the
+              // RBVMS terms are written in terms of the quasi-static fine-scale
+              // velocity u' = -τ r_M.
+              Tensor<1, dim, VectorizedArray<number>> r_m;
+              for (int i = 0; i < dim; ++i)
+                {
+                  // ∇p - f
+                  r_m[i] = gradient[dim][i] - source_value[i];
+                  // + (u_adv·∇)u
+                  for (int l = 0; l < dim; ++l)
+                    r_m[i] += gradient[i][l] * advective_value[l];
+                  // - ν∆u (only when the Laplacian is evaluated)
+                  if (this->enable_hessians_residual)
+                    for (int l = 0; l < dim; ++l)
+                      r_m[i] += -kinematic_viscosity * hessian_diagonal[i][l];
+                  // + ∂t u
+                  if (is_bdf)
+                    r_m[i] += (*bdf_coefficients)[0] * value[i] +
+                              previous_time_derivatives[i];
+                  if (is_sdirk)
+                    r_m[i] += (1.0 / (dt * a_ii)) * value[i] +
+                              previous_time_derivatives[i];
+                }
+
+              // Quasi-static: u' = -τ r_M. Dynamic: u' = -τ_t (r_M + m'),
+              // where the memory m' gathers the previous fine-scale
+              // velocities (only stored by the operator of the system).
+              if (has_fine_scale_memory)
+                fine_scale_velocity =
+                  -tau * (r_m + this->fine_scale_velocity_memory(cell, q));
+              else
+                fine_scale_velocity = -tau * r_m;
+
+              for (int i = 0; i < dim; ++i)
+                {
+                  // PSPG term -(∇q, u')
+                  gradient_result[dim][i] -= fine_scale_velocity[i];
+
+                  // SUPG term -((u_adv·∇)v, u')
+                  for (int k = 0; k < dim; ++k)
+                    gradient_result[i][k] -=
+                      advective_value[k] * fine_scale_velocity[i];
                 }
             }
 
@@ -2208,12 +2835,41 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                               ((1.0 / (dt * a_ii)) * value[i] +
                                previous_time_derivatives[i]);
                         }
-
-                      // LSIC term
-                      // (∇·u)τ'(∇·v)
-                      gradient_result[i][i] += tau_lsic * gradient[k][k];
                     }
                 }
+            }
+
+          // LSIC / grad-div term (∇·u)τ_C(∇·v). Present for GLS and for RBVMS
+          // (Bazilevs et al. 2007, eq. 72, continuity term with r_C = ∇·u). The
+          // accumulation order matches the historical GLS code so GLS remains
+          // bit-for-bit unchanged.
+          if (this->stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::gls ||
+              this->stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::rbvms)
+            {
+              for (int i = 0; i < dim; ++i)
+                for (int k = 0; k < dim; ++k)
+                  gradient_result[i][i] += tau_lsic * gradient[k][k];
+            }
+
+          // RBVMS cross-stress and Reynolds-stress terms (Bazilevs et al. 2007,
+          // eq. 72), -(∇v, u ⊗ u') - (∇v, u' ⊗ u'). These fine-scale terms
+          // are what distinguish RBVMS from SUPG/PSPG. The fine-scale velocity
+          // u' was computed above with the SUPG/PSPG terms.
+          if (is_rbvms)
+            {
+              // The cross-stress uses physical velocity, including for ALE.
+              // Only the SUPG weight uses the velocity relative to the mesh.
+              Tensor<1, dim, VectorizedArray<number>> velocity;
+              for (int d = 0; d < dim; ++d)
+                velocity[d] = value[d];
+
+              const auto fine_scale =
+                rbvms_fine_scale_terms<dim>(velocity, fine_scale_velocity);
+              for (int i = 0; i < dim; ++i)
+                for (int j = 0; j < dim; ++j)
+                  gradient_result[i][j] += fine_scale[i][j];
             }
 
           if (this->has_solids)

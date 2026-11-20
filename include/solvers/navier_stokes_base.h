@@ -806,6 +806,50 @@ protected:
   write_checkpoint();
 
   /**
+   * @brief Attach solver-specific data to the cells of the triangulation, so
+   * that it is saved with the triangulation in the checkpoint. It is called by
+   * write_checkpoint() just before the triangulation is saved, after the
+   * solutions of all the physics have been attached. The attached data, and
+   * the objects that attach it, must stay alive until the triangulation has
+   * been saved. By default, nothing is attached.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  virtual void
+  attach_cell_data_to_checkpoint(const std::string &checkpoint_file_prefix);
+
+  /**
+   * @brief Read the solver-specific data attached to the cells of the
+   * triangulation by attach_cell_data_to_checkpoint(). It is called by
+   * read_checkpoint() after the solutions of all the physics have been read,
+   * since the data attached to a triangulation must be read in the order in
+   * which it was attached. By default, nothing is read.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  virtual void
+  read_cell_data_from_checkpoint(const std::string &checkpoint_file_prefix);
+
+  /**
+   * @brief Prepare solver-specific data attached to the cells of the
+   * triangulation for the mesh adaptation that is about to be executed. It is
+   * called by refine_mesh_adaptive() and refine_mesh_uniform() before the
+   * triangulation is adapted, once the solutions have been prepared for the
+   * transfer. By default, nothing is prepared.
+   */
+  virtual void
+  prepare_cell_data_for_mesh_adaptation();
+
+  /**
+   * @brief Transfer the solver-specific data prepared by
+   * prepare_cell_data_for_mesh_adaptation() to the adapted mesh. It is called
+   * by transfer_solution() once the degrees of freedom have been set up on the
+   * adapted mesh. By default, nothing is transferred.
+   */
+  virtual void
+  transfer_cell_data_after_mesh_adaptation();
+
+  /**
    * @brief Gather and return vector of output structs that are particular to some applications.
    *
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.

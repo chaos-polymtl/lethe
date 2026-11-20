@@ -16,6 +16,8 @@ add_library(lethe-solvers
   cls_scratch_data.cc
   cls_subequations_interface.cc
   continuum_solid_dynamics.cc
+  fine_scale_velocity_history.cc
+  fine_scale_velocity_transfer.cc
   flow_control.cc
   fluid_dynamics_block.cc
   fluid_dynamics_matrix_based.cc
@@ -71,6 +73,8 @@ add_library(lethe-solvers
   ../../include/solvers/cls_subequations_interface.h
   ../../include/solvers/continuum_solid_dynamics.h
   ../../include/solvers/copy_data.h
+  ../../include/solvers/fine_scale_velocity_history.h
+  ../../include/solvers/fine_scale_velocity_transfer.h
   ../../include/solvers/flow_control.h
   ../../include/solvers/fluid_dynamics_block.h
   ../../include/solvers/fluid_dynamics_matrix_based.h

@@ -1,0 +1,17 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       16
+   Number of degrees of freedom: 243
+   Volume of triangulation:      1.000000e+00
+
+*****************************
+Steady iteration:        1/1
+*****************************
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  1.805864e-14
+	alpha =      1	res = 1.805864e-14
+	  ||du||_L2 = 0.000000e+00	  ||du||_Linfty = 0.000000e+00
+	  ||dp||_L2 = 0.000000e+00	  ||dp||_Linfty = 0.000000e+00
+cells error_velocity error_pressure 
+   16 1.913214e-16 - 0.000000e+00 -

@@ -12,6 +12,7 @@
 #include <solvers/fluid_dynamics_matrix_free.h>
 
 #include <deal.II/base/exceptions.h>
+#include <deal.II/base/mpi.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -47,6 +48,9 @@
 
 #include <cmath>
 #include <exception>
+#include <memory>
+#include <string>
+#include <vector>
 
 /**
  * @brief A base class of preconditioners used by the smoother.
@@ -1255,7 +1259,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             levels[level].first,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -1783,7 +1787,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -2818,6 +2822,34 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support the <pressure scaling factor> parameter of the <stabilization> subsection. Set it to 1, or use the matrix-based solver (lethe-fluid) if the pressure has to be rescaled."));
 
+  // The dynamic RBVMS velocity subscale stores the history of the fine-scale
+  // velocity at the quadrature points of the cells. This history is advanced
+  // with BDF schemes only. It is written to the checkpoint files with the
+  // triangulation (see attach_cell_data_to_checkpoint()) and transferred when
+  // the mesh is adapted (see transfer_cell_data_after_mesh_adaptation()). It
+  // follows the quadrature points of a rotating mesh, as the solution follows
+  // its nodes, so that its time derivative is taken along the motion of the
+  // mesh. For steady simulations, the dynamic and quasi-static subscales
+  // coincide.
+  if (nsparam.stabilization.velocity_subscale ==
+      Parameters::Stabilization::VelocitySubscale::dynamic)
+    {
+      using Method        = Parameters::SimulationControl::TimeSteppingMethod;
+      const Method method = nsparam.simulation_control.method;
+
+      AssertThrow(
+        nsparam.stabilization.stabilization ==
+          Parameters::Stabilization::NavierStokesStabilization::rbvms,
+        dealii::ExcMessage(
+          "The dynamic velocity subscale is only available with the rbvms stabilization."));
+      AssertThrow(
+        method == Method::steady || method == Method::steady_bdf ||
+          method == Method::bdf1 || method == Method::bdf2 ||
+          method == Method::bdf3,
+        dealii::ExcMessage(
+          "The dynamic velocity subscale is only available with the steady and BDF time-stepping methods."));
+    }
+
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_degree), dim + 1);
 
@@ -2929,6 +2961,114 @@ FluidDynamicsMatrixFree<dim>::multi_stage_postresolution(
 
 template <int dim>
 void
+FluidDynamicsMatrixFree<dim>::percolate_time_vectors_fd()
+{
+  // The fine-scale velocity of the dynamic RBVMS subscale is computed from the
+  // converged solution before the time vectors are percolated, while the
+  // forcing, buoyancy and time-derivative data of the operator still describe
+  // the time step that just converged. The initial condition is also
+  // percolated, before any time step is solved (iteration 0). The fine-scale
+  // velocity of the initial condition is zero, which is what the history
+  // already holds, so the history is left untouched in that case.
+  if (this->simulation_parameters.stabilization.velocity_subscale ==
+        Parameters::Stabilization::VelocitySubscale::dynamic &&
+      time_stepping_is_bdf(this->simulation_control->get_assembly_method()) &&
+      this->simulation_control->get_iteration_number() > 0)
+    {
+      this->present_solution->update_ghost_values();
+      this->system_operator->update_fine_scale_velocity_history(
+        *this->present_solution);
+    }
+
+  NavierStokesBase<dim, VectorType, IndexSet>::percolate_time_vectors_fd();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::write_checkpoint()
+{
+  NavierStokesBase<dim, VectorType, IndexSet>::write_checkpoint();
+
+  // The triangulation has been saved with the history of the fine-scale
+  // velocity attached to its cells, so the cell-wise copy is released.
+  this->fine_scale_velocity_transfer.reset();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::attach_cell_data_to_checkpoint(
+  const std::string &checkpoint_file_prefix)
+{
+  // The object must stay alive until the triangulation is saved, so it is a
+  // member released by write_checkpoint().
+  this->fine_scale_velocity_transfer =
+    std::make_unique<FineScaleVelocityTransfer<dim>>(
+      *this->triangulation,
+      this->mpi_communicator,
+      this->number_quadrature_points);
+  this->fine_scale_velocity_transfer->attach_to_checkpoint(
+    checkpoint_file_prefix,
+    this->system_operator->n_fine_scale_velocity_history_values_per_cell(),
+    this->system_operator->get_fine_scale_velocity_history_cell_data());
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::read_cell_data_from_checkpoint(
+  const std::string &checkpoint_file_prefix)
+{
+  FineScaleVelocityTransfer<dim> transfer(*this->triangulation,
+                                          this->mpi_communicator,
+                                          this->number_quadrature_points);
+  const auto                     cell_data = transfer.read_from_checkpoint(
+    checkpoint_file_prefix,
+    this->system_operator->n_fine_scale_velocity_history_values_per_cell(),
+    this->pcout);
+
+  // The data is empty if the checkpoint holds no history or if the simulation
+  // does not use it.
+  if (!cell_data.empty())
+    this->system_operator->set_fine_scale_velocity_history_from_cell_data(
+      cell_data);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::prepare_cell_data_for_mesh_adaptation()
+{
+  if (this->system_operator->n_fine_scale_velocity_history_values_per_cell() ==
+      0)
+    return;
+
+  // The object must stay alive until the history is transferred to the
+  // adapted mesh, so it is a member released by
+  // transfer_cell_data_after_mesh_adaptation().
+  this->fine_scale_velocity_transfer =
+    std::make_unique<FineScaleVelocityTransfer<dim>>(
+      *this->triangulation,
+      this->mpi_communicator,
+      this->number_quadrature_points);
+  this->fine_scale_velocity_transfer->prepare_for_coarsening_and_refinement(
+    this->system_operator->get_fine_scale_velocity_history_cell_data());
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::transfer_cell_data_after_mesh_adaptation()
+{
+  if (this->fine_scale_velocity_transfer == nullptr)
+    return;
+
+  // The history of the system operator has been allocated again, and set to
+  // zero, when the degrees of freedom were set up on the adapted mesh.
+  this->system_operator->set_fine_scale_velocity_history_from_cell_data(
+    this->fine_scale_velocity_transfer
+      ->unpack_after_coarsening_and_refinement());
+  this->fine_scale_velocity_transfer.reset();
+}
+
+template <int dim>
+void
 FluidDynamicsMatrixFree<dim>::update_multi_stage_solution(double time_step)
 {
   // At each time iteration, we update the value of present_solution
@@ -3019,6 +3159,11 @@ FluidDynamicsMatrixFree<dim>::solve()
           this->time_derivative_previous_solutions.update_ghost_values();
           this->system_operator->evaluate_time_derivative_previous_solutions(
             this->time_derivative_previous_solutions);
+
+          // Memory of the dynamic RBVMS fine-scale velocity, the counterpart
+          // of the time derivative of the previous solutions (does nothing
+          // for the quasi-static subscale).
+          this->system_operator->evaluate_fine_scale_velocity_memory();
 
           this->computing_timer.leave_subsection(
             "Calculate time derivative previous solutions");
@@ -3134,7 +3279,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     *this->cell_quadrature,
     this->forcing_function,
     this->physical_properties_manager,
-    this->simulation_parameters.stabilization.stabilization,
+    this->simulation_parameters.stabilization,
     mg_level,
     this->simulation_control,
     this->simulation_parameters.boundary_conditions,
@@ -3143,6 +3288,11 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .enable_hessians_residual,
     this->simulation_parameters.mortar_parameters.enable);
+
+  // History of the dynamic RBVMS fine-scale velocity. Only the operator of the
+  // system stores it; the operators of the multigrid levels neglect it.
+  this->system_operator->initialize_fine_scale_velocity_history(
+    this->simulation_parameters.simulation_control.method);
 
 
   // Initialize vectors using operator
