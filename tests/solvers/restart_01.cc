@@ -131,7 +131,10 @@ RestartNavierStokes<dim>::run()
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step();
   this->write_checkpoint(); // write_checkpoint needs to be called explicitly
-  this->write_checkpoint_controller();
+  this->checkpoint_controller.write(
+    this->simulation_parameters.simulation_control.output_folder +
+      this->simulation_parameters.restart_parameters.filename,
+    this->mpi_communicator);
 
   *this->present_solution = 0;
   auto errors_p2          = calculate_L2_error(*this->dof_handler,

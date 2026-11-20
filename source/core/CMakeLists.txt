@@ -2,6 +2,7 @@ add_library(lethe-core
   # Sources
   bdf.cc
   cahn_hilliard_boundary_conditions.cc
+  checkpoint_control.cc
   cls_boundary_conditions.cc
   dem_properties.cc
   density_model.cc

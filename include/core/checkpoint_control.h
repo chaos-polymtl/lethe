@@ -6,8 +6,12 @@
 
 #include <core/parameters.h>
 
+#include <deal.II/base/mpi.h>
+
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+
+#include <string>
 
 class CheckpointControl
 {
@@ -63,6 +67,44 @@ public:
   {
     return filename;
   }
+
+  /**
+   * @brief Write the id of the last checkpoint in the file
+   * <prefix>.checkpoint_controller, from which a restart reads. Only rank 0
+   * writes it. It is called once every file of the checkpoint is written.
+   *
+   * @param[in] prefix Prefix of the checkpoint files, without checkpoint slot.
+   * @param[in] mpi_communicator MPI communicator of the simulation.
+   */
+  void
+  write(const std::string &prefix, const MPI_Comm &mpi_communicator) const;
+
+  /**
+   * @brief Read the id of the last checkpoint from the file
+   * <prefix>.checkpoint_controller. It is called before the checkpoint is read.
+   *
+   * @param[in] prefix Prefix of the checkpoint files, without checkpoint slot.
+   * @param[in] mpi_communicator MPI communicator of the simulation.
+   */
+  void
+  read(const std::string &prefix, const MPI_Comm &mpi_communicator);
+
+  /**
+   * @brief Return the id of the last checkpoint recorded in the file
+   * <prefix>.checkpoint_controller. Only rank 0 reads the file, and the id is
+   * broadcast to the other ranks.
+   *
+   * @param[in] prefix Prefix of the checkpoint files, without checkpoint slot.
+   * @param[in] file_description Description of the file, and of the parameter
+   * that gives it, reported if the file cannot be read.
+   * @param[in] mpi_communicator MPI communicator of the simulation.
+   *
+   * @return Id of the last checkpoint.
+   */
+  static unsigned int
+  read_checkpoint_id(const std::string &prefix,
+                     const std::string &file_description,
+                     const MPI_Comm    &mpi_communicator);
 
   /**
    * @brief Serialize the checkpoint controller object to an output archive.

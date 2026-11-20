@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/checkpoint_control.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
 #include <core/multiphysics.h>
@@ -32,11 +33,8 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-#include <boost/archive/text_iarchive.hpp>
-
 #include <cmath>
 #include <exception>
-#include <fstream>
 
 
 // Constructor for class FluidDynamicsMatrixBased
@@ -1226,7 +1224,10 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->pcout << "************************" << std::endl;
       this->pcout << "---> Simulation Restart " << std::endl;
       this->pcout << "************************" << std::endl;
-      this->read_checkpoint_controller();
+      this->checkpoint_controller.read(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
       this->read_checkpoint();
     }
   else if (initial_condition_type ==
@@ -1396,17 +1397,12 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
       // Load the checkpoint controller of that simulation, which gives the id
       // of its last checkpoint
-      const std::string checkpoint_controller_object_filename =
-        checkpoint_file_name + ".checkpoint_controller";
-      check_file_exists(
-        checkpoint_controller_object_filename,
+      const unsigned int checkpoint_id = CheckpointControl::read_checkpoint_id(
+        checkpoint_file_name,
         "checkpoint file of the checkpoint controller, given by "
         "'subsection initial conditions' - 'subsection average "
-        "velocity profile' - 'set checkpoint file name'");
-      std::ifstream input(checkpoint_controller_object_filename);
-      boost::archive::text_iarchive archive(input, boost::archive::no_header);
-      unsigned int                  checkpoint_id;
-      archive >> checkpoint_id;
+        "velocity profile' - 'set checkpoint file name'",
+        this->mpi_communicator);
       checkpoint_file_name += "_" + Utilities::int_to_string(checkpoint_id);
 
       // The average velocity profile needs to come from the results of a

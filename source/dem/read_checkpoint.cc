@@ -34,17 +34,7 @@ read_checkpoint(
   std::string        prefix = checkpoint_controller.get_filename();
 
   // Load checkpoint controller
-  std::string checkpoint_controller_object_filename =
-    prefix + ".checkpoint_controller";
-  check_file_exists(checkpoint_controller_object_filename,
-                    "checkpoint file of the checkpoint controller, given by "
-                    "'subsection restart' - 'set filename'");
-  std::ifstream iss_checkpoint_controller_obj(
-    checkpoint_controller_object_filename);
-
-  boost::archive::text_iarchive ia_checkpoint_controller_obj(
-    iss_checkpoint_controller_obj, boost::archive::no_header);
-  checkpoint_controller.deserialize(ia_checkpoint_controller_obj);
+  checkpoint_controller.read(prefix, triangulation.get_mpi_communicator());
 
   // Update prefix with the checkpoint id
   prefix =

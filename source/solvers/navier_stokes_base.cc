@@ -40,12 +40,8 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
 #include <sys/stat.h>
 
-#include <fstream>
 #include <string>
 
 /*
@@ -598,7 +594,10 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
         simulation_control->is_at_end()))
     {
       this->write_checkpoint();
-      this->write_checkpoint_controller();
+      this->checkpoint_controller.write(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -3125,39 +3124,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   serialize_tables_vector(table_output_structs,
                           this->get_checkpoint_slot_label(),
                           this->mpi_communicator);
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint_controller() const
-{
-  // This file has the same name for every checkpoint id. It gives the id of
-  // the last checkpoint, from which a restart reads.
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    {
-      std::ofstream output(
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename +
-        ".checkpoint_controller");
-      boost::archive::text_oarchive archive(output, boost::archive::no_header);
-      this->checkpoint_controller.serialize(archive);
-    }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint_controller()
-{
-  const std::string filename =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename +
-    ".checkpoint_controller";
-  check_file_exists(filename,
-                    "checkpoint file of the checkpoint controller, given by "
-                    "'subsection restart' - 'set filename'");
-  std::ifstream                 input(filename);
-  boost::archive::text_iarchive archive(input, boost::archive::no_header);
-  this->checkpoint_controller.deserialize(archive);
 }
 
 template <int dim, typename VectorType, typename DofsType>

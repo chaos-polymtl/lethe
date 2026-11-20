@@ -809,21 +809,6 @@ protected:
   write_checkpoint();
 
   /**
-   * @brief Write the checkpoint controller, which gives the id of the last
-   * checkpoint. It is called after write_checkpoint(), once every file of the
-   * checkpoint is written.
-   */
-  void
-  write_checkpoint_controller() const;
-
-  /**
-   * @brief Read the checkpoint controller, which gives the id of the last
-   * checkpoint. It is called before read_checkpoint().
-   */
-  void
-  read_checkpoint_controller();
-
-  /**
    * @brief Return the prefix of the checkpoint files: the output path, the
    * restart file name and the label of the checkpoint slot.
    */
