@@ -76,6 +76,8 @@ test()
               Triangulation<dim>::smoothing_on_refinement |
               Triangulation<dim>::smoothing_on_coarsening));
 
+      AffineConstraints<double> constraints;
+
       Point<dim> p_0 = Point<dim>();
       Point<dim> p_1 = Point<dim>();
       for (int n = 0; n < dim; n++)
@@ -206,6 +208,15 @@ test()
           background_level_set = background_level_set_owned;
         }
 
+      constraints.clear();
+      constraints.reinit(background_dof_handler.locally_owned_dofs(),
+                         DoFTools::extract_locally_relevant_dofs(
+                           background_dof_handler));
+      DoFTools::make_hanging_node_constraints(background_dof_handler,
+                                              constraints);
+
+      constraints.close();
+
       // Instanciate the SignedDistanceSolver as it would as a member of the
       // background solver class
       std::shared_ptr<
@@ -253,7 +264,11 @@ test()
       FETools::interpolate(signed_distance_solver->dof_handler,
                            signed_distance,
                            background_dof_handler,
+                           constraints,
                            tmp_background_signed_distance);
+
+      constraints.close();
+
 
       background_signed_distance = tmp_background_signed_distance;
 
