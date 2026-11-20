@@ -18,6 +18,8 @@
 #include <solvers/postprocessors.h>
 #include <solvers/solid_constraints.h>
 
+#include <deal.II/base/timer.h>
+
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
@@ -1754,6 +1756,9 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 {
+  // Finish this section before initial-condition setup prints/resets the timer.
+  TimerOutput::Scope               timer(this->computing_timer,
+                           "Interpolate initial conditions");
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   VectorTools::interpolate(*this->get_mapping(),

@@ -1,0 +1,58 @@
+Running on 2 MPI rank(s)...
+Sharp IB periodic boundaries configured successfully.
+  Periodic direction: 0
+  Periodic boundary IDs: 0, 1
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      4.0000e+00
+  Periodic domain bounds [-1.0000e+00, 1.0000e+00] in direction 0
+  Periodic offset: 2.0000e+00 0.0000e+00
+Initial refinement around IB particles - Step : 1 of 1
+   Number of active cells:       112
+   Number of degrees of freedom: 432
+   Volume of triangulation:      4.0000e+00
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
+*******************************************************************************
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time   T_z     f_x     f_y    f_xv    f_yv    f_xp    f_yp   
+          0 0.5000 0.0140 -4.1775 -0.0725 -1.5327 -0.0372 -2.6448 -0.0353 
+
+*******************************************************************************
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 10.68   
+*******************************************************************************
+   Number of active cells:       124
+   Number of degrees of freedom: 465
+   Volume of triangulation:      4.0000e+00
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time   T_z     f_x     f_y    f_xv    f_yv    f_xp    f_yp   
+          0 1.0000 0.0068 -2.3392 -0.0157 -1.0674 -0.0101 -1.2718 -0.0056 
+
+*******************************************************************************
+Transient iteration: 3        Time: 1.5      Time step: 0.5      CFL: 20.56   
+*******************************************************************************
+   Number of active cells:       148
+   Number of degrees of freedom: 564
+   Volume of triangulation:      4.0000e+00
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time   T_z     f_x     f_y    f_xv    f_yv    f_xp    f_yp   
+          0 1.5000 0.0041 -1.5765 -0.0570 -0.7798 -0.0159 -0.7967 -0.0411 
+
+*******************************************************************************
+Transient iteration: 4        Time: 2        Time step: 0.5      CFL: 21.31   
+*******************************************************************************
+   Number of active cells:       160
+   Number of degrees of freedom: 621
+   Volume of triangulation:      4.0000e+00
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time   T_z     f_x     f_y    f_xv    f_yv    f_xp    f_yp   
+          0 2.0000 0.0030 -1.3800 -0.0314 -0.6978 -0.0100 -0.6822 -0.0213 
