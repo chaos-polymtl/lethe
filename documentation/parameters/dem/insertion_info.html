@@ -510,6 +510,11 @@
   # If method = file
   set list of input files                            = particles.input
 
+  # If method = packed
+  set packed particle-particle overlap factor        = 0.501
+  set packed particle-wall overlap factor            = 1.02
+  set packed clearance ratio                         = 0.01
+
   # Box removal
   set remove particles                               = false
   set removal box points coordinates                 = 0., 0., 0.: 1., 1., 1.
@@ -632,6 +637,22 @@ set list z = 0., 3.
 <section id="packed">
 <h2>Packed<a class="headerlink" href="#packed" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">packed</span></code> insertion method inserts particles in an insertion box in an unstructured manner without guaranteeing that the particles are not overlapping on insertion. Using these particle positions <strong>as is</strong> for the initial configuration of a DEM simulation would result in an unstable simulation. To solve this problem, overlapping particles are shifted apart, relative to their normal contact vector, until all particles are no longer touching other particles or walls. This particle shifting is performed using pseudo time-stepping, where gravity is not considered and where the equations of motion are not solved.</p>
+<p>At each pseudo time-step, every contact is evaluated with the positions of the particles at the beginning of the pseudo time-step. Each contact adds a displacement to its particle along the contact normal. The walls of the triangulation, its boundary points and lines, and the solid surfaces (see <a class="reference internal" href="solid_objects.html"><span class="doc">Solid Objects</span></a>) all shift the particles that overlap them. The sum of the displacements of the particle-particle contacts of a particle is limited to its radius. Then the displacements of its contacts with the walls and the solid surfaces are added. The particle is moved by this sum, limited to the largest particle diameter.</p>
+<p>Limiting the particle-particle displacements to the particle radius prevents the other particles from pushing a particle through a wall or a solid surface. A particle that does not overlap a wall or a solid surface is farther than its radius from it, and a particle that overlaps it is pushed back by at least its overlap. Without this limit, a particle could be pushed through a solid surface and remain on its other side, or be pushed out of the domain and be deleted.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">packed</span> <span class="pre">particle-particle</span> <span class="pre">overlap</span> <span class="pre">factor</span></code> (<span class="math notranslate nohighlight">\(f_{pp}\)</span>) defines the fraction of the normal overlap <span class="math notranslate nohighlight">\(\delta_n\)</span> of a particle-particle contact by which each of the two particles is shifted. A value slightly larger than 0.5 separates the two particles once both are shifted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">packed</span> <span class="pre">particle-wall</span> <span class="pre">overlap</span> <span class="pre">factor</span></code> (<span class="math notranslate nohighlight">\(f_{pw}\)</span>) defines the fraction of the normal overlap of a contact with a wall, a boundary point or line, or a solid surface by which the particle is shifted. A value slightly larger than 1 separates the particle from the wall. It must be at least 1, so that the other particles cannot push a particle through a wall or a solid surface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">packed</span> <span class="pre">clearance</span> <span class="pre">ratio</span></code> (<span class="math notranslate nohighlight">\(c\)</span>) defines a distance added to every shift, as a fraction of the particle diameter. It leaves a small gap between the surfaces once they are separated.</p></li>
+</ul>
+<p>A particle <span class="math notranslate nohighlight">\(i\)</span> in contact with a particle <span class="math notranslate nohighlight">\(j\)</span> and a particle in contact with a wall are thus shifted by:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Delta x_{ij} = f_{pp} \delta_n + c \frac{d_i + d_j}{2} \quad \text{and} \quad \Delta x_{iw} = f_{pw} \delta_n + c d_i\]</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The solid objects do not move during the packed insertion: the particles are arranged around their initial position, even if a translational or angular velocity is prescribed. The insertion points are generated without regard to the solid surfaces, so a particle whose center is generated inside a closed solid surface remains inside it.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Currently, when using this insertion method, the simulation ends once no contact is detected, thus the particle positions need to be extracted in an insertion file and the simulation must be relaunched with the <code class="docutils literal notranslate"><span class="pre">file</span></code> insertion method.</p>

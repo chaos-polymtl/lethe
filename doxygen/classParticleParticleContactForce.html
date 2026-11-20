@@ -156,6 +156,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a6a136d522c1736d47dc72af3a0205d86" id="r_a6a136d522c1736d47dc72af3a0205d86"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a136d522c1736d47dc72af3a0205d86">model_parameter_beta</a></td></tr>
 <tr class="memitem:accd5162835ca4eaed212a6ef05b9ef0e" id="r_accd5162835ca4eaed212a6ef05b9ef0e"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accd5162835ca4eaed212a6ef05b9ef0e">dmt_cut_off_threshold</a></td></tr>
 <tr class="memitem:a5bf0507c0f704a4c4392799ea54273a2" id="r_a5bf0507c0f704a4c4392799ea54273a2"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bf0507c0f704a4c4392799ea54273a2">f_coefficient_epsd</a></td></tr>
+<tr class="memitem:a4ce895c77862987d3e150d33cb33867f" id="r_a4ce895c77862987d3e150d33cb33867f"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ce895c77862987d3e150d33cb33867f">packed_particle_particle_overlap_factor</a></td></tr>
+<tr class="memitem:a26811f8a209038cf67f37ef492e17195" id="r_a26811f8a209038cf67f37ef492e17195"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26811f8a209038cf67f37ef492e17195">packed_clearance_ratio</a></td></tr>
 <tr class="memitem:a92f9d442fadaf1f186876e5fb8e0ac18" id="r_a92f9d442fadaf1f186876e5fb8e0ac18"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92f9d442fadaf1f186876e5fb8e0ac18">equivalent_surface_roughness</a></td></tr>
 <tr class="memitem:a418c1bdea070dd9f002997d07a03a06c" id="r_a418c1bdea070dd9f002997d07a03a06c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a418c1bdea070dd9f002997d07a03a06c">equivalent_surface_slope</a></td></tr>
 <tr class="memitem:a84db93114cc3b42b90ff0d73a7fd5c37" id="r_a84db93114cc3b42b90ff0d73a7fd5c37"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84db93114cc3b42b90ff0d73a7fd5c37">effective_microhardness</a></td></tr>
@@ -203,7 +205,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8templates_8h_source.html#l00028">28</a> of file <a class="el" href="particle__particle__contact__force_8templates_8h_source.html">particle_particle_contact_force.templates.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l02105">dmt_cut_off_threshold</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02106">f_coefficient_epsd</a>, <a class="el" href="dem__properties_8h_source.html#l00355">DEM::has_thermal_properties</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01581">set_effective_properties()</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01697">set_multiphysic_properties()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l02105">dmt_cut_off_threshold</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02106">f_coefficient_epsd</a>, <a class="el" href="dem__properties_8h_source.html#l00355">DEM::has_thermal_properties</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02108">packed_clearance_ratio</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02107">packed_particle_particle_overlap_factor</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l01581">set_effective_properties()</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01697">set_multiphysic_properties()</a>.</p>
 
 </div>
 </div>
@@ -1224,7 +1226,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 
 <p>Implements <a class="el" href="classParticleParticleContactForceBase.html#acf6f1d46b26383c7d617d4eda3276389">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8templates_8h_source.html#l00049">49</a> of file <a class="el" href="particle__particle__contact__force_8templates_8h_source.html">particle_particle_contact_force.templates.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8templates_8h_source.html#l00052">52</a> of file <a class="el" href="particle__particle__contact__force_8templates_8h_source.html">particle_particle_contact_force.templates.h</a>.</p>
 
 <p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l01781">execute_contact_calculation()</a>, <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, and <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>.</p>
 
@@ -1366,7 +1368,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 </table>
 </div><div class="memdoc">
 
-<p>Calculate the displacement that separates two overlapping particles. This "contact force" model is used by the packed insertion method. The displacement is along the contact normal and is slightly larger than half the normal overlap, so that the two particles are separated once each of them is displaced. </p>
+<p>Calculate the displacement that separates two overlapping particles. This "contact force" model is used by the packed insertion method. The displacement is along the contact normal. Its norm is the normal overlap multiplied by the packed particle-particle overlap factor, plus the mean diameter of the two particles multiplied by the packed clearance ratio. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">normal_unit_vector</td><td>Normal unit contact vector from particle one to particle two. </td></tr>
@@ -1380,7 +1382,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01541">1541</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00115">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::n_contacts</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00115">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::n_contacts</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02108">packed_clearance_ratio</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l02107">packed_particle_particle_overlap_factor</a>.</p>
 
 </div>
 </div>
@@ -1432,7 +1434,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01781">1781</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">apply_force_and_torque_on_local_particles()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00563">apply_force_and_torque_on_single_local_particle()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00269">apply_heat_transfer_on_local_particles()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00282">apply_heat_transfer_on_single_local_particle()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00343">calculate_contact()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00138">calculate_contact_thermal_conductance()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02109">effective_microhardness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02096">effective_real_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02095">effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02107">equivalent_surface_roughness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02108">equivalent_surface_slope</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00025">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::force</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02111">gas_parameter_m</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00486">get_force_calculation_threshold_distance()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00290">get_location()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00309">get_periodic_location()</a>, <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00013">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, <a class="el" href="dem__properties_8h_source.html#l00355">DEM::has_thermal_properties</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00026">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::heat_transfer_rate</a>, <a class="el" href="contact__type_8h_source.html#l00012">local_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02112">thermal_conductivity_gas</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02110">thermal_conductivity_particle</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00024">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::torque</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00206">update_contact_information()</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01569">vec_particle_type_index()</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00528">apply_force_and_torque_on_local_particles()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00563">apply_force_and_torque_on_single_local_particle()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00269">apply_heat_transfer_on_local_particles()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00282">apply_heat_transfer_on_single_local_particle()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00343">calculate_contact()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00138">calculate_contact_thermal_conductance()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02111">effective_microhardness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02096">effective_real_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02095">effective_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02109">equivalent_surface_roughness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02110">equivalent_surface_slope</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00025">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::force</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02113">gas_parameter_m</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00486">get_force_calculation_threshold_distance()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00290">get_location()</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00309">get_periodic_location()</a>, <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00013">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, <a class="el" href="dem__properties_8h_source.html#l00355">DEM::has_thermal_properties</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00026">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::heat_transfer_rate</a>, <a class="el" href="contact__type_8h_source.html#l00012">local_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02114">thermal_conductivity_gas</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02112">thermal_conductivity_particle</a>, <a class="el" href="particle__interaction__outcomes_8h_source.html#l00024">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::torque</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l00206">update_contact_information()</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l01569">vec_particle_type_index()</a>.</p>
 
 </div>
 </div>
@@ -1671,7 +1673,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l01697">1697</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l02109">effective_microhardness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02096">effective_real_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02107">equivalent_surface_roughness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02108">equivalent_surface_slope</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02111">gas_parameter_m</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02094">n_particle_types</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02112">thermal_conductivity_gas</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l02110">thermal_conductivity_particle</a>.</p>
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l02111">effective_microhardness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02096">effective_real_youngs_modulus</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02109">equivalent_surface_roughness</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02110">equivalent_surface_slope</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02113">gas_parameter_m</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02094">n_particle_types</a>, <a class="el" href="particle__particle__contact__force_8h_source.html#l02114">thermal_conductivity_gas</a>, and <a class="el" href="particle__particle__contact__force_8h_source.html#l02112">thermal_conductivity_particle</a>.</p>
 
 </div>
 </div>
@@ -1959,7 +1961,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02109">2109</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02111">2111</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2115,7 +2117,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02107">2107</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02109">2109</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2141,7 +2143,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02108">2108</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02110">2110</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2193,7 +2195,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02111">2111</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02113">2113</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2249,6 +2251,58 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 
 </div>
 </div>
+<a id="a26811f8a209038cf67f37ef492e17195" name="a26811f8a209038cf67f37ef492e17195"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26811f8a209038cf67f37ef492e17195">&#9670;&#160;</a></span>packed_clearance_ratio</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958a">Parameters::Lagrangian::ParticleParticleContactForceModel</a> contact_model, <a class="el" href="namespaceParameters_1_1Lagrangian.html#ac41aed1853eee7a1933daa560973327b">Parameters::Lagrangian::RollingResistanceMethod</a> rolling_friction_model&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double <a class="el" href="classParticleParticleContactForce.html">ParticleParticleContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::packed_clearance_ratio</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02108">2108</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+
+</div>
+</div>
+<a id="a4ce895c77862987d3e150d33cb33867f" name="a4ce895c77862987d3e150d33cb33867f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ce895c77862987d3e150d33cb33867f">&#9670;&#160;</a></span>packed_particle_particle_overlap_factor</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958a">Parameters::Lagrangian::ParticleParticleContactForceModel</a> contact_model, <a class="el" href="namespaceParameters_1_1Lagrangian.html#ac41aed1853eee7a1933daa560973327b">Parameters::Lagrangian::RollingResistanceMethod</a> rolling_friction_model&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double <a class="el" href="classParticleParticleContactForce.html">ParticleParticleContactForce</a>&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;::packed_particle_particle_overlap_factor</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02107">2107</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+
+</div>
+</div>
 <a id="a2e6b2e350eb712efe9eff9ca1522927a" name="a2e6b2e350eb712efe9eff9ca1522927a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2e6b2e350eb712efe9eff9ca1522927a">&#9670;&#160;</a></span>thermal_conductivity_gas</h2>
 
@@ -2271,7 +2325,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02112">2112</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02114">2114</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -2297,7 +2351,7 @@ template&lt;int dim, typename PropertiesIndex, <a class="el" href="namespacePara
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02110">2110</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l02112">2112</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>

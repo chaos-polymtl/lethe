@@ -155,6 +155,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a6f393f1a50d7dc16d5795a5649ea6623" id="r_a6f393f1a50d7dc16d5795a5649ea6623"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f393f1a50d7dc16d5795a5649ea6623">insertion_maximum_offset</a> = 1.</td></tr>
 <tr class="memitem:accdc8cc16963e1a4eb442d73e6e00136" id="r_accdc8cc16963e1a4eb442d73e6e00136"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accdc8cc16963e1a4eb442d73e6e00136">seed_for_insertion</a> = 1</td></tr>
 <tr class="memitem:a3d6263ec08f22fb91bf26eb7d68361ac" id="r_a3d6263ec08f22fb91bf26eb7d68361ac"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Function&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d6263ec08f22fb91bf26eb7d68361ac">insertion_acceptance_fct</a></td></tr>
+<tr class="memitem:aad4a0fb91f352ef14865787a55a5ca58" id="r_aad4a0fb91f352ef14865787a55a5ca58"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad4a0fb91f352ef14865787a55a5ca58">packed_particle_particle_overlap_factor</a> = 0.501</td></tr>
+<tr class="memitem:a1fdeec69a0135fb9c4b75f9f8762bb4f" id="r_a1fdeec69a0135fb9c4b75f9f8762bb4f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1fdeec69a0135fb9c4b75f9f8762bb4f">packed_particle_wall_overlap_factor</a> = 1.02</td></tr>
+<tr class="memitem:a49d5a51a82798444852f1c79cf46c08f" id="r_a49d5a51a82798444852f1c79cf46c08f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49d5a51a82798444852f1c79cf46c08f">packed_clearance_ratio</a> = 0.01</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -243,9 +246,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l00589">589</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l00590">590</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00451">clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00454">clear_box_point_2</a>, <a class="el" href="core_2utilities_8h_source.html#l00888">declare_enum_entry()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">direction_sequence</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00500">distance_threshold</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00493">initial_omega</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00490">initial_vel</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00442">inserted_this_step</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">insertion_box_point_2</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00445">insertion_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00503">insertion_maximum_offset</a>, <a class="el" href="#ad63ab8eeffb3dd5c4cbb9cc3ffe44a59">insertion_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00460">insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00463">insertion_plane_point</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00475">list_d</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00457">list_of_input_files</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00476">list_T</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00469">list_vx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00470">list_vy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00471">list_vz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00472">list_wx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00473">list_wy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00474">list_wz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00466">list_x</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00467">list_y</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00468">list_z</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00448">removing_particles_in_region</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00506">seed_for_insertion</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00451">clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00454">clear_box_point_2</a>, <a class="el" href="core_2utilities_8h_source.html#l00888">declare_enum_entry()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">direction_sequence</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00500">distance_threshold</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00493">initial_omega</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00490">initial_vel</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00442">inserted_this_step</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">insertion_box_point_2</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00445">insertion_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00503">insertion_maximum_offset</a>, <a class="el" href="#ad63ab8eeffb3dd5c4cbb9cc3ffe44a59">insertion_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00460">insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00463">insertion_plane_point</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00475">list_d</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00457">list_of_input_files</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00476">list_T</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00469">list_vx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00470">list_vy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00471">list_vz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00472">list_wx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00473">list_wy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00474">list_wz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00466">list_x</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00467">list_y</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00468">list_z</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00528">packed_clearance_ratio</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00515">packed_particle_particle_overlap_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00522">packed_particle_wall_overlap_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00448">removing_particles_in_region</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00506">seed_for_insertion</a>.</p>
 
 </div>
 </div>
@@ -274,9 +277,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l00788">788</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l00818">818</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00451">clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00454">clear_box_point_2</a>, <a class="el" href="core_2utilities_8h_source.html#l01330">convert_string_to_vector()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">direction_sequence</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00500">distance_threshold</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00493">initial_omega</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00497">initial_temperature_function</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00490">initial_vel</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00442">inserted_this_step</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00510">insertion_acceptance_fct</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">insertion_box_point_2</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00445">insertion_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00503">insertion_maximum_offset</a>, <a class="el" href="#ad63ab8eeffb3dd5c4cbb9cc3ffe44a59">insertion_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00460">insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00463">insertion_plane_point</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00475">list_d</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00457">list_of_input_files</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00476">list_T</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00469">list_vx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00470">list_vy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00471">list_vz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00472">list_wx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00473">list_wy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00474">list_wz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00466">list_x</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00467">list_y</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00468">list_z</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00448">removing_particles_in_region</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00506">seed_for_insertion</a>, <a class="el" href="core_2utilities_8h_source.html#l00734">string_to_enum()</a>, and <a class="el" href="core_2utilities_8h_source.html#l00956">value_string_to_tensor()</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00451">clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00454">clear_box_point_2</a>, <a class="el" href="core_2utilities_8h_source.html#l01330">convert_string_to_vector()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">direction_sequence</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00500">distance_threshold</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00493">initial_omega</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00497">initial_temperature_function</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00490">initial_vel</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00442">inserted_this_step</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00510">insertion_acceptance_fct</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">insertion_box_point_2</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00445">insertion_frequency</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00503">insertion_maximum_offset</a>, <a class="el" href="#ad63ab8eeffb3dd5c4cbb9cc3ffe44a59">insertion_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00460">insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00463">insertion_plane_point</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00475">list_d</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00457">list_of_input_files</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00476">list_T</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00469">list_vx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00470">list_vy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00471">list_vz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00472">list_wx</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00473">list_wy</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00474">list_wz</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00466">list_x</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00467">list_y</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00468">list_z</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00528">packed_clearance_ratio</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00515">packed_particle_particle_overlap_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00522">packed_particle_wall_overlap_factor</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00448">removing_particles_in_region</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00506">seed_for_insertion</a>, <a class="el" href="core_2utilities_8h_source.html#l00734">string_to_enum()</a>, and <a class="el" href="core_2utilities_8h_source.html#l00956">value_string_to_tensor()</a>.</p>
 
 </div>
 </div>
@@ -836,6 +839,63 @@ template&lt;int dim&gt; </div>
 <p>z-position for list insertion. </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00468">468</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="a49d5a51a82798444852f1c79cf46c08f" name="a49d5a51a82798444852f1c79cf46c08f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49d5a51a82798444852f1c79cf46c08f">&#9670;&#160;</a></span>packed_clearance_ratio</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a>&lt; dim &gt;::packed_clearance_ratio = 0.01</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Distance added to the shift of a particle in contact at each pseudo-time step of the packed insertion method, as a fraction of the particle diameter. The mean diameter of the two particles is used for particle-particle contacts. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00528">528</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="aad4a0fb91f352ef14865787a55a5ca58" name="aad4a0fb91f352ef14865787a55a5ca58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad4a0fb91f352ef14865787a55a5ca58">&#9670;&#160;</a></span>packed_particle_particle_overlap_factor</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a>&lt; dim &gt;::packed_particle_particle_overlap_factor = 0.501</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Fraction of the normal overlap of a particle-particle contact by which each of the two particles is shifted at each pseudo-time step of the packed insertion method. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00515">515</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="a1fdeec69a0135fb9c4b75f9f8762bb4f" name="a1fdeec69a0135fb9c4b75f9f8762bb4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fdeec69a0135fb9c4b75f9f8762bb4f">&#9670;&#160;</a></span>packed_particle_wall_overlap_factor</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a>&lt; dim &gt;::packed_particle_wall_overlap_factor = 1.02</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Fraction of the normal overlap of a contact with a wall, a solid surface, a boundary point or a boundary line by which the particle is shifted at each pseudo-time step of the packed insertion method. It is at least 1, so that the other particles cannot push a particle through a wall or a solid surface. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00522">522</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>

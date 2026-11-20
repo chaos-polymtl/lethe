@@ -116,6 +116,7 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a7dffc97cef18ad2d821dde4685b8417a" id="r_a7dffc97cef18ad2d821dde4685b8417a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7dffc97cef18ad2d821dde4685b8417a">limit_particle_particle_shift_displacement</a> (const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome)</td></tr>
 <tr class="memitem:a15e276503eb8184fe01bed42ead1db5d" id="r_a15e276503eb8184fe01bed42ead1db5d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15e276503eb8184fe01bed42ead1db5d">apply_shift_displacement</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double max_displacement, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome, std::vector&lt; double &gt; &amp;displacements)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
@@ -189,7 +190,7 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00017">17</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__packed_8h_source.html#l00128">acceptance_fct</a>, <a class="el" href="insertion__packed_8h_source.html#l00125">axis_max</a>, <a class="el" href="insertion__packed_8h_source.html#l00125">axis_min</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::direction_sequence</a>, <a class="el" href="insertion_8cc_source.html#l00010">Insertion&lt; dim, PropertiesIndex &gt;::Insertion()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_2</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::insertion_info</a>.</p>
+<p class="reference">References <a class="el" href="insertion__packed_8h_source.html#l00154">acceptance_fct</a>, <a class="el" href="insertion__packed_8h_source.html#l00151">axis_max</a>, <a class="el" href="insertion__packed_8h_source.html#l00151">axis_min</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00479">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::direction_sequence</a>, <a class="el" href="insertion_8cc_source.html#l00010">Insertion&lt; dim, PropertiesIndex &gt;::Insertion()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00484">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00487">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::insertion_box_point_2</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::insertion_info</a>.</p>
 
 </div>
 </div>
@@ -234,7 +235,7 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
 </div><div class="memdoc">
 
 <p>Displace the locally owned particles by the displacements accumulated by the shift contact models. </p>
-<p>Each contact of a particle adds a displacement to the entry of that particle in the force container of the contact outcomes. Each particle is moved by the sum of the displacements of its contacts, limited to a maximum norm, and the norm of the applied displacement is added to the displacement used by the dynamic contact detection. The force container is then reset to zero for the next pseudo-time step.</p>
+<p>Each contact of a particle adds a displacement to the entry of that particle in the force container of the contact outcomes. The sum of the particle-particle displacements is first limited to the particle radius by limit_particle_particle_shift_displacement. Each particle is moved by the sum of the displacements of its contacts, limited to a maximum norm, and the norm of the applied displacement is added to the displacement used by the dynamic contact detection. The force container is then reset to zero for the next pseudo-time step.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted. </td></tr>
@@ -245,7 +246,7 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00186">186</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00208">208</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="particle__interaction__outcomes_8h_source.html#l00025">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::force</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00052">tensor_nd_to_2d()</a>.</p>
 
@@ -334,9 +335,9 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00228">228</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00252">252</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__packed_8h_source.html#l00128">acceptance_fct</a>, <a class="el" href="insertion__packed_8h_source.html#l00125">axis_max</a>, <a class="el" href="insertion__packed_8h_source.html#l00125">axis_min</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00479">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::direction_sequence</a>.</p>
+<p class="reference">References <a class="el" href="insertion__packed_8h_source.html#l00154">acceptance_fct</a>, <a class="el" href="insertion__packed_8h_source.html#l00151">axis_max</a>, <a class="el" href="insertion__packed_8h_source.html#l00151">axis_min</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00479">Parameters::Lagrangian::InsertionInfo&lt; dim &gt;::direction_sequence</a>.</p>
 
 </div>
 </div>
@@ -388,7 +389,52 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00056">56</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion_8cc_source.html#l00063">Insertion&lt; dim, PropertiesIndex &gt;::assign_particle_properties()</a>, <a class="el" href="insertion__packed_8cc_source.html#l00228">generate_insertion_location()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00184">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00138">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, and <a class="el" href="insertion_8cc_source.html#l00044">Insertion&lt; dim, PropertiesIndex &gt;::print_insertion_info()</a>.</p>
+<p class="reference">References <a class="el" href="insertion_8cc_source.html#l00063">Insertion&lt; dim, PropertiesIndex &gt;::assign_particle_properties()</a>, <a class="el" href="insertion__packed_8cc_source.html#l00252">generate_insertion_location()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00029">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00028">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00184">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00138">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, and <a class="el" href="insertion_8cc_source.html#l00044">Insertion&lt; dim, PropertiesIndex &gt;::print_insertion_info()</a>.</p>
+
+</div>
+</div>
+<a id="a7dffc97cef18ad2d821dde4685b8417a" name="a7dffc97cef18ad2d821dde4685b8417a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7dffc97cef18ad2d821dde4685b8417a">&#9670;&#160;</a></span>limit_particle_particle_shift_displacement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classInsertionPacked.html">InsertionPacked</a>&lt; dim, PropertiesIndex &gt;::limit_particle_particle_shift_displacement </td>
+          <td>(</td>
+          <td class="paramtype">const Particles::ParticleHandler&lt; dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>particle_handler</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>contact_outcome</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Limit the norm of the displacement of each locally owned particle to its radius. </p>
+<p>It is called once the particle-particle contacts have added their displacements to the force container of the contact outcomes, and before the contacts with the walls, the boundary points and lines, and the solid surfaces add theirs. A particle that does not overlap a wall or a triangle is farther than its radius from it, and a particle that overlaps it is pushed back by at least its overlap. Thus, as long as the particle-wall overlap factor is at least 1, the particle-particle contacts cannot push the center of a particle through a wall or a triangle.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">contact_outcome</td><td>Contact outcomes holding the displacements accumulated by the particle-particle contacts. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8cc_source.html#l00186">186</a> of file <a class="el" href="insertion__packed_8cc_source.html">insertion_packed.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="particle__interaction__outcomes_8h_source.html#l00025">ParticleInteractionOutcomes&lt; PropertiesIndex &gt;::force</a>.</p>
 
 </div>
 </div>
@@ -456,7 +502,7 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
 
 <p>Function used to insert particles inside or outside an arbitrary shape. </p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00128">128</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00154">154</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
@@ -482,7 +528,7 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00125">125</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00151">151</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
@@ -508,7 +554,7 @@ template&lt;int dim, typename PropertiesIndex&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00125">125</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__packed_8h_source.html#l00151">151</a> of file <a class="el" href="insertion__packed_8h_source.html">insertion_packed.h</a>.</p>
 
 </div>
 </div>
