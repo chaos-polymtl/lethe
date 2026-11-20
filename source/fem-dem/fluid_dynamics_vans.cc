@@ -83,11 +83,11 @@ template <int dim, typename PropertiesIndex>
 void
 FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
 {
-  FluidDynamicsMatrixBased<dim>::setup_dofs();
-
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
+  FluidDynamicsMatrixBased<dim>::setup_dofs();
 
   // Provide the void fraction dof_handler and present solution to the
   // multiphysics interface
@@ -466,7 +466,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.CLS)
@@ -476,7 +476,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
       scratch_data.enable_cls(
         dof_handler_cls.get_fe(),
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
 
       if (this->simulation_parameters.multiphysics.cls_parameters
@@ -491,10 +491,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
           scratch_data.enable_projected_phase_indicator_gradient(
             projected_phase_indicator_gradient_dof_handler.get_fe(),
             *this->cell_quadrature,
-            *this->mapping);
+            *this->get_mapping());
           scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
                                         *this->cell_quadrature,
-                                        *this->mapping);
+                                        *this->get_mapping());
         }
     }
 
@@ -503,12 +503,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
 
   scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
-                                    *this->mapping);
+                                    *this->get_mapping());
   if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
       scratch_data.enable_particle_field_projection(
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         *particle_projector.fluid_drag_on_particles.fe,
         *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
         *particle_projector.particle_velocity.fe,
@@ -538,6 +538,19 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_matrix()
     }
 
   this->system_matrix.compress(VectorOperation::add);
+  // for (unsigned int i = 0; i < this->system_matrix.m(); ++i)
+  //   {
+  //     for (unsigned int j = 0; j < this->system_matrix.n(); ++j)
+  //       {
+  //         if (i == j)
+  //           {
+  //             std::cout << "MATRICE (" << i << "," << j
+  //                       << ") : " << this->system_matrix.el(i, j)
+  //                       << std::endl;
+  //           }
+  //       }
+  //   }
+  // std::cout << "MATRICE (0,0) : " << this->system_matrix.el(0, 0) << std::endl;
 }
 
 template <int dim, typename PropertiesIndex>
@@ -700,7 +713,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
-    *this->mapping,
+    *this->get_mapping(),
     *this->face_quadrature);
   this->computing_timer.leave_subsection("Assemble RHS");
 
@@ -708,7 +721,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
     {
       scratch_data.enable_particle_field_projection(
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         *particle_projector.fluid_drag_on_particles.fe,
         *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
         *particle_projector.particle_velocity.fe,
@@ -730,14 +743,14 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
               this->simulation_parameters.physical_properties_manager,
               *this->fe,
               *this->cell_quadrature,
-              *this->mapping,
+              *this->get_mapping(),
               *this->face_quadrature));
         }
     }
 
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  
   this->system_rhs = 0;
-
   setup_assemblers();
 
   if (this->simulation_parameters.multiphysics.CLS)
@@ -747,12 +760,12 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
       scratch_data.enable_cls(
         dof_handler_cls.get_fe(),
         *this->cell_quadrature,
-        *this->mapping,
+        *this->get_mapping(),
         this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
     }
   scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
-                                    *this->mapping);
+                                    *this->get_mapping());
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
     this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
@@ -769,6 +782,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
+
+  // this->system_rhs.compress(VectorOperation::add);
+  // for (auto element : this->system_rhs)
+  //   std::cout << "RHS element: " << element << std::endl;
 
   // Add mortar entries
   if (this->simulation_parameters.mortar_parameters.enable)
@@ -787,6 +804,8 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_system_rhs()
 
   this->system_rhs.compress(VectorOperation::add);
 
+  // for (auto element : this->system_rhs)
+  //   std::cout << "RHS element: " << element << std::endl;
   if (this->simulation_control->is_first_assembly())
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
@@ -827,10 +846,6 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
         this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
-  if (this->simulation_parameters.mortar_parameters.enable)
-    scratch_data.reinit_mortar(cell,
-                               this->simulation_parameters.mortar_parameters);
-
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
     cell->level(),
@@ -841,6 +856,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::assemble_local_system_rhs(
     void_fraction_cell,
     *this->particle_projector.void_fraction_locally_relevant,
     *this->particle_projector.previous_void_fraction);
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    scratch_data.reinit_mortar(cell,
+                               this->simulation_parameters.mortar_parameters);
 
   scratch_data.calculate_physical_properties();
 
@@ -1114,7 +1133,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::monitor_mass_conservation()
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
 
-  FEValues<dim> fe_values(*this->mapping,
+  FEValues<dim> fe_values(*this->get_mapping(),
                           *this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
@@ -1285,15 +1304,43 @@ template <int dim, typename PropertiesIndex>
 void
 FluidDynamicsVANS<dim, PropertiesIndex>::solve()
 {
-  read_mesh_and_manifolds(
-    *this->triangulation,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
-    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
-    this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart ||
-      this->cfd_dem_simulation_parameters.void_fraction->read_dem,
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
-      .periodic_boundaries);
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters
+        .enable)
+    {
+      AssertThrow(
+        this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
+          Parameters::VANSModel::modelA,
+        ExcMessage(
+          "To use the mortar method in a VANS simulation, model A needs to be selected."));
+      
+      // Mortar load balancing
+      this->connect_mortar_weight_signals();
+
+      read_mesh_and_manifolds_for_stator_and_rotor(
+        *this->triangulation,
+        this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+        this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+        this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+            .restart ||
+          this->cfd_dem_simulation_parameters.void_fraction->read_dem,
+        this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
+          .periodic_boundaries,
+        this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters);
+
+      this->mapping_cache =
+        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+      this->rotate_rotor_mapping(true);
+    }
+  else
+      read_mesh_and_manifolds(
+        *this->triangulation,
+        this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+        this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+        this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+            .restart ||
+          this->cfd_dem_simulation_parameters.void_fraction->read_dem,
+        this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
+          .periodic_boundaries);
 
   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
       this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1329,15 +1376,16 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
           vertices_cell_mapping();
           particle_projector.initialize_void_fraction(
             this->simulation_control->get_current_time());
-          this->iterate();
         }
       else
         {
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           vertices_cell_mapping();
           calculate_void_fraction(this->simulation_control->get_current_time());
-          this->iterate();
         }
+
+      this->update_mortar_configuration();
+      this->iterate();
 
       this->postprocess(false);
       monitor_mass_conservation();

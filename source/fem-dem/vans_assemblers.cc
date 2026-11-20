@@ -68,6 +68,7 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
+      
 
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -438,6 +439,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
         scratch_data.velocity_laplacians[q];
       const Tensor<1, dim> velocity_gradient_divergence =
         scratch_data.velocity_gradient_divergence[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -454,12 +457,12 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
       if (cfd_dem.implicit_stabilization)
-        u_mag = std::max(velocity.norm(), 1e-12);
+        u_mag = std::max(advective_velocity.norm(), 1e-12);
       else
         {
           if (this->simulation_control->get_current_time() ==
               this->simulation_control->get_time_step())
-            u_mag = std::max(velocity.norm(), 1e-12);
+            u_mag = std::max(advective_velocity.norm(), 1e-12);
           else
             u_mag = std::max(previous_velocity.norm(), 1e-12);
         }
@@ -489,7 +492,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
         // Term εfuj∂jui
-        velocity_gradient * velocity * void_fraction
+        velocity_gradient * advective_velocity * void_fraction
         // Mass Source: mass_source*ui
         + mass_source * velocity
         // Pressure: εf∂ip
@@ -520,7 +523,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j * void_fraction +
-             grad_phi_u_j * velocity * void_fraction
+             grad_phi_u_j * advective_velocity * void_fraction
              // Mass Source
              + mass_source * phi_u_j
              // Pressure
@@ -559,7 +562,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                 {
                   local_matrix_ij +=
                     phi_p_i * ((void_fraction * div_phi_u_j) +
-                               (phi_u_j * void_fraction_gradients));
+                               (phi_u_j * void_fraction_gradients) - 
+                               (velocity - advective_velocity) * void_fraction_gradients);
 
                   // PSPG GLS term
                   local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
@@ -570,7 +574,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                   // Convection
                   local_matrix_ij +=
                     ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) +
-                     (grad_phi_u_j * void_fraction * velocity * phi_u_i));
+                     (grad_phi_u_j * void_fraction * advective_velocity * phi_u_i));
 
                   if (component_i == component_j)
                     {
@@ -601,6 +605,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                                        void_fraction_gradients[component_j] *
                                        phi_u_i[component_i];
                 }
+              // if (q == 0 && i == 0 && j == 0)
+              //   std::cout << "local_matrix_ij_0: " << local_matrix_ij << std::endl;
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -610,7 +616,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
               if (SUPG && component_i < dim)
                 {
                   local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i * velocity +
+                    tau * (strong_jac * grad_phi_u_i * advective_velocity +
                            strong_residual * grad_phi_u_i * phi_u_j);
                 }
 
@@ -628,6 +634,9 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
             }
         }
     }
+  // for (unsigned int i = 0; i < n_dofs; ++i)
+  //   std::cout << "local_matrix(i,0): " << local_matrix(i, 0) << " ; " << i << std::endl;
+  // std::cout << "local_matrix(0,0) = " << local_matrix(0, 0) << std::endl;
 }
 
 template <int dim>
@@ -777,6 +786,9 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
             local_rhs_i -= (velocity_divergence * void_fraction +
                             velocity * void_fraction_gradients - mass_source) *
                            phi_p_i;
+          
+          // if (component_i == dim && q == 0)
+          //     std::cout << "local_rhs_i before GLS: " << local_rhs_i << std::endl;
 
           // PSPG GLS term
           local_rhs_i += -tau * (strong_residual * grad_phi_p_i);
@@ -801,6 +813,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
           local_rhs(i) += local_rhs_i;
         }
     }
+  // std::cout << "local_rhs(0): " << local_rhs(0) << std::endl;
 }
 
 template class VANSAssemblerCoreModelA<2>;
