@@ -89,6 +89,10 @@ This subsection controls the post-processing other than the forces and torque on
     set geometric melt volume name        = melt_volume_geo
     set melting temperature               = 0
 
+    # Electromagnetic postprocessing
+    set calculate electromagnetic power = false
+    set electromagnetic power name      = electromagnetic_power
+
     #---------------------------------------------------
     # Multiphase post-processing
     #---------------------------------------------------
@@ -332,6 +336,61 @@ Multiphysics Post-processing
 
   * ``geometric melt volume name``: name of the output file containing the time evolution of the geometric melt volume.
   * ``melting temperature``: temperature above which the fluid is considered melted.
+
+* ``calculate electromagnetic power``: controls if the calculation of the electromagnetic powers is enabled for the time-harmonic Maxwell equations. The powers are computed after each solve of the time-harmonic Maxwell equations and written in the file ``<electromagnetic power name>.dat`` of the output folder. They are defined below with the non-dimensional fields :math:`\mathbf{E}` and :math:`\mathbf{H}` of the time-harmonic Maxwell equations. If the ``electromagnetic scaling type`` is not ``none``, they are converted to W by the factor :math:`E_0^2 L^2 / Z_0`, where :math:`E_0` is the electric field amplitude used to scale the solution (in V/m), :math:`L` is the length unit of the mesh (in m) and :math:`Z_0` is the impedance of free space. Otherwise, they are non-dimensional. The following powers are computed:
+
+  1. The net power entering the domain through each boundary :math:`\Gamma`, i.e. the flux of the time-averaged Poynting vector through :math:`\Gamma`, where :math:`\mathbf{n}` is the outward normal and :math:`\mathbf{E}_T` is the tangential electric field:
+
+  .. math::
+
+      P_\text{net} = -\frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}\times\mathbf{H}^*\right)\cdot\mathbf{n} \,\mathrm{d}\Gamma = \frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}_T \cdot (\mathbf{n}\times\mathbf{H})^*\right) \mathrm{d}\Gamma
+
+  For each boundary with a ``pec``, ``pmc``, ``electric_field`` or ``magnetic_field`` boundary condition, the output table is appended with one column, named ``net_power_bc_i``, where ``i`` is the boundary id.
+
+  .. Tip::
+    The net power through the ``pec`` and ``pmc`` boundaries must vanish, which provides a sanity check.
+
+  2. The incident power :math:`P_\text{in}`, the outgoing power :math:`P_\text{out}` and the cross power :math:`P_\text{cross}` (the Poynting flux due to the interaction between the incident and outgoing waves) for each Robin boundary, i.e. each boundary with a ``silver_muller``, ``impedance_boundary`` or ``waveguide_port`` boundary condition, which all follow the same boundary condition :math:`\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}`. The total tangential electric field on the boundary :math:`\mathbf{E}_T` is split into an incident wave entering the domain, :math:`\mathbf{n}\times\mathbf{H}_\text{in} = Y\mathbf{E}_\text{in}`, and an outgoing wave, :math:`\mathbf{n}\times\mathbf{H}_\text{out} = -Y\mathbf{E}_\text{out}`. The boundary condition then gives :math:`\mathbf{E}_\text{in} = \mathbf{g}/(2Y)` and :math:`\mathbf{E}_\text{out} = \mathbf{E}_T - \mathbf{E}_\text{in}`. Consequently, the powers are defined from the Poynting flux of each wave as:
+
+  .. math::
+
+      P_\text{in} = \frac{1}{2}\int_\Gamma \mathrm{Re}(Y)|\mathbf{E}_\text{in}|^2 \,\mathrm{d}\Gamma \qquad P_\text{out} = \frac{1}{2}\int_\Gamma \mathrm{Re}(Y)|\mathbf{E}_\text{out}|^2 \,\mathrm{d}\Gamma \qquad P_\text{cross} = \int_\Gamma \mathrm{Im}(Y)\,\mathrm{Im}\left(\mathbf{E}_\text{out}\cdot\mathbf{E}_\text{in}^*\right) \mathrm{d}\Gamma
+
+  such that the net power entering the domain through the boundary is :math:`P_\text{net} = P_\text{in} - P_\text{out} + P_\text{cross}`. The output table is appended with the columns ``incident_power_bc_i``, ``outgoing_power_bc_i`` and ``cross_power_bc_i``, where ``i`` is the boundary id.
+
+  3. The power absorbed in each material :math:`\Omega_m`:
+
+  .. math::
+
+      P_\text{abs} = \frac{\omega}{2}\int_{\Omega_m} \left((\varepsilon_r'' + \sigma_r)|\mathbf{E}|^2 + \mu_r''|\mathbf{H}|^2\right) \mathrm{d}\Omega
+
+  where :math:`\omega` is the non-dimensional angular frequency, :math:`\varepsilon_r''` and :math:`\mu_r''` are the imaginary parts of the relative electric permittivity and magnetic permeability, and :math:`\sigma_r` is the dimensionless electric conductivity (see :doc:`physical properties <physical_properties>`). The output table is appended with one column per material, named ``absorbed_power_material_i``, where ``i`` is the material id (``0`` for the fluid and ``i`` for the i-th solid). With an effective medium (e.g., the ``bruggeman`` model of the unresolved CFD-DEM solvers), the fluid and the unresolved dispersed phase form a single mixture, so the power absorbed by the particles is included in the power of the fluid (material ``0``).
+
+  If ``verbosity = verbose``, a summary is also printed in the terminal. It lists the powers of all the boundaries, the power absorbed in each material and the power balance, with the labels of the summary:
+
+  .. math::
+
+      \begin{align}
+        \text{incident} &= \sum_{\text{Robin}} P_\text{in}, &
+        \text{reflected} &= \sum_{\text{Robin},\, P_\text{in} > 0} P_\text{out}, &
+        \text{transmitted} &= \sum_{\text{Robin},\, P_\text{in} = 0} P_\text{out}, \\
+        \text{cross} &= \sum_{\text{Robin}} P_\text{cross}, &
+        \text{imposed} &= \sum_{\text{non-Robin}} P_\text{net}, &
+        \text{absorbed} &= \sum_{\Omega_m} P_\text{abs},
+      \end{align}
+
+  where the sums are over the boundaries of the indicated type and over the materials. The reflected power is the outgoing power of the excited Robin boundaries. If several boundaries are excited (e.g., several waveguide ports), the outgoing power of each of them also contains the power transmitted from the other excited boundaries, which cannot be distinguished from the reflected power. The imbalance is:
+
+  .. math::
+
+      \text{imbalance} = \text{incident} - \text{reflected} - \text{transmitted} + \text{cross} + \text{imposed} - \text{absorbed}
+
+  The percentages are relative to the incident power. If no Robin boundary is excited, for instance when the excitation is imposed with an ``electric_field`` boundary condition, there is no incident power and the percentages are relative to the power entering the domain, i.e. the sum of the positive net powers of the boundaries. If this power is also zero, the percentages are not defined and are written as ``-``.
+
+  .. Tip::
+    The power imbalance, which vanishes for the exact solution by the Poynting theorem, can be used as a proxy to measure the numerical error. It includes both the discretization error and the error of the linear solver, since the linear system is only solved up to the ``relative residual`` or the ``absolute residual`` (which ever is the biggest) of the ``electromagnetics`` linear solver. If the imbalance does not decrease when the mesh is refined, the tolerance of the linear solver is likely too loose.
+
+  * ``electromagnetic power name``: output filename for the electromagnetic power calculations.
 
 Multiphase Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -16,7 +16,10 @@
 # transverse direction is along y and the second along x). The waveguide port
 # boundary condition should recover the right orientation, so this
 # functionality is tested here for a TE mode (it is tested for a TM mode in the
-# time_harmonic_maxwell_waveguide_robin test).
+# time_harmonic_maxwell_waveguide_robin test). The summary of the
+# electromagnetic powers is also printed to test their calculation: incident,
+# outgoing and cross powers on the Robin boundaries, net power through the PEC
+# boundaries, power absorbed in the dissipative medium and power imbalance.
 
 # Listing of Parameters
 #----------------------
@@ -187,6 +190,15 @@ subsection analytical solution
   subsection electromagnetics
     set Function expression = cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.014987*cos(6.767844*(z-1)) + 0.750154*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.014987*cos(6.767844*(z-1)) - 0.750154*sin(6.767844*(z-1)));    0.;    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.750154*cos(6.767844*(z-1)) + 0.014987*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.750154*cos(6.767844*(z-1)) - 0.014987*sin(6.767844*(z-1)));    0.;    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * cos(6.767844*(z-1));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * sin(6.767844*(z-1))
   end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                       = verbose
+  set calculate electromagnetic power = true
 end
 
 #---------------------------------------------------
