@@ -108,7 +108,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for time_harmonic_maxwell_assemblers.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="time__harmonic__maxwell__assemblers_8cc__incl.svg" width="4771" height="780"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="time__harmonic__maxwell__assemblers_8cc__incl.svg" width="3964" height="780"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="time__harmonic__maxwell__assemblers_8cc_source.html">Go to the source code of this file.</a></p>
@@ -119,12 +119,472 @@ Functions</h2></td></tr>
 <tr class="memitem:a6c2f4fc24e8fd2d594308a9a0d7f95a3 template"><td class="memItemLeft" align="right" valign="top">std::pair&lt; Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt;, Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c2f4fc24e8fd2d594308a9a0d7f95a3">compute_waveguide_port_incident_fields</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; dim &gt; &amp;time_harmonic_maxwell_parameters, const Point&lt; dim &gt; &amp;p, const Tensor&lt; 1, dim &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability, const unsigned int waveguide_port_index)</td></tr>
 <tr class="memitem:ad8ccc21127914d77c39eaf91c1a75359" id="r_ad8ccc21127914d77c39eaf91c1a75359"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:ad8ccc21127914d77c39eaf91c1a75359 template"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8ccc21127914d77c39eaf91c1a75359">get_waveguide_port_index</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; dim &gt; &amp;time_harmonic_maxwell_parameters, const types::boundary_id boundary_id)</td></tr>
+<tr class="memitem:a27eb8f6b03defeabec510b1c9bf15c34" id="r_a27eb8f6b03defeabec510b1c9bf15c34"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a27eb8f6b03defeabec510b1c9bf15c34 template"><td class="memItemLeft" align="right" valign="top">std::pair&lt; Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a27eb8f6b03defeabec510b1c9bf15c34">compute_waveguide_port_excitation</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; dim &gt; &amp;time_harmonic_maxwell_parameters, const Point&lt; dim &gt; &amp;p, const Tensor&lt; 1, dim &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability, const unsigned int waveguide_port_index, const double relative_amplitude)</td></tr>
+<tr class="memitem:aef281a9c27822cd9ad19b33e632868fc" id="r_aef281a9c27822cd9ad19b33e632868fc"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:aef281a9c27822cd9ad19b33e632868fc template"><td class="memItemLeft" align="right" valign="top">std::pair&lt; Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef281a9c27822cd9ad19b33e632868fc">compute_robin_boundary_data</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; dim &gt; &amp;time_harmonic_maxwell_parameters, const <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const std::vector&lt; double &gt; &amp;waveguide_ports_relative_amplitudes, const types::boundary_id boundary_id, const Point&lt; dim &gt; &amp;position, const Tensor&lt; 1, dim &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability)</td></tr>
+<tr class="memitem:a47cd5e7564064af38633847f68ec0eaf" id="r_a47cd5e7564064af38633847f68ec0eaf"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a47cd5e7564064af38633847f68ec0eaf template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structBoundaryPowerType.html">BoundaryPowerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47cd5e7564064af38633847f68ec0eaf">compute_robin_power_densities</a> (const Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt; &amp;E_T, const Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt; &amp;g_T, const std::complex&lt; double &gt; &amp;Y)</td></tr>
 <tr class="memitem:ab6834db78808e7347575661a4cd6c8f6" id="r_ab6834db78808e7347575661a4cd6c8f6"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt;, Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6834db78808e7347575661a4cd6c8f6">compute_waveguide_port_incident_fields&lt; 2 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 2 &gt; &amp;time_harmonic_maxwell_parameters, const Point&lt; 2 &gt; &amp;p, const Tensor&lt; 1, 2 &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability, const unsigned int waveguide_port_index)</td></tr>
 <tr class="memitem:ab834914032a606d61d45fceb89e6cd4c" id="r_ab834914032a606d61d45fceb89e6cd4c"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt;, Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab834914032a606d61d45fceb89e6cd4c">compute_waveguide_port_incident_fields&lt; 3 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 3 &gt; &amp;time_harmonic_maxwell_parameters, const Point&lt; 3 &gt; &amp;p, const Tensor&lt; 1, 3 &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability, const unsigned int waveguide_port_index)</td></tr>
 <tr class="memitem:a96dcbd50dcb4e2f185861e1eb8434b01" id="r_a96dcbd50dcb4e2f185861e1eb8434b01"><td class="memItemLeft" align="right" valign="top">template unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96dcbd50dcb4e2f185861e1eb8434b01">get_waveguide_port_index&lt; 2 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 2 &gt; &amp;time_harmonic_maxwell_parameters, const types::boundary_id boundary_id)</td></tr>
 <tr class="memitem:ab3e7f3c2a9a573e95552c1615f89514f" id="r_ab3e7f3c2a9a573e95552c1615f89514f"><td class="memItemLeft" align="right" valign="top">template unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3e7f3c2a9a573e95552c1615f89514f">get_waveguide_port_index&lt; 3 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 3 &gt; &amp;time_harmonic_maxwell_parameters, const types::boundary_id boundary_id)</td></tr>
+<tr class="memitem:aa63d50f72368cc7ca5640551163b6a60" id="r_aa63d50f72368cc7ca5640551163b6a60"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa63d50f72368cc7ca5640551163b6a60">compute_waveguide_port_excitation&lt; 2 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 2 &gt; &amp;time_harmonic_maxwell_parameters, const Point&lt; 2 &gt; &amp;p, const Tensor&lt; 1, 2 &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability, const unsigned int waveguide_port_index, const double relative_amplitude)</td></tr>
+<tr class="memitem:a0c5ae973cee430d46294e81f8b5b6dd8" id="r_a0c5ae973cee430d46294e81f8b5b6dd8"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c5ae973cee430d46294e81f8b5b6dd8">compute_waveguide_port_excitation&lt; 3 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 3 &gt; &amp;time_harmonic_maxwell_parameters, const Point&lt; 3 &gt; &amp;p, const Tensor&lt; 1, 3 &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability, const unsigned int waveguide_port_index, const double relative_amplitude)</td></tr>
+<tr class="memitem:ae0b05a54ebc1fb5f573d7ade7991f4e7" id="r_ae0b05a54ebc1fb5f573d7ade7991f4e7"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0b05a54ebc1fb5f573d7ade7991f4e7">compute_robin_boundary_data&lt; 2 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 2 &gt; &amp;time_harmonic_maxwell_parameters, const <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; 2 &gt; &amp;boundary_conditions, const std::vector&lt; double &gt; &amp;waveguide_ports_relative_amplitudes, const types::boundary_id boundary_id, const Point&lt; 2 &gt; &amp;position, const Tensor&lt; 1, 2 &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability)</td></tr>
+<tr class="memitem:acd55bf998c1533e25630d01454bd9187" id="r_acd55bf998c1533e25630d01454bd9187"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd55bf998c1533e25630d01454bd9187">compute_robin_boundary_data&lt; 3 &gt;</a> (const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 3 &gt; &amp;time_harmonic_maxwell_parameters, const <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; 3 &gt; &amp;boundary_conditions, const std::vector&lt; double &gt; &amp;waveguide_ports_relative_amplitudes, const types::boundary_id boundary_id, const Point&lt; 3 &gt; &amp;position, const Tensor&lt; 1, 3 &gt; &amp;normal, const std::complex&lt; double &gt; &amp;effective_electric_permittivity, const std::complex&lt; double &gt; &amp;effective_magnetic_permeability)</td></tr>
+<tr class="memitem:a5a3f27e88562a2e4f760fe826d842d10" id="r_a5a3f27e88562a2e4f760fe826d842d10"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="structBoundaryPowerType.html">BoundaryPowerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a3f27e88562a2e4f760fe826d842d10">compute_robin_power_densities&lt; 2 &gt;</a> (const Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt; &amp;E_T, const Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt; &amp;g_T, const std::complex&lt; double &gt; &amp;Y)</td></tr>
+<tr class="memitem:a1dd4672800d1efc10302b7a18bbf76bd" id="r_a1dd4672800d1efc10302b7a18bbf76bd"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="structBoundaryPowerType.html">BoundaryPowerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1dd4672800d1efc10302b7a18bbf76bd">compute_robin_power_densities&lt; 3 &gt;</a> (const Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt; &amp;E_T, const Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt; &amp;g_T, const std::complex&lt; double &gt; &amp;Y)</td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="aef281a9c27822cd9ad19b33e632868fc" name="aef281a9c27822cd9ad19b33e632868fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef281a9c27822cd9ad19b33e632868fc">&#9670;&#160;</a></span>compute_robin_boundary_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt; Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt; compute_robin_boundary_data </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>time_harmonic_maxwell_parameters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>boundary_conditions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>waveguide_ports_relative_amplitudes</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const types::boundary_id</td>          <td class="paramname"><span class="paramname"><em>boundary_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>position</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>normal</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_electric_permittivity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_magnetic_permeability</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the excitation \(\mathbf{g}\) and the surface admittance \(Y\) of the Robin boundary condition  \(\mathbf{n}\times\mathbf{H} + Y
+\mathbf{E}_T = \mathbf{g}\) at a point of a boundary with a Robin boundary condition (silver_muller, impedance_boundary or waveguide_port). </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">time_harmonic_maxwell_parameters</td><td><a class="el" href="namespaceParameters.html">Parameters</a> of the time-harmonic Maxwell physics, which contain the waveguide port definitions.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_conditions</td><td>Boundary conditions of the time-harmonic Maxwell physics.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">waveguide_ports_relative_amplitudes</td><td>Electric field amplitude of each waveguide port divided by the maximum amplitude of all the ports. Only used on waveguide ports.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_id</td><td>Boundary id of the face.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">position</td><td>Position where the Robin boundary data is computed.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Unit outward normal vector of the face at the position.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">effective_electric_permittivity</td><td>Effective electric permittivity at the position.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">effective_magnetic_permeability</td><td>Effective magnetic permeability at the position.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pair containing the excitation and the surface admittance. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00372">372</a> of file <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html">time_harmonic_maxwell_assemblers.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00301">compute_waveguide_port_excitation()</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00113">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::excitation_x_imag</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00104">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::excitation_x_real</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00116">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::excitation_y_imag</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00107">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::excitation_y_real</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00119">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::excitation_z_imag</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00110">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::excitation_z_real</a>, <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00210">get_waveguide_port_index()</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00030">BoundaryConditions::impedance_boundary</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00027">BoundaryConditions::silver_muller</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00099">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::surface_admittance_imag</a>, <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00096">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;::surface_admittance_real</a>, <a class="el" href="boundary__conditions_8h_source.html#l00034">BoundaryConditions::BoundaryConditions&lt; BoundaryType &gt;::type</a>, and <a class="el" href="time__harmonic__maxwell__boundary__conditions_8h_source.html#l00031">BoundaryConditions::waveguide_port</a>.</p>
+
+</div>
+</div>
+<a id="ae0b05a54ebc1fb5f573d7ade7991f4e7" name="ae0b05a54ebc1fb5f573d7ade7991f4e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0b05a54ebc1fb5f573d7ade7991f4e7">&#9670;&#160;</a></span>compute_robin_boundary_data&lt; 2 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template std::pair&lt; Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt; <a class="el" href="#aef281a9c27822cd9ad19b33e632868fc">compute_robin_boundary_data</a>&lt; 2 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 2 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>time_harmonic_maxwell_parameters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; 2 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>boundary_conditions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>waveguide_ports_relative_amplitudes</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const types::boundary_id</td>          <td class="paramname"><span class="paramname"><em>boundary_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; 2 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>position</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 2 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>normal</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_electric_permittivity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_magnetic_permeability</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acd55bf998c1533e25630d01454bd9187" name="acd55bf998c1533e25630d01454bd9187"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd55bf998c1533e25630d01454bd9187">&#9670;&#160;</a></span>compute_robin_boundary_data&lt; 3 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template std::pair&lt; Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt; <a class="el" href="#aef281a9c27822cd9ad19b33e632868fc">compute_robin_boundary_data</a>&lt; 3 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 3 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>time_harmonic_maxwell_parameters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; 3 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>boundary_conditions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>waveguide_ports_relative_amplitudes</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const types::boundary_id</td>          <td class="paramname"><span class="paramname"><em>boundary_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; 3 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>position</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>normal</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_electric_permittivity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_magnetic_permeability</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a47cd5e7564064af38633847f68ec0eaf" name="a47cd5e7564064af38633847f68ec0eaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47cd5e7564064af38633847f68ec0eaf">&#9670;&#160;</a></span>compute_robin_power_densities()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structBoundaryPowerType.html">BoundaryPowerType</a> compute_robin_power_densities </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>E_T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>g_T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the net, incident, outgoing and cross power densities (powers per unit area of the boundary) at a point of a boundary with a Robin boundary condition \(\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}\). </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">E_T</td><td>Tangential electric field at the point.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">g_T</td><td>Tangential component of the excitation at the point.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Y</td><td>Surface admittance at the point.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The power densities. If \(Y = 0\), the incident and outgoing waves are not defined, and the whole net power density is returned as cross power density. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00454">454</a> of file <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html">time_harmonic_maxwell_assemblers.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__assemblers_8h_source.html#l00228">BoundaryPowerType::cross</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00165">hermitian_product()</a>, <a class="el" href="time__harmonic__maxwell__assemblers_8h_source.html#l00224">BoundaryPowerType::incident</a>, <a class="el" href="time__harmonic__maxwell__assemblers_8h_source.html#l00222">BoundaryPowerType::net</a>, and <a class="el" href="time__harmonic__maxwell__assemblers_8h_source.html#l00226">BoundaryPowerType::outgoing</a>.</p>
+
+</div>
+</div>
+<a id="a5a3f27e88562a2e4f760fe826d842d10" name="a5a3f27e88562a2e4f760fe826d842d10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a3f27e88562a2e4f760fe826d842d10">&#9670;&#160;</a></span>compute_robin_power_densities&lt; 2 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="structBoundaryPowerType.html">BoundaryPowerType</a> <a class="el" href="#a47cd5e7564064af38633847f68ec0eaf">compute_robin_power_densities</a>&lt; 2 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>E_T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>g_T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1dd4672800d1efc10302b7a18bbf76bd" name="a1dd4672800d1efc10302b7a18bbf76bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1dd4672800d1efc10302b7a18bbf76bd">&#9670;&#160;</a></span>compute_robin_power_densities&lt; 3 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template <a class="el" href="structBoundaryPowerType.html">BoundaryPowerType</a> <a class="el" href="#a47cd5e7564064af38633847f68ec0eaf">compute_robin_power_densities</a>&lt; 3 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>E_T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>g_T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a27eb8f6b03defeabec510b1c9bf15c34" name="a27eb8f6b03defeabec510b1c9bf15c34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27eb8f6b03defeabec510b1c9bf15c34">&#9670;&#160;</a></span>compute_waveguide_port_excitation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt; Tensor&lt; 1, dim, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt; compute_waveguide_port_excitation </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>time_harmonic_maxwell_parameters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>normal</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_electric_permittivity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_magnetic_permeability</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int</td>          <td class="paramname"><span class="paramname"><em>waveguide_port_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>relative_amplitude</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the excitation and the surface admittance of the Robin boundary condition of a rectangular waveguide port from the input parameters. The excitation used is the normalized one across all the waveguide ports. This function is only implemented for 3D problems. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">time_harmonic_maxwell_parameters</td><td><a class="el" href="namespaceParameters.html">Parameters</a> of the time-harmonic Maxwell physics, which contain the waveguide port definitions.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td>Position where the excitation is computed.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normal</td><td>Unit normal vector of the waveguide port face.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">effective_electric_permittivity</td><td>Effective electric permittivity at the point p.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">effective_magnetic_permeability</td><td>Effective magnetic permeability at the point p.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">waveguide_port_index</td><td>Index of the waveguide port condition within the waveguide port parameters.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">relative_amplitude</td><td>Electric field amplitude of the port divided by the maximum amplitude of all the ports.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pair containing the excitation of the Robin boundary condition and the surface admittance at the point p. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00301">301</a> of file <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html">time_harmonic_maxwell_assemblers.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00020">compute_waveguide_port_incident_fields()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00133">tangential_component()</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00120">Parameters::TE</a>.</p>
+
+</div>
+</div>
+<a id="aa63d50f72368cc7ca5640551163b6a60" name="aa63d50f72368cc7ca5640551163b6a60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa63d50f72368cc7ca5640551163b6a60">&#9670;&#160;</a></span>compute_waveguide_port_excitation&lt; 2 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template std::pair&lt; Tensor&lt; 1, 2, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt; <a class="el" href="#a27eb8f6b03defeabec510b1c9bf15c34">compute_waveguide_port_excitation</a>&lt; 2 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 2 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>time_harmonic_maxwell_parameters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; 2 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 2 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>normal</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_electric_permittivity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_magnetic_permeability</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int</td>          <td class="paramname"><span class="paramname"><em>waveguide_port_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>relative_amplitude</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0c5ae973cee430d46294e81f8b5b6dd8" name="a0c5ae973cee430d46294e81f8b5b6dd8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c5ae973cee430d46294e81f8b5b6dd8">&#9670;&#160;</a></span>compute_waveguide_port_excitation&lt; 3 &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template std::pair&lt; Tensor&lt; 1, 3, std::complex&lt; double &gt; &gt;, std::complex&lt; double &gt; &gt; <a class="el" href="#a27eb8f6b03defeabec510b1c9bf15c34">compute_waveguide_port_excitation</a>&lt; 3 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell</a>&lt; 3 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>time_harmonic_maxwell_parameters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; 3 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>normal</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_electric_permittivity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>effective_magnetic_permeability</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int</td>          <td class="paramname"><span class="paramname"><em>waveguide_port_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>relative_amplitude</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a6c2f4fc24e8fd2d594308a9a0d7f95a3" name="a6c2f4fc24e8fd2d594308a9a0d7f95a3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6c2f4fc24e8fd2d594308a9a0d7f95a3">&#9670;&#160;</a></span>compute_waveguide_port_incident_fields()</h2>
 
@@ -169,7 +629,7 @@ template&lt;int dim&gt; </div>
 <p>Compute the incident electromagnetic fields of a rectangular waveguide port from the input parameters. It is only implemented for 3D problems. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>Spatial dimension.</td></tr>
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
   </table>
   </dd>
 </dl>
@@ -188,7 +648,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00020">20</a> of file <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html">time_harmonic_maxwell_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00878">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_frequency</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00904">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_m</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00905">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_n</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00120">Parameters::TE</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00122">Parameters::TM</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00909">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_corners</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00901">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_mode</a>.</p>
+<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00120">Parameters::TE</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00122">Parameters::TM</a>.</p>
 
 </div>
 </div>
@@ -298,7 +758,7 @@ template&lt;int dim&gt; </div>
 <p>Get the index of the waveguide port condition applied on a boundary, that is the index of the waveguide inlet whose port boundary id is this boundary id. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>Spatial dimension.</td></tr>
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
   </table>
   </dd>
 </dl>
@@ -311,7 +771,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Index of the waveguide port condition. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00215">215</a> of file <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html">time_harmonic_maxwell_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html#l00210">210</a> of file <a class="el" href="time__harmonic__maxwell__assemblers_8cc_source.html">time_harmonic_maxwell_assemblers.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00882">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_boundary_ids</a>.</p>
 

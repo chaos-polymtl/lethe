@@ -17,6 +17,7 @@ var searchData=
   ['boundaryconditions_3c_20timeharmonicmaxwellboundarytype_20_3e_14',['BoundaryConditions&lt; TimeHarmonicMaxwellBoundaryType &gt;',['../classBoundaryConditions_1_1BoundaryConditions.html',1,'BoundaryConditions']]],
   ['boundaryconditions_3c_20tracerboundarytype_20_3e_15',['BoundaryConditions&lt; TracerBoundaryType &gt;',['../classBoundaryConditions_1_1BoundaryConditions.html',1,'BoundaryConditions']]],
   ['boundarypostprocessor_16',['BoundaryPostprocessor',['../classBoundaryPostprocessor.html',1,'']]],
-  ['bruggemaneffectivemediummodel_17',['BruggemanEffectiveMediumModel',['../classBruggemanEffectiveMediumModel.html',1,'']]],
-  ['bufferrw_18',['BufferRW',['../classBufferRW.html',1,'']]]
+  ['boundarypowertype_17',['BoundaryPowerType',['../structBoundaryPowerType.html',1,'']]],
+  ['bruggemaneffectivemediummodel_18',['BruggemanEffectiveMediumModel',['../classBruggemanEffectiveMediumModel.html',1,'']]],
+  ['bufferrw_19',['BufferRW',['../classBufferRW.html',1,'']]]
 ];

@@ -23,7 +23,8 @@ var searchData=
   ['heattransferassemblerviscousdissipation_20',['HeatTransferAssemblerViscousDissipation',['../classHeatTransferAssemblerViscousDissipation.html#aee910a3b5d182cfb07342dc538b28e62',1,'HeatTransferAssemblerViscousDissipation']]],
   ['heattransferassemblerviscousdissipationcls_21',['HeatTransferAssemblerViscousDissipationCLS',['../classHeatTransferAssemblerViscousDissipationCLS.html#ae42e6e3f2e0ce99d8fe31e14efe24f0a',1,'HeatTransferAssemblerViscousDissipationCLS']]],
   ['heattransferscratchdata_22',['HeatTransferScratchData',['../classHeatTransferScratchData.html#a7340edb1c387fb7e1daf051b93853bcf',1,'HeatTransferScratchData::HeatTransferScratchData(const PhysicalPropertiesManager &amp;properties_manager, const FiniteElement&lt; dim &gt; &amp;fe_ht, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const FiniteElement&lt; dim &gt; &amp;fe_fd, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature, const double delta_T_ref)'],['../classHeatTransferScratchData.html#aaa4b7b3a2d5fd1212e99d3080365841e',1,'HeatTransferScratchData::HeatTransferScratchData(const HeatTransferScratchData&lt; dim &gt; &amp;sd)']]],
-  ['hessian_23',['hessian',['../classInterfaceTools_1_1CellWiseFunction.html#a80cbb30376899c78d07a5795b1b5f464',1,'InterfaceTools::CellWiseFunction']]],
-  ['hill_5fgeometry_24',['hill_geometry',['../classGridPeriodicHills.html#a45e04a00bffb274c496f8a62ec7fbc33',1,'GridPeriodicHills']]],
-  ['hyperrectangle_25',['HyperRectangle',['../classHyperRectangle.html#a6fccd48e250c2d6c850e8a173ca9a2dc',1,'HyperRectangle']]]
+  ['hermitian_5fproduct_23',['hermitian_product',['../tensors__and__points__dimension__manipulation_8h.html#ac3e6747c0f3388663f33b81f4d4326a4',1,'tensors_and_points_dimension_manipulation.h']]],
+  ['hessian_24',['hessian',['../classInterfaceTools_1_1CellWiseFunction.html#a80cbb30376899c78d07a5795b1b5f464',1,'InterfaceTools::CellWiseFunction']]],
+  ['hill_5fgeometry_25',['hill_geometry',['../classGridPeriodicHills.html#a45e04a00bffb274c496f8a62ec7fbc33',1,'GridPeriodicHills']]],
+  ['hyperrectangle_26',['HyperRectangle',['../classHyperRectangle.html#a6fccd48e250c2d6c850e8a173ca9a2dc',1,'HyperRectangle']]]
 ];

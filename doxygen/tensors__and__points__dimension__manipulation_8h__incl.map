@@ -1,7 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/core/tensors_and_points_dimension_manipulation.h" name="/home/runner/work/lethe/lethe/include/core/tensors_and_points_dimension_manipulation.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="25,5,304,67"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="112,5,391,67"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,115,151,143"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,66,103,106,99,101,133,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,67,117,110,115,105,191,68"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="175,115,328,143"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="195,65,231,104,226,103,192,70"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="253,66,254,101,249,98,249,69"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="351,115,429,143"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="298,65,360,106,355,106,297,70"/>
 </map>

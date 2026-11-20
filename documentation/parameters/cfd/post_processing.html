@@ -537,6 +537,10 @@
   set geometric melt volume name        = melt_volume_geo
   set melting temperature               = 0
 
+  # Electromagnetic postprocessing
+  set calculate electromagnetic power = false
+  set electromagnetic power name      = electromagnetic_power
+
   #---------------------------------------------------
   # Multiphase post-processing
   #---------------------------------------------------
@@ -842,6 +846,61 @@ end
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">melt</span> <span class="pre">volume</span> <span class="pre">name</span></code>: name of the output file containing the time evolution of the geometric melt volume.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">melting</span> <span class="pre">temperature</span></code>: temperature above which the fluid is considered melted.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">electromagnetic</span> <span class="pre">power</span></code>: controls if the calculation of the electromagnetic powers is enabled for the time-harmonic Maxwell equations. The powers are computed after each solve of the time-harmonic Maxwell equations and written in the file <code class="docutils literal notranslate"><span class="pre">&lt;electromagnetic</span> <span class="pre">power</span> <span class="pre">name&gt;.dat</span></code> of the output folder. They are defined below with the non-dimensional fields <span class="math notranslate nohighlight">\(\mathbf{E}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{H}\)</span> of the time-harmonic Maxwell equations. If the <code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">scaling</span> <span class="pre">type</span></code> is not <code class="docutils literal notranslate"><span class="pre">none</span></code>, they are converted to W by the factor <span class="math notranslate nohighlight">\(E_0^2 L^2 / Z_0\)</span>, where <span class="math notranslate nohighlight">\(E_0\)</span> is the electric field amplitude used to scale the solution (in V/m), <span class="math notranslate nohighlight">\(L\)</span> is the length unit of the mesh (in m) and <span class="math notranslate nohighlight">\(Z_0\)</span> is the impedance of free space. Otherwise, they are non-dimensional. The following powers are computed:</p>
+<ol class="arabic simple">
+<li><p>The net power entering the domain through each boundary <span class="math notranslate nohighlight">\(\Gamma\)</span>, i.e. the flux of the time-averaged Poynting vector through <span class="math notranslate nohighlight">\(\Gamma\)</span>, where <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> is the outward normal and <span class="math notranslate nohighlight">\(\mathbf{E}_T\)</span> is the tangential electric field:</p></li>
+</ol>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[P_\text{net} = -\frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}\times\mathbf{H}^*\right)\cdot\mathbf{n} \,\mathrm{d}\Gamma = \frac{1}{2}\int_\Gamma \mathrm{Re}\left(\mathbf{E}_T \cdot (\mathbf{n}\times\mathbf{H})^*\right) \mathrm{d}\Gamma\]</div>
+</div>
+<p>For each boundary with a <code class="docutils literal notranslate"><span class="pre">pec</span></code>, <code class="docutils literal notranslate"><span class="pre">pmc</span></code>, <code class="docutils literal notranslate"><span class="pre">electric_field</span></code> or <code class="docutils literal notranslate"><span class="pre">magnetic_field</span></code> boundary condition, the output table is appended with one column, named <code class="docutils literal notranslate"><span class="pre">net_power_bc_i</span></code>, where <code class="docutils literal notranslate"><span class="pre">i</span></code> is the boundary id.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The net power through the <code class="docutils literal notranslate"><span class="pre">pec</span></code> and <code class="docutils literal notranslate"><span class="pre">pmc</span></code> boundaries must vanish, which provides a sanity check.</p>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>The incident power <span class="math notranslate nohighlight">\(P_\text{in}\)</span>, the outgoing power <span class="math notranslate nohighlight">\(P_\text{out}\)</span> and the cross power <span class="math notranslate nohighlight">\(P_\text{cross}\)</span> (the Poynting flux due to the interaction between the incident and outgoing waves) for each Robin boundary, i.e. each boundary with a <code class="docutils literal notranslate"><span class="pre">silver_muller</span></code>, <code class="docutils literal notranslate"><span class="pre">impedance_boundary</span></code> or <code class="docutils literal notranslate"><span class="pre">waveguide_port</span></code> boundary condition, which all follow the same boundary condition <span class="math notranslate nohighlight">\(\mathbf{n}\times\mathbf{H} + Y\mathbf{E}_T = \mathbf{g}\)</span>. The total tangential electric field on the boundary <span class="math notranslate nohighlight">\(\mathbf{E}_T\)</span> is split into an incident wave entering the domain, <span class="math notranslate nohighlight">\(\mathbf{n}\times\mathbf{H}_\text{in} = Y\mathbf{E}_\text{in}\)</span>, and an outgoing wave, <span class="math notranslate nohighlight">\(\mathbf{n}\times\mathbf{H}_\text{out} = -Y\mathbf{E}_\text{out}\)</span>. The boundary condition then gives <span class="math notranslate nohighlight">\(\mathbf{E}_\text{in} = \mathbf{g}/(2Y)\)</span> and <span class="math notranslate nohighlight">\(\mathbf{E}_\text{out} = \mathbf{E}_T - \mathbf{E}_\text{in}\)</span>. Consequently, the powers are defined from the Poynting flux of each wave as:</p></li>
+</ol>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[P_\text{in} = \frac{1}{2}\int_\Gamma \mathrm{Re}(Y)|\mathbf{E}_\text{in}|^2 \,\mathrm{d}\Gamma \qquad P_\text{out} = \frac{1}{2}\int_\Gamma \mathrm{Re}(Y)|\mathbf{E}_\text{out}|^2 \,\mathrm{d}\Gamma \qquad P_\text{cross} = \int_\Gamma \mathrm{Im}(Y)\,\mathrm{Im}\left(\mathbf{E}_\text{out}\cdot\mathbf{E}_\text{in}^*\right) \mathrm{d}\Gamma\]</div>
+</div>
+<p>such that the net power entering the domain through the boundary is <span class="math notranslate nohighlight">\(P_\text{net} = P_\text{in} - P_\text{out} + P_\text{cross}\)</span>. The output table is appended with the columns <code class="docutils literal notranslate"><span class="pre">incident_power_bc_i</span></code>, <code class="docutils literal notranslate"><span class="pre">outgoing_power_bc_i</span></code> and <code class="docutils literal notranslate"><span class="pre">cross_power_bc_i</span></code>, where <code class="docutils literal notranslate"><span class="pre">i</span></code> is the boundary id.</p>
+<ol class="arabic simple" start="3">
+<li><p>The power absorbed in each material <span class="math notranslate nohighlight">\(\Omega_m\)</span>:</p></li>
+</ol>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[P_\text{abs} = \frac{\omega}{2}\int_{\Omega_m} \left((\varepsilon_r'' + \sigma_r)|\mathbf{E}|^2 + \mu_r''|\mathbf{H}|^2\right) \mathrm{d}\Omega\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\omega\)</span> is the non-dimensional angular frequency, <span class="math notranslate nohighlight">\(\varepsilon_r''\)</span> and <span class="math notranslate nohighlight">\(\mu_r''\)</span> are the imaginary parts of the relative electric permittivity and magnetic permeability, and <span class="math notranslate nohighlight">\(\sigma_r\)</span> is the dimensionless electric conductivity (see <a class="reference internal" href="physical_properties.html"><span class="doc">physical properties</span></a>). The output table is appended with one column per material, named <code class="docutils literal notranslate"><span class="pre">absorbed_power_material_i</span></code>, where <code class="docutils literal notranslate"><span class="pre">i</span></code> is the material id (<code class="docutils literal notranslate"><span class="pre">0</span></code> for the fluid and <code class="docutils literal notranslate"><span class="pre">i</span></code> for the i-th solid). With an effective medium (e.g., the <code class="docutils literal notranslate"><span class="pre">bruggeman</span></code> model of the unresolved CFD-DEM solvers), the fluid and the unresolved dispersed phase form a single mixture, so the power absorbed by the particles is included in the power of the fluid (material <code class="docutils literal notranslate"><span class="pre">0</span></code>).</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>, a summary is also printed in the terminal. It lists the powers of all the boundaries, the power absorbed in each material and the power balance, with the labels of the summary:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+  \text{incident} &amp;= \sum_{\text{Robin}} P_\text{in}, &amp;
+  \text{reflected} &amp;= \sum_{\text{Robin},\, P_\text{in} &gt; 0} P_\text{out}, &amp;
+  \text{transmitted} &amp;= \sum_{\text{Robin},\, P_\text{in} = 0} P_\text{out}, \\
+  \text{cross} &amp;= \sum_{\text{Robin}} P_\text{cross}, &amp;
+  \text{imposed} &amp;= \sum_{\text{non-Robin}} P_\text{net}, &amp;
+  \text{absorbed} &amp;= \sum_{\Omega_m} P_\text{abs},
+\end{align}\end{split}\]</div>
+</div>
+<p>where the sums are over the boundaries of the indicated type and over the materials. The reflected power is the outgoing power of the excited Robin boundaries. If several boundaries are excited (e.g., several waveguide ports), the outgoing power of each of them also contains the power transmitted from the other excited boundaries, which cannot be distinguished from the reflected power. The imbalance is:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\text{imbalance} = \text{incident} - \text{reflected} - \text{transmitted} + \text{cross} + \text{imposed} - \text{absorbed}\]</div>
+</div>
+<p>The percentages are relative to the incident power. If no Robin boundary is excited, for instance when the excitation is imposed with an <code class="docutils literal notranslate"><span class="pre">electric_field</span></code> boundary condition, there is no incident power and the percentages are relative to the power entering the domain, i.e. the sum of the positive net powers of the boundaries. If this power is also zero, the percentages are not defined and are written as <code class="docutils literal notranslate"><span class="pre">-</span></code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The power imbalance, which vanishes for the exact solution by the Poynting theorem, can be used as a proxy to measure the numerical error. It includes both the discretization error and the error of the linear solver, since the linear system is only solved up to the <code class="docutils literal notranslate"><span class="pre">relative</span> <span class="pre">residual</span></code> or the <code class="docutils literal notranslate"><span class="pre">absolute</span> <span class="pre">residual</span></code> (which ever is the biggest) of the <code class="docutils literal notranslate"><span class="pre">electromagnetics</span></code> linear solver. If the imbalance does not decrease when the mesh is refined, the tolerance of the linear solver is likely too loose.</p>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">electromagnetic</span> <span class="pre">power</span> <span class="pre">name</span></code>: output filename for the electromagnetic power calculations.</p></li>
 </ul>
 </li>
 </ul>

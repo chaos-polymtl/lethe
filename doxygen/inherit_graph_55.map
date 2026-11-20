@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classFlowControl.html" title="Dynamic flow controller that drives the average velocity of the flow towards a target value." alt="" coords="5,5,160,33"/>
+<area shape="rect" id="Node000000" href="$classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu..." alt="" coords="5,32,145,60"/>
+<area shape="rect" id="Node000001" href="$classEvaporationModelConstant.html" title="EvaporationModelConstant. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="205,5,402,33"/>
+<area shape="poly" id="edge69_Node000000_Node000001" title=" " alt="" coords="160,33,207,30,202,31,161,39"/>
+<area shape="rect" id="Node000002" href="$classEvaporationModelTemperature.html" title="EvaporationModelTemperature. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="193,57,414,85"/>
+<area shape="poly" id="edge70_Node000000_Node000002" title=" " alt="" coords="160,53,195,59,190,59,160,58"/>
 </map>

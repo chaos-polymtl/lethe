@@ -658,6 +658,22 @@ implementation,</p>
 <div class="math notranslate nohighlight">
 \[\Delta p \geq 1.\]</div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The index <span class="math notranslate nohighlight">\(p\)</span> follows the finite element exterior calculus convention,
+in which the lowest-order spaces correspond to <span class="math notranslate nohighlight">\(p = 1\)</span>. It is related to
+the polynomial degree parameters of the <a class="reference internal" href="../../../parameters/cfd/fem.html"><span class="doc">FEM</span></a>
+subsection by</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[p = \text{electromagnetics trial degree} + 1,
+\qquad
+p_{\mathrm{test}} = \text{electromagnetics test degree} + 1,\]</div>
+</div>
+<p>In particular, <code class="docutils literal notranslate"><span class="pre">electromagnetics</span> <span class="pre">trial</span> <span class="pre">degree</span> <span class="pre">=</span> <span class="pre">0</span></code> is allowed and corresponds
+to the lowest-order case <span class="math notranslate nohighlight">\(p = 1\)</span>, with piecewise-constant interior fields
+and lowest-order Nédélec traces.</p>
+</div>
 <p>The discrete fields are expanded in terms of their respective basis functions,</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">

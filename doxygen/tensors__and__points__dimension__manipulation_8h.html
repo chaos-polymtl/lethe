@@ -98,10 +98,11 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;deal.II/base/point.h&gt;</code><br />
 <code>#include &lt;deal.II/base/tensor.h&gt;</code><br />
+<code>#include &lt;complex&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for tensors_and_points_dimension_manipulation.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="tensors__and__points__dimension__manipulation_8h__incl.svg" width="334" height="148"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="tensors__and__points__dimension__manipulation_8h__incl.svg" width="435" height="148"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -123,8 +124,64 @@ Functions</h2></td></tr>
 <tr class="memitem:a9adf59d1cce57d834b665e224d1f95ab template"><td class="memItemLeft" align="right" valign="top">Point&lt; 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9adf59d1cce57d834b665e224d1f95ab">point_nd_to_2d</a> (const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="memitem:a1df71c0a0c32db8a1f321801f407c07f" id="r_a1df71c0a0c32db8a1f321801f407c07f"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number&gt; </td></tr>
 <tr class="memitem:a1df71c0a0c32db8a1f321801f407c07f template"><td class="memItemLeft" align="right" valign="top">DEAL_II_ALWAYS_INLINE Tensor&lt; 1, dim, Number &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1df71c0a0c32db8a1f321801f407c07f">tangential_component</a> (const Tensor&lt; 1, dim, Number &gt; &amp;tensor, const Tensor&lt; 1, dim &gt; &amp;normal)</td></tr>
+<tr class="memitem:ac3e6747c0f3388663f33b81f4d4326a4" id="r_ac3e6747c0f3388663f33b81f4d4326a4"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number&gt; </td></tr>
+<tr class="memitem:ac3e6747c0f3388663f33b81f4d4326a4 template"><td class="memItemLeft" align="right" valign="top">DEAL_II_ALWAYS_INLINE std::complex&lt; Number &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3e6747c0f3388663f33b81f4d4326a4">hermitian_product</a> (const Tensor&lt; 1, dim, std::complex&lt; Number &gt; &gt; &amp;a, const Tensor&lt; 1, dim, std::complex&lt; Number &gt; &gt; &amp;b)</td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ac3e6747c0f3388663f33b81f4d4326a4" name="ac3e6747c0f3388663f33b81f4d4326a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3e6747c0f3388663f33b81f4d4326a4">&#9670;&#160;</a></span>hermitian_product()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DEAL_II_ALWAYS_INLINE std::complex&lt; Number &gt; hermitian_product </td>
+          <td>(</td>
+          <td class="paramtype">const Tensor&lt; 1, dim, std::complex&lt; Number &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor&lt; 1, dim, std::complex&lt; Number &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the Hermitian product of two complex vectors, i.e. the dot product of the first vector with the complex conjugate of the second one: </p>
+<p class="formulaDsp">
+\[\mathbf{a} \cdot \mathbf{b}^* = \sum_i a_i b_i^*
+\]
+</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions </td></tr>
+    <tr><td class="paramname">Number</td><td>Type of the real and imaginary parts of the components</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a</td><td>First vector. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>Second vector, which is conjugated.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The Hermitian product of the two vectors. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00165">165</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
+
+</div>
+</div>
 <a id="a9adf59d1cce57d834b665e224d1f95ab" name="a9adf59d1cce57d834b665e224d1f95ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9adf59d1cce57d834b665e224d1f95ab">&#9670;&#160;</a></span>point_nd_to_2d()</h2>
 
@@ -158,7 +215,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>point_2d Two-dimensional output point </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00094">94</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00096">96</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
 
 </div>
 </div>
@@ -195,7 +252,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>point_3d Three-dimensional output point </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">69</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00071">71</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
 
 </div>
 </div>
@@ -255,7 +312,7 @@ template&lt;int dim, typename Number&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The tangential component of the vector. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00131">131</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00133">133</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
 
 </div>
 </div>
@@ -292,7 +349,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>tensor_2d Three-dimensional output tensor </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">50</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00052">52</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
 
 </div>
 </div>
@@ -329,7 +386,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>tensor_3d Three-dimensional output tensor </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">24</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00026">26</a> of file <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">tensors_and_points_dimension_manipulation.h</a>.</p>
 
 </div>
 </div>
