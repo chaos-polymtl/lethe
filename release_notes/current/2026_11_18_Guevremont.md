@@ -6,8 +6,8 @@
 
 ### Changed
 
-- MAJOR The `none` type of the `boundary conditions qmom` subsection is renamed `noflux`, which states that no particle crosses these boundaries (walls). It remains the default type. [#2216](https://github.com/chaos-polymtl/lethe/pull/2216)
+- MINOR The `none` type of the `boundary conditions qmom` subsection is renamed `noflux`, which states that no particle crosses these boundaries (walls). It remains the default type. [#2216](https://github.com/chaos-polymtl/lethe/pull/2216)
 
 ### Removed
 
-- MAJOR The `qmom` subsection of the `non-linear solver` subsection is removed, since the QMOM physics is solved with the linear solver strategy. [#2216](https://github.com/chaos-polymtl/lethe/pull/2216)
+- MINOR The `qmom` subsection of the `non-linear solver` subsection is removed, since the QMOM physics is solved with the linear solver strategy. [#2216](https://github.com/chaos-polymtl/lethe/pull/2216)
