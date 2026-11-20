@@ -126,7 +126,7 @@ For tracer boundary conditions, the defaults parameters are:
 QMOM
 ^^^^
 
-The boundary conditions of the quadrature method of moments (see :doc:`qmom`) apply to the scalars and the moments. The possible ``types`` are ``none`` (default), ``outlet`` and ``dirichlet``. The parameters for each type of QMOM boundary conditions are:
+The boundary conditions of the quadrature method of moments (see :doc:`qmom`) apply to the scalars and the moments. The possible ``types`` are ``noflux`` (default), ``outlet`` and ``dirichlet``. The parameters for each type of QMOM boundary conditions are:
 
 .. code-block:: text
 
@@ -135,7 +135,7 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
     set time dependent = false
     subsection bc 0
       set id   = 0
-      set type = none
+      set type = noflux
     end
     subsection bc 1
       set id   = 1
@@ -156,11 +156,11 @@ The boundary conditions of the quadrature method of moments (see :doc:`qmom`) ap
     end
   end
 
-* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions. Every boundary of the mesh must have a QMOM boundary condition, including the walls (type ``none``).
+* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions. Every boundary of the mesh must have a QMOM boundary condition, including the walls (type ``noflux``).
 
 * ``type``: This is the type of boundary condition being imposed:
 
-  * ``none`` (default): the advective flux is zero (no flux). This is the natural choice for walls.
+  * ``noflux`` (default): the advective flux is zero, as with the ``none`` type of the tracer. This is the natural choice for walls; use ``outlet`` where the flow leaves the domain.
   * ``outlet``: a natural boundary condition that prevents backflow.
   * ``dirichlet``: the scalars and the particle size distribution are imposed, as functions of space and time, in the ``dirichlet`` subsection. The format of this subsection is described in :doc:`qmom`.
 

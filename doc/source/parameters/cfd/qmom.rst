@@ -32,7 +32,7 @@ Every component :math:`\zeta_c`, scalar or moment, is transported by the velocit
 
   \frac{\partial \zeta_c}{\partial t} + \nabla \cdot (\mathbf{u} \zeta_c) = S_c
 
-The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c` smaller than the ``number of scalars``, and the moment :math:`M_{c - n_s}` otherwise, where :math:`n_s` is the ``number of scalars``.
+The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c` smaller than the ``number of scalars`` :math:`n_s`, and the moment :math:`M_{c - n_s}` otherwise.
 
 This equation is discretized with an upwind discontinuous Galerkin method and integrated in time with the BDF scheme of the ``method`` of the :doc:`simulation_control` subsection, which must be ``bdf1``, ``bdf2`` or ``bdf3``. The steady and SDIRK methods are not supported. Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every scalar and moment. The linear systems are solved with the parameters of the ``qmom`` subsection of the :doc:`linear_solver_control` subsection, with the GMRES method and an ``ilu`` or ``amg`` preconditioner. The QMOM physics has no ``non-linear solver`` subsection. Since the moments have very different magnitudes, the tolerance of each scalar and moment is the ``relative residual`` times its initial residual, computed with the solution at the beginning of the time step as initial guess, but at least the ``minimum residual``. The ``minimum residual`` should therefore be much smaller than the initial residual of the smallest moment.
 
@@ -102,7 +102,7 @@ The default values of the QMOM parameters are given in the text box below:
 
 * ``scalar names``: comma-separated list of scalars names, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). The names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
 
-* ``number of moments``: number :math:`K` of transported moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes: when :math:`K` is odd, one more node is used, so that all the moments are used by the quadrature. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
+* ``number of moments``: number :math:`K` of transported moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 

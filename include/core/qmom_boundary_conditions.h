@@ -19,7 +19,7 @@ namespace BoundaryConditions
   /// Boundary condition types of the QMOM physics
   enum class QMOMBoundaryType
   {
-    none,
+    noflux,
     dirichlet,
     outlet
   };
@@ -32,9 +32,9 @@ namespace BoundaryConditions
    *    (u.n < 0) and the interior values leave it where the flow leaves;
    *  - outlet: the interior values leave the domain where the flow leaves and
    *    nothing enters where the flow enters (backflow);
-   *  - none: the advective flux is zero, which is the natural choice for
+   *  - noflux: the advective flux is zero, which is the natural choice for
    *    walls.
-   * Boundaries without a QMOM boundary condition are treated as none.
+   * Boundaries without a QMOM boundary condition are treated as noflux.
    *
    * @tparam dim Number of spatial dimensions.
    */

@@ -676,10 +676,10 @@ QMOM<dim>::assemble_system_matrix()
         QMOMScratchData<dim>                                 &scratch_data,
         QMOMCopyData                                         &copy_data) {
       // Only the outlet and Dirichlet boundaries contribute to the matrix: no
-      // flux crosses a boundary of type none
+      // flux crosses a boundary of type noflux
       if (simulation_parameters.qmom_boundary_conditions.type.at(
             cell->face(face_no)->boundary_id()) ==
-          BoundaryConditions::QMOMBoundaryType::none)
+          BoundaryConditions::QMOMBoundaryType::noflux)
         return;
 
       scratch_data.reinit_boundary_face(cell, face_no);
