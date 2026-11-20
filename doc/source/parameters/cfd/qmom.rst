@@ -26,6 +26,9 @@ Discretization
 
 Each time step of the fluid dynamics is split into the transport of the scalars and moments in physical space, followed by their evolution in phase space (``lie`` splitting).
 
+Transport in Physical Space
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Every component :math:`\zeta_c`, scalar or moment, is transported by the velocity :math:`\mathbf{u}` of the fluid at the end of the time step, which is solved before the QMOM physics, with the source term :math:`S_c` of the :doc:`source_term` subsection:
 
 .. math::
@@ -35,6 +38,9 @@ Every component :math:`\zeta_c`, scalar or moment, is transported by the velocit
 The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c` smaller than the ``number of scalars`` :math:`n_s`, and the moment :math:`M_{c - n_s}` otherwise.
 
 This equation is discretized with an upwind discontinuous Galerkin method and integrated in time with the BDF scheme of the ``method`` of the :doc:`simulation_control` subsection, which must be ``bdf1``, ``bdf2`` or ``bdf3``. The steady and SDIRK methods are not supported. If the growth, the nucleation or the coalescence is enabled, the method must be ``bdf1``: the previous solutions of the BDF scheme include the changes of the previous phase-space steps, which the ``bdf2`` and ``bdf3`` schemes would extrapolate and partly repeat. The ``lie`` splitting is first-order accurate anyway, so the ``bdf1`` scheme loses no accuracy. Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every scalar and moment. The linear systems are solved with the parameters of the ``qmom`` subsection of the :doc:`linear_solver_control` subsection, with the GMRES method and an ``ilu`` or ``amg`` preconditioner. The QMOM physics has no ``non-linear solver`` subsection. Since the moments have very different magnitudes, the tolerance of each scalar and moment is the ``relative residual`` times its initial residual, computed with the solution at the beginning of the time step as initial guess, but at least the ``minimum residual``. The ``minimum residual`` should therefore be much smaller than the initial residual of the smallest moment.
+
+Evolution in Phase Space
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 The evolution in phase space is done by QMOMKit, independently at every degree of freedom: since the element is nodal and discontinuous, the moments of a degree of freedom are the moments at its support point. They are inverted into a quadrature of :math:`N` nodes, of weights :math:`w_i` and abscissas (sizes) :math:`\xi_i`, with the Wheeler algorithm, the quadrature is evolved over the time step, and the moments are rebuilt from it. Three mechanisms evolve the quadrature:
 
@@ -58,7 +64,7 @@ The evolution in phase space is done by QMOMKit, independently at every degree o
 
     \frac{\mathrm{d} M_k}{\mathrm{d} t} = \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} w_i w_j \beta(\xi_i, \xi_j, t) \left[ \left(\xi_i^3 + \xi_j^3\right)^{k/3} - \xi_i^k - \xi_j^k \right]
 
-The changes of the moments due to the nucleation and the coalescence are integrated with a third-order Runge-Kutta method, and combined with the growth by a Strang splitting within the phase-space step. The rates of the three mechanisms can depend on the scalars of the degree of freedom, which keep their values at the end of the transport during the phase-space step: none of the current models uses them. Without any mechanism enabled, the quadrature does not evolve and the moments are unchanged, up to the round-off of the inversion.
+The changes of the moments due to the nucleation and the coalescence are integrated with a third-order Runge-Kutta method, and combined with the growth within the phase-space step by a Strang splitting, the default of QMOMKit. This inner splitting is distinct from the ``splitting scheme`` of the transport and the phase-space evolution. QMOMKit also provides two first-order alternatives (growth then sources, or sources then growth), which are not exposed as parameters. The rates of the three mechanisms can depend on the scalars of the degree of freedom, which keep their values at the end of the transport during the phase-space step: none of the current models uses them. Without any mechanism enabled, the quadrature does not evolve and the moments are unchanged, up to the round-off of the inversion.
 
 Degrees of freedom without particles (:math:`M_0` below :math:`10^{-30}`) have no quadrature: only the nucleation changes their moments, with its rate integrated by the midpoint rule. The moments must nevertheless be realizable, i.e. be the moments of a distribution of positive sizes: the simulation stops with an error at the first time step where they cannot be inverted, for example because of the oscillations of the transport near steep gradients.
 
@@ -139,6 +145,9 @@ The default values of the QMOM parameters are given in the text box below:
     end
   end
 
+General
+^^^^^^^
+
 * ``process``: process simulated. The choices are:
 
   * ``generic``: the scalars and the moments are given by ``number of scalars``, ``scalar names`` and ``number of moments``.
@@ -156,6 +165,9 @@ The default values of the QMOM parameters are given in the text box below:
 
   * ``lie``: :math:`T(\Delta t)` followed by :math:`P(\Delta t)`. This scheme is first-order accurate in time.
   * ``strang``: :math:`P(\Delta t / 2)`, then :math:`T(\Delta t)`, then :math:`P(\Delta t / 2)`. This scheme is second-order accurate in time when both parts are at least second-order accurate.
+
+Phase-Space Source Terms
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``enable nucleation``, ``enable coalescence`` and ``enable growth``: enable the corresponding phase-space mechanisms. They are disabled by default, so that the moments are only transported.
 
@@ -197,6 +209,9 @@ The default values of the QMOM parameters are given in the text box below:
   * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set, instead of stopping the simulation with an error.
   * ``relative tolerance``: relative tolerance of the adaptive Runge-Kutta integration of the trajectories of the quadrature nodes in phase space.
   * ``absolute tolerance``: absolute tolerance of this integration, in m. The default value is much smaller than the particle sizes, so that the ``relative tolerance`` controls the integration.
+
+Process Parameters
+^^^^^^^^^^^^^^^^^^
 
 * ``lipid nanoparticle production``: process parameters of the production of lipid nanoparticles (LNP), in SI units. The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
 
