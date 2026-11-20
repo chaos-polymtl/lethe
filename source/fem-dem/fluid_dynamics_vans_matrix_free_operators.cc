@@ -599,17 +599,25 @@ VANSOperator<dim, number>::do_cell_integral_local(
           hessian          = integrator.get_hessian(q);
         }
 
-      // Result value/gradient we will use
+      // Result value/gradient we will use. The VANS Jacobian (PSPG/SUPG and
+      // grad-div) has no term with the hessians of the test functions, so no
+      // hessian is submitted.
       typename FECellIntegrator::value_type    value_result;
       typename FECellIntegrator::gradient_type gradient_result;
-      typename FECellIntegrator::hessian_type  hessian_result;
 
-      // Gather previous values of the velocity and the pressure
+      // Gather previous values of the velocity and the pressure. The hessian
+      // tables of the linearization point are only filled when the hessians
+      // are enabled in the Jacobian.
       auto previous_values   = this->nonlinear_previous_values(cell, q);
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
-      auto previous_hessian_diagonal =
-        this->nonlinear_previous_hessian_diagonal(cell, q);
-      auto previous_hessian = this->nonlinear_previous_hessian(cell, q);
+      typename FECellIntegrator::gradient_type previous_hessian_diagonal;
+      typename FECellIntegrator::hessian_type  previous_hessian;
+      if (this->enable_hessians_jacobian)
+        {
+          previous_hessian_diagonal =
+            this->nonlinear_previous_hessian_diagonal(cell, q);
+          previous_hessian = this->nonlinear_previous_hessian(cell, q);
+        }
 
       // Add the drag force with the momentum coupling
       for (int d = 0; d < dim; ++d)
@@ -776,22 +784,13 @@ VANSOperator<dim, number>::do_cell_integral_local(
         {
           gradient_result = gradient_result * cell_mask;
           value_result    = value_result * cell_mask;
-          if (this->enable_hessians_jacobian)
-            hessian_result = hessian_result * cell_mask;
         }
 
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
-
-      if (this->enable_hessians_jacobian)
-        integrator.submit_hessian(hessian_result, q);
     }
 
-  if (this->enable_hessians_jacobian)
-    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients |
-                         EvaluationFlags::hessians);
-  else
-    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
 /**
@@ -917,10 +916,11 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Get stabilization parameter
           const auto tau = this->stabilization_parameter[cell][q];
 
-          // Result value/gradient we will use
+          // Result value/gradient we will use. The VANS residual (PSPG/SUPG
+          // and grad-div) has no term with the hessians of the test functions,
+          // so no hessian is submitted.
           typename FECellIntegrator::value_type    value_result;
           typename FECellIntegrator::gradient_type gradient_result;
-          typename FECellIntegrator::hessian_type  hessian_result;
 
           // +(q,∂t ɛ)
           value_result[dim] = vf_time_derivative;
@@ -1056,25 +1056,15 @@ VANSOperator<dim, number>::local_evaluate_residual(
             {
               gradient_result = gradient_result * cell_mask;
               value_result    = value_result * cell_mask;
-              if (this->enable_hessians_residual)
-                hessian_result = hessian_result * cell_mask;
             }
 
           integrator.submit_gradient(gradient_result, q);
           integrator.submit_value(value_result, q);
-          if (this->enable_hessians_residual)
-            integrator.submit_hessian(hessian_result, q);
         }
 
-      if (this->enable_hessians_residual)
-        integrator.integrate_scatter(EvaluationFlags::values |
-                                       EvaluationFlags::gradients |
-                                       EvaluationFlags::hessians,
-                                     dst);
-      else
-        integrator.integrate_scatter(EvaluationFlags::values |
-                                       EvaluationFlags::gradients,
-                                     dst);
+      integrator.integrate_scatter(EvaluationFlags::values |
+                                     EvaluationFlags::gradients,
+                                   dst);
     }
 }
 
