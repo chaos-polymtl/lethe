@@ -912,6 +912,113 @@ Parameters::QMOMGrowth::parse_parameters(ParameterHandler &prm)
 }
 
 void
+Parameters::QMOMNucleation::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMNucleation defaults;
+  prm.enter_subsection("nucleation");
+  {
+    declare_enum_entry(prm,
+                       "model",
+                       defaults.model,
+                       "Model of the nucleation rate J: constant (J = a) or "
+                       "function (J given by an expression of t)");
+
+    prm.declare_entry("nucleation coefficient",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nucleation_coefficient),
+                      Patterns::Double(0.),
+                      "Coefficient a, in 1/(m^3 s), of the constant "
+                      "nucleation model");
+
+    prm.declare_entry("Function expression",
+                      defaults.function_expression,
+                      Patterns::Anything(),
+                      "Nucleation rate J, in 1/(m^3 s), of the function model, "
+                      "as an expression of the time t, in s");
+
+    prm.declare_entry("nuclei mean size",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nuclei_mean_size),
+                      Patterns::Double(0.),
+                      "Mean size, in m, of the log-normal distribution of the "
+                      "sizes of the nuclei");
+
+    prm.declare_entry("nuclei standard deviation",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nuclei_standard_deviation),
+                      Patterns::Double(0.),
+                      "Standard deviation, in m, of the log-normal "
+                      "distribution of the sizes of the nuclei");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMNucleation::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("nucleation");
+  {
+    model = string_to_enum<QMOMNucleationModel>(prm.get("model"));
+    nucleation_coefficient    = prm.get_double("nucleation coefficient");
+    function_expression       = prm.get("Function expression");
+    nuclei_mean_size          = prm.get_double("nuclei mean size");
+    nuclei_standard_deviation = prm.get_double("nuclei standard deviation");
+    // A zero standard deviation would create nuclei of a single size, whose
+    // moments can only be inverted into a single quadrature node
+    AssertThrow(nuclei_mean_size > 0. && nuclei_standard_deviation > 0.,
+                ExcMessage("The \"nuclei mean size\" (" +
+                           std::to_string(nuclei_mean_size) +
+                           ") and the \"nuclei standard deviation\" (" +
+                           std::to_string(nuclei_standard_deviation) +
+                           ") of the \"nucleation\" subsection of the QMOM "
+                           "subsection must be strictly positive."));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMCoalescence::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMCoalescence defaults;
+  prm.enter_subsection("coalescence");
+  {
+    declare_enum_entry(prm,
+                       "model",
+                       defaults.model,
+                       "Model of the coalescence kernel beta: constant (beta = "
+                       "a) or function (beta given by an expression of xi_1, "
+                       "xi_2 and t)");
+
+    prm.declare_entry("coalescence coefficient",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.coalescence_coefficient),
+                      Patterns::Double(0.),
+                      "Coefficient a, in m^3/s, of the constant coalescence "
+                      "model");
+
+    prm.declare_entry("Function expression",
+                      defaults.function_expression,
+                      Patterns::Anything(),
+                      "Coalescence kernel beta, in m^3/s, of the function "
+                      "model, as an expression of the sizes xi_1 and xi_2, in "
+                      "m, of the two particles and of the time t, in s");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMCoalescence::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("coalescence");
+  {
+    model = string_to_enum<QMOMCoalescenceModel>(prm.get("model"));
+    coalescence_coefficient = prm.get_double("coalescence coefficient");
+    function_expression     = prm.get("Function expression");
+  }
+  prm.leave_subsection();
+}
+
+void
 Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
 {
   const QMOM defaults;
@@ -969,6 +1076,8 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
                       "Include the growth source <true|false>");
 
     growth.declare_parameters(prm);
+    nucleation.declare_parameters(prm);
+    coalescence.declare_parameters(prm);
     phase_evolution.declare_parameters(prm);
     lipid_nanoparticle_production.declare_parameters(prm);
     physical_constants.declare_parameters(prm);
@@ -1040,6 +1149,8 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
     enable_growth      = prm.get_bool("enable growth");
 
     growth.parse_parameters(prm);
+    nucleation.parse_parameters(prm);
+    coalescence.parse_parameters(prm);
     phase_evolution.parse_parameters(prm);
     lipid_nanoparticle_production.parse_parameters(prm);
     physical_constants.parse_parameters(prm);
