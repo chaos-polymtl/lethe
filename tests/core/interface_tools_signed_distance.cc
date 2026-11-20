@@ -59,7 +59,7 @@ test()
 
   ConvergenceTable error_table;
 
-  for (unsigned int mesh_ref = 0; mesh_ref < 3; mesh_ref++)
+  for (unsigned int mesh_ref = 0; mesh_ref < number_of_mesh_ref; mesh_ref++)
     {
       unsigned int max_ref = 3 + mesh_ref;
       unsigned int min_ref = max_ref - 2;
@@ -379,17 +379,6 @@ test()
       error_table.add_value("error_distance_L2", error_L2);
       error_table.add_value("error_distance_Linf", error_Linf);
     }
-
-  // double convergence_order = log(error[number_of_mesh_ref-1] /
-  // error[number_of_mesh_ref-1]) / log(0.5);
-
-  // deallog << "The convergence is: " << convergence_order << std::endl;
-  // pcout << "The convergence is: " << convergence_order << std::endl;
-
-  // convergence_order = log(error_volume[number_of_mesh_ref-1] /
-  // error_volume[number_of_mesh_ref-1]) / log(0.5); pcout << "The convergence
-  // of the volume is: " << convergence_order
-  //       << std::endl;
 
   error_table.set_precision("error_volume", 3);
   error_table.set_scientific("error_volume", true);
