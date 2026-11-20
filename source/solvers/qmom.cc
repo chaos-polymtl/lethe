@@ -1155,9 +1155,18 @@ QMOM<dim>::advance_physical_space()
                                completely_distributed_solution,
                                system_rhs[component]) /
         rescale_metric;
+      // GMRES cannot reduce the residual below the round-off of the
+      // right-hand side. Without this floor, a component that is already at
+      // steady state (e.g. in a fluid at rest) has an initial residual made of
+      // round-off, and its relative tolerance cannot be reached.
+      constexpr double round_off_relative_tolerance = 1e-13;
+      const double     round_off_residual = round_off_relative_tolerance *
+                                        system_rhs[component].l2_norm() /
+                                        rescale_metric;
       const double linear_solver_tolerance =
-        std::max(linear_solver_parameters.relative_residual * current_residual,
-                 linear_solver_parameters.minimum_residual);
+        std::max({linear_solver_parameters.relative_residual * current_residual,
+                  linear_solver_parameters.minimum_residual,
+                  round_off_residual});
       if (verbose)
         this->pcout << "  -Tolerance of iterative solver of "
                     << component_names[component]
