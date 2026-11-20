@@ -820,19 +820,6 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     }
 
   system_matrix.compress(VectorOperation::add);
-  // for (unsigned int i = 0; i < this->system_matrix.m(); ++i)
-  //   {
-  //     for (unsigned int j = 0; j < this->system_matrix.n(); ++j)
-  //       {
-  //         if (i == j)
-  //           {
-  //             std::cout << "MATRICE (" << i << "," << j
-  //                       << ") : " << this->system_matrix.el(i, j)
-  //                       << std::endl;
-  //           }
-  //       }
-  //   }
-  // std::cout << "MATRICE (0,0) : " << this->system_matrix.el(0, 0) << std::endl;
 }
 
 template <int dim>
@@ -1059,10 +1046,6 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
-  // this->system_rhs.compress(VectorOperation::add);
-  // for (auto element : this->system_rhs)
-  //   std::cout << "RHS element: " << element << std::endl;
-
   // Add mortar entries
   if (this->simulation_parameters.mortar_parameters.enable)
     {
@@ -1079,9 +1062,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     }
 
   this->system_rhs.compress(VectorOperation::add);
-
-  // for (auto element : this->system_rhs)
-  //   std::cout << "RHS element: " << element << std::endl;
+  
   if (this->simulation_control->is_first_assembly())
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
