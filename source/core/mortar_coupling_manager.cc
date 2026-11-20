@@ -1926,7 +1926,7 @@ template <int dim, typename Number>
 unsigned int
 NavierStokesCouplingEvaluationSIPG<dim, Number>::data_size() const
 {
-  return 4 * dim;
+  return 3 * dim;
 }
 
 template <int dim, typename Number>
@@ -1984,7 +1984,7 @@ NavierStokesCouplingEvaluationSIPG<dim, Number>::local_evaluate(
 
       // Initialize buffer for local side of the interface (i.e. rotor),
       // where information is evaluated
-      BufferRW<Number> buffer_m(all_values_m, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * 3 * dim * q_stride);
 
       // Store values and gradients at the created buffer
       buffer_m.write(u_value);
@@ -2008,8 +2008,8 @@ NavierStokesCouplingEvaluationSIPG<dim, Number>::local_integrate(
       const unsigned int q_index = ptr_q + q;
 
       // Initialize buffer for both local and ghost sides
-      BufferRW<Number> buffer_m(all_values_m, q * 4 * dim * q_stride);
-      BufferRW<Number> buffer_p(all_values_p, q * 4 * dim * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * 3 * dim * q_stride);
+      BufferRW<Number> buffer_p(all_values_p, q * 3 * dim * q_stride);
 
       // Read shape functions values and gradients stored in the buffer
       const auto u_value_m        = buffer_m.template read<u_value_type>();
@@ -2045,18 +2045,23 @@ NavierStokesCouplingEvaluationSIPG<dim, Number>::local_integrate(
       /* Contributions from viscous term */
       // - (n avg(∇v), jump(u))
       u_grad_result -= u_value_jump;
+      // u_grad_result -= u_value_jump*0.;
       // - (jump(v), ν avg(∇δu) n)
       u_value_result -= u_grad_avg * this->kinematic_viscosity;
+      // u_value_result -= u_grad_avg * this->kinematic_viscosity*0.;
       // + (jump(v), ν σ jump(δu))
       u_value_result += sigma * this->kinematic_viscosity * u_value_jump;
+      // u_value_result += sigma * this->kinematic_viscosity * u_value_jump*0.;
 
       /* Contribution from pressure gradient term */
       // + (jump(v), avg(δp) n)
       u_value_result += p_value_avg;
+      // u_value_result += p_value_avg*0.;
 
       /* Contribution from velocity divergence term */
       // - (avg(q), jump(u) n)
       p_value_result -= 0.5 * contract(u_value_jump, normal);
+      // p_value_result -= 0.5 * contract(u_value_jump, normal)*0.;
 
       // - (n avg(∇v), ν/2 jump(δu))
       phi_u_m.submit_gradient(outer(u_grad_result, normal) *
@@ -2086,23 +2091,22 @@ template <int dim, typename Number>
 unsigned int
 VANSCouplingEvaluationSIPG<dim, Number>::data_size() const
 {
-  return 4 * dim + 1;
+  return 3 * dim + 1;
 }
 
 template <int dim, typename Number>
 void
 VANSCouplingEvaluationSIPG<dim, Number>::local_reinit(
   const typename Triangulation<dim>::cell_iterator &cell,
-  const ArrayView<const Point<dim, Number>> &points) const
+  const ArrayView<const Point<dim, Number>>        &points) const
 {
   NavierStokesCouplingEvaluationSIPG<dim, Number>::local_reinit(cell, points);
 
-  this->void_fraction_cell =
-    typename DoFHandler<dim>::active_cell_iterator(
-      &cell->get_triangulation(),
-      cell->level(),
-      cell->index(),
-      &(*this->void_fraction_dof_handler));
+  this->void_fraction_cell = typename DoFHandler<dim>::active_cell_iterator(
+    &cell->get_triangulation(),
+    cell->level(),
+    cell->index(),
+    &(*this->void_fraction_dof_handler));
 
   this->phi_eps_m.reinit(this->void_fraction_cell, points);
 }
@@ -2130,8 +2134,8 @@ VANSCouplingEvaluationSIPG<dim, Number>::local_evaluate(
                          EvaluationFlags::values | EvaluationFlags::gradients);
   this->phi_p_m.evaluate(buffer_p, EvaluationFlags::values);
 
-  Vector<double> local_void_fraction_dofs(this->void_fraction_cell->get_fe()
-                                           .n_dofs_per_cell());
+  Vector<double> local_void_fraction_dofs(
+    this->void_fraction_cell->get_fe().n_dofs_per_cell());
   this->void_fraction_cell->get_dof_values(*this->void_fraction_solution,
                                            local_void_fraction_dofs);
   this->phi_eps_m.evaluate(local_void_fraction_dofs, EvaluationFlags::values);
@@ -2149,11 +2153,11 @@ VANSCouplingEvaluationSIPG<dim, Number>::local_evaluate(
       const auto u_grad_normal =
         contract(this->phi_u_m.get_gradient(q), normal);
       const auto p_value_normal = this->phi_p_m.get_value(q) * normal;
-      const auto epsilon = this->phi_eps_m.get_value(q);
+      const auto epsilon        = this->phi_eps_m.get_value(q);
 
       // Initialize buffer for local side of the interface (i.e. rotor),
       // where information is evaluated
-      BufferRW<Number> buffer_m(all_values_m, q * (4 * dim + 1) * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * (3 * dim + 1) * q_stride);
 
       // Store values and gradients at the created buffer
       buffer_m.write(u_value);
@@ -2178,8 +2182,8 @@ VANSCouplingEvaluationSIPG<dim, Number>::local_integrate(
       const unsigned int q_index = ptr_q + q;
 
       // Initialize buffer for both local and ghost sides
-      BufferRW<Number> buffer_m(all_values_m, q * (4 * dim + 1) * q_stride);
-      BufferRW<Number> buffer_p(all_values_p, q * (4 * dim + 1) * q_stride);
+      BufferRW<Number> buffer_m(all_values_m, q * (3 * dim + 1) * q_stride);
+      BufferRW<Number> buffer_p(all_values_p, q * (3 * dim + 1) * q_stride);
 
       // Read shape functions values and gradients stored in the buffer
       const auto u_value_m        = buffer_m.template read<u_value_type>();
@@ -2199,16 +2203,24 @@ VANSCouplingEvaluationSIPG<dim, Number>::local_integrate(
       const auto u_value_jump = u_value_m - u_value_p;
 
       // jump(u) = u_m - u_p
-      const auto u_value_vf_jump = void_fraction_m*u_value_m - void_fraction_p*u_value_p;
+      const auto u_value_vf_jump =
+        void_fraction_m * u_value_m - void_fraction_p * u_value_p;
 
       // The expression for the average on the mortar interface is
-      // avg(\eps*∇u).n = (\eps_m*∇u_m.normal_m + \eps_p*∇u_p.normal_p) * 0.5. Since we are
-      // accessing only the value of normal_m, we use a minus sign here because
-      // normal_p = - normal_m
-      const auto u_grad_vf_avg = (void_fraction_m*u_grad_normal_m - void_fraction_p*u_grad_normal_p) * 0.5;
+      // avg(\eps*∇u).n = (\eps_m*∇u_m.normal_m + \eps_p*∇u_p.normal_p) * 0.5.
+      // Since we are accessing only the value of normal_m, we use a minus sign
+      // here because normal_p = - normal_m
+      const auto u_grad_vf_avg = (void_fraction_m * u_grad_normal_m -
+                                  void_fraction_p * u_grad_normal_p) *
+                                 0.5;
 
       // {{\eps*p}} = (\eps_m*p_m + \eps_p*p_p)/2
-      const auto p_value_vf_avg = (void_fraction_m*p_value_normal_m - void_fraction_p*p_value_normal_p) * 0.5;
+      const auto p_value_vf_avg = (void_fraction_m * p_value_normal_m -
+                                   void_fraction_p * p_value_normal_p) *
+                                  0.5;
+
+      // {{\eps}} = (\eps_m + \eps_p)/2
+      const auto void_fraction_avg = 0.5 * (void_fraction_m + void_fraction_p);
 
       typename FEPointIntegratorU::value_type u_grad_result  = {};
       typename FEPointIntegratorU::value_type u_value_result = {};
@@ -2219,19 +2231,26 @@ VANSCouplingEvaluationSIPG<dim, Number>::local_integrate(
 
       /* Contributions from viscous term */
       // - (n avg(∇v), jump(u))
-      u_grad_result -= u_value_jump;
+      u_grad_result -= u_value_jump * void_fraction_avg;
+      // u_grad_result -= u_value_jump * void_fraction_avg*0.;
       // - (jump(v), ν avg(∇δu) n)
       u_value_result -= u_grad_vf_avg * this->kinematic_viscosity;
+      // u_value_result -= u_grad_vf_avg * this->kinematic_viscosity*0.;
       // + (jump(v), ν σ jump(δu))
-      u_value_result += sigma * this->kinematic_viscosity * u_value_jump;
+      u_value_result +=
+        sigma * this->kinematic_viscosity * void_fraction_avg * u_value_jump;
+      // u_value_result +=
+        // sigma * this->kinematic_viscosity * void_fraction_avg * u_value_jump*0.;
 
       /* Contribution from pressure gradient term */
       // + (jump(v), avg(δp) n)
       u_value_result += p_value_vf_avg;
+      // u_value_result += p_value_vf_avg*0.;
 
       /* Contribution from velocity divergence term */
       // - (avg(q), jump(u) n)
       p_value_result -= 0.5 * contract(u_value_vf_jump, normal);
+      // p_value_result -= 0.5 * contract(u_value_vf_jump, normal)*0.;
 
       // - (n avg(∇v), ν/2 jump(δu))
       this->phi_u_m.submit_gradient(outer(u_grad_result, normal) *

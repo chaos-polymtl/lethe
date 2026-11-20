@@ -1681,10 +1681,15 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
 
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
 
-  // ADAM
   if (this->cfd_dem_simulation_parameters.cfd_parameters.mortar_parameters
         .enable)
     {
+      AssertThrow(
+        this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
+          Parameters::VANSModel::modelA,
+        ExcMessage(
+          "To use the mortar method in a VANS simulation, model A needs to be selected."));
+
       // Mortar load balancing
       this->connect_mortar_weight_signals();
       this->connect_lost_particles_signal();
@@ -1714,7 +1719,6 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
         this->cfd_dem_simulation_parameters.void_fraction->read_dem,
       this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions
         .periodic_boundaries);
-  // DLH
 
   dem_setup_parameters();
 
@@ -1758,7 +1762,6 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
         .restart)
     dem_action_manager->restart_simulation();
 
-  // DELAMODIF???
   // Initialize the DEM parameters and generate the required ghost particles
   initialize_dem_parameters();
 
@@ -1795,9 +1798,7 @@ CFDDEMSolver<dim, PropertiesIndex>::solve()
       insert_particles();
 
       this->dynamic_flow_control();
-      // ADAM
       this->update_mortar_configuration();
-      // DLH
 
       if (!this->simulation_control->is_at_start())
         {

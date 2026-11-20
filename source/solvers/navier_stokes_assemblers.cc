@@ -168,6 +168,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
                         mass_source * phi_u_j * phi_u_i;
                     }
                 }
+              // if (q == 0 && i == 1 && j == 0)
+              //   std::cout << "local_matrix_ij_0: " << local_matrix_ij << std::endl;
               if (component_i < dim)
                 {
                   // The jacobian matrix for the SUPG formulation
@@ -186,6 +188,9 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
             }
         }
     }
+  // for (unsigned int i = 0; i < n_dofs; ++i)
+  //   std::cout << "local_matrix(i,0): " << local_matrix(i, 0) << " ; " << i << std::endl;
+  // std::cout << "local_matrix(0,0): " << local_matrix(0, 0) << std::endl;
 }
 
 template <int dim>
@@ -291,6 +296,10 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
               // Continuity
               velocity_divergence * phi_p_i + mass_source * phi_p_i) *
             JxW;
+          
+          // const int component_i = scratch_data.components[i];
+          // if (component_i == dim && q == 0)
+          //     std::cout << "local_rhs_i before GLS: " << local_rhs_i << std::endl;
 
           // PSPG GLS term
           local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
@@ -303,6 +312,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
           local_rhs(i) += local_rhs_i;
         }
     }
+  // std::cout << "local_rhs(0): " << local_rhs(0) << std::endl;
 }
 
 
