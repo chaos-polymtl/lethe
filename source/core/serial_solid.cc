@@ -102,7 +102,8 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
       // cell that a solid cell can be mapped to, and the distance is only
       // computed for them. The cubes are enlarged by a small fraction of the
       // diameter so that round-off errors cannot discard a mapped pair.
-      constexpr double cube_enlargement_relative_tolerance = 1e-8; // Not sure if this is required.
+      constexpr double cube_enlargement_relative_tolerance =
+        1e-8; // Not sure if this is required.
 
       // Locally own cells
       std::vector<typename Triangulation<spacedim>::active_cell_iterator>
@@ -176,7 +177,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
               const unsigned int local_index = intersected_cube.second;
 
               // Distance between the triangle and the cell center.
-              const double       distance =
+              const double distance =
                 LetheGridTools::find_point_triangle_distance(
                   triangle, local_background_cell_centers[local_index]);
 
