@@ -3,7 +3,102 @@
 
 #include <dem/particle_wall_broad_search.h>
 
+#include <numeric>
+#include <vector>
+
 using namespace dealii;
+
+namespace
+{
+  /**
+   * @brief Call a function once for every pair of a solid cell and a
+   * background cell that neighbors a background cell to which the solid cell
+   * is mapped.
+   *
+   * Only the mapped background cells that are locally owned or ghost are
+   * considered. The background cells of a solid cell are visited in the order
+   * of the mapped pairs, then in the order of the neighbor lists. A background
+   * cell that neighbors several mapped background cells of the same solid cell
+   * is visited only once, the first time it is reached.
+   *
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   * @tparam VisitFunction Type of the function called for every pair. It takes
+   * the solid cell and the background cell as arguments.
+   *
+   * @param[in] mapped_pairs The (background cell, solid cell) pairs of one
+   * solid surface mapped in the background triangulation.
+   * @param[in] cells_total_neighbor_list A container in which all the neighbor
+   * cells of the local cells are stored.
+   * @param[in] visit_cell Function called for every pair of a solid cell and a
+   * background cell.
+   */
+  template <int dim, typename VisitFunction>
+  void
+  for_each_solid_cell_and_neighbor_cell(
+    const typename DEM::dem_data_structures<
+      dim>::solid_surfaces_mesh_information::value_type &mapped_pairs,
+    const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+                        &cells_total_neighbor_list,
+    const VisitFunction &visit_cell)
+  {
+    if (mapped_pairs.empty())
+      return;
+
+    // Group the pairs by solid cell with a counting sort, which keeps the
+    // order of the pairs of each solid cell
+    const unsigned int n_solid_cells =
+      mapped_pairs.front().second->get_triangulation().n_active_cells();
+    std::vector<unsigned int> first_pair_of_solid_cell(n_solid_cells + 1, 0);
+    for (const auto &mapped_pair : mapped_pairs)
+      ++first_pair_of_solid_cell[mapped_pair.second->active_cell_index() + 1];
+    std::partial_sum(first_pair_of_solid_cell.begin(),
+                     first_pair_of_solid_cell.end(),
+                     first_pair_of_solid_cell.begin());
+
+    std::vector<unsigned int> pairs_grouped_by_solid_cell(mapped_pairs.size());
+    std::vector<unsigned int> next_position_of_solid_cell(
+      first_pair_of_solid_cell.begin(), first_pair_of_solid_cell.end() - 1);
+    for (unsigned int pair_index = 0; pair_index < mapped_pairs.size();
+         ++pair_index)
+      {
+        const unsigned int solid_cell_index =
+          mapped_pairs[pair_index].second->active_cell_index();
+        pairs_grouped_by_solid_cell
+          [next_position_of_solid_cell[solid_cell_index]++] = pair_index;
+      }
+
+    // Index of the last solid cell for which each background cell was visited
+    std::vector<unsigned int> last_visiting_solid_cell(
+      mapped_pairs.front().first->get_triangulation().n_active_cells(),
+      numbers::invalid_unsigned_int);
+
+    for (unsigned int solid_cell_index = 0; solid_cell_index < n_solid_cells;
+         ++solid_cell_index)
+      for (unsigned int position = first_pair_of_solid_cell[solid_cell_index];
+           position < first_pair_of_solid_cell[solid_cell_index + 1];
+           ++position)
+        {
+          const auto &[background_cell, solid_cell] =
+            mapped_pairs[pairs_grouped_by_solid_cell[position]];
+
+          if (!background_cell->is_locally_owned() &&
+              !background_cell->is_ghost())
+            continue;
+
+          for (const auto &neighbor_cell : cells_total_neighbor_list.at(
+                 background_cell->global_active_cell_index()))
+            {
+              unsigned int &last_solid_cell =
+                last_visiting_solid_cell[neighbor_cell->active_cell_index()];
+              if (last_solid_cell == solid_cell_index)
+                continue;
+              last_solid_cell = solid_cell_index;
+
+              visit_cell(solid_cell, neighbor_cell);
+            }
+        }
+  }
+} // namespace
 
 template <int dim>
 void
@@ -154,62 +249,25 @@ particle_solid_surfaces_contact_search(
       // "I am assuming that triangles in different solids have different unique
       // global ids. If it's not the case, we have to modify the code" - ???
 
-      // Loop through solids
-      auto &solid_iterator = solid_surfaces_mesh_information[solid_counter];
+      // The particles of every background cell that neighbors a background
+      // cell to which a solid cell is mapped are candidates of the solid cell
+      for_each_solid_cell_and_neighbor_cell<dim>(
+        solid_surfaces_mesh_information[solid_counter],
+        cells_total_neighbor_list,
+        [&](const auto &solid_cell, const auto &neighbor_cell) {
+          const auto particles_in_cell =
+            particle_handler.particles_in_cell(neighbor_cell);
 
-      // Loop through the pairs (first -> background cell, second -> floating
-      // cell)
-      for (auto floating_mesh_iterator = solid_iterator.begin();
-           floating_mesh_iterator != solid_iterator.end();
-           ++floating_mesh_iterator)
-        {
-          // Get background cell
-          auto background_cell = floating_mesh_iterator->first;
+          if (particles_in_cell.empty())
+            return;
 
-          if (background_cell->is_locally_owned() ||
-              background_cell->is_ghost())
-            {
-              // Get cut cells (floating mesh cells)
-              auto cut_cells = floating_mesh_iterator->second;
-
-              // Get neighbors of the background cell
-              const auto &cell_list = cells_total_neighbor_list.at(
-                background_cell->global_active_cell_index());
-
-              // Loop through neighbors
-              for (auto &cell_iterator : cell_list)
-                {
-                  // Find particles located in cell
-                  typename Particles::ParticleHandler<
-                    dim>::particle_iterator_range particles_in_cell =
-                    particle_handler.particles_in_cell(cell_iterator);
-
-                  const bool particles_exist_in_cell =
-                    !particles_in_cell.empty();
-
-                  // If the main cell is not empty
-                  if (particles_exist_in_cell)
-                    {
-                      // Get the contact candidates of the cut cell
-                      auto &cut_cell_candidates = candidates[cut_cells];
-
-                      // Loop through particles in the main cell and build
-                      // contact candidate pairs
-                      for (typename Particles::ParticleHandler<
-                             dim>::particle_iterator_range::iterator
-                             particle_in_cell_iterator =
-                               particles_in_cell.begin();
-                           particle_in_cell_iterator != particles_in_cell.end();
-                           ++particle_in_cell_iterator)
-                        {
-                          cut_cell_candidates.insert(
-                            {particle_in_cell_iterator->get_id(),
-                             particle_in_cell_iterator});
-                        }
-                    }
-                }
-            }
-        }
+          auto &solid_cell_candidates = candidates[solid_cell];
+          for (auto particle_in_cell_iterator = particles_in_cell.begin();
+               particle_in_cell_iterator != particles_in_cell.end();
+               ++particle_in_cell_iterator)
+            solid_cell_candidates.insert(
+              {particle_in_cell_iterator->get_id(), particle_in_cell_iterator});
+        });
     }
 }
 
@@ -365,63 +423,29 @@ particle_solid_surfaces_contact_search(
       // I am assuming that triangles in different solids have different unique
       // global ids. If it's not the case, we have to modify the code
 
-      // Loop through solids
-      auto &solid_iterator = solid_surfaces_mesh_information[solid_counter];
+      // The particles of every mobile background cell that neighbors a
+      // background cell to which a solid cell is mapped are candidates of the
+      // solid cell
+      for_each_solid_cell_and_neighbor_cell<dim>(
+        solid_surfaces_mesh_information[solid_counter],
+        cells_total_neighbor_list,
+        [&](const auto &solid_cell, const auto &neighbor_cell) {
+          // No need to check if the cell has any particle after this step
+          // since mobile cells have particles
+          if (sparse_contacts_object.check_cell_mobility(neighbor_cell) !=
+              AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
+            return;
 
-      // Loop through the pairs (first -> background cell, second -> floating
-      // cell)
-      for (auto floating_mesh_iterator = solid_iterator.begin();
-           floating_mesh_iterator != solid_iterator.end();
-           ++floating_mesh_iterator)
-        {
-          // Get background cell
-          auto background_cell = floating_mesh_iterator->first;
+          const auto particles_in_cell =
+            particle_handler.particles_in_cell(neighbor_cell);
 
-          if (background_cell->is_locally_owned() ||
-              background_cell->is_ghost())
-            {
-              // Get cut cells (floating mesh cells)
-              auto cut_cells = floating_mesh_iterator->second;
-
-              // Get neighbors of the background cell
-              const auto &cell_list = cells_total_neighbor_list.at(
-                background_cell->global_active_cell_index());
-
-              // Loop through neighbors
-              for (auto &cell_iterator : cell_list)
-                {
-                  // If main cell has status other than mobile, skip to next
-                  // cell
-                  // No needs to check if the main cell has any particle after
-                  // this step since mobile cells have particles
-                  unsigned int main_cell_mobility_status =
-                    sparse_contacts_object.check_cell_mobility(cell_iterator);
-                  if (main_cell_mobility_status !=
-                      AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
-                    continue;
-
-                  // Find particles located in cell
-                  typename Particles::ParticleHandler<
-                    dim>::particle_iterator_range particles_in_cell =
-                    particle_handler.particles_in_cell(cell_iterator);
-
-                  // Get the contact candidates of the cut cell
-                  auto &cut_cell_candidates = candidates[cut_cells];
-
-                  // Loop through particles in the main cell and build
-                  // contact candidate pairs
-                  for (auto particle_in_cell_iterator =
-                         particles_in_cell.begin();
-                       particle_in_cell_iterator != particles_in_cell.end();
-                       ++particle_in_cell_iterator)
-                    {
-                      cut_cell_candidates.insert(
-                        {particle_in_cell_iterator->get_id(),
-                         particle_in_cell_iterator});
-                    }
-                }
-            }
-        }
+          auto &solid_cell_candidates = candidates[solid_cell];
+          for (auto particle_in_cell_iterator = particles_in_cell.begin();
+               particle_in_cell_iterator != particles_in_cell.end();
+               ++particle_in_cell_iterator)
+            solid_cell_candidates.insert(
+              {particle_in_cell_iterator->get_id(), particle_in_cell_iterator});
+        });
     }
 }
 
