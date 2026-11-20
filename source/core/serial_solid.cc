@@ -5,6 +5,7 @@
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 
+#include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -16,6 +17,7 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/rtree.h>
 #include <deal.II/numerics/vector_tools.h>
 
 #include <fstream>
@@ -91,47 +93,107 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
 
   if constexpr (dim == 2)
     {
-      // Gather the amount of vertices per cell in the solid cells once to have
-      // a static memory allocation of the vector. This prevents reallocating
-      // the vector dynamically using push_back if the solid triangulation
-      // has many triangles
-      auto                         temporary_solid_cell = solid_tria->begin();
-      std::vector<Point<spacedim>> triangle(temporary_solid_cell->n_vertices());
+      // A solid cell is mapped to a locally owned background cell if the
+      // distance between the center of the background cell and the solid cell
+      // is smaller than the diameter of the background cell. The point of the
+      // solid cell closest to the center then lies in the bounding box of the
+      // solid cell and in the cube centered on the center whose half-width is
+      // the diameter. An R-tree of these cubes thus gives every background
+      // cell that a solid cell can be mapped to, and the distance is only
+      // computed for them. The cubes are enlarged by a small fraction of the
+      // diameter so that round-off errors cannot discard a mapped pair.
+      constexpr double cube_enlargement_relative_tolerance = 1e-8; // Not sure if this is required.
 
-      // Calculate distance from cell center to solid_cell
+      // Locally own cells
+      std::vector<typename Triangulation<spacedim>::active_cell_iterator>
+        local_background_cells;
+
+      // Position of the center of the cells
+      std::vector<Point<spacedim>> local_background_cell_centers;
+
+      // Diameter of each cell
+      std::vector<double> local_background_cell_diameters;
+
+      // Bounding box for each cell
+      std::vector<std::pair<BoundingBox<spacedim>, unsigned int>> cubes;
+
+      // Number of locally own cells
+      const unsigned int n_locally_owned_cells =
+        background_tr.n_locally_owned_active_cells();
+
+      // Reserve the containers
+      local_background_cells.reserve(n_locally_owned_cells);
+      local_background_cell_centers.reserve(n_locally_owned_cells);
+      local_background_cell_diameters.reserve(n_locally_owned_cells);
+      cubes.reserve(n_locally_owned_cells);
+
       for (const auto &background_cell : background_tr.active_cell_iterators())
         {
-          // If the cell is owned by the processor
-          if (background_cell->is_locally_owned())
+          if (!background_cell->is_locally_owned())
+            continue;
+
+          const Point<spacedim> center   = background_cell->center();
+          const double          diameter = background_cell->diameter();
+
+          BoundingBox<spacedim> cube(center);
+          cube.extend(diameter * (1. + cube_enlargement_relative_tolerance));
+          cubes.emplace_back(
+            cube, static_cast<unsigned int>(local_background_cells.size()));
+
+          local_background_cells.emplace_back(background_cell);
+          local_background_cell_centers.emplace_back(center);
+          local_background_cell_diameters.emplace_back(diameter);
+        }
+
+      const auto cube_tree = pack_rtree(cubes);
+
+      // Solid cells mapped to each locally owned background cell, in the
+      // order of the active cells of the solid triangulation
+      std::vector<std::vector<
+        typename Triangulation<dim, spacedim>::active_cell_iterator>>
+        solid_cells_of_background_cell(local_background_cells.size());
+
+      // The distance is computed with the first three vertices of the solid
+      // cell
+      std::vector<Point<spacedim>> triangle(solid_tria->begin()->n_vertices());
+      std::vector<std::pair<BoundingBox<spacedim>, unsigned int>>
+        intersected_cubes;
+
+      // Loop on the triangles of the solid-surface
+      for (const auto &solid_cell : solid_tria->active_cell_iterators())
+        {
+          // Loop on the vertex of the triangle
+          for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)
+            triangle[v] = solid_cell->vertex(v);
+
+          intersected_cubes.clear();
+          cube_tree.query(boost::geometry::index::intersects(
+                            solid_cell->bounding_box()),
+                          std::back_inserter(intersected_cubes));
+
+          for (const auto &intersected_cube : intersected_cubes)
             {
-              // Calculate the characteristic size of the background cell
-              const double bg_cell_length = background_cell->diameter();
+              const unsigned int local_index = intersected_cube.second;
 
-              // Calculate the center of the cell
-              Point<spacedim> bg_cell_center = background_cell->center();
+              // Distance between the triangle and the cell center.
+              const double       distance =
+                LetheGridTools::find_point_triangle_distance(
+                  triangle, local_background_cell_centers[local_index]);
 
-              // Calculate distance from center of the cell to triangle
-              for (auto &solid_cell : solid_tria->active_cell_iterators())
-                {
-                  // Gather triangle vertices
-                  for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)
-                    {
-                      triangle[v] = solid_cell->vertex(v);
-                    }
-
-                  // Calculate distance between triangle and center
-                  const double distance =
-                    LetheGridTools::find_point_triangle_distance(
-                      triangle, bg_cell_center);
-
-                  if (distance < bg_cell_length)
-                    {
-                      mapped_solid.push_back(
-                        std::make_pair(background_cell, solid_cell));
-                    }
-                }
+              if (distance < local_background_cell_diameters[local_index])
+                solid_cells_of_background_cell[local_index].emplace_back(
+                  solid_cell);
             }
         }
+
+      // Store the pairs ordered by background cell, then by solid cell
+      for (unsigned int local_index = 0;
+           local_index < local_background_cells.size();
+           ++local_index)
+        for (const auto &solid_cell :
+             solid_cells_of_background_cell[local_index])
+          mapped_solid.emplace_back(local_background_cells[local_index],
+                                    solid_cell);
     }
   else if constexpr (dim == 3)
     {
