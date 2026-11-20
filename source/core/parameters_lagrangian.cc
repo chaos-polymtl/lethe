@@ -10,6 +10,7 @@
 
 #include <deal.II/grid/grid_in.h>
 
+#include <string>
 #include <vector>
 
 namespace Parameters
@@ -760,6 +761,35 @@ namespace Parameters
           Patterns::Tools::Convert<int>::to_string(defaults.seed_for_insertion),
           Patterns::Integer(),
           "Pseudo-random number seed used to generate the position offsets");
+
+        // Packed:
+        prm.declare_entry(
+          "packed particle-particle overlap factor",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.packed_particle_particle_overlap_factor),
+          Patterns::Double(0.),
+          "Fraction of the normal overlap of a particle-particle contact by "
+          "which each of the two particles is shifted at each pseudo-time step "
+          "of the packed insertion method");
+        prm.declare_entry(
+          "packed particle-wall overlap factor",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.packed_particle_wall_overlap_factor),
+          Patterns::Double(1.),
+          "Fraction of the normal overlap of a contact with a wall or a solid "
+          "surface by which the particle is shifted at each pseudo-time step "
+          "of the packed insertion method. It is at least 1, so that the "
+          "other particles cannot push a particle through a wall or a solid "
+          "surface");
+        prm.declare_entry(
+          "packed clearance ratio",
+          Patterns::Tools::Convert<double>::to_string(
+            defaults.packed_clearance_ratio),
+          Patterns::Double(0.),
+          "Distance added to the shift of a particle in contact at each "
+          "pseudo-time step of the packed insertion method, as a fraction of "
+          "the particle diameter");
+
         prm.declare_entry("initial velocity",
                           Patterns::Tools::Convert<Tensor<1, 3>>::to_string(
                             defaults.initial_vel),
@@ -934,6 +964,22 @@ namespace Parameters
         distance_threshold = prm.get_double("insertion distance threshold");
         insertion_maximum_offset = prm.get_double("insertion maximum offset");
         seed_for_insertion       = prm.get_integer("insertion prn seed");
+
+        packed_particle_particle_overlap_factor =
+          prm.get_double("packed particle-particle overlap factor");
+        packed_particle_wall_overlap_factor =
+          prm.get_double("packed particle-wall overlap factor");
+        packed_clearance_ratio = prm.get_double("packed clearance ratio");
+
+        // A particle-particle shift without an overlap term would not move
+        // the particles far enough to separate them.
+        AssertThrow(packed_particle_particle_overlap_factor > 0.,
+                    ExcMessage(
+                      "The packed particle-particle overlap factor (" +
+                      std::to_string(packed_particle_particle_overlap_factor) +
+                      ") must be strictly positive. Increase it, for example "
+                      "to its default value of 0.501."));
+
         initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =
           value_string_to_tensor<3>(prm.get("initial angular velocity"));

@@ -79,15 +79,41 @@ public:
   }
 
   /**
+   * @brief Limit the norm of the displacement of each locally owned particle
+   * to its radius.
+   *
+   * It is called once the particle-particle contacts have added their
+   * displacements to the force container of the contact outcomes, and before
+   * the contacts with the walls, the boundary points and lines, and the solid
+   * surfaces add theirs. A particle that does not overlap a wall or a triangle
+   * is farther than its radius from it, and a particle that overlaps it is
+   * pushed back by at least its overlap. Thus, as long as the
+   * particle-wall overlap factor is at least 1, the particle-particle
+   * contacts cannot push the center of a particle through a wall or a
+   * triangle.
+   *
+   * @param[in] particle_handler The particle handler of particles which are
+   * being inserted.
+   * @param[in,out] contact_outcome Contact outcomes holding the displacements
+   * accumulated by the particle-particle contacts.
+   */
+  static void
+  limit_particle_particle_shift_displacement(
+    const Particles::ParticleHandler<dim>        &particle_handler,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome);
+
+  /**
    * @brief Displace the locally owned particles by the displacements
    * accumulated by the shift contact models.
    *
    * Each contact of a particle adds a displacement to the entry of that
-   * particle in the force container of the contact outcomes. Each particle is
-   * moved by the sum of the displacements of its contacts, limited to a
-   * maximum norm, and the norm of the applied displacement is added to the
-   * displacement used by the dynamic contact detection. The force container is
-   * then reset to zero for the next pseudo-time step.
+   * particle in the force container of the contact outcomes. The sum of the
+   * particle-particle displacements is first limited to the particle radius
+   * by limit_particle_particle_shift_displacement. Each particle is moved by
+   * the sum of the displacements of its contacts, limited to a maximum norm,
+   * and the norm of the applied displacement is added to the displacement used
+   * by the dynamic contact detection. The force container is then reset to
+   * zero for the next pseudo-time step.
    *
    * @param[in,out] particle_handler The particle handler of particles which are
    * being inserted.

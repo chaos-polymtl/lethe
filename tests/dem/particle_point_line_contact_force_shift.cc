@@ -138,12 +138,15 @@ test()
           << std::endl;
 
   // Evaluate the contacts with the shift model
-  ParticlePointLineForce<dim, PropertiesIndex> shift_force_object;
-  auto                                         evaluate_contacts = [&]() {
+  // The default insertion parameters hold the default packed particle-wall
+  // overlap factor and packed clearance ratio
+  const Parameters::Lagrangian::InsertionInfo<dim> insertion_info;
+  ParticlePointLineForce<dim, PropertiesIndex>     shift_force_object;
+  auto                                             evaluate_contacts = [&]() {
     shift_force_object.calculate_particle_point_shift_displacement(
-      points_in_contact, contact_outcome.force);
+      points_in_contact, insertion_info, contact_outcome.force);
     shift_force_object.calculate_particle_line_shift_displacement(
-      lines_in_contact, contact_outcome.force);
+      lines_in_contact, insertion_info, contact_outcome.force);
   };
 
   evaluate_contacts();

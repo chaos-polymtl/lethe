@@ -509,6 +509,24 @@ namespace Parameters
       /// using the volume insertion.
       std::shared_ptr<Function<dim>> insertion_acceptance_fct;
 
+      /// Fraction of the normal overlap of a particle-particle contact by
+      /// which each of the two particles is shifted at each pseudo-time step
+      /// of the packed insertion method.
+      double packed_particle_particle_overlap_factor = 0.501;
+
+      /// Fraction of the normal overlap of a contact with a wall, a solid
+      /// surface, a boundary point or a boundary line by which the particle is
+      /// shifted at each pseudo-time step of the packed insertion method. It
+      /// is at least 1, so that the other particles cannot push a particle
+      /// through a wall or a solid surface.
+      double packed_particle_wall_overlap_factor = 1.02;
+
+      /// Distance added to the shift of a particle in contact at each
+      /// pseudo-time step of the packed insertion method, as a fraction of
+      /// the particle diameter. The mean diameter of the two particles is used
+      /// for particle-particle contacts.
+      double packed_clearance_ratio = 0.01;
+
       /**
        * @brief Declare the parameters in the parameter handler.
        *
