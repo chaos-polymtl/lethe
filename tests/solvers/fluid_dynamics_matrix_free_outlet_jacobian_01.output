@@ -1,0 +1,7 @@
+
+DEAL::Dimension 2
+DEAL::Norm of the outlet term of the Jacobian: 775.165
+DEAL::Outlet term of the matrix-free Jacobian matches its direct evaluation: true
+DEAL::Dimension 3
+DEAL::Norm of the outlet term of the Jacobian: 69.8893
+DEAL::Outlet term of the matrix-free Jacobian matches its direct evaluation: true

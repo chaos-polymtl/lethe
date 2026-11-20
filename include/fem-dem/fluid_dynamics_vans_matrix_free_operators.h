@@ -36,6 +36,10 @@ public:
     : NavierStokesOperatorBase<dim, number>()
     , cfd_dem_parameters(cfd_dem_parameters)
   {
+    // The Jacobian reads the full hessian of the linearization point (gradient
+    // of the divergence of the velocity).
+    this->store_previous_hessian = true;
+
     AssertThrow(
       this->cfd_dem_parameters.vans_model == Parameters::VANSModel::modelA,
       ExcMessage(

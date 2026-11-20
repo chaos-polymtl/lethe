@@ -414,7 +414,7 @@ public:
    *
    * @return Aligned vector with the size of all elements.
    */
-  const AlignedVector<VectorizedArray<number>>
+  const AlignedVector<VectorizedArray<number>> &
   get_element_size() const;
 
   /**
@@ -609,6 +609,16 @@ protected:
   TimeSteppingData
   initialize_time_stepping_data() const;
 
+  /**
+   * @brief Gather the time-stepping data and the kinematic viscosity used by
+   * the cell and face kernels into kernel_time_stepping_data and
+   * kernel_kinematic_viscosity. These values do not change during one
+   * application of the operator, so they are gathered once at the start of
+   * every function that applies the operator instead of once per cell batch.
+   */
+  void
+  update_kernel_data() const;
+
 
 private:
   /**
@@ -672,6 +682,28 @@ protected:
    *
    */
   bool has_solids = false;
+
+  /**
+   * @brief Time-stepping data used by the cell kernels, gathered by
+   * update_kernel_data() at the start of each operator application.
+   *
+   */
+  mutable TimeSteppingData kernel_time_stepping_data;
+
+  /**
+   * @brief Kinematic viscosity used by the cell and face kernels, gathered by
+   * update_kernel_data() at the start of each operator application.
+   *
+   */
+  mutable double kernel_kinematic_viscosity = 0.0;
+
+  /**
+   * @brief Flag set by the derived operators that read the full hessian of the
+   * linearization point (nonlinear_previous_hessian), such as the VANS
+   * operator. When false, this table is neither allocated nor filled.
+   *
+   */
+  bool store_previous_hessian = false;
 
   /**
    * @brief Finite element degree for the operator.
