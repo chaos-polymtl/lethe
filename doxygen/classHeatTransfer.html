@@ -120,8 +120,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a647057ca3043ee2d38e880e1366be62d" id="r_a647057ca3043ee2d38e880e1366be62d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a647057ca3043ee2d38e880e1366be62d">post_mesh_adaptation</a> () override</td></tr>
 <tr class="memitem:aa6ea50a26cfc0edd3ed18276e0793053" id="r_aa6ea50a26cfc0edd3ed18276e0793053"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6ea50a26cfc0edd3ed18276e0793053">compute_error_estimate</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</td></tr>
 <tr class="memitem:a55bc87b60c7fa3f561392a2842f185e6" id="r_a55bc87b60c7fa3f561392a2842f185e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55bc87b60c7fa3f561392a2842f185e6">compute_kelly</a> (dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell, const ComponentMask &amp;component_mask)</td></tr>
-<tr class="memitem:a57220cba37f8342ad6941e3188ff8971" id="r_a57220cba37f8342ad6941e3188ff8971"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57220cba37f8342ad6941e3188ff8971">write_checkpoint</a> () override</td></tr>
-<tr class="memitem:a8e4d76beacb77c787c9079c5a0ca7c55" id="r_a8e4d76beacb77c787c9079c5a0ca7c55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e4d76beacb77c787c9079c5a0ca7c55">read_checkpoint</a> () override</td></tr>
+<tr class="memitem:a4db5b930c8c0584e412110d6dbbc761e" id="r_a4db5b930c8c0584e412110d6dbbc761e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4db5b930c8c0584e412110d6dbbc761e">write_checkpoint</a> (const std::string &amp;checkpoint_slot_label) override</td></tr>
+<tr class="memitem:a2bba4d5de93e6a858c21e3794bea8cfe" id="r_a2bba4d5de93e6a858c21e3794bea8cfe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2bba4d5de93e6a858c21e3794bea8cfe">read_checkpoint</a> (const std::string &amp;checkpoint_slot_label) override</td></tr>
 <tr class="memitem:aaa7662383d9bbbba61db49dfad67f4f8" id="r_aaa7662383d9bbbba61db49dfad67f4f8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa7662383d9bbbba61db49dfad67f4f8">gather_tables</a> () override</td></tr>
 <tr class="memitem:aca8c8523ca5b4d9df7c1ed977ed7d113" id="r_aca8c8523ca5b4d9df7c1ed977ed7d113"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca8c8523ca5b4d9df7c1ed977ed7d113">setup_dofs</a> () override</td></tr>
 <tr class="memitem:af7e209dda017e39d3988b1e3f3751857" id="r_af7e209dda017e39d3988b1e3f3751857"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7e209dda017e39d3988b1e3f3751857">set_initial_conditions</a> () override</td></tr>
@@ -283,7 +283,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00079">79</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="auxiliary__physics_8h_source.html#l00058">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;::AuxiliaryPhysics()</a>, <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00768">cell_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00773">face_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="physics__solver_8h_source.html#l00176">PhysicsSolver&lt; GlobalVectorType &gt;::physics_solving_strategy</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00853">previous_solutions_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00846">solution_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00936">temperature_isocontour_bounding_values_tables</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00892">thermal_conductivity_models</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="auxiliary__physics_8h_source.html#l00058">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;::AuxiliaryPhysics()</a>, <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00772">cell_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00777">face_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="physics__solver_8h_source.html#l00176">PhysicsSolver&lt; GlobalVectorType &gt;::physics_solving_strategy</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00857">previous_solutions_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00850">solution_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00940">temperature_isocontour_bounding_values_tables</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00896">thermal_conductivity_models</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -335,7 +335,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00488">488</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00869">assemblers</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00179">HeatTransferScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00792">evaluation_point</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00177">HeatTransferScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00394">HeatTransferScratchData&lt; dim &gt;::reinit_cls()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00292">HeatTransferScratchData&lt; dim &gt;::reinit_fluid_dynamics()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00442">HeatTransferScratchData&lt; dim &gt;::reinit_time_harmonic_maxwell()</a>, <a class="el" href="copy__data_8h_source.html#l00092">StabilizedMethodsCopyData::reset()</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00873">assemblers</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00179">HeatTransferScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00796">evaluation_point</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00177">HeatTransferScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00394">HeatTransferScratchData&lt; dim &gt;::reinit_cls()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00292">HeatTransferScratchData&lt; dim &gt;::reinit_fluid_dynamics()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00442">HeatTransferScratchData&lt; dim &gt;::reinit_time_harmonic_maxwell()</a>, <a class="el" href="copy__data_8h_source.html#l00092">StabilizedMethodsCopyData::reset()</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -385,7 +385,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00685">685</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00869">assemblers</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00179">HeatTransferScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00792">evaluation_point</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00177">HeatTransferScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00394">HeatTransferScratchData&lt; dim &gt;::reinit_cls()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00292">HeatTransferScratchData&lt; dim &gt;::reinit_fluid_dynamics()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00442">HeatTransferScratchData&lt; dim &gt;::reinit_time_harmonic_maxwell()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00336">HeatTransferScratchData&lt; dim &gt;::reinit_velocity_gradient()</a>, <a class="el" href="copy__data_8h_source.html#l00092">StabilizedMethodsCopyData::reset()</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00873">assemblers</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00179">HeatTransferScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00796">evaluation_point</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00177">HeatTransferScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00394">HeatTransferScratchData&lt; dim &gt;::reinit_cls()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00292">HeatTransferScratchData&lt; dim &gt;::reinit_fluid_dynamics()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00442">HeatTransferScratchData&lt; dim &gt;::reinit_time_harmonic_maxwell()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00336">HeatTransferScratchData&lt; dim &gt;::reinit_velocity_gradient()</a>, <a class="el" href="copy__data_8h_source.html#l00092">StabilizedMethodsCopyData::reset()</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -411,7 +411,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00032">32</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00430">assemble_system_matrix()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00627">assemble_system_rhs()</a>, and <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00430">assemble_system_matrix()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00627">assemble_system_rhs()</a>, and <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -443,7 +443,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00053">53</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00792">evaluation_point</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00822">system_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">system_rhs</a>, and <a class="el" href="heat__transfer_8h_source.html#l00818">zero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00796">evaluation_point</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00826">system_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00815">system_rhs</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">zero_constraints</a>.</p>
 
 </div>
 </div>
@@ -469,7 +469,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00044">44</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00627">assemble_system_rhs()</a>, and <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00627">assemble_system_rhs()</a>, and <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -504,7 +504,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00430">430</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00488">assemble_local_system_matrix()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00945">calculate_delta_T_ref()</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="heat__transfer_8cc_source.html#l00612">copy_local_matrix_to_global_matrix()</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="heat__transfer_8cc_source.html#l00276">setup_assemblers()</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">system_matrix</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00488">assemble_local_system_matrix()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00945">calculate_delta_T_ref()</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="heat__transfer_8cc_source.html#l00612">copy_local_matrix_to_global_matrix()</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="heat__transfer_8cc_source.html#l00276">setup_assemblers()</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00826">system_matrix</a>.</p>
 
 </div>
 </div>
@@ -539,7 +539,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00627">627</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00685">assemble_local_system_rhs()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00945">calculate_delta_T_ref()</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="heat__transfer_8cc_source.html#l00812">copy_local_rhs_to_global_rhs()</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="heat__transfer_8cc_source.html#l00276">setup_assemblers()</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00811">system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l00685">assemble_local_system_rhs()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00053">assemble_nitsche_heat_restriction()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00945">calculate_delta_T_ref()</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="heat__transfer_8cc_source.html#l00812">copy_local_rhs_to_global_rhs()</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00046">electromagnetics</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="heat__transfer_8cc_source.html#l00276">setup_assemblers()</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00815">system_rhs</a>.</p>
 
 </div>
 </div>
@@ -571,7 +571,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00945">945</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00015">is_steady()</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, and <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00015">is_steady()</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, and <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -596,7 +596,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00971">971</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00768">cell_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00772">cell_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -642,7 +642,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01326">1326</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l01350">compute_kelly()</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="parameters_8h_source.html#l02098">Parameters::MultipleAdaptationParameters::kelly</a>, and <a class="el" href="multiphysics_8h_source.html#l00085">temperature</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8cc_source.html#l01350">compute_kelly()</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="parameters_8h_source.html#l02098">Parameters::MultipleAdaptationParameters::kelly</a>, and <a class="el" href="multiphysics_8h_source.html#l00085">temperature</a>.</p>
 
 </div>
 </div>
@@ -678,7 +678,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01350">1350</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00773">face_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, and <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00777">face_quadrature</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, and <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>.</p>
 
 </div>
 </div>
@@ -711,7 +711,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00612">612</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00104">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00822">system_matrix</a>, and <a class="el" href="heat__transfer_8h_source.html#l00818">zero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00104">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00826">system_matrix</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">zero_constraints</a>.</p>
 
 </div>
 </div>
@@ -744,7 +744,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00812">812</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">system_rhs</a>, and <a class="el" href="heat__transfer_8h_source.html#l00818">zero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00113">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="heat__transfer_8h_source.html#l00815">system_rhs</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">zero_constraints</a>.</p>
 
 </div>
 </div>
@@ -779,7 +779,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01016">1016</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="parameters_8h_source.html#l01051">Parameters::Timer::end</a>, <a class="el" href="heat__transfer_8h_source.html#l00755">error_table</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="parameters_8h_source.html#l00091">Parameters::SimulationControl::steady</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="parameters_8h_source.html#l01051">Parameters::Timer::end</a>, <a class="el" href="heat__transfer_8h_source.html#l00759">error_table</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="parameters_8h_source.html#l00091">Parameters::SimulationControl::steady</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -815,7 +815,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00826">826</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00914">average_heat_flux_postprocessors</a>, <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00902">average_temperature_to_output</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00908">heat_flux_postprocessors</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00892">thermal_conductivity_models</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00918">average_heat_flux_postprocessors</a>, <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00906">average_temperature_to_output</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00912">heat_flux_postprocessors</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00896">thermal_conductivity_models</a>.</p>
 
 </div>
 </div>
@@ -851,7 +851,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01366">1366</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00755">error_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00883">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00925">melt_volume_alge_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00930">melt_volume_geo_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00875">statistics_table</a>, <a class="el" href="multiphysics_8h_source.html#l00085">temperature</a>, and <a class="el" href="heat__transfer_8h_source.html#l00936">temperature_isocontour_bounding_values_tables</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00759">error_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00887">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00929">melt_volume_alge_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00934">melt_volume_geo_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00879">statistics_table</a>, <a class="el" href="multiphysics_8h_source.html#l00085">temperature</a>, and <a class="el" href="heat__transfer_8h_source.html#l00940">temperature_isocontour_bounding_values_tables</a>.</p>
 
 </div>
 </div>
@@ -885,9 +885,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#af12247ba26a29f99e637d62ed93d1e92">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00349">349</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00353">353</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>.</p>
 
 </div>
 </div>
@@ -921,9 +921,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00361">361</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00365">365</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00792">evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00796">evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -957,9 +957,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#ae6cc2bfa320526e438a44bd6dc8ee804">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00374">374</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00378">378</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00797">local_evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00801">local_evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -993,9 +993,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb66d0340d77e712bca30814eef04e5d">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00386">386</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00390">390</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00803">newton_update</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00807">newton_update</a>.</p>
 
 </div>
 </div>
@@ -1029,9 +1029,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abf527a264ed49a5327db8f48e16ee182">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00426">426</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00430">430</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00817">nonzero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00821">nonzero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1065,9 +1065,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a0a64669b4bbd93475dc816a8291a588f">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00400">400</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00404">404</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>.</p>
 
 </div>
 </div>
@@ -1101,9 +1101,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a365035283c1495135aaee11de8abaa19">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00451">451</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00455">455</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1137,9 +1137,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00412">412</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00416">416</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00811">system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00815">system_rhs</a>.</p>
 
 </div>
 </div>
@@ -1172,9 +1172,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abfa7bc1385779d5c7175411f4c8e3264">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00435">435</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00439">439</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00803">newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00807">newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>.</p>
 
 </div>
 </div>
@@ -1209,7 +1209,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01266">1266</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>.</p>
 
 </div>
 </div>
@@ -1244,7 +1244,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01052">1052</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, and <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, and <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>.</p>
 
 </div>
 </div>
@@ -1279,7 +1279,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01293">1293</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00782">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00817">nonzero_constraints</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00853">previous_solutions_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00846">solution_transfer</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00786">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00821">nonzero_constraints</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00857">previous_solutions_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00850">solution_transfer</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1314,7 +1314,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01063">1063</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01233">calculate_L2_error()</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00755">error_table</a>, <a class="el" href="parameters_8h_source.html#l00076">Parameters::fluid_0</a>, <a class="el" href="parameters_8h_source.html#l00077">Parameters::fluid_1</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8cc_source.html#l02181">postprocess_algebraic_melt_volume()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02356">postprocess_geometric_melt_volume_and_surface()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02506">postprocess_heat_flux_on_bc()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00174">postprocess_heat_flux_on_nitsche_ib()</a>, <a class="el" href="interface__tools_8cc_source.html#l01764">InterfaceTools::postprocess_isocontour_bounding_values()</a>, <a class="el" href="heat__transfer_8cc_source.html#l01954">postprocess_temperature_statistics()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02786">postprocess_thermal_energy_in_fluid()</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="multiphysics_8h_source.html#l00085">temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>, <a class="el" href="heat__transfer_8cc_source.html#l02337">write_algebraic_melt_volume()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02486">write_geometric_melt_volume()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02996">write_heat_flux()</a>, <a class="el" href="interface__tools_8cc_source.html#l01868">InterfaceTools::write_isocontour_bounding_values_tables()</a>, and <a class="el" href="heat__transfer_8cc_source.html#l02163">write_temperature_statistics()</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01233">calculate_L2_error()</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00759">error_table</a>, <a class="el" href="parameters_8h_source.html#l00076">Parameters::fluid_0</a>, <a class="el" href="parameters_8h_source.html#l00077">Parameters::fluid_1</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8cc_source.html#l02180">postprocess_algebraic_melt_volume()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02355">postprocess_geometric_melt_volume_and_surface()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02505">postprocess_heat_flux_on_bc()</a>, <a class="el" href="heat__transfer_8cc_source.html#l00174">postprocess_heat_flux_on_nitsche_ib()</a>, <a class="el" href="interface__tools_8cc_source.html#l01764">InterfaceTools::postprocess_isocontour_bounding_values()</a>, <a class="el" href="heat__transfer_8cc_source.html#l01953">postprocess_temperature_statistics()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02785">postprocess_thermal_energy_in_fluid()</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="multiphysics_8h_source.html#l00085">temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>, <a class="el" href="heat__transfer_8cc_source.html#l02336">write_algebraic_melt_volume()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02485">write_geometric_melt_volume()</a>, <a class="el" href="heat__transfer_8cc_source.html#l02995">write_heat_flux()</a>, <a class="el" href="interface__tools_8cc_source.html#l01868">InterfaceTools::write_isocontour_bounding_values_tables()</a>, and <a class="el" href="heat__transfer_8cc_source.html#l02162">write_temperature_statistics()</a>.</p>
 
 </div>
 </div>
@@ -1346,9 +1346,9 @@ template&lt;int dim&gt; </div>
 <p>Compute the algebraic (phase indicator and liquid fraction weighted) melt volume (3D) or surface (2D) in a domain. The monitored fluid must be selected with <a class="el" href="classParameters_1_1PostProcessing.html#a80e3523df4e5252ee9a373e6cc0dd2d2" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
 <dl class="section remark"><dt>Remarks</dt><dd>For CLS multiphase flow, only one of the fluids can be monitored. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02181">2181</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02180">2180</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="phase__change_8h_source.html#l00021">calculate_liquid_fraction()</a>, <a class="el" href="heat__transfer_8h_source.html#l00768">cell_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="parameters_8h_source.html#l00076">Parameters::fluid_0</a>, <a class="el" href="parameters_8h_source.html#l00077">Parameters::fluid_1</a>, <a class="el" href="heat__transfer_8h_source.html#l00925">melt_volume_alge_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="phase__change_8h_source.html#l00021">calculate_liquid_fraction()</a>, <a class="el" href="heat__transfer_8h_source.html#l00772">cell_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="parameters_8h_source.html#l00076">Parameters::fluid_0</a>, <a class="el" href="parameters_8h_source.html#l00077">Parameters::fluid_1</a>, <a class="el" href="heat__transfer_8h_source.html#l00929">melt_volume_alge_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1380,9 +1380,9 @@ template&lt;int dim&gt; </div>
 <p>Compute the geometric melt volume (3D) or surface (2D) and the contour surface area (3D) or length (2D) in a domain. The melt region is delimited by the <a class="el" href="classParameters_1_1PostProcessing.html#add8657ebd771ad00c333891f3cdb7790" title="Melting temperature iso-value.">Parameters::PostProcessing::melting_temperature</a> isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid selected with <a class="el" href="classParameters_1_1PostProcessing.html#a80e3523df4e5252ee9a373e6cc0dd2d2" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
 <dl class="section remark"><dt>Remarks</dt><dd>For CLS multiphase flow, only one of the fluids can be monitored. The volume is computed as the geometrical volume with respect to the phase indicator isocurve (isosurface) of value 0.5. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02356">2356</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02355">2355</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="parameters_8h_source.html#l00077">Parameters::fluid_1</a>, <a class="el" href="interface__tools_8cc_source.html#l00070">InterfaceTools::integrate_volume_and_surface()</a>, <a class="el" href="heat__transfer_8h_source.html#l00930">melt_volume_geo_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="parameters_8h_source.html#l00077">Parameters::fluid_1</a>, <a class="el" href="interface__tools_8cc_source.html#l00070">InterfaceTools::integrate_volume_and_surface()</a>, <a class="el" href="heat__transfer_8h_source.html#l00934">melt_volume_geo_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1425,9 +1425,9 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02506">2506</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02505">2505</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00307">calculate_point_property()</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00773">face_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00883">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00892">thermal_conductivity_models</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00307">calculate_point_property()</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00777">face_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00887">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00896">thermal_conductivity_models</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1459,7 +1459,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00174">174</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00883">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00887">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1513,9 +1513,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01954">1954</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01953">1953</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00768">cell_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8cc_source.html#l03014">set_phase_coefficient()</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00875">statistics_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00772">cell_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8cc_source.html#l03013">set_phase_coefficient()</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00879">statistics_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1571,9 +1571,9 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02786">2786</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02785">2785</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00307">calculate_point_property()</a>, <a class="el" href="heat__transfer_8h_source.html#l00768">cell_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00883">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8cc_source.html#l03014">set_phase_coefficient()</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00307">calculate_point_property()</a>, <a class="el" href="heat__transfer_8h_source.html#l00772">cell_quadrature</a>, <a class="el" href="multiphysics_8h_source.html#l00038">CLS</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="heat__transfer_8h_source.html#l00887">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8cc_source.html#l03013">set_phase_coefficient()</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1608,12 +1608,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01277">1277</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00853">previous_solutions_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00846">solution_transfer</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00857">previous_solutions_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00850">solution_transfer</a>.</p>
 
 </div>
 </div>
-<a id="a8e4d76beacb77c787c9079c5a0ca7c55" name="a8e4d76beacb77c787c9079c5a0ca7c55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e4d76beacb77c787c9079c5a0ca7c55">&#9670;&#160;</a></span>read_checkpoint()</h2>
+<a id="a2bba4d5de93e6a858c21e3794bea8cfe" name="a2bba4d5de93e6a858c21e3794bea8cfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bba4d5de93e6a858c21e3794bea8cfe">&#9670;&#160;</a></span>read_checkpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1626,7 +1626,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classHeatTransfer.html">HeatTransfer</a>&lt; dim &gt;::read_checkpoint </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1638,12 +1638,18 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Allow Heat Transfer to set up solution vector from checkpoint file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab68fa8d211549189803ddd8ba1fcc4ff">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
+<p>Implements <a class="el" href="classAuxiliaryPhysics.html#a6dbe750520cad5d5caf5a74fb7da0394">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01480">1480</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01476">1476</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="core_2utilities_8h_source.html#l00624">deserialize_tables_vector()</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8cc_source.html#l01366">gather_tables()</a>, <a class="el" href="heat__transfer_8h_source.html#l00782">locally_owned_dofs</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00846">solution_transfer</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="core_2utilities_8h_source.html#l00634">deserialize_tables_vector()</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8cc_source.html#l01366">gather_tables()</a>, <a class="el" href="heat__transfer_8h_source.html#l00786">locally_owned_dofs</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00850">solution_transfer</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1676,9 +1682,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aeecb470de43133aa878a5e9499509b31">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01755">1755</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01754">1754</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00803">newton_update</a>, <a class="el" href="heat__transfer_8h_source.html#l00817">nonzero_constraints</a>, <a class="el" href="heat__transfer_8cc_source.html#l01052">percolate_time_vectors()</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">newton_update</a>, <a class="el" href="heat__transfer_8h_source.html#l00821">nonzero_constraints</a>, <a class="el" href="heat__transfer_8cc_source.html#l01052">percolate_time_vectors()</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>.</p>
 
 </div>
 </div>
@@ -1730,7 +1736,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l03014">3014</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l03013">3013</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l00076">Parameters::fluid_0</a>, and <a class="el" href="parameters_8h_source.html#l00077">Parameters::fluid_1</a>.</p>
 
@@ -1755,9 +1761,9 @@ template&lt;int dim&gt; </div>
 
 <p>Set up the AMG preconditioner stored in amg_preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01791">1791</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01790">1790</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00832">amg_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">system_matrix</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00836">amg_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00826">system_matrix</a>.</p>
 
 </div>
 </div>
@@ -1790,7 +1796,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l00276">276</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00869">assemblers</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00144">Parameters::none</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00042">time_stepping_is_bdf()</a>, and <a class="el" href="time__integration__utilities_8h_source.html#l00060">time_stepping_is_sdirk()</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00873">assemblers</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00144">Parameters::none</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00042">time_stepping_is_bdf()</a>, and <a class="el" href="time__integration__utilities_8h_source.html#l00060">time_stepping_is_sdirk()</a>.</p>
 
 </div>
 </div>
@@ -1823,9 +1829,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3d0c0d037152ce2e8552227c3dda383e">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01551">1551</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01550">1550</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00797">local_evaluation_point</a>, <a class="el" href="heat__transfer_8h_source.html#l00782">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00787">locally_relevant_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00711">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00803">newton_update</a>, <a class="el" href="heat__transfer_8h_source.html#l00817">nonzero_constraints</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00028">BoundaryConditions::periodic</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00822">system_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">system_rhs</a>, <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00026">BoundaryConditions::temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00763">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, <a class="el" href="heat__transfer_8h_source.html#l00467">verify_consistency_of_boundary_conditions()</a>, and <a class="el" href="heat__transfer_8h_source.html#l00818">zero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00752">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00801">local_evaluation_point</a>, <a class="el" href="heat__transfer_8h_source.html#l00786">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00791">locally_relevant_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00715">multiphysics</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">newton_update</a>, <a class="el" href="heat__transfer_8h_source.html#l00821">nonzero_constraints</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00028">BoundaryConditions::periodic</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00826">system_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00815">system_rhs</a>, <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00026">BoundaryConditions::temperature</a>, <a class="el" href="heat__transfer_8h_source.html#l00767">temperature_mapping</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, <a class="el" href="heat__transfer_8h_source.html#l00471">verify_consistency_of_boundary_conditions()</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">zero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1848,9 +1854,9 @@ template&lt;int dim&gt; </div>
 
 <p>Set up the ILU preconditioner stored in ilu_preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01768">1768</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01767">1767</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00827">ilu_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">system_matrix</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="heat__transfer_8h_source.html#l00831">ilu_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00826">system_matrix</a>.</p>
 
 </div>
 </div>
@@ -1883,9 +1889,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a375f91bc1e5a05dac2c71f5ae5575f84">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01867">1867</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01866">1866</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01837">Parameters::LinearSolver::amg</a>, <a class="el" href="heat__transfer_8h_source.html#l00832">amg_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00717">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00451">get_residual_rescale_metric()</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="heat__transfer_8h_source.html#l00827">ilu_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00782">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00803">newton_update</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="heat__transfer_8cc_source.html#l01791">setup_amg()</a>, <a class="el" href="heat__transfer_8cc_source.html#l01768">setup_ilu()</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00822">system_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">system_rhs</a>, <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>, and <a class="el" href="heat__transfer_8h_source.html#l00818">zero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01837">Parameters::LinearSolver::amg</a>, <a class="el" href="heat__transfer_8h_source.html#l00836">amg_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00721">computing_timer</a>, <a class="el" href="heat__transfer_8h_source.html#l00455">get_residual_rescale_metric()</a>, <a class="el" href="multiphysics_8h_source.html#l00033">heat_transfer</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="heat__transfer_8h_source.html#l00831">ilu_preconditioner</a>, <a class="el" href="heat__transfer_8h_source.html#l00786">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">newton_update</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="heat__transfer_8cc_source.html#l01790">setup_amg()</a>, <a class="el" href="heat__transfer_8cc_source.html#l01767">setup_ilu()</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00826">system_matrix</a>, <a class="el" href="heat__transfer_8h_source.html#l00815">system_rhs</a>, <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>, and <a class="el" href="heat__transfer_8h_source.html#l00822">zero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1918,9 +1924,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#aa4eb967dee8229dc43ff95182df011fe">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01695">1695</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01694">1694</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00744">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00782">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00787">locally_relevant_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00817">nonzero_constraints</a>, <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00028">BoundaryConditions::periodic</a>, <a class="el" href="heat__transfer_8h_source.html#l00738">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00026">BoundaryConditions::temperature</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00748">dof_handler</a>, <a class="el" href="heat__transfer_8h_source.html#l00786">locally_owned_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00791">locally_relevant_dofs</a>, <a class="el" href="heat__transfer_8h_source.html#l00821">nonzero_constraints</a>, <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00028">BoundaryConditions::periodic</a>, <a class="el" href="heat__transfer_8h_source.html#l00742">simulation_control</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer__boundary__conditions_8h_source.html#l00026">BoundaryConditions::temperature</a>.</p>
 
 </div>
 </div>
@@ -1951,9 +1957,9 @@ template&lt;int dim&gt; </div>
 
 <p>Verify consistency of the input parameters for boundary conditions to ensure that for every boundary condition within the triangulation, a boundary condition has been specified in the input file. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00467">467</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00471">471</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1984,14 +1990,14 @@ template&lt;int dim&gt; </div>
 
 <p>Post-processing. Write the algebraic melt volume to an output file. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02337">2337</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02336">2336</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00925">melt_volume_alge_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00929">melt_volume_alge_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
-<a id="a57220cba37f8342ad6941e3188ff8971" name="a57220cba37f8342ad6941e3188ff8971"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a57220cba37f8342ad6941e3188ff8971">&#9670;&#160;</a></span>write_checkpoint()</h2>
+<a id="a4db5b930c8c0584e412110d6dbbc761e" name="a4db5b930c8c0584e412110d6dbbc761e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4db5b930c8c0584e412110d6dbbc761e">&#9670;&#160;</a></span>write_checkpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2004,7 +2010,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classHeatTransfer.html">HeatTransfer</a>&lt; dim &gt;::write_checkpoint </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -2016,12 +2022,18 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Prepare Heat Transfer to write checkpoint. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implements <a class="el" href="classAuxiliaryPhysics.html#aac6b380b7f28d81bef3a7d33eb13ec34">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
+<p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab4a6fff2ef9cd5297df0104744b3e265">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01441">1441</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01434">1434</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00897">average_temperature</a>, <a class="el" href="heat__transfer_8cc_source.html#l01366">gather_tables()</a>, <a class="el" href="heat__transfer_8h_source.html#l00807">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00838">previous_solutions</a>, <a class="el" href="core_2utilities_8h_source.html#l00602">serialize_tables_vector()</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00846">solution_transfer</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00901">average_temperature</a>, <a class="el" href="heat__transfer_8cc_source.html#l01366">gather_tables()</a>, <a class="el" href="heat__transfer_8h_source.html#l00811">present_solution</a>, <a class="el" href="heat__transfer_8h_source.html#l00842">previous_solutions</a>, <a class="el" href="core_2utilities_8h_source.html#l00606">serialize_tables_vector()</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00850">solution_transfer</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -2052,9 +2064,9 @@ template&lt;int dim&gt; </div>
 
 <p>Write the geometric melt volume to an output file. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02486">2486</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02485">2485</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00930">melt_volume_geo_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00934">melt_volume_geo_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -2091,9 +2103,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02996">2996</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02995">2995</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00883">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00887">heat_flux_table</a>, <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -2130,9 +2142,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02163">2163</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02162">2162</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00722">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00875">statistics_table</a>, and <a class="el" href="heat__transfer_8h_source.html#l00731">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer_8h_source.html#l00726">simulation_parameters</a>, <a class="el" href="heat__transfer_8h_source.html#l00879">statistics_table</a>, and <a class="el" href="heat__transfer_8h_source.html#l00735">triangulation</a>.</p>
 
 </div>
 </div>
@@ -2161,7 +2173,7 @@ template&lt;int dim&gt; </div>
 
 <p>AMG preconditioner used by the iterative linear solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00832">832</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00836">836</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2189,7 +2201,7 @@ template&lt;int dim&gt; </div>
 
 <p>Assemblers for the matrix and the right hand side (RHS). </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00869">869</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00873">873</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2217,7 +2229,7 @@ template&lt;int dim&gt; </div>
 
 <p>Compute local average heat flux quantities from temperature field and material properties. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00914">914</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00918">918</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2245,7 +2257,7 @@ template&lt;int dim&gt; </div>
 
 <p>Compute the average temperature in time. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00897">897</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00901">901</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2273,7 +2285,7 @@ template&lt;int dim&gt; </div>
 
 <p>Locally owned average temperature calculated using the <a class="el" href="classAverageScalar.html" title="Calculates the time-averaged scalar field.">AverageScalar</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00902">902</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00906">906</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2301,7 +2313,7 @@ template&lt;int dim&gt; </div>
 
 <p>Approximate an integral by evaluating the integrand at specific points and summing the point values with specific weights. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00768">768</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00772">772</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2329,7 +2341,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store information related to the computing time such as CPU times or wall time. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00717">717</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00721">721</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2357,7 +2369,7 @@ template&lt;int dim&gt; </div>
 
 <p>Given a triangulation and a description of a finite element, this class enumerates degrees of freedom on all vertices, edges, faces, and cells of the triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00744">744</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00748">748</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2385,7 +2397,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store some convergence data, such as residuals of the cg-method, or some evaluated <em>L<sup>2</sup></em>-errors of discrete solutions. Evaluate convergence rates or orders. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00755">755</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00759">759</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2413,7 +2425,7 @@ template&lt;int dim&gt; </div>
 
 <p>The point at which the evaluation is performed. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00792">792</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00796">796</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2441,7 +2453,7 @@ template&lt;int dim&gt; </div>
 
 <p>Approximate an integral by evaluating the integrand at specific points and summing the point values with specific weights. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00773">773</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00777">777</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2469,7 +2481,7 @@ template&lt;int dim&gt; </div>
 
 <p>The base class for finite element. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00748">748</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00752">752</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2497,7 +2509,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reference for GGLS <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324">https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324</a> Warning, this GGLS implementation is valid only for Linear elements Quad elements will be lacking the third derivative of the diffusion operator Whether this affects or not the final result is unclear to me at the moment. Additionnaly, this formulation does not use the gradient of the source term. The same applies, I have no clue if this is detrimental or not to the solution since anyway the GGLS term scales as h^(order+1). </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00864">864</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00868">868</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2525,7 +2537,7 @@ template&lt;int dim&gt; </div>
 
 <p>Compute local heat flux quantities from temperature field and material properties. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00908">908</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00912">912</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2558,7 +2570,7 @@ template&lt;int dim&gt; </div>
 <li>the total fluxes on the nitsche immersed boundaries (if active) </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00883">883</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00887">887</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2586,7 +2598,7 @@ template&lt;int dim&gt; </div>
 
 <p>ILU preconditioner used by the iterative linear solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00827">827</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00831">831</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2614,7 +2626,7 @@ template&lt;int dim&gt; </div>
 
 <p>The local evaluation point. Ghosts cells are not considered in this evaluation. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00797">797</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00801">801</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2642,7 +2654,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store a subset of the DoF indices that are stored on a particular processor on a distributed architecture. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00782">782</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00786">786</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2670,7 +2682,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store a subset of the DoF indices that contains both the locally_owned_dofs and the DoF indices on ghost cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00787">787</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00791">791</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2698,7 +2710,7 @@ template&lt;int dim&gt; </div>
 
 <p>Liquid fraction in the domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00925">925</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00929">929</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2726,7 +2738,7 @@ template&lt;int dim&gt; </div>
 
 <p>Evolution of the melt volume in the simulated domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00930">930</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00934">934</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2752,7 +2764,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00711">711</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00715">715</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2780,7 +2792,7 @@ template&lt;int dim&gt; </div>
 
 <p>The direction \( \delta u^n \) used to perform the newton iteration in \( u^{n+1} = u^n + \alpha ^n \delta u ^n \). Where \( \alpha ^n \) is the size of the step. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00803">803</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00807">807</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2808,7 +2820,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store the nonzero constraints that arise from several sources such as boundary conditions and hanging nodes in the mesh. See the deal.II documentation on constraints on degrees of freedom for more information. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00817">817</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00821">821</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2836,7 +2848,7 @@ template&lt;int dim&gt; </div>
 
 <p>A vector containing all the values of the solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00807">807</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00811">811</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2864,7 +2876,7 @@ template&lt;int dim&gt; </div>
 
 <p>Previous solution vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00838">838</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00842">842</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2892,7 +2904,7 @@ template&lt;int dim&gt; </div>
 
 <p>previous_solutions_transfer occupies the same role as solution_transfer but for solutions at previous time steps. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00853">853</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00857">857</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2920,7 +2932,7 @@ template&lt;int dim&gt; </div>
 
 <p>Responsible for the control of steady-state and transient simulations. Contains all the information related to time stepping and the stopping criteria. See simulation_control abstract class for more information. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00738">738</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00742">742</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2948,7 +2960,7 @@ template&lt;int dim&gt; </div>
 
 <p>Contain the simulation parameter file information. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00722">722</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00726">726</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -2976,7 +2988,7 @@ template&lt;int dim&gt; </div>
 
 <p>SolutionTransfer&lt;dim, GlobalVectorType&gt;&gt; is used to implement the transfer of a discrete FE function (e.g. a solution vector) from one mesh to another. This Deal.ii class is used for mesh_refinement and simulation restarts. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00846">846</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00850">850</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3004,7 +3016,7 @@ template&lt;int dim&gt; </div>
 
 <p>Temperature statistics table used for post-processing. It contains the minimum , maximum, average and standard deviation of the temperature. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00875">875</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00879">879</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3032,7 +3044,7 @@ template&lt;int dim&gt; </div>
 
 <p>The system matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00822">822</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00826">826</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3060,7 +3072,7 @@ template&lt;int dim&gt; </div>
 
 <p>The right hand side vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00811">811</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00815">815</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3088,7 +3100,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector of tables containing evolution of temperature isocontour bounding values. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00936">936</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00940">940</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3116,7 +3128,7 @@ template&lt;int dim&gt; </div>
 
 <p>Transformation which maps point in the reference cell to points in the actual grid cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00763">763</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00767">767</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3144,7 +3156,7 @@ template&lt;int dim&gt; </div>
 
 <p>Abstract class that allows to calculate the thermal conductivity on each quadrature point using the temperature of the fluid. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00892">892</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00896">896</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3172,7 +3184,7 @@ template&lt;int dim&gt; </div>
 
 <p>Collection of cells that cover the domain on which one wants to solve a partial differential equation. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00731">731</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00735">735</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>
@@ -3198,7 +3210,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00818">818</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8h_source.html#l00822">822</a> of file <a class="el" href="heat__transfer_8h_source.html">heat_transfer.h</a>.</p>
 
 </div>
 </div>

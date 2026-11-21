@@ -479,15 +479,15 @@ end
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">checkpoint</span></code>: controls if a checkpoint of the simulation is created. All the files needed to restart the simulation from this checkpoint (such as <code class="docutils literal notranslate"><span class="pre">.pvdhandler</span></code>, <code class="docutils literal notranslate"><span class="pre">.triangulation</span></code>) will be written.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: number of iteration before the first checkpoint, and between each subsequent checkpoint.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: number of iteration before the first checkpoint, and between each subsequent checkpoint. A checkpoint is also written at the last time step.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Checkpointing is very intensive from an I/O point of view, consequently it should not be done at every iteration. The checkpointing frequency is in accordance to the number of <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> (see <a class="reference internal" href="simulation_control.html"><span class="doc">Simulation Control</span></a>).</p>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Each checkpoint erases the previous one, so a simulation can only be restarted from the last check-point.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Checkpoints alternate between two slots, so a simulation interrupted while writing a checkpoint can restart from the previous one. Their files end with <code class="docutils literal notranslate"><span class="pre">_0</span></code> or <code class="docutils literal notranslate"><span class="pre">_1</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;_0.triangulation</span></code>, <code class="docutils literal notranslate"><span class="pre">force_00_0.checkpoint</span></code>, …), and <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;.checkpoint_controller</span></code> gives the slot of the last checkpoint, from which a simulation restarts.</p>
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">filename</span></code>: prefix for the files. This parameter is used to output checkpoint files as well as to load files during a restart.</p></li>

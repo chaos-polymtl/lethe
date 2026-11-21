@@ -174,8 +174,8 @@ Functions</h2></td></tr>
 <tr class="memitem:ae96f2733ac0b6de0ebf0e15bfa0900d7" id="r_ae96f2733ac0b6de0ebf0e15bfa0900d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae96f2733ac0b6de0ebf0e15bfa0900d7">announce_string</a> (const ConditionalOStream &amp;pcout, const std::string &amp;expression, const unsigned int banner_size, const char delimiter='-')</td></tr>
 <tr class="memitem:a5b78e809b34030d2be858fbc29e69267" id="r_a5b78e809b34030d2be858fbc29e69267"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b78e809b34030d2be858fbc29e69267">serialize_table</a> (const TableHandler &amp;table, const std::string &amp;filename, const MPI_Comm &amp;mpi_communicator, const bool serialize_on_rank_zero=true)</td></tr>
 <tr class="memitem:a33de98af6e3fa7efc6404f934ea9db9d" id="r_a33de98af6e3fa7efc6404f934ea9db9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33de98af6e3fa7efc6404f934ea9db9d">deserialize_table</a> (TableHandler &amp;table, const std::string &amp;filename, const MPI_Comm &amp;mpi_communicator, const bool deserialize_on_rank_zero=true)</td></tr>
-<tr class="memitem:a83d25a54c0d722fd5843a5f27a01e99a" id="r_a83d25a54c0d722fd5843a5f27a01e99a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83d25a54c0d722fd5843a5f27a01e99a">serialize_tables_vector</a> (const std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; &amp;table_output_structs, const MPI_Comm mpi_communicator)</td></tr>
-<tr class="memitem:afcfe4de1afd73ea594f9e79b64c3b1c0" id="r_afcfe4de1afd73ea594f9e79b64c3b1c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afcfe4de1afd73ea594f9e79b64c3b1c0">deserialize_tables_vector</a> (std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; &amp;table_output_structs, const MPI_Comm mpi_communicator)</td></tr>
+<tr class="memitem:aaaea751e2783c9aa1b96b9c1bebe3111" id="r_aaaea751e2783c9aa1b96b9c1bebe3111"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaaea751e2783c9aa1b96b9c1bebe3111">serialize_tables_vector</a> (const std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; &amp;table_output_structs, const std::string &amp;checkpoint_slot_label, const MPI_Comm mpi_communicator)</td></tr>
+<tr class="memitem:a5f97045ac7e8e23e8cd2dafc4b45e8c7" id="r_a5f97045ac7e8e23e8cd2dafc4b45e8c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f97045ac7e8e23e8cd2dafc4b45e8c7">deserialize_tables_vector</a> (std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; &amp;table_output_structs, const std::string &amp;checkpoint_slot_label, const MPI_Comm mpi_communicator)</td></tr>
 <tr class="memitem:a34ac72c0df6c4a24f85c97b22d137520" id="r_a34ac72c0df6c4a24f85c97b22d137520"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a> (const std::string &amp;file_name, const std::string &amp;parameter_name)</td></tr>
 <tr class="memitem:a2f4c4c70d98da93b973297b97e085b90" id="r_a2f4c4c70d98da93b973297b97e085b90"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a> (const std::string &amp;file_name)</td></tr>
 <tr class="memitem:a825eba5d27f92341a8515280f34f9d24" id="r_a825eba5d27f92341a8515280f34f9d24"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a825eba5d27f92341a8515280f34f9d24">get_max_subsection_size</a> (const std::string &amp;file_name, const bool require_subsection_size=true)</td></tr>
@@ -254,7 +254,7 @@ template&lt;typename EnumType&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00765">765</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00777">777</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -635,7 +635,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Cell diameter value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00989">989</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01001">1001</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -677,7 +677,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Area (2D) volume (3D) of the cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01017">1017</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01029">1029</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -758,7 +758,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A std::vector&lt;double&gt; corresponding to the entry_string in the prm file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01331">1331</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01343">1343</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -837,7 +837,7 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01302">1302</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01314">1314</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -911,7 +911,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00888">888</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00900">900</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1016,8 +1016,8 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 
 </div>
 </div>
-<a id="afcfe4de1afd73ea594f9e79b64c3b1c0" name="afcfe4de1afd73ea594f9e79b64c3b1c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcfe4de1afd73ea594f9e79b64c3b1c0">&#9670;&#160;</a></span>deserialize_tables_vector()</h2>
+<a id="a5f97045ac7e8e23e8cd2dafc4b45e8c7" name="a5f97045ac7e8e23e8cd2dafc4b45e8c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f97045ac7e8e23e8cd2dafc4b45e8c7">&#9670;&#160;</a></span>deserialize_tables_vector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1033,6 +1033,11 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const MPI_Comm</td>          <td class="paramname"><span class="paramname"><em>mpi_communicator</em></span>&#160;)</td>
         </tr>
       </table>
@@ -1043,16 +1048,17 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p>Deserializes all the TableHandler objects in table_output_structs. </p>
+<p>Deserializes all the TableHandler objects in table_output_structs. Each table is read from the file &lt;table_filename&gt;&lt;checkpoint_slot_label&gt;.checkpoint. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">table_output_structs</td><td>Vector of structures containing references to TableHandler objects that needs to be serialized/deserialized for a given solver, and their corresponding file names.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot from which the tables are read. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>The MPI communicator </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00624">624</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00634">634</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00576">deserialize_table()</a>.</p>
 
@@ -1099,7 +1105,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The sentence listing the choices, separated by "|". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00854">854</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00866">866</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1149,7 +1155,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The choices separated by "|". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00807">807</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00819">819</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1196,7 +1202,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The identifier of <code class="param">value</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00705">705</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00717">717</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1270,7 +1276,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00930">930</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01528">points_are_in_domain()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01540">points_are_in_domain()</a>.</p>
 
 </div>
 </div>
@@ -1345,7 +1351,7 @@ template&lt;int n_component, int dim, typename <a class="el" href="time__harmoni
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l01027">1027</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01528">points_are_in_domain()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01540">points_are_in_domain()</a>.</p>
 
 </div>
 </div>
@@ -1382,7 +1388,7 @@ template&lt;typename key, typename val&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>keys Vector of keys from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01118">1118</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01130">1130</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1419,7 +1425,7 @@ template&lt;typename key, typename val&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>values Vector of values from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01138">1138</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01150">1150</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1686,7 +1692,7 @@ template&lt;typename key, typename val&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01099">1099</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01111">1111</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1747,9 +1753,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Smallest cell size value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01044">1044</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01056">1056</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00989">compute_cell_diameter()</a>, and <a class="el" href="core_2utilities_8h_source.html#l01017">compute_cell_measure_with_JxW()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l01001">compute_cell_diameter()</a>, and <a class="el" href="core_2utilities_8h_source.html#l01029">compute_cell_measure_with_JxW()</a>.</p>
 
 </div>
 </div>
@@ -2192,7 +2198,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Angle in the plane perpendicular to the rotation axis </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01234">1234</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01246">1246</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2241,7 +2247,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><code class="param">true</code> if all points are within the simulated domain. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01528">1528</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01540">1540</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2399,7 +2405,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>point Point in cartesian coordinates </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01266">1266</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l01278">1278</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2456,8 +2462,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a83d25a54c0d722fd5843a5f27a01e99a" name="a83d25a54c0d722fd5843a5f27a01e99a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83d25a54c0d722fd5843a5f27a01e99a">&#9670;&#160;</a></span>serialize_tables_vector()</h2>
+<a id="aaaea751e2783c9aa1b96b9c1bebe3111" name="aaaea751e2783c9aa1b96b9c1bebe3111"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaaea751e2783c9aa1b96b9c1bebe3111">&#9670;&#160;</a></span>serialize_tables_vector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2473,6 +2479,11 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const MPI_Comm</td>          <td class="paramname"><span class="paramname"><em>mpi_communicator</em></span>&#160;)</td>
         </tr>
       </table>
@@ -2483,16 +2494,17 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Serializes all the TableHandler objects in table_output_structs. </p>
+<p>Serializes all the TableHandler objects in table_output_structs. Each table is written in the file &lt;table_filename&gt;&lt;checkpoint_slot_label&gt;.checkpoint. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">table_output_structs</td><td>Vector of structures containing references to TableHandler objects that need to be serialized/deserialized for a given solver, and their corresponding file names.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot in which the tables are written. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>The MPI communicator </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00602">602</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00606">606</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00547">serialize_table()</a>.</p>
 
@@ -2593,7 +2605,7 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The enumerator of <code class="param">EnumType</code> named <code class="param">name</code>. An exception is thrown if <code class="param">EnumType</code> has no enumerator named <code class="param">name</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00734">734</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00746">746</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2649,9 +2661,9 @@ requires std::is_enum_v&lt;EnumType&gt;</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The enumerator of <code class="param">EnumType</code> designated by <code class="param">name</code>. An exception is thrown if <code class="param">name</code> is neither an enumerator nor a deprecated string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00923">923</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00935">935</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00705">enum_to_string()</a>, <a class="el" href="core_2utilities_8h_source.html#l00734">string_to_enum()</a>, and <a class="el" href="utilities_8cc_source.html#l00839">warn_deprecated_parameter_value()</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00717">enum_to_string()</a>, <a class="el" href="core_2utilities_8h_source.html#l00746">string_to_enum()</a>, and <a class="el" href="utilities_8cc_source.html#l00839">warn_deprecated_parameter_value()</a>.</p>
 
 </div>
 </div>
@@ -2696,7 +2708,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code class="param">value_string</code> in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00956">956</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="core_2utilities_8h_source.html#l00968">968</a> of file <a class="el" href="core_2utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>

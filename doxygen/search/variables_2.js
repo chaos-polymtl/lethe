@@ -81,7 +81,7 @@ var searchData=
   ['change_5fto_5ftriangulation_78',['change_to_triangulation',['../classInsertion.html#a5d7992614d04517eea7a579853a45292',1,'Insertion']]],
   ['check_5ffor_5fdiamond_5fcells_79',['check_for_diamond_cells',['../classParameters_1_1Mesh.html#aad43070c4b45cb0e6091ea80142d13c4',1,'Parameters::Mesh']]],
   ['checkpoint_80',['checkpoint',['../structParameters_1_1Restart.html#aa7fb84c1978dc97e0752f2735f1e0297',1,'Parameters::Restart']]],
-  ['checkpoint_5fcontroller_81',['checkpoint_controller',['../classDEMSolver.html#aad8860f94da214a80de30288907f8486',1,'DEMSolver']]],
+  ['checkpoint_5fcontroller_81',['checkpoint_controller',['../classDEMSolver.html#aad8860f94da214a80de30288907f8486',1,'DEMSolver::checkpoint_controller'],['../classNavierStokesBase.html#a72313426f5d59467909f79f52ec85aac',1,'NavierStokesBase::checkpoint_controller']]],
   ['checkpointing_5ffrequency_82',['checkpointing_frequency',['../classCheckpointControl.html#a498f5c51ec59f237a88ff62f05ab83d2',1,'CheckpointControl']]],
   ['chemical_5fpotential_83',['chemical_potential',['../classCahnHilliardScratchData.html#ab380994e237140a284a253af988c1acc',1,'CahnHilliardScratchData::chemical_potential'],['../classNavierStokesScratchData.html#ab12122ce6e915131ae74691c0aaf8a11',1,'NavierStokesScratchData::chemical_potential']]],
   ['chemical_5fpotential_5fcahn_5fhilliard_5fvalues_84',['chemical_potential_cahn_hilliard_values',['../classNavierStokesScratchData.html#afcbbcbddf76fe8e5c18ee4f4549aee17',1,'NavierStokesScratchData']]],

@@ -116,8 +116,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a80ca51c9663936458f15d33e85774e4d" id="r_a80ca51c9663936458f15d33e85774e4d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80ca51c9663936458f15d33e85774e4d">output_per_iteration_timer</a> ()=0</td></tr>
 <tr class="memitem:ae80e26995eb53ee0ea0239a2390d082f" id="r_ae80e26995eb53ee0ea0239a2390d082f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae80e26995eb53ee0ea0239a2390d082f">pre_mesh_adaptation</a> ()=0</td></tr>
 <tr class="memitem:a3870a0c5dc427098c9bec1afc9a668c0" id="r_a3870a0c5dc427098c9bec1afc9a668c0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3870a0c5dc427098c9bec1afc9a668c0">post_mesh_adaptation</a> ()=0</td></tr>
-<tr class="memitem:aac6b380b7f28d81bef3a7d33eb13ec34" id="r_aac6b380b7f28d81bef3a7d33eb13ec34"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac6b380b7f28d81bef3a7d33eb13ec34">write_checkpoint</a> ()=0</td></tr>
-<tr class="memitem:ab68fa8d211549189803ddd8ba1fcc4ff" id="r_ab68fa8d211549189803ddd8ba1fcc4ff"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab68fa8d211549189803ddd8ba1fcc4ff">read_checkpoint</a> ()=0</td></tr>
+<tr class="memitem:ab4a6fff2ef9cd5297df0104744b3e265" id="r_ab4a6fff2ef9cd5297df0104744b3e265"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4a6fff2ef9cd5297df0104744b3e265">write_checkpoint</a> (const std::string &amp;checkpoint_slot_label)=0</td></tr>
+<tr class="memitem:a6dbe750520cad5d5caf5a74fb7da0394" id="r_a6dbe750520cad5d5caf5a74fb7da0394"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6dbe750520cad5d5caf5a74fb7da0394">read_checkpoint</a> (const std::string &amp;checkpoint_slot_label)=0</td></tr>
 <tr class="memitem:a764abbac51050515970d14a13b5e8aad" id="r_a764abbac51050515970d14a13b5e8aad"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a764abbac51050515970d14a13b5e8aad">gather_tables</a> ()=0</td></tr>
 <tr class="memitem:a4fd20b9411d6ac816873465deae02530" id="r_a4fd20b9411d6ac816873465deae02530"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fd20b9411d6ac816873465deae02530">compute_error_estimate</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell)=0</td></tr>
 <tr class="memitem:a3d0c0d037152ce2e8552227c3dda383e" id="r_a3d0c0d037152ce2e8552227c3dda383e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d0c0d037152ce2e8552227c3dda383e">setup_dofs</a> ()=0</td></tr>
@@ -626,8 +626,8 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 </div>
 </div>
-<a id="ab68fa8d211549189803ddd8ba1fcc4ff" name="ab68fa8d211549189803ddd8ba1fcc4ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab68fa8d211549189803ddd8ba1fcc4ff">&#9670;&#160;</a></span>read_checkpoint()</h2>
+<a id="a6dbe750520cad5d5caf5a74fb7da0394" name="a6dbe750520cad5d5caf5a74fb7da0394"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dbe750520cad5d5caf5a74fb7da0394">&#9670;&#160;</a></span>read_checkpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -640,7 +640,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
         <tr>
           <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::read_checkpoint </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -652,8 +652,14 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 </div><div class="memdoc">
 
 <p>Set solution vector of Auxiliary Physics using checkpoint. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#aa96108c743c84c51fb532dc02c45fb92">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classConservativeLevelSet.html#ad9dd212d4a66a4e2937dbe71acf0135d">ConservativeLevelSet&lt; dim &gt;</a>, <a class="el" href="classContinuumSolidDynamics.html#a92a9b42070067b3ad24b5ef9192d294b">ContinuumSolidDynamics&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a8e4d76beacb77c787c9079c5a0ca7c55">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classQMOM.html#a6f7df92ccd127dc0d772240062d0b383">QMOM&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a464afe05178a71e40b9df01464143072">TimeHarmonicMaxwell&lt; dim &gt;</a>, and <a class="el" href="classTracer.html#aeb8ac98be79872fb1ea9d30414e8cc5a">Tracer&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#a37f8a944bb12143ae2f9bb8d8c5132dc">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classConservativeLevelSet.html#ae0c9befab2b8cee73494736770611d24">ConservativeLevelSet&lt; dim &gt;</a>, <a class="el" href="classContinuumSolidDynamics.html#a3c039fdaf9bf7eb2f8ca886d74d2cdc1">ContinuumSolidDynamics&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a2bba4d5de93e6a858c21e3794bea8cfe">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classQMOM.html#ad2c6e98a621aac672f433fca8d88f4c6">QMOM&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a2c210c921e742b5ad8a262cfb0b50c73">TimeHarmonicMaxwell&lt; dim &gt;</a>, and <a class="el" href="classTracer.html#a62ac94461688977c052194b245e56ed5">Tracer&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -750,7 +756,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Reimplemented in <a class="el" href="classQMOM.html#a6ae08442774715f0657b15ab9d4abdd1">QMOM&lt; dim &gt;</a>, and <a class="el" href="classTimeHarmonicMaxwell.html#a19bce29a7b265f24d66bbead2898be6b">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00209">209</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00213">213</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -783,7 +789,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Reimplemented in <a class="el" href="classContinuumSolidDynamics.html#a8decf5e37c37403c4a0d00927b6aaf12">ContinuumSolidDynamics&lt; dim &gt;</a>, and <a class="el" href="classTimeHarmonicMaxwell.html#a2d3c064b6bf670746350109f43b90062">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00215">215</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00219">219</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -820,8 +826,8 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 </div>
 </div>
-<a id="aac6b380b7f28d81bef3a7d33eb13ec34" name="aac6b380b7f28d81bef3a7d33eb13ec34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac6b380b7f28d81bef3a7d33eb13ec34">&#9670;&#160;</a></span>write_checkpoint()</h2>
+<a id="ab4a6fff2ef9cd5297df0104744b3e265" name="ab4a6fff2ef9cd5297df0104744b3e265"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4a6fff2ef9cd5297df0104744b3e265">&#9670;&#160;</a></span>write_checkpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -834,7 +840,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
         <tr>
           <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::write_checkpoint </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -846,8 +852,14 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 </div><div class="memdoc">
 
 <p>Prepares auxiliary physics to write checkpoint. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#aadf3482b407082b319fbfeb31bbc99ad">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classConservativeLevelSet.html#a78c022771160318bb85110223a9b20eb">ConservativeLevelSet&lt; dim &gt;</a>, <a class="el" href="classContinuumSolidDynamics.html#a6b17602de68b19910886a0f13b1ed640">ContinuumSolidDynamics&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a57220cba37f8342ad6941e3188ff8971">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classQMOM.html#a227788d0173f972235eb8211212c89da">QMOM&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a954de39253094ec607966649bb335b42">TimeHarmonicMaxwell&lt; dim &gt;</a>, and <a class="el" href="classTracer.html#a18399604e964cdbaecf39baef51c4d61">Tracer&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#a45ea8fba1462542607407251e84ba389">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classConservativeLevelSet.html#a58eb03f0986bb21ee4d7dfc2e8eb6059">ConservativeLevelSet&lt; dim &gt;</a>, <a class="el" href="classContinuumSolidDynamics.html#a1922f27eaa2e02e07043bea953f97ec5">ContinuumSolidDynamics&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a4db5b930c8c0584e412110d6dbbc761e">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classQMOM.html#a16173f90ec9cba4c2f1388c5bd12b7b0">QMOM&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#adc78efa76dfafd83f8baaa1f9a95fac4">TimeHarmonicMaxwell&lt; dim &gt;</a>, and <a class="el" href="classTracer.html#a864066019e91f2e0d40ea1f4d986a5d0">Tracer&lt; dim &gt;</a>.</p>
 
 </div>
 </div>

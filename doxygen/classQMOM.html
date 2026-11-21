@@ -114,8 +114,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afc1ad5dc2f61b378ec4a6a9ac8f45182" id="r_afc1ad5dc2f61b378ec4a6a9ac8f45182"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc1ad5dc2f61b378ec4a6a9ac8f45182">pre_mesh_adaptation</a> () override</td></tr>
 <tr class="memitem:aa61952c1bb16c4b868e8375164d1cc08" id="r_aa61952c1bb16c4b868e8375164d1cc08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa61952c1bb16c4b868e8375164d1cc08">post_mesh_adaptation</a> () override</td></tr>
 <tr class="memitem:a14375e0c32384dfa92f7cc94be84186c" id="r_a14375e0c32384dfa92f7cc94be84186c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14375e0c32384dfa92f7cc94be84186c">compute_error_estimate</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</td></tr>
-<tr class="memitem:a227788d0173f972235eb8211212c89da" id="r_a227788d0173f972235eb8211212c89da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a227788d0173f972235eb8211212c89da">write_checkpoint</a> () override</td></tr>
-<tr class="memitem:a6f7df92ccd127dc0d772240062d0b383" id="r_a6f7df92ccd127dc0d772240062d0b383"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f7df92ccd127dc0d772240062d0b383">read_checkpoint</a> () override</td></tr>
+<tr class="memitem:a16173f90ec9cba4c2f1388c5bd12b7b0" id="r_a16173f90ec9cba4c2f1388c5bd12b7b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16173f90ec9cba4c2f1388c5bd12b7b0">write_checkpoint</a> (const std::string &amp;checkpoint_slot_label) override</td></tr>
+<tr class="memitem:ad2c6e98a621aac672f433fca8d88f4c6" id="r_ad2c6e98a621aac672f433fca8d88f4c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2c6e98a621aac672f433fca8d88f4c6">read_checkpoint</a> (const std::string &amp;checkpoint_slot_label) override</td></tr>
 <tr class="memitem:af9a968ba3abacb3238fa5f4b092aee5e" id="r_af9a968ba3abacb3238fa5f4b092aee5e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9a968ba3abacb3238fa5f4b092aee5e">gather_tables</a> () override</td></tr>
 <tr class="memitem:af4981197cb7a73c5375846cf975d39ed" id="r_af4981197cb7a73c5375846cf975d39ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4981197cb7a73c5375846cf975d39ed">setup_dofs</a> () override</td></tr>
 <tr class="memitem:a3f90067240a91be4d3914010530c95da" id="r_a3f90067240a91be4d3914010530c95da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f90067240a91be4d3914010530c95da">set_initial_conditions</a> () override</td></tr>
@@ -253,7 +253,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00058">58</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00504">analytical_solution</a>, <a class="el" href="auxiliary__physics_8h_source.html#l00058">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;::AuxiliaryPhysics()</a>, <a class="el" href="qmom_8h_source.html#l00486">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00490">component_names</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00497">dirichlet_functions</a>, <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00812">Parameters::QMOM::enable_coalescence</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00814">Parameters::QMOM::enable_growth</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00810">Parameters::QMOM::enable_nucleation</a>, <a class="el" href="core_2utilities_8h_source.html#l00705">enum_to_string()</a>, <a class="el" href="qmom_8h_source.html#l00487">face_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00482">fe</a>, <a class="el" href="qmom_8h_source.html#l00493">initial_conditions</a>, <a class="el" href="dimensionality_8h_source.html#l00073">Parameters::Dimensionality::length</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00565">Parameters::lie</a>, <a class="el" href="qmom_8h_source.html#l00485">mapping</a>, <a class="el" href="dimensionality_8h_source.html#l00074">Parameters::Dimensionality::mass</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="qmom_8h_source.html#l00464">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom_8h_source.html#l00458">n_moments</a>, <a class="el" href="qmom_8h_source.html#l00455">n_scalars</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00794">Parameters::QMOM::scalar_names</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00535">solution_transfer</a>, <a class="el" href="qmom_8h_source.html#l00500">source_term</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00807">Parameters::QMOM::splitting_scheme</a>, <a class="el" href="qmom_8h_source.html#l00531">system_rhs</a>, <a class="el" href="dimensionality_8h_source.html#l00076">Parameters::Dimensionality::temperature</a>, <a class="el" href="dimensionality_8h_source.html#l00075">Parameters::Dimensionality::time</a>, and <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00508">analytical_solution</a>, <a class="el" href="auxiliary__physics_8h_source.html#l00058">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;::AuxiliaryPhysics()</a>, <a class="el" href="qmom_8h_source.html#l00490">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00494">component_names</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00501">dirichlet_functions</a>, <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00812">Parameters::QMOM::enable_coalescence</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00814">Parameters::QMOM::enable_growth</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00810">Parameters::QMOM::enable_nucleation</a>, <a class="el" href="core_2utilities_8h_source.html#l00717">enum_to_string()</a>, <a class="el" href="qmom_8h_source.html#l00491">face_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00486">fe</a>, <a class="el" href="qmom_8h_source.html#l00497">initial_conditions</a>, <a class="el" href="dimensionality_8h_source.html#l00073">Parameters::Dimensionality::length</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00565">Parameters::lie</a>, <a class="el" href="qmom_8h_source.html#l00489">mapping</a>, <a class="el" href="dimensionality_8h_source.html#l00074">Parameters::Dimensionality::mass</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="qmom_8h_source.html#l00468">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom_8h_source.html#l00462">n_moments</a>, <a class="el" href="qmom_8h_source.html#l00459">n_scalars</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00794">Parameters::QMOM::scalar_names</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00539">solution_transfer</a>, <a class="el" href="qmom_8h_source.html#l00504">source_term</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00807">Parameters::QMOM::splitting_scheme</a>, <a class="el" href="qmom_8h_source.html#l00535">system_rhs</a>, <a class="el" href="dimensionality_8h_source.html#l00076">Parameters::Dimensionality::temperature</a>, <a class="el" href="dimensionality_8h_source.html#l00075">Parameters::Dimensionality::time</a>, and <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>.</p>
 
 </div>
 </div>
@@ -324,7 +324,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l01113">1113</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00520">amg_preconditioner</a>, <a class="el" href="qmom_8h_source.html#l00490">component_names</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00511">constraints</a>, <a class="el" href="qmom_8cc_source.html#l01246">get_residual_rescale_metric()</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="qmom_8h_source.html#l00517">ilu_preconditioner</a>, <a class="el" href="qmom_8h_source.html#l00507">locally_owned_dofs</a>, <a class="el" href="parameters_8h_source.html#l01822">Parameters::LinearSolver::max_iterations</a>, <a class="el" href="parameters_8h_source.html#l01825">Parameters::LinearSolver::max_krylov_vectors</a>, <a class="el" href="parameters_8h_source.html#l01819">Parameters::LinearSolver::minimum_residual</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="parameters_8h_source.html#l01842">Parameters::LinearSolver::preconditioner</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="parameters_8h_source.html#l01816">Parameters::LinearSolver::relative_residual</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00514">system_matrix</a>, <a class="el" href="qmom_8h_source.html#l00531">system_rhs</a>, <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l01809">Parameters::LinearSolver::verbosity</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00524">amg_preconditioner</a>, <a class="el" href="qmom_8h_source.html#l00494">component_names</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00515">constraints</a>, <a class="el" href="qmom_8cc_source.html#l01246">get_residual_rescale_metric()</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="qmom_8h_source.html#l00521">ilu_preconditioner</a>, <a class="el" href="qmom_8h_source.html#l00511">locally_owned_dofs</a>, <a class="el" href="parameters_8h_source.html#l01822">Parameters::LinearSolver::max_iterations</a>, <a class="el" href="parameters_8h_source.html#l01825">Parameters::LinearSolver::max_krylov_vectors</a>, <a class="el" href="parameters_8h_source.html#l01819">Parameters::LinearSolver::minimum_residual</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="parameters_8h_source.html#l01842">Parameters::LinearSolver::preconditioner</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="parameters_8h_source.html#l01816">Parameters::LinearSolver::relative_residual</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00518">system_matrix</a>, <a class="el" href="qmom_8h_source.html#l00535">system_rhs</a>, <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l01809">Parameters::LinearSolver::verbosity</a>.</p>
 
 </div>
 </div>
@@ -359,7 +359,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00597">597</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00185">QMOMCopyData::cell_is_local</a>, <a class="el" href="qmom_8h_source.html#l00486">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00511">constraints</a>, <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="copy__data_8h_source.html#l00200">QMOMCopyData::face_data</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00258">QMOMScratchData&lt; dim &gt;::face_jump_phi</a>, <a class="el" href="copy__data_8h_source.html#l00193">QMOMCopyData::FaceData::face_matrix</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00250">QMOMScratchData&lt; dim &gt;::face_phi_here</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00254">QMOMScratchData&lt; dim &gt;::face_phi_there</a>, <a class="el" href="qmom_8h_source.html#l00487">face_quadrature</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00261">QMOMScratchData&lt; dim &gt;::face_velocity_values</a>, <a class="el" href="qmom_8h_source.html#l00482">fe</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00199">QMOMScratchData&lt; dim &gt;::fe_interface_values</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00236">QMOMScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="copy__data_8h_source.html#l00196">QMOMCopyData::FaceData::joint_dof_indices</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00226">QMOMScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00181">QMOMCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00174">QMOMCopyData::local_matrix</a>, <a class="el" href="qmom_8h_source.html#l00507">locally_owned_dofs</a>, <a class="el" href="qmom_8h_source.html#l00485">mapping</a>, <a class="el" href="qmom_8h_source.html#l00464">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00214">QMOMScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00220">QMOMScratchData&lt; dim &gt;::n_face_q_points</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00223">QMOMScratchData&lt; dim &gt;::n_interface_dofs</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00217">QMOMScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="qmom__boundary__conditions_8h_source.html#l00022">BoundaryConditions::noflux</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00232">QMOMScratchData&lt; dim &gt;::phi</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00096">QMOMScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00184">QMOMScratchData&lt; dim &gt;::reinit_boundary_face()</a>, <a class="el" href="qmom_8cc_source.html#l00575">reinit_face_velocity_with_adequate_solution()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00151">QMOMScratchData&lt; dim &gt;::reinit_internal_face()</a>, <a class="el" href="qmom_8cc_source.html#l00560">reinit_velocity_with_adequate_solution()</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00514">system_matrix</a>, <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>, <a class="el" href="multiphysics_8h_source.html#l00079">velocity</a>, and <a class="el" href="qmom__scratch__data_8h_source.html#l00246">QMOMScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00185">QMOMCopyData::cell_is_local</a>, <a class="el" href="qmom_8h_source.html#l00490">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00515">constraints</a>, <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="copy__data_8h_source.html#l00200">QMOMCopyData::face_data</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00258">QMOMScratchData&lt; dim &gt;::face_jump_phi</a>, <a class="el" href="copy__data_8h_source.html#l00193">QMOMCopyData::FaceData::face_matrix</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00250">QMOMScratchData&lt; dim &gt;::face_phi_here</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00254">QMOMScratchData&lt; dim &gt;::face_phi_there</a>, <a class="el" href="qmom_8h_source.html#l00491">face_quadrature</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00261">QMOMScratchData&lt; dim &gt;::face_velocity_values</a>, <a class="el" href="qmom_8h_source.html#l00486">fe</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00199">QMOMScratchData&lt; dim &gt;::fe_interface_values</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00236">QMOMScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="copy__data_8h_source.html#l00196">QMOMCopyData::FaceData::joint_dof_indices</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00226">QMOMScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00181">QMOMCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00174">QMOMCopyData::local_matrix</a>, <a class="el" href="qmom_8h_source.html#l00511">locally_owned_dofs</a>, <a class="el" href="qmom_8h_source.html#l00489">mapping</a>, <a class="el" href="qmom_8h_source.html#l00468">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00214">QMOMScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00220">QMOMScratchData&lt; dim &gt;::n_face_q_points</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00223">QMOMScratchData&lt; dim &gt;::n_interface_dofs</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00217">QMOMScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="qmom__boundary__conditions_8h_source.html#l00022">BoundaryConditions::noflux</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00232">QMOMScratchData&lt; dim &gt;::phi</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00096">QMOMScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00184">QMOMScratchData&lt; dim &gt;::reinit_boundary_face()</a>, <a class="el" href="qmom_8cc_source.html#l00575">reinit_face_velocity_with_adequate_solution()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00151">QMOMScratchData&lt; dim &gt;::reinit_internal_face()</a>, <a class="el" href="qmom_8cc_source.html#l00560">reinit_velocity_with_adequate_solution()</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00518">system_matrix</a>, <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>, <a class="el" href="multiphysics_8h_source.html#l00079">velocity</a>, and <a class="el" href="qmom__scratch__data_8h_source.html#l00246">QMOMScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
@@ -394,7 +394,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00837">837</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="bdf_8cc_source.html#l00010">bdf_coefficients()</a>, <a class="el" href="copy__data_8h_source.html#l00185">QMOMCopyData::cell_is_local</a>, <a class="el" href="qmom_8h_source.html#l00486">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00511">constraints</a>, <a class="el" href="qmom__boundary__conditions_8h_source.html#l00023">BoundaryConditions::dirichlet</a>, <a class="el" href="qmom_8h_source.html#l00497">dirichlet_functions</a>, <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00487">face_quadrature</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00261">QMOMScratchData&lt; dim &gt;::face_velocity_values</a>, <a class="el" href="qmom_8h_source.html#l00482">fe</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00199">QMOMScratchData&lt; dim &gt;::fe_interface_values</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00226">QMOMScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00181">QMOMCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00178">QMOMCopyData::local_rhs</a>, <a class="el" href="qmom_8h_source.html#l00485">mapping</a>, <a class="el" href="qmom_8h_source.html#l00464">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00214">QMOMScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00220">QMOMScratchData&lt; dim &gt;::n_face_q_points</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00217">QMOMScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="bdf_8h_source.html#l00097">number_of_previous_solutions()</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00232">QMOMScratchData&lt; dim &gt;::phi</a>, <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00240">QMOMScratchData&lt; dim &gt;::previous_values</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00096">QMOMScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00184">QMOMScratchData&lt; dim &gt;::reinit_boundary_face()</a>, <a class="el" href="qmom_8cc_source.html#l00575">reinit_face_velocity_with_adequate_solution()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00115">QMOMScratchData&lt; dim &gt;::reinit_previous_solutions()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00128">QMOMScratchData&lt; dim &gt;::reinit_source()</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00500">source_term</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00243">QMOMScratchData&lt; dim &gt;::source_values</a>, <a class="el" href="qmom_8h_source.html#l00531">system_rhs</a>, <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>, and <a class="el" href="qmom__field__function_8cc_source.html#l00080">QMOMFieldFunction&lt; dim &gt;::vector_value()</a>.</p>
+<p class="reference">References <a class="el" href="bdf_8cc_source.html#l00010">bdf_coefficients()</a>, <a class="el" href="copy__data_8h_source.html#l00185">QMOMCopyData::cell_is_local</a>, <a class="el" href="qmom_8h_source.html#l00490">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00515">constraints</a>, <a class="el" href="qmom__boundary__conditions_8h_source.html#l00023">BoundaryConditions::dirichlet</a>, <a class="el" href="qmom_8h_source.html#l00501">dirichlet_functions</a>, <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00491">face_quadrature</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00261">QMOMScratchData&lt; dim &gt;::face_velocity_values</a>, <a class="el" href="qmom_8h_source.html#l00486">fe</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00199">QMOMScratchData&lt; dim &gt;::fe_interface_values</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00226">QMOMScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00181">QMOMCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00178">QMOMCopyData::local_rhs</a>, <a class="el" href="qmom_8h_source.html#l00489">mapping</a>, <a class="el" href="qmom_8h_source.html#l00468">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00214">QMOMScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00220">QMOMScratchData&lt; dim &gt;::n_face_q_points</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00217">QMOMScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="bdf_8h_source.html#l00097">number_of_previous_solutions()</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00232">QMOMScratchData&lt; dim &gt;::phi</a>, <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00240">QMOMScratchData&lt; dim &gt;::previous_values</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00096">QMOMScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00184">QMOMScratchData&lt; dim &gt;::reinit_boundary_face()</a>, <a class="el" href="qmom_8cc_source.html#l00575">reinit_face_velocity_with_adequate_solution()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00115">QMOMScratchData&lt; dim &gt;::reinit_previous_solutions()</a>, <a class="el" href="qmom__scratch__data_8cc_source.html#l00128">QMOMScratchData&lt; dim &gt;::reinit_source()</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00504">source_term</a>, <a class="el" href="qmom__scratch__data_8h_source.html#l00243">QMOMScratchData&lt; dim &gt;::source_values</a>, <a class="el" href="qmom_8h_source.html#l00535">system_rhs</a>, <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>, and <a class="el" href="qmom__field__function_8cc_source.html#l00080">QMOMFieldFunction&lt; dim &gt;::vector_value()</a>.</p>
 
 </div>
 </div>
@@ -428,7 +428,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l01197">1197</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00504">analytical_solution</a>, <a class="el" href="qmom_8h_source.html#l00486">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00482">fe</a>, <a class="el" href="qmom_8h_source.html#l00485">mapping</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, and <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00508">analytical_solution</a>, <a class="el" href="qmom_8h_source.html#l00490">cell_quadrature</a>, <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00486">fe</a>, <a class="el" href="qmom_8h_source.html#l00489">mapping</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, and <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>.</p>
 
 </div>
 </div>
@@ -505,7 +505,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00458">458</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00511">constraints</a>, <a class="el" href="qmom_8h_source.html#l00507">locally_owned_dofs</a>, and <a class="el" href="qmom_8h_source.html#l00508">locally_relevant_dofs</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00515">constraints</a>, <a class="el" href="qmom_8h_source.html#l00511">locally_owned_dofs</a>, and <a class="el" href="qmom_8h_source.html#l00512">locally_relevant_dofs</a>.</p>
 
 </div>
 </div>
@@ -540,7 +540,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00246">246</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="qmom_8h_source.html#l00490">component_names</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="parameters_8h_source.html#l01051">Parameters::Timer::end</a>, <a class="el" href="qmom_8h_source.html#l00538">error_table</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="qmom_8h_source.html#l00494">component_names</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="parameters_8h_source.html#l01051">Parameters::Timer::end</a>, <a class="el" href="qmom_8h_source.html#l00542">error_table</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -576,7 +576,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00225">225</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, and <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, and <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>.</p>
 
 </div>
 </div>
@@ -644,9 +644,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#af12247ba26a29f99e637d62ed93d1e92">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00265">265</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00269">269</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>.</p>
 
 </div>
 </div>
@@ -680,7 +680,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00277">277</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00281">281</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -714,7 +714,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#ae6cc2bfa320526e438a44bd6dc8ee804">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00289">289</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00293">293</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -748,7 +748,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb66d0340d77e712bca30814eef04e5d">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00301">301</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00305">305</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -782,9 +782,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abf527a264ed49a5327db8f48e16ee182">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00338">338</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00342">342</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00511">constraints</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00515">constraints</a>.</p>
 
 </div>
 </div>
@@ -818,7 +818,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a0a64669b4bbd93475dc816a8291a588f">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00313">313</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00317">317</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -854,7 +854,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l01246">1246</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00485">mapping</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, and <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00489">mapping</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, and <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>.</p>
 
 </div>
 </div>
@@ -888,7 +888,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00325">325</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00329">329</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -921,7 +921,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abfa7bc1385779d5c7175411f4c8e3264">PhysicsSolver&lt; GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00348">348</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00352">352</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -956,7 +956,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00333">333</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00500">announce_string()</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, and <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>.</p>
 
 </div>
 </div>
@@ -991,7 +991,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00276">276</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, and <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, and <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>.</p>
 
 </div>
 </div>
@@ -1026,7 +1026,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00362">362</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00507">locally_owned_dofs</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>, <a class="el" href="qmom_8h_source.html#l00535">solution_transfer</a>, and <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00511">locally_owned_dofs</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>, <a class="el" href="qmom_8h_source.html#l00539">solution_transfer</a>, and <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1061,7 +1061,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00294">294</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8cc_source.html#l01197">calculate_L2_errors()</a>, <a class="el" href="qmom_8h_source.html#l00490">component_names</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00538">error_table</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8cc_source.html#l01197">calculate_L2_errors()</a>, <a class="el" href="qmom_8h_source.html#l00494">component_names</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00542">error_table</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1096,12 +1096,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00344">344</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>, and <a class="el" href="qmom_8h_source.html#l00535">solution_transfer</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>, and <a class="el" href="qmom_8h_source.html#l00539">solution_transfer</a>.</p>
 
 </div>
 </div>
-<a id="a6f7df92ccd127dc0d772240062d0b383" name="a6f7df92ccd127dc0d772240062d0b383"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f7df92ccd127dc0d772240062d0b383">&#9670;&#160;</a></span>read_checkpoint()</h2>
+<a id="ad2c6e98a621aac672f433fca8d88f4c6" name="ad2c6e98a621aac672f433fca8d88f4c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2c6e98a621aac672f433fca8d88f4c6">&#9670;&#160;</a></span>read_checkpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1114,7 +1114,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classQMOM.html">QMOM</a>&lt; dim &gt;::read_checkpoint </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1126,12 +1126,18 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Deserialize the present and previous solutions of every component. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab68fa8d211549189803ddd8ba1fcc4ff">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
+<p>Implements <a class="el" href="classAuxiliaryPhysics.html#a6dbe750520cad5d5caf5a74fb7da0394">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00423">423</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00507">locally_owned_dofs</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>, <a class="el" href="qmom_8h_source.html#l00535">solution_transfer</a>, and <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00511">locally_owned_dofs</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>, <a class="el" href="qmom_8h_source.html#l00539">solution_transfer</a>, and <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1187,7 +1193,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00575">575</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom_8h_source.html#l00464">multiphysics</a>, and <a class="el" href="qmom__scratch__data_8cc_source.html#l00194">QMOMScratchData&lt; dim &gt;::reinit_face_velocity()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom_8h_source.html#l00468">multiphysics</a>, and <a class="el" href="qmom__scratch__data_8cc_source.html#l00194">QMOMScratchData&lt; dim &gt;::reinit_face_velocity()</a>.</p>
 
 </div>
 </div>
@@ -1231,7 +1237,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00560">560</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom_8h_source.html#l00464">multiphysics</a>, and <a class="el" href="qmom__scratch__data_8cc_source.html#l00140">QMOMScratchData&lt; dim &gt;::reinit_velocity()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="qmom_8h_source.html#l00468">multiphysics</a>, and <a class="el" href="qmom__scratch__data_8cc_source.html#l00140">QMOMScratchData&lt; dim &gt;::reinit_velocity()</a>.</p>
 
 </div>
 </div>
@@ -1266,7 +1272,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00520">520</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00511">constraints</a>, <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00493">initial_conditions</a>, <a class="el" href="qmom_8h_source.html#l00507">locally_owned_dofs</a>, <a class="el" href="qmom_8h_source.html#l00485">mapping</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom_8cc_source.html#l00276">percolate_time_vectors()</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, and <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00515">constraints</a>, <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00497">initial_conditions</a>, <a class="el" href="qmom_8h_source.html#l00511">locally_owned_dofs</a>, <a class="el" href="qmom_8h_source.html#l00489">mapping</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom_8cc_source.html#l00276">percolate_time_vectors()</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, and <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1299,7 +1305,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l01041">1041</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01866">Parameters::LinearSolver::amg_aggregation_threshold</a>, <a class="el" href="parameters_8h_source.html#l01869">Parameters::LinearSolver::amg_n_cycles</a>, <a class="el" href="parameters_8h_source.html#l01860">Parameters::LinearSolver::amg_precond_ilu_atol</a>, <a class="el" href="parameters_8h_source.html#l01857">Parameters::LinearSolver::amg_precond_ilu_fill</a>, <a class="el" href="parameters_8h_source.html#l01863">Parameters::LinearSolver::amg_precond_ilu_rtol</a>, <a class="el" href="qmom_8h_source.html#l00520">amg_preconditioner</a>, <a class="el" href="parameters_8h_source.html#l01878">Parameters::LinearSolver::amg_smoother_overlap</a>, <a class="el" href="parameters_8h_source.html#l01875">Parameters::LinearSolver::amg_smoother_sweeps</a>, <a class="el" href="parameters_8h_source.html#l01872">Parameters::LinearSolver::amg_w_cycles</a>, <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00482">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, and <a class="el" href="qmom_8h_source.html#l00514">system_matrix</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01866">Parameters::LinearSolver::amg_aggregation_threshold</a>, <a class="el" href="parameters_8h_source.html#l01869">Parameters::LinearSolver::amg_n_cycles</a>, <a class="el" href="parameters_8h_source.html#l01860">Parameters::LinearSolver::amg_precond_ilu_atol</a>, <a class="el" href="parameters_8h_source.html#l01857">Parameters::LinearSolver::amg_precond_ilu_fill</a>, <a class="el" href="parameters_8h_source.html#l01863">Parameters::LinearSolver::amg_precond_ilu_rtol</a>, <a class="el" href="qmom_8h_source.html#l00524">amg_preconditioner</a>, <a class="el" href="parameters_8h_source.html#l01878">Parameters::LinearSolver::amg_smoother_overlap</a>, <a class="el" href="parameters_8h_source.html#l01875">Parameters::LinearSolver::amg_smoother_sweeps</a>, <a class="el" href="parameters_8h_source.html#l01872">Parameters::LinearSolver::amg_w_cycles</a>, <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00486">fe</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, and <a class="el" href="qmom_8h_source.html#l00518">system_matrix</a>.</p>
 
 </div>
 </div>
@@ -1334,7 +1340,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00469">469</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00511">constraints</a>, <a class="el" href="qmom_8cc_source.html#l00458">define_constraints()</a>, <a class="el" href="qmom_8h_source.html#l00479">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00482">fe</a>, <a class="el" href="qmom_8h_source.html#l00507">locally_owned_dofs</a>, <a class="el" href="qmom_8h_source.html#l00508">locally_relevant_dofs</a>, <a class="el" href="qmom_8h_source.html#l00485">mapping</a>, <a class="el" href="qmom_8h_source.html#l00464">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00514">system_matrix</a>, <a class="el" href="qmom_8h_source.html#l00531">system_rhs</a>, and <a class="el" href="qmom_8h_source.html#l00473">triangulation</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00515">constraints</a>, <a class="el" href="qmom_8cc_source.html#l00458">define_constraints()</a>, <a class="el" href="qmom_8h_source.html#l00483">dof_handler</a>, <a class="el" href="qmom_8h_source.html#l00486">fe</a>, <a class="el" href="qmom_8h_source.html#l00511">locally_owned_dofs</a>, <a class="el" href="qmom_8h_source.html#l00512">locally_relevant_dofs</a>, <a class="el" href="qmom_8h_source.html#l00489">mapping</a>, <a class="el" href="qmom_8h_source.html#l00468">multiphysics</a>, <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00518">system_matrix</a>, <a class="el" href="qmom_8h_source.html#l00535">system_rhs</a>, and <a class="el" href="qmom_8h_source.html#l00477">triangulation</a>.</p>
 
 </div>
 </div>
@@ -1367,7 +1373,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l01023">1023</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00467">computing_timer</a>, <a class="el" href="parameters_8h_source.html#l01848">Parameters::LinearSolver::ilu_precond_atol</a>, <a class="el" href="parameters_8h_source.html#l01845">Parameters::LinearSolver::ilu_precond_fill</a>, <a class="el" href="parameters_8h_source.html#l01851">Parameters::LinearSolver::ilu_precond_rtol</a>, <a class="el" href="qmom_8h_source.html#l00517">ilu_preconditioner</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, and <a class="el" href="qmom_8h_source.html#l00514">system_matrix</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00471">computing_timer</a>, <a class="el" href="parameters_8h_source.html#l01848">Parameters::LinearSolver::ilu_precond_atol</a>, <a class="el" href="parameters_8h_source.html#l01845">Parameters::LinearSolver::ilu_precond_fill</a>, <a class="el" href="parameters_8h_source.html#l01851">Parameters::LinearSolver::ilu_precond_rtol</a>, <a class="el" href="qmom_8h_source.html#l00521">ilu_preconditioner</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, and <a class="el" href="qmom_8h_source.html#l00518">system_matrix</a>.</p>
 
 </div>
 </div>
@@ -1402,7 +1408,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l01004">1004</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01837">Parameters::LinearSolver::amg</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8cc_source.html#l01041">setup_amg()</a>, <a class="el" href="qmom_8cc_source.html#l01023">setup_ilu()</a>, and <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01837">Parameters::LinearSolver::amg</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="multiphysics_8h_source.html#l00057">qmom</a>, <a class="el" href="qmom_8cc_source.html#l01041">setup_amg()</a>, <a class="el" href="qmom_8cc_source.html#l01023">setup_ilu()</a>, and <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -1437,7 +1443,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l01095">1095</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8cc_source.html#l01188">advance_phase_space()</a>, <a class="el" href="qmom_8cc_source.html#l01113">advance_physical_space()</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00565">Parameters::lie</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00566">Parameters::strang</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8cc_source.html#l01188">advance_phase_space()</a>, <a class="el" href="qmom_8cc_source.html#l01113">advance_physical_space()</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00565">Parameters::lie</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00566">Parameters::strang</a>.</p>
 
 </div>
 </div>
@@ -1472,12 +1478,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00548">548</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00497">dirichlet_functions</a>, <a class="el" href="qmom_8h_source.html#l00476">simulation_control</a>, and <a class="el" href="qmom_8h_source.html#l00470">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00501">dirichlet_functions</a>, <a class="el" href="qmom_8h_source.html#l00480">simulation_control</a>, and <a class="el" href="qmom_8h_source.html#l00474">simulation_parameters</a>.</p>
 
 </div>
 </div>
-<a id="a227788d0173f972235eb8211212c89da" name="a227788d0173f972235eb8211212c89da"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a227788d0173f972235eb8211212c89da">&#9670;&#160;</a></span>write_checkpoint()</h2>
+<a id="a16173f90ec9cba4c2f1388c5bd12b7b0" name="a16173f90ec9cba4c2f1388c5bd12b7b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16173f90ec9cba4c2f1388c5bd12b7b0">&#9670;&#160;</a></span>write_checkpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1490,7 +1496,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classQMOM.html">QMOM</a>&lt; dim &gt;::write_checkpoint </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>checkpoint_slot_label</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1502,12 +1508,18 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Serialize the present and previous solutions of every component for restart. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">checkpoint_slot_label</td><td>Label of the checkpoint slot. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implements <a class="el" href="classAuxiliaryPhysics.html#aac6b380b7f28d81bef3a7d33eb13ec34">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
+<p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab4a6fff2ef9cd5297df0104744b3e265">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="qmom_8cc_source.html#l00404">404</a> of file <a class="el" href="qmom_8cc_source.html">qmom.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="qmom_8h_source.html#l00461">n_components</a>, <a class="el" href="qmom_8h_source.html#l00524">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00528">previous_solutions</a>, and <a class="el" href="qmom_8h_source.html#l00535">solution_transfer</a>.</p>
+<p class="reference">References <a class="el" href="qmom_8h_source.html#l00465">n_components</a>, <a class="el" href="qmom_8h_source.html#l00528">present_solutions</a>, <a class="el" href="qmom_8h_source.html#l00532">previous_solutions</a>, and <a class="el" href="qmom_8h_source.html#l00539">solution_transfer</a>.</p>
 
 </div>
 </div>
@@ -1536,7 +1548,7 @@ template&lt;int dim&gt; </div>
 
 <p>AMG preconditioner of the transport matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00520">520</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00524">524</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1563,7 +1575,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Analytical solution of all the components, used to compute the L2 errors </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00504">504</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00508">508</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1589,7 +1601,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00486">486</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00490">490</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1617,7 +1629,7 @@ template&lt;int dim&gt; </div>
 
 <p>Names of the components, used for the output and the error table. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00490">490</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00494">494</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1645,7 +1657,7 @@ template&lt;int dim&gt; </div>
 
 <p>Timer of the <a class="el" href="classQMOM.html" title="Quadrature method of moments (QMOM), solved as an auxiliary physics coupled to the fluid dynamics sol...">QMOM</a> physics. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00467">467</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00471">471</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1673,7 +1685,7 @@ template&lt;int dim&gt; </div>
 
 <p>Empty constraints of the discontinuous Galerkin discretization. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00511">511</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00515">515</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1701,7 +1713,7 @@ template&lt;int dim&gt; </div>
 
 <p>Values imposed by the Dirichlet boundary conditions, by boundary id. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00497">497</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00501">501</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1729,7 +1741,7 @@ template&lt;int dim&gt; </div>
 
 <p>DoFHandler shared by all the components. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00479">479</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00483">483</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1757,7 +1769,7 @@ template&lt;int dim&gt; </div>
 
 <p>L2 errors of the components with respect to the analytical solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00538">538</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00542">542</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1783,7 +1795,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00487">487</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00491">491</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1811,7 +1823,7 @@ template&lt;int dim&gt; </div>
 
 <p>Scalar discontinuous element shared by all the components. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00482">482</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00486">486</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1839,7 +1851,7 @@ template&lt;int dim&gt; </div>
 
 <p>ILU preconditioner of the transport matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00517">517</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00521">521</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1867,7 +1879,7 @@ template&lt;int dim&gt; </div>
 
 <p>Initial conditions of all the components. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00493">493</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00497">497</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1895,7 +1907,7 @@ template&lt;int dim&gt; </div>
 
 <p>Locally owned and locally relevant DoFs. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00507">507</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00511">511</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1921,7 +1933,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00508">508</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00512">512</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1949,7 +1961,7 @@ template&lt;int dim&gt; </div>
 
 <p>Mapping, cell and face quadratures. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00485">485</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00489">489</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -1977,7 +1989,7 @@ template&lt;int dim&gt; </div>
 
 <p>Multiphysics interface, used to get the fluid velocity. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00464">464</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00468">468</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2005,7 +2017,7 @@ template&lt;int dim&gt; </div>
 
 <p>Total number of components: n_scalars + n_moments. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00461">461</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00465">465</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2033,7 +2045,7 @@ template&lt;int dim&gt; </div>
 
 <p>Number of transported moments. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00458">458</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00462">462</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2061,7 +2073,7 @@ template&lt;int dim&gt; </div>
 
 <p>Number of user-defined scalars. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00455">455</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00459">459</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2088,7 +2100,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Ghosted present solution of each component: present_solutions[component] </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00524">524</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00528">528</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2115,7 +2127,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Ghosted previous solutions of each component, used by the BDF schemes: previous_solutions[component][p] is the solution p + 1 time steps ago </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00528">528</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00532">532</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2143,7 +2155,7 @@ template&lt;int dim&gt; </div>
 
 <p>Simulation control. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00476">476</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00480">480</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2171,7 +2183,7 @@ template&lt;int dim&gt; </div>
 
 <p>Simulation parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00470">470</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00474">474</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2198,7 +2210,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Solution transfer of the present and previous solutions of all the components, for mesh adaptation and checkpointing </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00535">535</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00539">539</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2226,7 +2238,7 @@ template&lt;int dim&gt; </div>
 
 <p>Source term of all the components. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00500">500</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00504">504</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2254,7 +2266,7 @@ template&lt;int dim&gt; </div>
 
 <p>Transport matrix, shared by all the components. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00514">514</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00518">518</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2282,7 +2294,7 @@ template&lt;int dim&gt; </div>
 
 <p>Right-hand side of each component: system_rhs[component]. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00531">531</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00535">535</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>
@@ -2310,7 +2322,7 @@ template&lt;int dim&gt; </div>
 
 <p>Triangulation shared by all physics. </p>
 
-<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00473">473</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="qmom_8h_source.html#l00477">477</a> of file <a class="el" href="qmom_8h_source.html">qmom.h</a>.</p>
 
 </div>
 </div>

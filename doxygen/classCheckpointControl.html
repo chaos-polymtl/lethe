@@ -89,6 +89,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classCheckpointControl-members.html">List of all members</a>  </div>
@@ -100,12 +101,18 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af3e507c4f481700350d26df2bbff6dfa" id="r_af3e507c4f481700350d26df2bbff6dfa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3e507c4f481700350d26df2bbff6dfa">CheckpointControl</a> (<a class="el" href="structParameters_1_1Restart.html">Parameters::Restart</a> &amp;param)</td></tr>
-<tr class="memitem:a56549d77379632aebbb4244f9563fb62" id="r_a56549d77379632aebbb4244f9563fb62"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56549d77379632aebbb4244f9563fb62">is_checkpoint_time_step</a> (const unsigned int time_step_number)</td></tr>
+<tr class="memitem:a6b78eade0a36101d110e316168456979" id="r_a6b78eade0a36101d110e316168456979"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b78eade0a36101d110e316168456979">CheckpointControl</a> (const <a class="el" href="structParameters_1_1Restart.html">Parameters::Restart</a> &amp;param)</td></tr>
+<tr class="memitem:a18337b4f494869da1ee89a1a39d97b04" id="r_a18337b4f494869da1ee89a1a39d97b04"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18337b4f494869da1ee89a1a39d97b04">is_checkpoint_time_step</a> (const unsigned int time_step_number, const bool is_last_time_step)</td></tr>
 <tr class="memitem:a7e90981c65604fe9e68bf968cea83d49" id="r_a7e90981c65604fe9e68bf968cea83d49"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e90981c65604fe9e68bf968cea83d49">get_next_checkpoint_id</a> () const</td></tr>
 <tr class="memitem:ad1f255e7c8999c96b8b0b7653f8754dc" id="r_ad1f255e7c8999c96b8b0b7653f8754dc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1f255e7c8999c96b8b0b7653f8754dc">get_filename</a> () const</td></tr>
+<tr class="memitem:a9445fbfe26030ee038adcfcbe8415ccf" id="r_a9445fbfe26030ee038adcfcbe8415ccf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9445fbfe26030ee038adcfcbe8415ccf">write</a> (const std::string &amp;prefix, const MPI_Comm &amp;mpi_communicator) const</td></tr>
+<tr class="memitem:ad4425ec6f5bce0b8933e72c8b126431b" id="r_ad4425ec6f5bce0b8933e72c8b126431b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4425ec6f5bce0b8933e72c8b126431b">read</a> (const std::string &amp;prefix, const MPI_Comm &amp;mpi_communicator)</td></tr>
 <tr class="memitem:a108eefc649738846d592cb50c00b5846" id="r_a108eefc649738846d592cb50c00b5846"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a108eefc649738846d592cb50c00b5846">serialize</a> (boost::archive::text_oarchive &amp;ar) const</td></tr>
 <tr class="memitem:ab01231cc0e49fac94833818df23ccbb3" id="r_ab01231cc0e49fac94833818df23ccbb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab01231cc0e49fac94833818df23ccbb3">deserialize</a> (boost::archive::text_iarchive &amp;ar)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a5dd4236c31b9dc4365beb81bafbc8807" id="r_a5dd4236c31b9dc4365beb81bafbc8807"><td class="memItemLeft" align="right" valign="top">static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dd4236c31b9dc4365beb81bafbc8807">read_checkpoint_id</a> (const std::string &amp;prefix, const std::string &amp;file_description, const MPI_Comm &amp;mpi_communicator)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -121,10 +128,10 @@ Private Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00012">12</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00016">16</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af3e507c4f481700350d26df2bbff6dfa" name="af3e507c4f481700350d26df2bbff6dfa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3e507c4f481700350d26df2bbff6dfa">&#9670;&#160;</a></span>CheckpointControl()</h2>
+<a id="a6b78eade0a36101d110e316168456979" name="a6b78eade0a36101d110e316168456979"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b78eade0a36101d110e316168456979">&#9670;&#160;</a></span>CheckpointControl()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -135,7 +142,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">CheckpointControl::CheckpointControl </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structParameters_1_1Restart.html">Parameters::Restart</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>param</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Restart.html">Parameters::Restart</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>param</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -154,9 +161,9 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00022">22</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00026">26</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00095">checkpointing_frequency</a>, <a class="el" href="checkpoint__control_8h_source.html#l00097">filename</a>, <a class="el" href="checkpoint__control_8h_source.html#l00093">max_checkpoint_id</a>, <a class="el" href="checkpoint__control_8h_source.html#l00094">next_checkpoint_id</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00096">restart</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00141">checkpointing_frequency</a>, <a class="el" href="checkpoint__control_8h_source.html#l00143">filename</a>, <a class="el" href="checkpoint__control_8h_source.html#l00139">max_checkpoint_id</a>, <a class="el" href="checkpoint__control_8h_source.html#l00140">next_checkpoint_id</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00142">restart</a>.</p>
 
 </div>
 </div>
@@ -192,9 +199,9 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00078">78</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00124">124</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00094">next_checkpoint_id</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00140">next_checkpoint_id</a>.</p>
 
 </div>
 </div>
@@ -223,9 +230,9 @@ Private Attributes</h2></td></tr>
 
 <p>Return the prefix for the restart files. </p>
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00058">58</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00066">66</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00097">filename</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00143">filename</a>.</p>
 
 </div>
 </div>
@@ -254,9 +261,9 @@ Private Attributes</h2></td></tr>
 
 <p>Return the next checkpoint id. </p>
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00049">49</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00057">57</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00094">next_checkpoint_id</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00140">next_checkpoint_id</a>.</p>
 
 </div>
 </div>
@@ -285,14 +292,14 @@ Private Attributes</h2></td></tr>
 
 <p>Calculate the next checkpoint id. </p>
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00088">88</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00134">134</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00093">max_checkpoint_id</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00094">next_checkpoint_id</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00139">max_checkpoint_id</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00140">next_checkpoint_id</a>.</p>
 
 </div>
 </div>
-<a id="a56549d77379632aebbb4244f9563fb62" name="a56549d77379632aebbb4244f9563fb62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56549d77379632aebbb4244f9563fb62">&#9670;&#160;</a></span>is_checkpoint_time_step()</h2>
+<a id="a18337b4f494869da1ee89a1a39d97b04" name="a18337b4f494869da1ee89a1a39d97b04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18337b4f494869da1ee89a1a39d97b04">&#9670;&#160;</a></span>is_checkpoint_time_step()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -303,8 +310,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">bool CheckpointControl::is_checkpoint_time_step </td>
           <td>(</td>
-          <td class="paramtype">const unsigned int</td>          <td class="paramname"><span class="paramname"><em>time_step_number</em></span></td><td>)</td>
+          <td class="paramtype">const unsigned int</td>          <td class="paramname"><span class="paramname"><em>time_step_number</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>is_last_time_step</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -314,17 +325,101 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Return true if a checkpoint should be made at the current time step. </p>
+<p>Return true if a checkpoint should be made at the current time step: at each checkpointing frequency time step and at the last time step. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">time_step_number</td><td>Current time step. </td></tr>
+    <tr><td class="paramname">is_last_time_step</td><td>Whether the current time step is the last one. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00035">35</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00041">41</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00095">checkpointing_frequency</a>, <a class="el" href="checkpoint__control_8h_source.html#l00088">increment_checkpoint_id()</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00096">restart</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00141">checkpointing_frequency</a>, <a class="el" href="checkpoint__control_8h_source.html#l00134">increment_checkpoint_id()</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00142">restart</a>.</p>
+
+</div>
+</div>
+<a id="ad4425ec6f5bce0b8933e72c8b126431b" name="ad4425ec6f5bce0b8933e72c8b126431b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4425ec6f5bce0b8933e72c8b126431b">&#9670;&#160;</a></span>read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CheckpointControl::read </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>prefix</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;</td>          <td class="paramname"><span class="paramname"><em>mpi_communicator</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read the id of the last checkpoint from the file &lt;prefix&gt;.checkpoint_controller. It is called before the checkpoint is read. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>Prefix of the checkpoint files, without checkpoint slot. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>MPI communicator of the simulation. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8cc_source.html#l00026">26</a> of file <a class="el" href="checkpoint__control_8cc_source.html">checkpoint_control.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00140">next_checkpoint_id</a>, and <a class="el" href="checkpoint__control_8cc_source.html#l00037">read_checkpoint_id()</a>.</p>
+
+</div>
+</div>
+<a id="a5dd4236c31b9dc4365beb81bafbc8807" name="a5dd4236c31b9dc4365beb81bafbc8807"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5dd4236c31b9dc4365beb81bafbc8807">&#9670;&#160;</a></span>read_checkpoint_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int CheckpointControl::read_checkpoint_id </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>prefix</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>file_description</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;</td>          <td class="paramname"><span class="paramname"><em>mpi_communicator</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the id of the last checkpoint recorded in the file &lt;prefix&gt;.checkpoint_controller. Only rank 0 reads the file, and the id is broadcast to the other ranks. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>Prefix of the checkpoint files, without checkpoint slot. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">file_description</td><td>Description of the file, and of the parameter that gives it, reported if the file cannot be read. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>MPI communicator of the simulation.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Id of the last checkpoint. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8cc_source.html#l00037">37</a> of file <a class="el" href="checkpoint__control_8cc_source.html">checkpoint_control.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00225">check_file_exists()</a>, and <a class="el" href="checkpoint__control_8h_source.html#l00143">filename</a>.</p>
 
 </div>
 </div>
@@ -359,9 +454,43 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00068">68</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00114">114</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00094">next_checkpoint_id</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00140">next_checkpoint_id</a>.</p>
+
+</div>
+</div>
+<a id="a9445fbfe26030ee038adcfcbe8415ccf" name="a9445fbfe26030ee038adcfcbe8415ccf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9445fbfe26030ee038adcfcbe8415ccf">&#9670;&#160;</a></span>write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CheckpointControl::write </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>prefix</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;</td>          <td class="paramname"><span class="paramname"><em>mpi_communicator</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write the id of the last checkpoint in the file &lt;prefix&gt;.checkpoint_controller, from which a restart reads. Only rank 0 writes it. It is called once every file of the checkpoint is written. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>Prefix of the checkpoint files, without checkpoint slot. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>MPI communicator of the simulation. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8cc_source.html#l00012">12</a> of file <a class="el" href="checkpoint__control_8cc_source.html">checkpoint_control.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00114">serialize()</a>.</p>
 
 </div>
 </div>
@@ -386,7 +515,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00095">95</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00141">141</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
 </div>
 </div>
@@ -410,7 +539,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00097">97</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00143">143</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
 </div>
 </div>
@@ -434,7 +563,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00093">93</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00139">139</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
 </div>
 </div>
@@ -458,7 +587,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00094">94</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00140">140</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
 </div>
 </div>
@@ -482,12 +611,13 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00096">96</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="checkpoint__control_8h_source.html#l00142">142</a> of file <a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/lethe/lethe/include/core/<a class="el" href="checkpoint__control_8h_source.html">checkpoint_control.h</a></li>
+<li>/home/runner/work/lethe/lethe/source/core/<a class="el" href="checkpoint__control_8cc_source.html">checkpoint_control.cc</a></li>
 </ul>
 </div><!-- contents -->
 <!--
