@@ -158,29 +158,7 @@ public:
     const FiniteElement<dim>        &fe_test,
     const Quadrature<dim>           &cell_quadrature,
     const Quadrature<dim - 1>       &face_quadrature,
-    const Mapping<dim>              &mapping)
-    : properties_manager(properties_manager)
-    , omega(omega)
-    , fe_values_trial_interior(mapping,
-                               fe_trial_interior,
-                               cell_quadrature,
-                               update_values | update_quadrature_points |
-                                 update_JxW_values)
-    , fe_values_test(mapping,
-                     fe_test,
-                     cell_quadrature,
-                     update_values | update_gradients)
-    , fe_face_values_trial_skeleton(mapping,
-                                    fe_trial_skeleton,
-                                    face_quadrature,
-                                    update_values | update_quadrature_points |
-                                      update_normal_vectors | update_JxW_values)
-    , fe_face_values_test(mapping, fe_test, face_quadrature, update_values)
-  {
-    gather_temperature   = false;
-    gather_void_fraction = false;
-    allocate();
-  }
+    const Mapping<dim>              &mapping);
 
   /**
    * @brief Copy constructor. Same as the main constructor. It only uses the
@@ -190,46 +168,7 @@ public:
    *
    * @param[in] sd The scratch data to be copied.
    */
-  TimeHarmonicMaxwellScratchData(const TimeHarmonicMaxwellScratchData<dim> &sd)
-    : properties_manager(sd.properties_manager)
-    , omega(sd.omega)
-    , fe_values_trial_interior(sd.fe_values_trial_interior.get_mapping(),
-                               sd.fe_values_trial_interior.get_fe(),
-                               sd.fe_values_trial_interior.get_quadrature(),
-                               update_values | update_quadrature_points |
-                                 update_JxW_values)
-    , fe_values_test(sd.fe_values_test.get_mapping(),
-                     sd.fe_values_test.get_fe(),
-                     sd.fe_values_test.get_quadrature(),
-                     update_values | update_gradients)
-    , fe_face_values_trial_skeleton(
-        sd.fe_face_values_trial_skeleton.get_mapping(),
-        sd.fe_face_values_trial_skeleton.get_fe(),
-        sd.fe_face_values_trial_skeleton.get_quadrature(),
-        update_values | update_quadrature_points | update_normal_vectors |
-          update_JxW_values)
-    , fe_face_values_test(sd.fe_face_values_test.get_mapping(),
-                          sd.fe_face_values_test.get_fe(),
-                          sd.fe_face_values_test.get_quadrature(),
-                          update_values)
-  {
-    gather_temperature   = sd.gather_temperature;
-    gather_void_fraction = sd.gather_void_fraction;
-
-    allocate();
-
-    if (sd.gather_temperature)
-      enable_temperature(sd.fe_values_temperature->get_fe(),
-                         sd.fe_values_temperature->get_quadrature(),
-                         sd.fe_face_values_temperature->get_quadrature(),
-                         sd.fe_values_temperature->get_mapping());
-
-    if (sd.gather_void_fraction)
-      enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
-                           sd.fe_values_void_fraction->get_quadrature(),
-                           sd.fe_face_values_void_fraction->get_quadrature(),
-                           sd.fe_values_void_fraction->get_mapping());
-  }
+  TimeHarmonicMaxwellScratchData(const TimeHarmonicMaxwellScratchData<dim> &sd);
 
   /**
    * @brief Allocate the memory of all the members of the scratch. It builds the lists
@@ -375,12 +314,7 @@ public:
   void
   reinit_temperature(
     const typename DoFHandler<dim>::active_cell_iterator &cell_temperature,
-    const VectorType                                     &temperature_solution)
-  {
-    fe_values_temperature->reinit(cell_temperature);
-    fe_values_temperature->get_function_values(temperature_solution,
-                                               this->temperature_values);
-  }
+    const VectorType                                     &temperature_solution);
 
   /**
    * @brief Evaluate the temperature field at the quadrature points of a face
@@ -401,12 +335,7 @@ public:
   reinit_face_temperature(
     const typename DoFHandler<dim>::active_cell_iterator &cell_temperature,
     const unsigned int                                    face_no,
-    const VectorType                                     &temperature_solution)
-  {
-    fe_face_values_temperature->reinit(cell_temperature, face_no);
-    fe_face_values_temperature->get_function_values(
-      temperature_solution, this->face_temperature_values);
-  }
+    const VectorType                                     &temperature_solution);
 
   /**
    * @brief Evaluate the void fraction field at the cell quadrature points.
@@ -422,12 +351,7 @@ public:
   void
   reinit_void_fraction(
     const typename DoFHandler<dim>::active_cell_iterator &cell_void_fraction,
-    const VectorType &void_fraction_solution)
-  {
-    fe_values_void_fraction->reinit(cell_void_fraction);
-    fe_values_void_fraction->get_function_values(void_fraction_solution,
-                                                 this->void_fraction_values);
-  }
+    const VectorType &void_fraction_solution);
 
   /**
    * @brief Evaluate the void fraction field at the quadrature points of a face
@@ -447,12 +371,7 @@ public:
   reinit_face_void_fraction(
     const typename DoFHandler<dim>::active_cell_iterator &cell_void_fraction,
     const unsigned int                                    face_no,
-    const VectorType &void_fraction_solution)
-  {
-    fe_face_values_void_fraction->reinit(cell_void_fraction, face_no);
-    fe_face_values_void_fraction->get_function_values(
-      void_fraction_solution, this->face_void_fraction_values);
-  }
+    const VectorType &void_fraction_solution);
 
   /**
    * @brief Compute the effective electromagnetic properties at the cell
