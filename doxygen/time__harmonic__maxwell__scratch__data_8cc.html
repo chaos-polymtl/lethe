@@ -97,6 +97,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html">core/tensors_and_points_dimension_manipulation.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="vector_8h_source.html">core/vector.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="time__harmonic__maxwell_8h_source.html">solvers/time_harmonic_maxwell.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="time__harmonic__maxwell__scratch__data_8h_source.html">solvers/time_harmonic_maxwell_scratch_data.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/exceptions.h&gt;</code><br />
@@ -105,7 +106,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for time_harmonic_maxwell_scratch_data.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="time__harmonic__maxwell__scratch__data_8cc__incl.svg" width="5458" height="628"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="time__harmonic__maxwell__scratch__data_8cc__incl.svg" width="5483" height="628"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="time__harmonic__maxwell__scratch__data_8cc_source.html">Go to the source code of this file.</a></p>
@@ -163,7 +164,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00015">15</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00016">16</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_dispersed_phase</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00414">PhysicalPropertiesManager::get_effective_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00396">PhysicalPropertiesManager::get_effective_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00450">PhysicalPropertiesManager::get_effective_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00432">PhysicalPropertiesManager::get_effective_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00207">PhysicalPropertiesManager::get_electric_conductivity()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00236">PhysicalPropertiesManager::get_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00221">PhysicalPropertiesManager::get_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00266">PhysicalPropertiesManager::get_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00251">PhysicalPropertiesManager::get_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00516">PhysicalPropertiesManager::get_material_interaction_id()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00568">PhysicalPropertiesManager::is_effective_medium()</a>, and <a class="el" href="physical__property__model_8h_source.html#l00042">temperature</a>.</p>
 
@@ -204,7 +205,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if at least one electromagnetic property of the material depends on the field, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00097">97</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html#l00098">98</a> of file <a class="el" href="time__harmonic__maxwell__scratch__data_8cc_source.html">time_harmonic_maxwell_scratch_data.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_dispersed_phase</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00414">PhysicalPropertiesManager::get_effective_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00396">PhysicalPropertiesManager::get_effective_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00450">PhysicalPropertiesManager::get_effective_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00432">PhysicalPropertiesManager::get_effective_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00207">PhysicalPropertiesManager::get_electric_conductivity()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00236">PhysicalPropertiesManager::get_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00221">PhysicalPropertiesManager::get_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00266">PhysicalPropertiesManager::get_magnetic_permeability_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00251">PhysicalPropertiesManager::get_magnetic_permeability_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00516">PhysicalPropertiesManager::get_material_interaction_id()</a>, and <a class="el" href="physical__properties__manager_8h_source.html#l00568">PhysicalPropertiesManager::is_effective_medium()</a>.</p>
 
