@@ -129,7 +129,8 @@ struct OutputStructTableHandler
    *
    * @param[in] table A reference to a TableHandler object that needs to be
    * serialized/ deserialized.
-   * @param[in] table_filename A string with the corresponding file name.
+   * @param[in] table_filename A string with the corresponding file name,
+   * without checkpoint slot nor extension.
    */
   OutputStructTableHandler(TableHandler      &table,
                            const std::string &table_filename)

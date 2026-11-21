@@ -3314,6 +3314,10 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       this->pcout << "************************" << std::endl;
       this->pcout << "---> Simulation Restart " << std::endl;
       this->pcout << "************************" << std::endl;
+      this->checkpoint_controller.read(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
       this->read_checkpoint();
     }
   else if (initial_condition_type ==

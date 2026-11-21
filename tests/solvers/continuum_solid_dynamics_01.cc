@@ -126,7 +126,7 @@ test()
         deallog << "Output field: " << name << std::endl;
 
     // Checkpoint writing
-    multiphysics.write_checkpoint();
+    multiphysics.write_checkpoint("_0");
     tria->save(checkpoint_file);
   }
 
@@ -140,7 +140,7 @@ test()
                                             pcout,
                                             FluidDynamicsFormulation::VANS);
     multiphysics.setup_dofs();
-    multiphysics.read_checkpoint();
+    multiphysics.read_checkpoint("_0");
     deallog << "Solid phase DoFs after restart: "
             << multiphysics.get_dof_handler(PhysicsID::continuum_solid_dynamics)
                  .n_dofs()

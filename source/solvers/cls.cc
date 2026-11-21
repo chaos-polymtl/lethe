@@ -2555,28 +2555,24 @@ ConservativeLevelSet<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CLS" + suffix);
+        "_CLS");
 
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     table_output_structs.emplace_back(
       this->table_monitoring_cls,
-      prefix +
-        this->simulation_parameters.post_processing
-          .mass_conservation_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .mass_conservation_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     table_output_structs.emplace_back(
       this->table_barycenter,
       prefix +
-        this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.barycenter_output_name);
 
   if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
         .ids_and_isocontours_per_variable.contains(Variable::phase))
@@ -2597,7 +2593,7 @@ ConservativeLevelSet<dim>::gather_tables()
 
           table_output_structs.emplace_back(
             this->phase_indicator_isocontour_bounding_values_tables[i],
-            prefix + isocontour_output_name + suffix);
+            prefix + isocontour_output_name);
         }
     }
 
@@ -2606,7 +2602,8 @@ ConservativeLevelSet<dim>::gather_tables()
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::write_checkpoint()
+ConservativeLevelSet<dim>::write_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2626,12 +2623,15 @@ ConservativeLevelSet<dim>::write_checkpoint()
   // solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::read_checkpoint()
+ConservativeLevelSet<dim>::read_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2668,7 +2668,9 @@ ConservativeLevelSet<dim>::read_checkpoint()
   // solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
         .reinitialization_method.sharpening.type ==

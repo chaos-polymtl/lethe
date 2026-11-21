@@ -401,7 +401,7 @@ QMOM<dim>::compute_error_estimate(
 
 template <int dim>
 void
-QMOM<dim>::write_checkpoint()
+QMOM<dim>::write_checkpoint(const std::string & /*checkpoint_slot_label*/)
 {
   // Same order as in pre_mesh_adaptation()
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -420,7 +420,7 @@ QMOM<dim>::write_checkpoint()
 
 template <int dim>
 void
-QMOM<dim>::read_checkpoint()
+QMOM<dim>::read_checkpoint(const std::string & /*checkpoint_slot_label*/)
 {
   const MPI_Comm mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading QMOM checkpoint" << std::endl;

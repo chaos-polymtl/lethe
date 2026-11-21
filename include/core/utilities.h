@@ -590,45 +590,57 @@ deserialize_table(TableHandler      &table,
 }
 
 /**
- * @brief Serializes all the TableHandler objects in table_output_structs.
+ * @brief Serializes all the TableHandler objects in table_output_structs. Each
+ * table is written in the file
+ * <table_filename><checkpoint_slot_label>.checkpoint.
  *
  * @param[in] table_output_structs Vector of structures containing references
  * to TableHandler objects that need to be serialized/deserialized for a
  * given solver, and their corresponding file names.
  *
+ * @param[in] checkpoint_slot_label Label of the checkpoint slot in which the
+ * tables are written.
  * @param[in] mpi_communicator The MPI communicator
  */
 inline void
 serialize_tables_vector(
   const std::vector<OutputStructTableHandler> &table_output_structs,
+  const std::string                           &checkpoint_slot_label,
   const MPI_Comm                               mpi_communicator)
 {
   for (const auto &output_table : table_output_structs)
     {
       serialize_table(output_table.table,
-                      output_table.table_filename,
+                      output_table.table_filename + checkpoint_slot_label +
+                        ".checkpoint",
                       mpi_communicator);
     }
 }
 
 /**
  * @brief Deserializes all the TableHandler objects in table_output_structs.
+ * Each table is read from the file
+ * <table_filename><checkpoint_slot_label>.checkpoint.
  *
  * @param[in,out] table_output_structs Vector of structures containing
  * references to TableHandler objects that needs to be serialized/deserialized
  * for a given solver, and their corresponding file names.
  *
+ * @param[in] checkpoint_slot_label Label of the checkpoint slot from which the
+ * tables are read.
  * @param[in] mpi_communicator The MPI communicator
  */
 inline void
 deserialize_tables_vector(
   std::vector<OutputStructTableHandler> &table_output_structs,
+  const std::string                     &checkpoint_slot_label,
   const MPI_Comm                         mpi_communicator)
 {
   for (auto &output_table : table_output_structs)
     {
       deserialize_table(output_table.table,
-                        output_table.table_filename,
+                        output_table.table_filename + checkpoint_slot_label +
+                          ".checkpoint",
                         mpi_communicator);
     }
 }

@@ -278,15 +278,19 @@ public:
 
   /**
    * @brief Prepare Heat Transfer to write checkpoint.
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  write_checkpoint() override;
+  write_checkpoint(const std::string &checkpoint_slot_label) override;
 
   /**
    * @brief Allow Heat Transfer to set up solution vector from checkpoint file.
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  read_checkpoint() override;
+  read_checkpoint(const std::string &checkpoint_slot_label) override;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to

@@ -72,19 +72,12 @@ write_checkpoint(
         {
           solid_objects[i]->write_checkpoint(prefix);
         }
-
-      // Prepare the checkpoint controller for checkpointing
-      // We don't use the same prefix, since this file needs to have the same
-      // name regardless of the checkpoint id being used. This file is giving
-      // the information of which checkpoint id to use when restarting.
-      std::string checkpoint_controller_object_filename =
-        checkpoint_controller.get_filename() + ".checkpoint_controller";
-      std::ofstream oss_checkpoint_controller_obj(
-        checkpoint_controller_object_filename);
-      boost::archive::text_oarchive oa_checkpoint_controller_obj(
-        oss_checkpoint_controller_obj, boost::archive::no_header);
-      checkpoint_controller.serialize(oa_checkpoint_controller_obj);
     }
+
+  // Write the checkpoint controller once every file of the checkpoint is
+  // written
+  checkpoint_controller.write(checkpoint_controller.get_filename(),
+                              mpi_communicator);
 }
 
 template void

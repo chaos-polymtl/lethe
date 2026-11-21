@@ -1369,46 +1369,39 @@ HeatTransfer<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_HT" + suffix);
+        "_HT");
 
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
     table_output_structs.emplace_back(
       this->heat_flux_table,
       prefix +
-        this->simulation_parameters.post_processing.heat_flux_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.heat_flux_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_temperature_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
       prefix +
-        this->simulation_parameters.post_processing.temperature_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.temperature_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_algebraic_melt_volume)
     table_output_structs.emplace_back(
       this->melt_volume_alge_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .algebraic_melt_volume_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .algebraic_melt_volume_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_geometric_melt_volume)
     table_output_structs.emplace_back(
       this->melt_volume_geo_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .geometric_melt_volume_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .geometric_melt_volume_output_name);
 
   if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
         .ids_and_isocontours_per_variable.contains(Variable::temperature))
@@ -1429,7 +1422,7 @@ HeatTransfer<dim>::gather_tables()
 
           table_output_structs.emplace_back(
             this->temperature_isocontour_bounding_values_tables[i],
-            prefix + isocontour_output_name + suffix);
+            prefix + isocontour_output_name);
         }
     }
 
@@ -1438,7 +1431,7 @@ HeatTransfer<dim>::gather_tables()
 
 template <int dim>
 void
-HeatTransfer<dim>::write_checkpoint()
+HeatTransfer<dim>::write_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1454,7 +1447,8 @@ HeatTransfer<dim>::write_checkpoint()
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+    this->simulation_parameters.restart_parameters.filename +
+    checkpoint_slot_label;
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
@@ -1472,12 +1466,14 @@ HeatTransfer<dim>::write_checkpoint()
   // Transfer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::read_checkpoint()
+HeatTransfer<dim>::read_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading heat transfer checkpoint" << std::endl;
@@ -1501,7 +1497,8 @@ HeatTransfer<dim>::read_checkpoint()
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+    this->simulation_parameters.restart_parameters.filename +
+    checkpoint_slot_label;
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
@@ -1542,7 +1539,9 @@ HeatTransfer<dim>::read_checkpoint()
   // Heat Transfer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 }
 
 

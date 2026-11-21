@@ -971,37 +971,40 @@ public:
 
   /**
    * @brief Prepares auxiliary physics to write simulation checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  write_checkpoint()
+  write_checkpoint(const std::string &checkpoint_slot_label)
   {
     for (auto &iphys : physics)
       {
-        iphys.second->write_checkpoint();
+        iphys.second->write_checkpoint(checkpoint_slot_label);
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->write_checkpoint();
+        iphys.second->write_checkpoint(checkpoint_slot_label);
       }
-    this->probe_postprocessor.write_checkpoint();
+    this->probe_postprocessor.write_checkpoint(checkpoint_slot_label);
   };
 
   /**
    * @brief Read solution from checkpoint from auxiliary physics
    *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  read_checkpoint()
+  read_checkpoint(const std::string &checkpoint_slot_label)
   {
     for (auto &iphys : physics)
       {
-        iphys.second->read_checkpoint();
+        iphys.second->read_checkpoint(checkpoint_slot_label);
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->read_checkpoint();
+        iphys.second->read_checkpoint(checkpoint_slot_label);
       }
-    this->probe_postprocessor.read_checkpoint();
+    this->probe_postprocessor.read_checkpoint(checkpoint_slot_label);
   };
 
   /**

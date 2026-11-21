@@ -1723,7 +1723,8 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::write_checkpoint()
+TimeHarmonicMaxwell<dim>::write_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -1757,12 +1758,15 @@ TimeHarmonicMaxwell<dim>::write_checkpoint()
   // TimeHarmonicMaxwell solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::read_checkpoint()
+TimeHarmonicMaxwell<dim>::read_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading time-harmonic Maxwell checkpoint" << std::endl;
@@ -1813,7 +1817,9 @@ TimeHarmonicMaxwell<dim>::read_checkpoint()
   // TimeHarmonicMaxwell solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 }
 
 template <int dim>
@@ -1824,22 +1830,19 @@ TimeHarmonicMaxwell<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_THM" + suffix);
+        "_THM");
 
   if (this->simulation_parameters.post_processing
         .calculate_electromagnetic_power)
     table_output_structs.emplace_back(
       this->electromagnetic_power_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .electromagnetic_power_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .electromagnetic_power_output_name);
 
   return table_output_structs;
 }

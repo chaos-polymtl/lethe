@@ -42,6 +42,8 @@
 
 #include <sys/stat.h>
 
+#include <string>
+
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -61,6 +63,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                     TimerOutput::wall_times)
   , simulation_parameters(p_nsparam)
   , flow_control(simulation_parameters.flow_control)
+  , checkpoint_controller(simulation_parameters.restart_parameters)
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_degree)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_degree)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_degree + 1)
@@ -585,14 +588,16 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
                                        *this->get_mapping());
       this->simulation_control->set_CFL(CFL);
     }
-  if (this->simulation_parameters.restart_parameters.checkpoint &&
-      simulation_control->get_iteration_number() != 0 &&
-      (simulation_control->get_iteration_number() %
-           this->simulation_parameters.restart_parameters.frequency ==
-         0 ||
-       simulation_control->is_at_end()))
+  if (simulation_control->get_iteration_number() != 0 &&
+      this->checkpoint_controller.is_checkpoint_time_step(
+        simulation_control->get_iteration_number(),
+        simulation_control->is_at_end()))
     {
       this->write_checkpoint();
+      this->checkpoint_controller.write(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -2198,17 +2203,14 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  std::string        prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  const std::string  prefix = this->get_checkpoint_prefix();
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
   if (this->simulation_control->get_output_boundaries())
     {
-      std::string prefix_boundary =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename + ".boundary";
+      const std::string prefix_boundary =
+        this->get_checkpoint_prefix() + ".boundary";
 
       this->pvdhandler_boundary.read(prefix_boundary);
     }
@@ -2220,12 +2222,14 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       this->flow_control.read(prefix);
     }
 
-  multiphysics->read_checkpoint();
+  multiphysics->read_checkpoint(this->get_checkpoint_slot_label());
 
   // Deserialize all post-processing tables that are currently used
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            this->get_checkpoint_slot_label(),
+                            this->mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -3004,38 +3008,35 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
     this->simulation_parameters.post_processing;
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (post_processing.calculate_enstrophy)
     table_output_structs.emplace_back(this->enstrophy_table,
                                       prefix +
-                                        post_processing.enstrophy_output_name +
-                                        suffix);
+                                        post_processing.enstrophy_output_name);
   if (post_processing.calculate_kinetic_energy)
     table_output_structs.emplace_back(
       this->kinetic_energy_table,
-      prefix + post_processing.kinetic_energy_output_name + suffix);
+      prefix + post_processing.kinetic_energy_output_name);
   if (post_processing.calculate_pressure_power)
     table_output_structs.emplace_back(
       this->pressure_power_table,
-      prefix + post_processing.pressure_power_output_name + suffix);
+      prefix + post_processing.pressure_power_output_name);
   if (post_processing.calculate_viscous_dissipation)
     table_output_structs.emplace_back(
       this->viscous_dissipation_table,
-      prefix + post_processing.viscous_dissipation_output_name + suffix);
+      prefix + post_processing.viscous_dissipation_output_name);
   if (post_processing.calculate_apparent_viscosity)
     table_output_structs.emplace_back(
       this->apparent_viscosity_table,
-      prefix + post_processing.apparent_viscosity_output_name + suffix);
+      prefix + post_processing.apparent_viscosity_output_name);
   if (post_processing.calculate_flow_rate)
     table_output_structs.emplace_back(this->flow_rate_table,
                                       prefix +
-                                        post_processing.flow_rate_output_name +
-                                        suffix);
+                                        post_processing.flow_rate_output_name);
   if (post_processing.calculate_pressure_drop)
     table_output_structs.emplace_back(
       this->pressure_drop_table,
-      prefix + post_processing.pressure_drop_output_name + suffix);
+      prefix + post_processing.pressure_drop_output_name);
   if (this->simulation_parameters.forces_parameters.calculate_force)
     for (auto const &[boundary_id, type] :
          this->simulation_parameters.boundary_conditions.type)
@@ -3044,7 +3045,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
           this->forces_tables[boundary_id],
           prefix +
             this->simulation_parameters.forces_parameters.force_output_name +
-            "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+            "_" + Utilities::int_to_string(boundary_id, 2));
       }
   if (this->simulation_parameters.forces_parameters.calculate_torque)
     for (auto const &[boundary_id, type] :
@@ -3054,13 +3055,13 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
           this->torques_tables[boundary_id],
           prefix +
             this->simulation_parameters.forces_parameters.torque_output_name +
-            "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+            "_" + Utilities::int_to_string(boundary_id, 2));
       }
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_FD" + suffix);
+        "_FD");
 
   return table_output_structs;
 }
@@ -3070,9 +3071,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
-  std::string        prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  const std::string  prefix = this->get_checkpoint_prefix();
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);
@@ -3083,10 +3082,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 
       if (this->simulation_control->get_output_boundaries())
         {
-          std::string prefix_boundary =
-            this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.restart_parameters.filename +
-            ".boundary";
+          const std::string prefix_boundary =
+            this->get_checkpoint_prefix() + ".boundary";
 
           this->pvdhandler_boundary.save(prefix_boundary);
         }
@@ -3113,7 +3110,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  multiphysics->write_checkpoint();
+  multiphysics->write_checkpoint(this->get_checkpoint_slot_label());
 
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
@@ -3124,7 +3121,26 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   // Serialize all post-processing tables that are currently used
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          this->get_checkpoint_slot_label(),
+                          this->mpi_communicator);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::string
+NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_prefix() const
+{
+  return this->simulation_parameters.simulation_control.output_folder +
+         this->simulation_parameters.restart_parameters.filename +
+         this->get_checkpoint_slot_label();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::string
+NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_slot_label() const
+{
+  return "_" + Utilities::int_to_string(
+                 this->checkpoint_controller.get_next_checkpoint_id());
 }
 
 template <int dim, typename VectorType, typename DofsType>

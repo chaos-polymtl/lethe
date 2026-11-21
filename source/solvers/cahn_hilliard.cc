@@ -974,40 +974,36 @@ CahnHilliard<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix);
+        "_CH");
 
   if (this->simulation_parameters.post_processing.calculate_phase_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing.phase_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     table_output_structs.emplace_back(
       this->barycenter_table,
       prefix +
-        this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.barycenter_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_phase_energy)
     table_output_structs.emplace_back(
       this->phase_energy_table,
       prefix +
-        this->simulation_parameters.post_processing.phase_energy_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.phase_energy_output_name);
 
   return table_output_structs;
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::write_checkpoint()
+CahnHilliard<dim>::write_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1026,12 +1022,14 @@ CahnHilliard<dim>::write_checkpoint()
   // Hilliard solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::read_checkpoint()
+CahnHilliard<dim>::read_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading Cahn Hilliard checkpoint" << std::endl;
@@ -1062,7 +1060,9 @@ CahnHilliard<dim>::read_checkpoint()
   // Cahn-Hilliard solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 }
 
 

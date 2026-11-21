@@ -925,10 +925,9 @@ FluidDynamicsNitsche<dim, spacedim>::gather_tables()
   // tables that are additional in this solver and their associated filenames
   std::vector<OutputStructTableHandler> table_output_structs;
 
-  // Prefix and suffix for the table checkpoint file name
+  // Prefix for the table checkpoint file name
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   // Add the tables of the forces and torques calculated on each solid, one
   // table per solid
@@ -944,7 +943,7 @@ FluidDynamicsNitsche<dim, spacedim>::gather_tables()
             prefix +
               this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                 ->force_output_name +
-              "_" + Utilities::int_to_string(i_solid, 2) + suffix);
+              "_" + Utilities::int_to_string(i_solid, 2));
         }
       if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
             ->calculate_torque_on_solid)
@@ -954,7 +953,7 @@ FluidDynamicsNitsche<dim, spacedim>::gather_tables()
             prefix +
               this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                 ->torque_output_name +
-              "_" + Utilities::int_to_string(i_solid, 2) + suffix);
+              "_" + Utilities::int_to_string(i_solid, 2));
         }
     }
   return table_output_structs;
@@ -967,10 +966,8 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
   // Write solid base checkpoint
   for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
-      std::string filename =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename + "_solid_" +
-        Utilities::int_to_string(i_solid, 2);
+      const std::string filename = this->get_checkpoint_prefix() + "_solid_" +
+                                   Utilities::int_to_string(i_solid, 2);
 
       (*this->solids)[i_solid]->write_checkpoint(filename);
     }
@@ -978,9 +975,7 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
   // Call regular checkpointing routine
   this->FluidDynamicsMatrixBased<spacedim>::write_checkpoint();
 
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  const std::string prefix = this->get_checkpoint_prefix();
 
   // Write data about paraview format (pvd)
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
@@ -1008,7 +1003,9 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
   // serialize_tables_vector in NavierStokesBase.
   const std::vector<OutputStructTableHandler> &table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-  serialize_tables_vector(table_output_structs, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          this->get_checkpoint_slot_label(),
+                          this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
@@ -1026,19 +1023,15 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
   // after the triangulation is read.
   for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
-      std::string prefix =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename + "_solid_" +
-        Utilities::int_to_string(i_solid, 2);
+      const std::string prefix = this->get_checkpoint_prefix() + "_solid_" +
+                                 Utilities::int_to_string(i_solid, 2);
 
       (*solids)[i_solid]->read_checkpoint(prefix);
     }
 
 
   // Reload particle and solid pvd handlers
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  const std::string prefix = this->get_checkpoint_prefix();
   for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
       // Load Paraview pvd handler for solid triangulation and particles
@@ -1057,7 +1050,9 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
   // deserialize_tables_vector in NavierStokesBase.
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            this->get_checkpoint_slot_label(),
+                            this->mpi_communicator);
 }
 
 
