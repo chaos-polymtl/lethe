@@ -19,6 +19,7 @@
       .math {font-family:Georgia,'Times New Roman',serif;font-size:27px;fill:#20363e;text-anchor:middle}
     </style>
   </defs>
+  <rect id="background" x="-10" y="106" width="1080" height="510" fill="#ffffff"/>
   <g id="lower-wall" class="plate">
     <path fill="#98b2bc" d="M145 495H805V502H145Z"/>
     <path fill="#abc4cd" d="M805 495 960 380V387L805 502Z"/>
