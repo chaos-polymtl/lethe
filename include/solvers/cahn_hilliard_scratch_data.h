@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_cahn_hilliard_scratch_data_h
@@ -57,24 +57,7 @@ public:
                           const Quadrature<dim>           &quadrature,
                           const Mapping<dim>              &mapping,
                           const FiniteElement<dim>        &fe_fd,
-                          const Quadrature<dim - 1>       &face_quadrature)
-    : properties_manager(properties_manager)
-    , fe_values_cahn_hilliard(mapping,
-                              fe_cahn_hilliard,
-                              quadrature,
-                              update_values | update_quadrature_points |
-                                update_JxW_values | update_gradients |
-                                update_hessians)
-    , fe_values_fd(mapping, fe_fd, quadrature, update_values)
-    , fe_face_values_cahn_hilliard(mapping,
-                                   fe_cahn_hilliard,
-                                   face_quadrature,
-                                   update_values | update_quadrature_points |
-                                     update_JxW_values | update_gradients |
-                                     update_normal_vectors)
-  {
-    allocate();
-  }
+                          const Quadrature<dim - 1>       &face_quadrature);
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
@@ -85,27 +68,7 @@ public:
    *
    * @param sd
    */
-  CahnHilliardScratchData(const CahnHilliardScratchData<dim> &sd)
-    : properties_manager(sd.properties_manager)
-    , fe_values_cahn_hilliard(sd.fe_values_cahn_hilliard.get_mapping(),
-                              sd.fe_values_cahn_hilliard.get_fe(),
-                              sd.fe_values_cahn_hilliard.get_quadrature(),
-                              update_values | update_quadrature_points |
-                                update_JxW_values | update_gradients |
-                                update_hessians)
-    , fe_values_fd(sd.fe_values_fd.get_mapping(),
-                   sd.fe_values_fd.get_fe(),
-                   sd.fe_values_fd.get_quadrature(),
-                   update_values)
-    , fe_face_values_cahn_hilliard(
-        sd.fe_face_values_cahn_hilliard.get_mapping(),
-        sd.fe_face_values_cahn_hilliard.get_fe(),
-        sd.fe_face_values_cahn_hilliard.get_quadrature(),
-        update_values | update_quadrature_points | update_JxW_values |
-          update_gradients | update_normal_vectors)
-  {
-    allocate();
-  }
+  CahnHilliardScratchData(const CahnHilliardScratchData<dim> &sd);
 
 
   /** @brief Allocates the necessary memory for all members of the scratch
@@ -136,168 +99,25 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         Function<dim>                 *source_function)
-  {
-    this->phase_order.component        = 0;
-    this->chemical_potential.component = 1;
+         Function<dim>                 *source_function);
 
-    this->fe_values_cahn_hilliard.reinit(cell);
-
-    quadrature_points = this->fe_values_cahn_hilliard.get_quadrature_points();
-    auto &fe_cahn_hilliard = this->fe_values_cahn_hilliard.get_fe();
-
-    source_function->value_list(quadrature_points, source_phase_order, 0);
-    source_function->value_list(quadrature_points,
-                                source_chemical_potential,
-                                1);
-
-    // Compute cell diameter
-    double cell_measure = compute_cell_measure_with_JxW(
-      this->fe_values_cahn_hilliard.get_JxW_values());
-    this->cell_size =
-      compute_cell_diameter<dim>(cell_measure, fe_cahn_hilliard.degree);
-
-    // Gather Phi and eta (values, gradient and laplacian)
-    this->fe_values_cahn_hilliard[phase_order].get_function_values(
-      current_solution, this->phase_order_values);
-    this->fe_values_cahn_hilliard[phase_order].get_function_gradients(
-      current_solution, this->phase_order_gradients);
-    this->fe_values_cahn_hilliard[phase_order].get_function_laplacians(
-      current_solution, this->phase_order_laplacians);
-
-    this->fe_values_cahn_hilliard[chemical_potential].get_function_values(
-      current_solution, this->chemical_potential_values);
-    this->fe_values_cahn_hilliard[chemical_potential].get_function_gradients(
-      current_solution, this->chemical_potential_gradients);
-    this->fe_values_cahn_hilliard[chemical_potential].get_function_laplacians(
-      current_solution, this->chemical_potential_laplacians);
-
-    // Gather previous phase order values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_cahn_hilliard[phase_order].get_function_values(
-          previous_solutions[p], previous_phase_order_values[p]);
-      }
-
-    // Gather previous chemical potential values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_cahn_hilliard[chemical_potential].get_function_values(
-          previous_solutions[p], previous_chemical_potential_values[p]);
-      }
-
-    for (unsigned int q = 0; q < n_q_points; ++q)
-      {
-        this->JxW[q] = this->fe_values_cahn_hilliard.JxW(q);
-
-        for (unsigned int k = 0; k < n_dofs; ++k)
-          {
-            // Shape functions for the phase order
-            this->phi_phase[q][k] =
-              this->fe_values_cahn_hilliard[phase_order].value(k, q);
-            this->grad_phi_phase[q][k] =
-              this->fe_values_cahn_hilliard[phase_order].gradient(k, q);
-            this->hess_phi_phase[q][k] =
-              this->fe_values_cahn_hilliard[phase_order].hessian(k, q);
-            this->laplacian_phi_phase[q][k] = trace(this->hess_phi_phase[q][k]);
-
-            // Shape functions for the chemical potential
-            this->phi_potential[q][k] =
-              this->fe_values_cahn_hilliard[chemical_potential].value(k, q);
-            this->grad_phi_potential[q][k] =
-              this->fe_values_cahn_hilliard[chemical_potential].gradient(k, q);
-            this->hess_phi_potential[q][k] =
-              this->fe_values_cahn_hilliard[chemical_potential].hessian(k, q);
-            this->laplacian_phi_potential[q][k] =
-              trace(this->hess_phi_potential[q][k]);
-          }
-      }
-
-    this->is_boundary_cell =
-      cell->at_boundary(); // The attribute needs to be updated because the
-                           // assembler for the angle of contact boundary
-                           // condition needs to know if the cell is at the
-                           // boundary
-    if (this->is_boundary_cell)
-      {
-        n_faces          = cell->n_faces();
-        is_boundary_face = std::vector<bool>(n_faces, false);
-        n_faces_q_points = fe_face_values_cahn_hilliard.get_quadrature().size();
-        boundary_face_id = std::vector<unsigned int>(n_faces);
-
-        face_JxW.reinit(n_faces, n_faces_q_points);
-        this->grad_phi_face_phase.reinit(n_faces, n_faces_q_points, n_dofs);
-
-        this->face_phase_grad_values = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-
-        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-
-        for (const auto face : cell->face_indices())
-          {
-            this->is_boundary_face[face] = cell->face(face)->at_boundary();
-            if (this->is_boundary_face[face])
-              {
-                fe_face_values_cahn_hilliard.reinit(cell, face);
-                boundary_face_id[face] = cell->face(face)->boundary_id();
-
-                this->fe_face_values_cahn_hilliard[phase_order]
-                  .get_function_gradients(current_solution,
-                                          this->face_phase_grad_values[face]);
-
-                for (unsigned int q = 0; q < n_faces_q_points; ++q)
-                  {
-                    face_JxW[face][q] = fe_face_values_cahn_hilliard.JxW(q);
-                    this->face_normal[face][q] =
-                      this->fe_face_values_cahn_hilliard.normal_vector(q);
-                    for (const unsigned int k :
-                         fe_face_values_cahn_hilliard.dof_indices())
-                      {
-                        this->grad_phi_face_phase[face][q][k] =
-                          this->fe_face_values_cahn_hilliard[phase_order]
-                            .gradient(k, q);
-                      }
-                  }
-              }
-          }
-      }
-  }
-
-
+  /**
+   * @brief Reinitialize the content of the scratch data for the velocity
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the void fraction FE and not the
+   * Navier-Stokes FE
+   *
+   * @param[in] current_solution The present value of the solution for
+   * \f$[u,p]\f$.
+   *
+   * @param[in] ale ALE parameters.
+   */
   template <typename VectorType>
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const VectorType           &current_solution,
-                  const Parameters::ALE<dim> &ale)
-  {
-    FEValuesExtractors::Vector velocities(0);
-    this->fe_values_fd.reinit(cell);
-
-    this->fe_values_fd[velocities].get_function_values(current_solution,
-                                                       velocity_values);
-
-    if (!ale.enabled())
-      return;
-
-
-    // ALE enabled, so extract the ALE velocity and subtract it from the
-    // velocity obtained from the fluid dynamics
-    Tensor<1, dim>                                  velocity_ale;
-    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
-      ale.velocity;
-    Vector<double> velocity_ale_vector(dim);
-
-    for (unsigned int q = 0; q < n_q_points; ++q)
-      {
-        velocity_ale_function->vector_value(quadrature_points[q],
-                                            velocity_ale_vector);
-        for (int d = 0; d < dim; ++d)
-          velocity_ale[d] = velocity_ale_vector[d];
-
-        velocity_values[q] -= velocity_ale;
-      }
-  }
+                  const Parameters::ALE<dim> &ale);
 
   /**
    * @brief Calculates the physical properties that may be required by the
