@@ -196,9 +196,7 @@ end
 #---------------------------------------------------
 # Non-Linear Solver Control: with a tolerance of 1e-5, every time step does
 # two Newton iterations. The multigrid preconditioner is built at the first
-# Newton iteration of each time step and reused for the second. The residual
-# and the Jacobian are still evaluated at the current iterate, so the solution
-# does not change.
+# Newton iteration of each time step and reused for the second.
 #---------------------------------------------------
 
 subsection non-linear solver
