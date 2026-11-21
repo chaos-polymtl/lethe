@@ -958,7 +958,7 @@ $(function() {
 <div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        {</div>
 <div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>          <span class="keywordflow">if</span> (local_face_id / 2 == i)</div>
 <div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>            {</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>              x_ref_cell[i] = double(local_face_id % 2);</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>              x_ref_cell[i] = <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(local_face_id % 2);</div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>              <span class="keywordflow">continue</span>;</div>
 <div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>            }</div>
 <div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>          x_ref_cell[i] = x_ref_face[j];</div>

@@ -354,7 +354,7 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Same as in fluid_dynamics_matrix_based, but calls <a class="el" href="#a5d142e2faaa64289b81d7317688d1030" title="Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immerse...">assemble_nitsche_restriction()</a> when global matrix and rhs are assembled. </p>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated</a></b></dt><dd>This function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00898">898</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00902">902</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00058">assemble_nitsche_restriction()</a>, <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00736">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_matrix()</a>, and <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00970">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
 
@@ -423,7 +423,7 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Same as in fluid_dynamics_matrix_based, but calls <a class="el" href="#a5d142e2faaa64289b81d7317688d1030" title="Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immerse...">assemble_nitsche_restriction()</a> when rhs is assembled. </p>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated</a></b></dt><dd>This function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00909">909</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00913">913</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00058">assemble_nitsche_restriction()</a>, and <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00970">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
 
@@ -460,7 +460,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00089">89</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00898">assemble_matrix_and_rhs()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00902">assemble_matrix_and_rhs()</a>.</p>
 
 </div>
 </div>
@@ -495,7 +495,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00098">98</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00909">assemble_rhs()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00913">assemble_rhs()</a>.</p>
 
 </div>
 </div>
@@ -527,7 +527,7 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Calculates the force due to the fluid motion on the solid. </p>
 <dl class="section return"><dt>Returns</dt><dd>Tensor of forces on the solid </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00317">317</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00319">319</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00989">compute_cell_diameter()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00894">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00919">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00895">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::fe</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="multiphysics_8h_source.html#l00079">velocity</a>.</p>
 
@@ -556,7 +556,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00230">230</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00232">232</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00894">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00919">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00895">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::fe</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="multiphysics_8h_source.html#l00081">pressure</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
 
@@ -620,7 +620,7 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Calculates the torque due to the fluid motion on the solid. </p>
 <dl class="section return"><dt>Returns</dt><dd>Tensor of torque on the solid. This is always a 3D tensor even in 2D </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00393">393</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00396">396</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00989">compute_cell_diameter()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00894">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00919">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::evaluation_point</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00895">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::fe</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="multiphysics_8h_source.html#l00079">velocity</a>.</p>
 
@@ -656,7 +656,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a2932cb8c662806e38471f5e388fe4e65">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00918">918</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00922">922</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00173">solid_forces_table</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00174">solid_torques_table</a>.</p>
 
@@ -689,7 +689,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Outputs a vtu file for each output frequency of the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00787">787</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00791">791</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00171">pvdhandler_solid_particles</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, and <a class="el" href="solutions__output_8cc_source.html#l00017">write_vtu_and_pvd()</a>.</p>
 
@@ -722,7 +722,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Outputs a vtu file for each output frequency of the solid triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00815">815</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00819">819</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00170">pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, and <a class="el" href="solutions__output_8cc_source.html#l00017">write_vtu_and_pvd()</a>.</p>
 
@@ -766,9 +766,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00492">492</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00496">496</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00317">calculate_forces_on_solid()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="utilities_8cc_source.html#l00059">make_table_scalars_tensors()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00173">solid_forces_table</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00893">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00319">calculate_forces_on_solid()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="utilities_8cc_source.html#l00059">make_table_scalars_tensors()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00173">solid_forces_table</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00893">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -810,9 +810,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00577">577</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00581">581</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00393">calculate_torque_on_solid()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="utilities_8cc_source.html#l00059">make_table_scalars_tensors()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00174">solid_torques_table</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00891">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::this_mpi_process</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00893">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00396">calculate_torque_on_solid()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="utilities_8cc_source.html#l00059">make_table_scalars_tensors()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00174">solid_torques_table</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00891">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::this_mpi_process</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00893">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>, and <a class="el" href="parameters_8h_source.html#l00064">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -845,7 +845,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a582b5a5fd99b3e8e1c2b21c17bb1b21a">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l01012">1012</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l01016">1016</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="core_2utilities_8h_source.html#l00624">deserialize_tables_vector()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l03000">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00171">pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00170">pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l02198">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00169">solids</a>.</p>
 
@@ -880,7 +880,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00863">863</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00867">867</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l02124">Parameters::MeshAdaptation::adaptive</a>, <a class="el" href="parameters_8h_source.html#l02122">Parameters::MeshAdaptation::none</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00945">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::refine_mesh_adaptive()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l01192">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::refine_mesh_uniform()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00169">solids</a>, and <a class="el" href="parameters_8h_source.html#l02123">Parameters::MeshAdaptation::uniform</a>.</p>
 
@@ -916,9 +916,9 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#a0851f8761d15071cf776a0467b339eaa">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00661">661</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00665">665</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00207">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_simulation()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00572">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_time_step()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00660">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::iterate()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00977">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00787">output_solid_particles()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00815">output_solid_triangulation()</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00219">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00492">postprocess_solid_forces()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00577">postprocess_solid_torques()</a>, <a class="el" href="grids_8cc_source.html#l00447">read_mesh_and_manifolds()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00863">refine_mesh()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00255">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::set_initial_condition()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00238">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::setup_dofs()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00169">solids</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00893">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00897">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::computing_timer</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00207">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_simulation()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00572">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::finish_time_step()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00660">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::iterate()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00977">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00791">output_solid_particles()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00819">output_solid_triangulation()</a>, <a class="el" href="physics__solver_8h_source.html#l00172">PhysicsSolver&lt; GlobalVectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00219">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00496">postprocess_solid_forces()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00581">postprocess_solid_torques()</a>, <a class="el" href="grids_8cc_source.html#l00447">read_mesh_and_manifolds()</a>, <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00867">refine_mesh()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00255">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::set_initial_condition()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00238">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::setup_dofs()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00169">solids</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00893">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -951,7 +951,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00961">961</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00965">965</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03000">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00889">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::mpi_communicator</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00900">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::pvdhandler</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00171">pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00170">pvdhandler_solid_triangulation</a>, <a class="el" href="core_2utilities_8h_source.html#l00602">serialize_tables_vector()</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00980">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00899">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00169">solids</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l03070">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>, and <a class="el" href="write__checkpoint_8cc_source.html#l00016">write_checkpoint()</a>.</p>
 

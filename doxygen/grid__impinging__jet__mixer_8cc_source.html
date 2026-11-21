@@ -439,7 +439,7 @@ $(function() {
 <div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>            }</div>
 <div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        }</div>
 <div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    <span class="keywordflow">if</span> (!found)</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>      <span class="keywordflow">return</span> std::size_t(0);</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>      <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(0);</div>
 <div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    inlet_axis_z  = f0_center[2];</div>
 <div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    axis_z_locked = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span> </div>

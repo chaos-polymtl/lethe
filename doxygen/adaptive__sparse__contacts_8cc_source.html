@@ -423,7 +423,7 @@ $(function() {
 <div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>      <span class="keywordtype">bool</span> has_active_nodes = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> node_id : local_dofs_indices)</div>
 <div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>        {</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>          <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAdaptiveSparseContacts.html#a4472edc56504afa3959aaea5e18a3534">mobility_at_nodes</a>(node_id) == (<span class="keywordtype">int</span>)active_status)</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>          <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAdaptiveSparseContacts.html#a4472edc56504afa3959aaea5e18a3534">mobility_at_nodes</a>(node_id) == <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(active_status))</div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>            {</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>              has_active_nodes = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>              <span class="keywordflow">break</span>;</div>

@@ -638,7 +638,7 @@ $(function() {
 <div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>                                             update_normal_vectors);</div>
 <div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>          <span class="comment">// Loop over the faces of the cell at the boundary.</span></div>
 <div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> face_id = 0;</div>
-<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>               face_id &lt; int(GeometryInfo&lt;dim&gt;::faces_per_cell);</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>               face_id &lt; static_cast&lt;int&gt;(GeometryInfo&lt;dim&gt;::faces_per_cell);</div>
 <div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>               ++face_id)</div>
 <div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>            {</div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>              <span class="comment">// Find the face at the boundary</span></div>

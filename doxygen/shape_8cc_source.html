@@ -2147,7 +2147,7 @@ $(function() {
 <div class="line"><a id="l01907" name="l01907"></a><span class="lineno"> 1907</span>                  <span class="comment">// either</span></div>
 <div class="line"><a id="l01908" name="l01908"></a><span class="lineno"> 1908</span>                  <span class="keywordflow">continue</span>;</div>
 <div class="line"><a id="l01909" name="l01909"></a><span class="lineno"> 1909</span>              }</div>
-<div class="line"><a id="l01910" name="l01910"></a><span class="lineno"> 1910</span>            <span class="keywordflow">catch</span> (TriaAccessorExceptions::ExcCellHasNoParent())</div>
+<div class="line"><a id="l01910" name="l01910"></a><span class="lineno"> 1910</span>            <span class="keywordflow">catch</span> (<span class="keyword">const</span> TriaAccessorExceptions::ExcCellHasNoParent &amp;)</div>
 <div class="line"><a id="l01911" name="l01911"></a><span class="lineno"> 1911</span>              {}</div>
 <div class="line"><a id="l01912" name="l01912"></a><span class="lineno"> 1912</span> </div>
 <div class="line"><a id="l01913" name="l01913"></a><span class="lineno"> 1913</span>          std::shared_ptr&lt;std::vector&lt;size_t&gt;&gt; current_cell_nodes =</div>
@@ -2299,7 +2299,7 @@ $(function() {
 <div class="line"><a id="l02057" name="l02057"></a><span class="lineno"> 2057</span>            <a class="code hl_variable" href="classRBFShape.html#a0c93189216143c45549d01818ace16a1">iterable_nodes</a>.swap(*parent_iterator-&gt;second);</div>
 <div class="line"><a id="l02058" name="l02058"></a><span class="lineno"> 2058</span>          }</div>
 <div class="line"><a id="l02059" name="l02059"></a><span class="lineno"> 2059</span>      }</div>
-<div class="line"><a id="l02060" name="l02060"></a><span class="lineno"> 2060</span>    <span class="keywordflow">catch</span> (TriaAccessorExceptions::ExcCellHasNoParent())</div>
+<div class="line"><a id="l02060" name="l02060"></a><span class="lineno"> 2060</span>    <span class="keywordflow">catch</span> (<span class="keyword">const</span> TriaAccessorExceptions::ExcCellHasNoParent &amp;)</div>
 <div class="line"><a id="l02061" name="l02061"></a><span class="lineno"> 2061</span>      {}</div>
 <div class="line"><a id="l02062" name="l02062"></a><span class="lineno"> 2062</span> </div>
 <div class="line"><a id="l02063" name="l02063"></a><span class="lineno"> 2063</span>  <span class="keywordtype">double</span>       distance, max_distance;</div>
