@@ -99,7 +99,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
             simulation_parameters.fem_parameters.CLS_degree);
         }
       // Mapping has to be at least Q1, but DGQ0 is allowed
-      mapping = std::make_shared<MappingQ<dim>>(std::max(fe->degree, uint(1)));
+      mapping = std::make_shared<MappingQ<dim>>(std::max(fe->degree, 1U));
       cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
     }

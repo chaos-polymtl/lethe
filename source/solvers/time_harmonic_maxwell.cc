@@ -104,7 +104,7 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
       // quadrature points in the cells, so we use the maximum of the trial
       // degree and 1 for the mapping.
       mapping = std::make_shared<MappingQ<dim>>(
-        std::max(fe_trial_interior->degree, uint(1)));
+        std::max(fe_trial_interior->degree, 1U));
       cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
     }

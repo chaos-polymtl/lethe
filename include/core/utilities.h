@@ -1307,8 +1307,9 @@ create_random_number_container(std::vector<double> &random_container,
   for (unsigned int i = 0; i < number_of_elements; ++i)
     {
       srand(prn_seed * (i + 1));
-      random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
-                                 maximum_range);
+      random_container.push_back(
+        (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) *
+        maximum_range);
     }
 }
 

@@ -534,7 +534,7 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                                              update_normal_vectors);
           // Loop over the faces of the cell at the boundary.
           for (int face_id = 0;
-               face_id < int(GeometryInfo<dim>::faces_per_cell);
+               face_id < static_cast<int>(GeometryInfo<dim>::faces_per_cell);
                ++face_id)
             {
               // Find the face at the boundary

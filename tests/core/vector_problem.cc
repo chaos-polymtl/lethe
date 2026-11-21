@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -61,7 +61,7 @@ test()
         {
           const auto comp_i = fe.system_to_component_index(i).first;
 
-          cell_dummy_solution(i) = 1.0 * (float(comp_i) + 1);
+          cell_dummy_solution(i) = 1.0 * (static_cast<float>(comp_i) + 1);
         }
 
       cell->get_dof_indices(local_dof_indices);

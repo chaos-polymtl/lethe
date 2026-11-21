@@ -60,7 +60,8 @@ SubSimulationControlDEM::SubSimulationControlDEM(
       // Since the total number of iterations needs to be an integer, the actual
       // value of the time step may have changed as a result of the previous
       // calculations. We then recalculate the time step.
-      time_step = this->time_interval / double(total_number_of_iterations);
+      time_step =
+        this->time_interval / static_cast<double>(total_number_of_iterations);
 
       Assert(
         total_number_of_iterations > 0,

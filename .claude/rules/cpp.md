@@ -45,9 +45,9 @@ surrounding code.
 
 ## clang-tidy 20 (CI, every warning is an error)
 
-It runs on `lethe-core`, `lethe-dem`, `lethe-solvers`, `lethe-fem-dem` and their
-headers, not on applications or tests. The enabled checks and the reasons for
-each exclusion are in `.clang-tidy`. Common triggers:
+It runs on every file of `compile_commands.json` (the four libraries, the
+applications and the tests) and on the Lethe headers they include. The enabled
+checks and the reasons for each exclusion are in `.clang-tidy`. Common triggers:
 
 - `performance-unnecessary-value-param`: pass non-trivial parameters by
   `const &`. `modernize-pass-by-value` is disabled: do not switch to by-value +
@@ -68,6 +68,19 @@ each exclusion are in `.clang-tidy`. Common triggers:
   used as a floating-point value.
 - `bugprone-throw-keyword-missing`: a constructed exception is thrown or passed
   to `AssertThrow`, never left as a bare statement.
+- `bugprone-assert-side-effect`: no `++`, assignment or other side effect in the
+  condition of `Assert`, `AssertDimension`, `AssertIndexRange`, `AssertIsFinite`
+  or `assert`, which are removed in Release.
+- `bugprone-float-loop-counter`: drive a loop with an integer counter, not with a
+  `double` compared to a bound (update the `double` in the body).
+- `bugprone-use-after-move`: never read an object after `std::move` from it.
+- `bugprone-reserved-identifier`: no `__` in names, e.g. for unused structured
+  bindings: name them after what they hold.
+- `google-readability-casting`: `static_cast<double>(n)`, never `(double)n` or
+  `double(n)`.
+- `misc-redundant-expression`: no `x != x` NaN test, use `std::isnan`; no
+  operator with two identical operands (`a - a`, `c && c`).
+- `misc-throw-by-value-catch-by-reference`: `catch (const ExceptionType &)`.
 - `cppcoreguidelines-pro-type-static-cast-downcast`: downcast polymorphic types
   with `dynamic_cast`, not `static_cast`.
 - `readability-qualified-auto`: `auto *` / `const auto *` when `auto` deduces a

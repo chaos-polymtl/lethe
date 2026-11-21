@@ -69,7 +69,7 @@ test()
     deallog << "Active physics (expected: fluid, heat)" << std::endl;
     for (const auto &iphys : active_physics)
       {
-        deallog << int(iphys) << std::endl;
+        deallog << static_cast<int>(iphys) << std::endl;
       }
   }
 
@@ -86,7 +86,7 @@ test()
     deallog << "Active physics (expected: fluid)" << std::endl;
     for (const auto &iphys : active_physics)
       {
-        deallog << int(iphys) << std::endl;
+        deallog << static_cast<int>(iphys) << std::endl;
       }
   }
 
@@ -106,7 +106,7 @@ test()
             << std::endl;
     for (const auto &iphys : active_physics)
       {
-        deallog << int(iphys) << std::endl;
+        deallog << static_cast<int>(iphys) << std::endl;
       }
   }
 
@@ -138,7 +138,7 @@ test()
           << std::endl;
         for (const auto &iphys : active_physics)
           {
-            deallog << int(iphys) << std::endl;
+            deallog << static_cast<int>(iphys) << std::endl;
           }
       }
       solver_parameters.multiphysics.electromagnetics = false;

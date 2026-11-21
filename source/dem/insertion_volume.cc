@@ -331,7 +331,7 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
       number_of_valid_insertion_point_global =
         std::accumulate(number_of_insertion_point_per_core.begin(),
                         number_of_insertion_point_per_core.end(),
-                        0);
+                        0U);
     }
 
   // This scatters the number of particles to insert

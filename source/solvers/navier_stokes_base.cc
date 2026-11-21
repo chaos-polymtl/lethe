@@ -3118,7 +3118,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
     {
-      std::string triangulationName = prefix + ".triangulation";
       tria->save(prefix + ".triangulation");
     }
 

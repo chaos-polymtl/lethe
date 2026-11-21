@@ -832,7 +832,7 @@ namespace InterfaceTools
         {
           if (local_face_id / 2 == i)
             {
-              x_ref_cell[i] = double(local_face_id % 2);
+              x_ref_cell[i] = static_cast<double>(local_face_id % 2);
               continue;
             }
           x_ref_cell[i] = x_ref_face[j];

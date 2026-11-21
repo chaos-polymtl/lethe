@@ -1158,12 +1158,12 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::report_particle_statistics()
     Utilities::MPI::this_mpi_process(this->mpi_communicator);
   // Update statistics on contact list
   double number_of_list_built_since_last_log =
-    double(contact_search_total_number) - contact_list.total;
+    static_cast<double>(contact_search_total_number) - contact_list.total;
   contact_list.max =
     std::max(number_of_list_built_since_last_log, contact_list.max);
   contact_list.min =
     std::min(number_of_list_built_since_last_log, contact_list.min);
-  contact_list.total   = double(contact_search_total_number);
+  contact_list.total   = static_cast<double>(contact_search_total_number);
   contact_list.average = contact_list.total /
                          (this->simulation_control->get_iteration_number()) *
                          this->simulation_control->get_log_frequency();
