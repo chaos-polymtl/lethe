@@ -312,11 +312,11 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``DEM coupling frequency`` is set to 1000. This is the number of DEM time steps performed per CFD time step. Here 1000 is enough to prevent instability due to particles' contact.
 
-* The ``enable lubrication force`` is set to true since the subgrid lubrication force model is required to capture the lubrication force between the particles when the gap between them is inferior to two times the mesh size.
+* The ``enable lubrication force`` is set to true since the subgrid lubrication force model is required to capture the lubrication force between the particles when the gap between them is inferior to about two times the mesh size.
 
-* The ``lubrication range max`` is set to 2. The subgrid lubrication force model is enabled when the gap between the particles is smaller than two times the mesh size.
+* The ``lubrication range max`` is set to 2. The subgrid lubrication force model is enabled when the gap between the particles is smaller than two times the smallest cell diameter divided by :math:`\sqrt{2}`, which is 2.45 times the edge of the smallest cell in 3D.
 
-* The ``lubrication range min`` is set to 0.1. The subgrid lubrication force model minimal gap considered between the particles is 0.1 times the mesh size.
+* The ``lubrication range min`` is set to 0.1. The subgrid lubrication force model minimal gap considered between the particles is 0.1 times the smallest cell diameter divided by :math:`\sqrt{2}`, which is 0.12 times the edge of the smallest cell in 3D.
 
 * The ``load particles from file`` is set to true to enable the particle to be defined using an external file.
 

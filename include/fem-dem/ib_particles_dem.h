@@ -109,10 +109,10 @@ public:
    * between particles and between particles and walls.
    *
    * @param dt The CFD time step.
-   * @param h_max The gap between the two particle.
+   * @param h_max The gap below which the lubrication force is evaluated.
    * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
    * @param rho The fluid density.
-   * @param mu The fluid viscosity.
+   * @param mu The dynamic viscosity of the fluid.
    */
   void
   integrate_particles_motion(const double dt,
@@ -199,9 +199,9 @@ public:
    * Karrila, Seppo J. ISBN 13: 9780750691734
    *
    * @param dt_dem The sub time stepping time step.
-   * @param h_max The gap between the two particle.
+   * @param h_max The gap below which the lubrication force is evaluated.
    * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
-   * @param mu The fluid viscosity.
+   * @param mu The dynamic viscosity of the fluid.
    * @param lubrication_force a vector containing the lubrication force on the particles.
    * @param lubrication_torque a vector containing the lubrication torques on the particles.
    */
@@ -220,7 +220,7 @@ public:
    * @param dt_dem The sub time stepping time step.
    * @param h_max The gap between particle and the wall below which we evaluate the force.
    * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
-   * @param mu The fluid viscosity.
+   * @param mu The dynamic viscosity of the fluid.
    * @param lubrication_force a vector containing the lubrication force on the particles.
    * @param lubrication_torque a vector containing the lubrication torques on the particles.
    */

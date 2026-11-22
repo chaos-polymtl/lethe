@@ -4790,6 +4790,18 @@ namespace Parameters
         enable_lubrication_force = prm.get_bool("enable lubrication force");
         lubrication_range_max    = prm.get_double("lubrication range max");
         lubrication_range_min    = prm.get_double("lubrication range min");
+        // Above the maximum of the range, the force would accelerate the
+        // approach of the particles. A maximum of zero disables the force.
+        AssertThrow(
+          !enable_lubrication_force || lubrication_range_max <= 0. ||
+            lubrication_range_min <= lubrication_range_max,
+          ExcMessage(
+            "The 'lubrication range min' (" +
+            std::to_string(lubrication_range_min) +
+            ") is larger than the 'lubrication range max' (" +
+            std::to_string(lubrication_range_max) +
+            "). Decrease the minimum, increase the maximum, or set 'enable "
+            "lubrication force' to false."));
         explicit_contact_impulsion_calculation =
           prm.get_bool("explicit contact impulsion");
         explicit_position_integration_calculation =
