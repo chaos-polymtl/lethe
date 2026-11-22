@@ -268,15 +268,13 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 typeid(*particle_two.shape) == typeid(Sphere<dim>);
               const auto contact_state =
                 only_particle_two_is_a_sphere ?
-                  particle_two.shape->half_distance_to_shape(
+                  particle_two.shape->distance_to_shape(
                     *particle_one.shape, contact_points_candidate) :
-                  particle_one.shape->half_distance_to_shape(
+                  particle_one.shape->distance_to_shape(
                     *particle_two.shape, contact_points_candidate);
 
-              // The Hertz model uses the full overlap, which is twice the
-              // half distance returned by the shape, as for the walls.
-              const double normal_overlap =
-                -2. * std::get<double>(contact_state);
+              // The overlap is the opposite of the distance between the shapes.
+              const double normal_overlap = -std::get<double>(contact_state);
               const Point<dim> contact_point =
                 std::get<Point<dim>>(contact_state);
               const Tensor<1, dim> normal =
@@ -768,9 +766,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               // set is smaller than the wall initial guess. Find the normal
               // overlap
               auto contact_state =
-                particle.shape->half_distance_to_shape(*contact_plane,
-                                                       contact_point_candidate);
-              double   normal_overlap = -2 * std::get<double>(contact_state);
+                particle.shape->distance_to_shape(*contact_plane,
+                                                  contact_point_candidate);
+              double   normal_overlap = -std::get<double>(contact_state);
               Point<3> contact_point =
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
               // The shape distance routine returns the wall-to-particle
