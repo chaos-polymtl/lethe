@@ -176,20 +176,14 @@ public:
     // then the rectangular boxes.
     if (exact_distance_outside_of_contact == false)
       {
-        Point<dim> bounding_box_center_one;
-        Point<dim> bounding_box_center_two;
-        double     radius_one = this->bounding_box_half_length.norm();
-        double     radius_two = shape.bounding_box_half_length.norm();
-        // In the case of the plane, the radius of the bounding box is zero, so
-        // we replace it with the radius of the other object.
-        if (radius_one == 0)
-          {
-            radius_one = radius_two;
-          }
-        if (radius_two == 0)
-          {
-            radius_two = radius_one;
-          }
+        Point<dim>   bounding_box_center_one;
+        Point<dim>   bounding_box_center_two;
+        const double radius_one = this->bounding_box_half_length.norm();
+        const double radius_two = shape.bounding_box_half_length.norm();
+        // A plane is infinite and has no bounding box, so its radius is zero.
+        // The distance to the point which defines it says nothing about the
+        // contact: only the check of the bounding boxes applies.
+        const bool is_with_plane = radius_one <= 0. || radius_two <= 0.;
         if constexpr (dim == 3)
           {
             bounding_box_center_one =
@@ -210,7 +204,8 @@ public:
               tensor_nd_to_2d(shape.rotation_matrix *
                               point_nd_to_3d(shape.bounding_box_center));
           }
-        if (((bounding_box_center_one - bounding_box_center_two).norm() -
+        if (is_with_plane ||
+            ((bounding_box_center_one - bounding_box_center_two).norm() -
              radius_one - radius_two) <= 0)
           {
             bounding_box_contact = this->bounding_box_contact(shape);
@@ -497,20 +492,14 @@ public:
     // then the rectangular boxes.
     if (exact_distance_outside_of_contact == false)
       {
-        Point<dim> bounding_box_center_one;
-        Point<dim> bounding_box_center_two;
-        double     radius_one = this->bounding_box_half_length.norm();
-        double     radius_two = shape.bounding_box_half_length.norm();
-        // In the case of the plane, the radius of the bounding box is zero, so
-        // we replace it with the radius of the other object.
-        if (radius_one == 0)
-          {
-            radius_one = radius_two;
-          }
-        if (radius_two == 0)
-          {
-            radius_two = radius_one;
-          }
+        Point<dim>   bounding_box_center_one;
+        Point<dim>   bounding_box_center_two;
+        const double radius_one = this->bounding_box_half_length.norm();
+        const double radius_two = shape.bounding_box_half_length.norm();
+        // A plane is infinite and has no bounding box, so its radius is zero.
+        // The distance to the point which defines it says nothing about the
+        // contact: only the check of the bounding boxes applies.
+        const bool is_with_plane = radius_one <= 0. || radius_two <= 0.;
         if constexpr (dim == 3)
           {
             bounding_box_center_one =
@@ -531,7 +520,8 @@ public:
               tensor_nd_to_2d(shape.rotation_matrix *
                               point_nd_to_3d(shape.bounding_box_center));
           }
-        if (((bounding_box_center_one - bounding_box_center_two).norm() -
+        if (is_with_plane ||
+            ((bounding_box_center_one - bounding_box_center_two).norm() -
              radius_one - radius_two) <= 0)
           {
             bounding_box_contact = this->bounding_box_contact(shape);
@@ -855,22 +845,17 @@ public:
           }
 
         double         ra, rb;
-        Tensor<2, dim> R, AbsR;
+        Tensor<2, dim> AbsR;
         // Compute rotation matrix expressing each box in the other's coordinate
-        // frame
-        for (int i = 0; i < 3; i++)
-          {
-            for (int j = 0; j < 3; j++)
-              {
-                R[i][j] = scalar_product(this->rotation_matrix[i],
-                                         shape.rotation_matrix[j]);
-              }
-          }
+        // frame. The axes of a box are the columns of its rotation matrix,
+        // which goes from the frame of the shape to the global frame.
+        const Tensor<2, dim> R =
+          transpose(this->rotation_matrix) * shape.rotation_matrix;
         // Compute translation vector t in this shape frame
         Tensor<1, dim> t =
           shape.position + shape.rotation_matrix * shape.bounding_box_center -
           (this->position + this->rotation_matrix * this->bounding_box_center);
-        t = this->rotation_matrix * t;
+        t = transpose(this->rotation_matrix) * t;
         // Compute common subexpressions. Add in an epsilon term to counteract
         // arithmetic errors
         for (int i = 0; i < 3; i++)
@@ -909,13 +894,13 @@ public:
               return false;
           }
         // Check the axis obtained from the cross product of all the bases axis.
-        Tensor<1, dim> L;
         for (int i = 0; i < 3; i++)
           {
             for (int j = 0; j < 3; j++)
               {
-                L  = cross_product_3d(this->rotation_matrix[i],
-                                     shape.rotation_matrix[j]);
+                // Projection of t on the axis A_i x B_j, in the frame of A
+                const double t_on_axis = t[(i + 2) % 3] * R[(i + 1) % 3][j] -
+                                         t[(i + 1) % 3] * R[(i + 2) % 3][j];
                 ra = (this->bounding_box_half_length[(i + 1) % 3] +
                       this->layer_thickening) *
                        AbsR[(i + 2) % 3][j] +
@@ -928,7 +913,7 @@ public:
                      (shape.bounding_box_half_length[(j + 2) % 3] +
                       shape.layer_thickening) *
                        AbsR[i][(j + 1) % 3];
-                if (std::abs(scalar_product(t, L)) > ra + rb)
+                if (std::abs(t_on_axis) > ra + rb)
                   return false;
               }
           }
@@ -962,11 +947,11 @@ public:
                                        vertex_position);
                     if (this->value(point_nd_to_2d(vertex)) <= 0)
                       {
-                        return false;
+                        return true;
                       }
                   }
               }
-            return true;
+            return false;
           }
         else if (shape.bounding_box_half_length.norm() == 0)
           {
@@ -991,25 +976,20 @@ public:
                          vertex_position);
                     if (shape.value(point_nd_to_2d(vertex)) <= 0)
                       {
-                        return false;
+                        return true;
                       }
                   }
               }
-            return true;
+            return false;
           }
         double       ra, rb;
-        Tensor<2, 3> R, AbsR;
+        Tensor<2, 3> AbsR;
 
         // Compute rotation matrix expressing each box in the other's coordinate
-        // frame
-        for (int i = 0; i < 3; i++)
-          {
-            for (int j = 0; j < 3; j++)
-              {
-                R[i][j] = scalar_product(this->rotation_matrix[i],
-                                         shape.rotation_matrix[j]);
-              }
-          }
+        // frame. The axes of a box are the columns of its rotation matrix,
+        // which goes from the frame of the shape to the global frame.
+        const Tensor<2, 3> R =
+          transpose(this->rotation_matrix) * shape.rotation_matrix;
 
         // Compute translation vector t in this shape frame
         Tensor<1, 3> t =
@@ -1017,7 +997,7 @@ public:
           shape.rotation_matrix * point_nd_to_3d(shape.bounding_box_center) -
           (point_nd_to_3d(this->position) +
            this->rotation_matrix * point_nd_to_3d(this->bounding_box_center));
-        t = this->rotation_matrix * t;
+        t = transpose(this->rotation_matrix) * t;
 
         // Compute common subexpressions. Add in an epsilon term to counteract
         // arithmetic errors

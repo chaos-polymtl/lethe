@@ -1,0 +1,13 @@
+
+DEAL::Dimension 2
+DEAL::Force of a boundary is the Hertz force: true
+DEAL::No force when the boundary is not touched: true
+DEAL::Force of a floating wall is the Hertz force: true
+DEAL::Floating wall is found far from the point which defines it: true
+DEAL::No force when the floating wall is not touched: true
+DEAL::Dimension 3
+DEAL::Force of a boundary is the Hertz force: true
+DEAL::No force when the boundary is not touched: true
+DEAL::Force of a floating wall is the Hertz force: true
+DEAL::Floating wall is found far from the point which defines it: true
+DEAL::No force when the floating wall is not touched: true

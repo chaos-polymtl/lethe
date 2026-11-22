@@ -1,0 +1,12 @@
+
+DEAL::Dimension 2
+DEAL::Axis-aligned plane and box: true
+DEAL::Oblique plane and box: true
+DEAL::Boxes of the same orientation: true
+DEAL::Boxes of different orientations: true
+DEAL::Dimension 3
+DEAL::Axis-aligned plane and box: true
+DEAL::Oblique plane and box: true
+DEAL::Boxes of the same orientation: true
+DEAL::Boxes of different orientations: true
+DEAL::Boxes with crossed edges: true

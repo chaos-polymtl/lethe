@@ -14,6 +14,7 @@
 #include <boost/serialization/utility.hpp>
 
 #include <algorithm>
+#include <cfloat>
 #include <map>
 #include <utility>
 
@@ -242,11 +243,12 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               // Calculation of normal overlap
               std::vector<Point<dim>> contact_points_candidate;
 
+              auto &previous_contact_points =
+                previous_particle_particle_contact_point[particle_one
+                                                           .particle_id];
               auto iterator =
-                previous_wall_contact_point[particle_one.particle_id].find(
-                  particle_two.particle_id);
-              if (iterator !=
-                  previous_wall_contact_point[particle_one.particle_id].end())
+                previous_contact_points.find(particle_two.particle_id);
+              if (iterator != previous_contact_points.end())
                 {
                   contact_points_candidate.push_back(iterator->second);
                 }
@@ -281,9 +283,10 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 only_particle_two_is_a_sphere ?
                   -std::get<Tensor<1, dim>>(contact_state) :
                   std::get<Tensor<1, dim>>(contact_state);
-              previous_wall_contact_point[particle_one.particle_id]
-                                         [particle_two.particle_id] =
-                                           contact_point;
+              // No point is found when the bounding boxes do not touch
+              if (std::get<double>(contact_state) < DBL_MAX)
+                previous_contact_points[particle_two.particle_id] =
+                  contact_point;
               Point<3>     contact_point_3d = point_nd_to_3d(contact_point);
               Tensor<1, 3> contact_normal   = tensor_nd_to_3d(normal);
 
@@ -758,6 +761,20 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 {
                   contact_point_candidate.push_back(iterator->second);
                 }
+              else if (boundary_cell.boundary_index >
+                       static_cast<types::boundary_id>(
+                         lowest_floating_wall_indices))
+                {
+                  // The point which defines a floating wall can be far from
+                  // the particle: start from the projection of the particle on
+                  // the wall instead.
+                  const Tensor<1, dim> &wall_normal =
+                    boundary_cell_information.normal_vector;
+                  contact_point_candidate.push_back(
+                    particle.position -
+                    ((particle.position - point_on_boundary) * wall_normal) *
+                      wall_normal);
+                }
               else
                 {
                   contact_point_candidate.push_back(point_on_boundary);
@@ -779,9 +796,12 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
               // Keep the last contact point as an initial guess for the
               // next contact point.
-              previous_wall_contact_point[particle.particle_id]
-                                         [boundary_cell.boundary_index] =
-                                           std::get<Point<dim>>(contact_state);
+              // No point is found when the bounding boxes do not touch
+              if (std::get<double>(contact_state) < DBL_MAX)
+                previous_wall_contact_point[particle.particle_id]
+                                           [boundary_cell.boundary_index] =
+                                             std::get<Point<dim>>(
+                                               contact_state);
 
               if (normal_overlap > 0)
                 {
