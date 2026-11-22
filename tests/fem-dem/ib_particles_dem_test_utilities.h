@@ -11,6 +11,7 @@
  */
 
 // Deal.II includes
+#include <deal.II/base/logstream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
@@ -93,6 +94,58 @@ make_ib_particles_parameters(const std::string &gravity)
   prm.set("Function expression", gravity);
   parameters->f_gravity->parse_parameters(prm);
   return parameters;
+}
+
+/**
+ * @brief Write the result of a check to the log of the test.
+ *
+ * @param[in] description What is checked.
+ * @param[in] is_right Result of the check.
+ */
+inline void
+log_check(const std::string &description, const bool is_right)
+{
+  deallog << description << ": " << (is_right ? "true" : "false") << std::endl;
+}
+
+/**
+ * @brief Get the unit vector along which the tests align their pairs of
+ * particles. It is not aligned with an axis.
+ *
+ * @return The unit vector, from the first particle to the second one.
+ */
+template <int dim>
+Tensor<1, dim>
+get_pair_direction()
+{
+  Tensor<1, dim> direction;
+  if constexpr (dim == 2)
+    {
+      direction[0] = 0.6;
+      direction[1] = 0.8;
+    }
+  else
+    {
+      direction[0] = 2. / 3.;
+      direction[1] = 1. / 3.;
+      direction[2] = 2. / 3.;
+    }
+  return direction;
+}
+
+/**
+ * @brief Get the position of the first particle of the pairs of the tests.
+ *
+ * @return The position.
+ */
+template <int dim>
+Point<dim>
+get_pair_origin()
+{
+  Point<dim> origin;
+  for (int d = 0; d < dim; ++d)
+    origin[d] = 0.1 * (d + 1);
+  return origin;
 }
 
 #endif
