@@ -125,8 +125,8 @@ General
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
-  * ``lie``: transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t` (first-order accurate).
-  * ``strang``: phase-space evolution over :math:`\Delta t / 2`, transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t / 2` (second-order accurate).
+  * ``lie``: physical-space transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t` (first-order accurate).
+  * ``strang``: phase-space evolution over :math:`\Delta t / 2`, physical-space transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t / 2` (second-order accurate).
 
 .. note::
   See :doc:`../../theory/multiphysics/qmom/qmom_equations` for details on the splitting schemes.
@@ -151,7 +151,7 @@ Growth of the particles in phase space, used if ``enable growth`` is ``true``. T
 
   * ``constant``: :math:`G = a`, with :math:`a` the ``growth coefficient`` in :math:`\text{m} \cdot \text{s}^{-1}`. All the sizes increase by the same amount.
   * ``linear``: :math:`G = a \xi`, with :math:`a` the ``growth coefficient`` in :math:`\text{s}^{-1}`. All the sizes are multiplied by :math:`\exp(a t)`.
-  * ``function``: :math:`G` is the ``Function expression``. This generic model is slower than the ``constant`` and ``linear`` models, since the expression is evaluated by a parser for every quadrature node, at every stage of the integration and at every degree of freedom: use it only for a growth rate that no other model provides.
+  * ``function``: :math:`G` is the ``Function expression``. This generic model runs slower than the ``constant`` and ``linear`` models, since the expression is evaluated by a parser for every quadrature node, at every stage of the integration and at every degree of freedom: use it only for a growth rate that no other model provides.
 
 * ``growth coefficient``: coefficient :math:`a` of the ``constant`` and ``linear`` models.
 * ``Function expression``: growth rate of the ``function`` model, in :math:`\text{m} \cdot \text{s}^{-1}`, as an expression of the particle size ``xi``, in :math:`\text{m}`, and of the time ``t``, in :math:`\text{s}` (e.g. ``set Function expression = 2 * xi``). The expression cannot depend on the position.
@@ -164,7 +164,7 @@ Nucleation of the particles in phase space, used if ``enable nucleation`` is ``t
 * ``model``: model of the nucleation rate. The choices are:
 
   * ``constant``: :math:`J = a`, with :math:`a` the ``nucleation coefficient`` in :math:`\text{m}^{-3} \cdot \text{s}^{-1}`.
-  * ``function``: :math:`J` is the ``Function expression``. This generic model is slower than the ``constant`` model, since the expression is evaluated by a parser at every stage of the integration and at every degree of freedom.
+  * ``function``: :math:`J` is the ``Function expression``. This generic model runs slower than the ``constant`` model, since the expression is evaluated by a parser at every stage of the integration and at every degree of freedom.
 
 * ``nucleation coefficient``: coefficient :math:`a` of the ``constant`` model.
 * ``Function expression``: nucleation rate of the ``function`` model, in :math:`\text{m}^{-3} \cdot \text{s}^{-1}`, as an expression of the time ``t``, in :math:`\text{s}` (e.g. ``set Function expression = 1e19 * exp(-t)``). The expression cannot depend on the position.
@@ -179,7 +179,7 @@ Coalescence of the particles in phase space, used if ``enable coalescence`` is `
 * ``model``: model of the coalescence kernel. The choices are:
 
   * ``constant``: :math:`\beta = a`, with :math:`a` the ``coalescence coefficient`` in :math:`\text{m}^{3} \cdot \text{s}^{-1}`.
-  * ``function``: :math:`\beta` is the ``Function expression``. This generic model is slower than the ``constant`` model, since the expression is evaluated by a parser for every pair of quadrature nodes, at every stage of the integration and at every degree of freedom.
+  * ``function``: :math:`\beta` is the ``Function expression``. This generic model runs slower than the ``constant`` model, since the expression is evaluated by a parser for every pair of quadrature nodes, at every stage of the integration and at every degree of freedom.
 
 * ``coalescence coefficient``: coefficient :math:`a` of the ``constant`` model.
 * ``Function expression``: coalescence kernel of the ``function`` model, in :math:`\text{m}^{3} \cdot \text{s}^{-1}`, as an expression of the sizes ``xi_1`` and ``xi_2`` of the two particles, in :math:`\text{m}`, and of the time ``t``, in :math:`\text{s}` (e.g. ``set Function expression = 1e-18 * (xi_1 + xi_2) / 1e-7``). The expression cannot depend on the position.
