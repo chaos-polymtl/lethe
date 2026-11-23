@@ -129,6 +129,9 @@ The warnings build is Debug with `-Wall -Wextra -Wpedantic -pedantic-errors
    */
   ```
 
+- The `@brief` is one or two short sentences stating what the function does;
+  details (method, assumptions, references) go in a paragraph after it.
+
 - clang-format regroups and sorts includes (`IncludeBlocks: Regroup`): Lethe
   modules first, then deal.II, Boost, other third-party, and the standard
   library. Add an include anywhere in the block and run

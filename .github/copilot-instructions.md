@@ -35,8 +35,9 @@ flagging an issue, and prefer a small number of high-signal comments over noise.
 
 - Every function must be documented **in the header (`.h`)** with a Doxygen
   `@brief` describing what it does and a `@param` for **each** argument.
-- Flag any new or modified public function missing `@brief` or with incomplete
-  `@param` coverage.
+- The `@brief` is one or two short sentences; details go in a paragraph after it.
+- Flag any new or modified public function missing `@brief`, with a `@brief`
+  longer than two short sentences, or with incomplete `@param` coverage.
 - If a PR adds or changes parameters that appear in the input file (`.prm`/JSON),
   the corresponding documentation must be updated. Flag missing doc updates.
 
