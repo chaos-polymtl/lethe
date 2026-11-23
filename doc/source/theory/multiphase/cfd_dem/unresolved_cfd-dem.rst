@@ -53,7 +53,7 @@ where:
 * :math:`\mathbf{F}''_{i}` are the remaining forces, such as virtual mass, Basset, etc., which are not currently implemented in Lethe.
 
 .. note::
-    Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{\mathrm{Ar},i}` in :math:`\mathbf{f}_{\mathrm{fp},i}`.  
+    Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), :math:`\mathbf{F}_{\nabla p,i}` is computed from the reduced pressure :math:`p^*` and we explicitly insert the buoyancy :math:`\mathbf{F}_{\mathrm{Ar},i} = -\rho_f V_{\mathrm{p},i} \mathbf{g}` in :math:`\mathbf{F}_{\mathrm{fp},i}`. Its reaction is not applied to the fluid, because the hydrostatic reduction already accounts for it. In Model A, :math:`\mathbf{F}_{\nabla p,i} + \mathbf{F}_{\mathrm{Ar},i}` is the full pressure gradient force, which is excluded from :math:`\mathbf{f}_{\mathrm{pf},\mathrm{A}}`. In Model B, the reaction :math:`-\sum_i k_r \mathbf{F}_{\mathrm{Ar},i} = (1-\varepsilon_f) \rho_f \mathbf{g}` exactly cancels the term :math:`-(1-\varepsilon_f) \rho_f \mathbf{g}` left by the hydrostatic reduction of :math:`-\nabla p^{\mathrm{phys}} + \varepsilon_f \rho_f \mathbf{g}`.
 
 In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <../../../parameters/unresolved-cfd-dem/cfd-dem>`_.
 
@@ -102,7 +102,7 @@ where:
 
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
-* :math:`\tau` is the deviatoric stress tensor;
+* :math:`\tau = \rho_f \nu \left( \nabla \mathbf{u} + \nabla \mathbf{u}^T \right)` is the viscous stress tensor, with :math:`\nu` the kinematic viscosity. Since :math:`\nabla \cdot \mathbf{u} = -\left( \partial_t \varepsilon_f + \mathbf{u} \cdot \nabla \varepsilon_f \right) / \varepsilon_f` does not vanish, :math:`\tau` is not traceless: its dilatational part :math:`-\frac{2}{3} \rho_f \nu \left( \nabla \cdot \mathbf{u} \right) \mathbf{I}` is not included;
 * :math:`\mathbf{f}_{\mathrm{pf},\mathrm{A}}` and :math:`\mathbf{f}_{\mathrm{pf},\mathrm{B}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. 
 
 It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:
@@ -123,14 +123,76 @@ The term :math:`\mathbf{f}_{\mathrm{pf}}`, which has units of a volumetric force
 
 
 .. math::
-     \mathbf{f}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
-     \mathbf{f}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)            
+     \mathbf{f}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} - \mathbf{F}_{\mathrm{Ar},i} \right ) \right) \\
+     \mathbf{f}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\mathrm{Ar},i} \right ) \right)
 
 Different choices of the weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` are possible, and Lethe provides two options. When the Particle-in-Cell (PIC) method is used for particle–fluid coupling, particle properties are regularized over the mesh cells by averaging them within each cell. This procedure is equivalent to using a cell-based top-hat weighting function over the cell containing the point :math:`\mathbf{x}`. However, this approach is not ideal, as it leads to force definitions that depend on the mesh resolution.
 
 To mitigate this issue, Lethe also supports filtering of solid–fluid interaction forces using a spherical top-hat filter centered at the quadrature points, with a user-defined radius that should be larger than the particle diameter. This approach, referred to as the Quadrature-Centered Method (QCM), yields a filtering operation that is independent of the mesh and depends solely on the chosen filter radius.
 
 Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
+
+Weak Formulation of Model A
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let :math:`p` be the kinematic pressure, :math:`\tilde{\boldsymbol{\tau}} = \tau / \rho_f = \nu \left( \nabla \mathbf{u} + \nabla \mathbf{u}^T \right)` the kinematic viscous stress, :math:`m` a mass source, so that the continuity equation reads :math:`\partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) = m`, and :math:`\mathbf{f}` a body force per unit mass (source term and dynamic flow control). Lethe does not discretize the conservative left-hand side of the Model A momentum equation directly. Using mass conservation, it is rewritten as:
+
+.. math::
+    \partial_t \left( \varepsilon_f \mathbf{u} \right) + \nabla \cdot \left( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right) &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + \mathbf{u} \left( \partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) \right) = \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} \\
+    \partial_t \left( \varepsilon_f u_k \right) + \partial_l \left( \varepsilon_f u_l u_k \right) &= \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + u_k \left( \partial_t \varepsilon_f + \partial_l \left( \varepsilon_f u_l \right) \right) = \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k
+
+Both forms are equivalent for the exact solution, but not after discretization, since the continuity equation is only satisfied weakly. The strong form solved by Lethe is therefore:
+
+.. math::
+    \partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) &= m \\
+    \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} &= -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tilde{\boldsymbol{\tau}} + \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} + \varepsilon_f \mathbf{f}
+
+or, in index notation, with :math:`\tilde{\tau}_{lk} = \nu \left( \partial_l u_k + \partial_k u_l \right)`:
+
+.. math::
+    \partial_t \varepsilon_f + \partial_l \left( \varepsilon_f u_l \right) &= m \\
+    \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k &= -\varepsilon_f \partial_k p + \varepsilon_f \partial_l \tilde{\tau}_{lk} + \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} + \varepsilon_f f_k
+
+Since :math:`\varepsilon_f` remains outside the derivatives in Model A, only :math:`p` and :math:`\tilde{\boldsymbol{\tau}}` are integrated by parts, which leaves explicit void fraction gradient terms:
+
+.. math::
+    \left( \mathbf{v}, \varepsilon_f \nabla p \right)_{\Omega} &= - \left( \nabla \cdot \mathbf{v}, \varepsilon_f p \right)_{\Omega} - \left( \mathbf{v}, p \nabla \varepsilon_f \right)_{\Omega} + \left( \mathbf{v}, \varepsilon_f p \mathbf{n} \right)_{\partial \Omega} \\
+    - \left( \mathbf{v}, \varepsilon_f \nabla \cdot \tilde{\boldsymbol{\tau}} \right)_{\Omega} &= \left( \nabla \mathbf{v}, \varepsilon_f \tilde{\boldsymbol{\tau}} \right)_{\Omega} + \left( \mathbf{v}, \tilde{\boldsymbol{\tau}} \nabla \varepsilon_f \right)_{\Omega} - \left( \mathbf{v}, \varepsilon_f \tilde{\boldsymbol{\tau}} \mathbf{n} \right)_{\partial \Omega}
+
+where :math:`\varepsilon_f` is the projected finite element field described in the Void Fraction section below, so its gradient is defined. Let :math:`\mathcal{V}` be the velocity space satisfying the Dirichlet conditions, :math:`\mathcal{V}_0` its homogeneous counterpart and :math:`\mathcal{Q}` the pressure space. The weak form is: find :math:`(\mathbf{u}, p) \in \mathcal{V} \times \mathcal{Q}` such that, for all :math:`(\mathbf{v}, q) \in \mathcal{V}_0 \times \mathcal{Q}`:
+
+.. math::
+    & \left( q, \partial_t \varepsilon_f + \varepsilon_f \nabla \cdot \mathbf{u} + \mathbf{u} \cdot \nabla \varepsilon_f - m \right)_{\Omega} = 0 \\
+    & \left( \mathbf{v}, \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} \right)_{\Omega} - \left( \nabla \cdot \mathbf{v}, \varepsilon_f p \right)_{\Omega} - \left( \mathbf{v}, p \nabla \varepsilon_f \right)_{\Omega} + \left( \nabla \mathbf{v}, \varepsilon_f \tilde{\boldsymbol{\tau}} \right)_{\Omega} + \left( \mathbf{v}, \tilde{\boldsymbol{\tau}} \nabla \varepsilon_f \right)_{\Omega} \\
+    & \quad - \left( \mathbf{v}, \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} + \varepsilon_f \mathbf{f} \right)_{\Omega} + \left( \tau_{\mathrm{s}} \nabla q, \mathbf{R} \right)_{\Omega_e} + \left( \tau_{\mathrm{s}} \left( \mathbf{u} \cdot \nabla \right) \mathbf{v}, \mathbf{R} \right)_{\Omega_e} + \left( \nabla \cdot \mathbf{v}, \gamma R_c \right)_{\Omega} = 0
+
+or, in index notation:
+
+.. math::
+    & \left( q, \partial_t \varepsilon_f + \varepsilon_f \partial_l u_l + u_l \partial_l \varepsilon_f - m \right)_{\Omega} = 0 \\
+    & \left( v_k, \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k \right)_{\Omega} - \left( \partial_k v_k, \varepsilon_f p \right)_{\Omega} - \left( v_k, p \partial_k \varepsilon_f \right)_{\Omega} + \left( \partial_l v_k, \varepsilon_f \tilde{\tau}_{lk} \right)_{\Omega} + \left( v_k, \tilde{\tau}_{lk} \partial_l \varepsilon_f \right)_{\Omega} \\
+    & \quad - \left( v_k, \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} + \varepsilon_f f_k \right)_{\Omega} + \left( \tau_{\mathrm{s}} \partial_k q, R_k \right)_{\Omega_e} + \left( \tau_{\mathrm{s}} u_l \partial_l v_k, R_k \right)_{\Omega_e} + \left( \partial_k v_k, \gamma R_c \right)_{\Omega} = 0
+
+The boundary term :math:`\left( \mathbf{v}, \varepsilon_f \left( \tilde{\boldsymbol{\tau}} - p \mathbf{I} \right) \mathbf{n} \right)_{\partial \Omega}` is discarded, so where no Dirichlet condition is applied, the natural condition is :math:`\varepsilon_f \left( \tilde{\boldsymbol{\tau}} - p \mathbf{I} \right) \mathbf{n} = \mathbf{0}`. The SUPG/PSPG terms use the strong residual of the momentum equation, :math:`\mathbf{R}`, and the grad-div term uses the strong residual of the continuity equation, :math:`R_c`:
+
+.. math::
+    \mathbf{R} &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} + \varepsilon_f \nabla p - \varepsilon_f \nu \left( \nabla^2 \mathbf{u} + \nabla \left( \nabla \cdot \mathbf{u} \right) \right) - \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} - \varepsilon_f \mathbf{f} \\
+    R_c &= \partial_t \varepsilon_f + \varepsilon_f \nabla \cdot \mathbf{u} + \mathbf{u} \cdot \nabla \varepsilon_f - m
+
+or, in index notation:
+
+.. math::
+    R_k &= \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k + \varepsilon_f \partial_k p - \varepsilon_f \nu \left( \partial_l \partial_l u_k + \partial_k \partial_l u_l \right) - \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} - \varepsilon_f f_k \\
+    R_c &= \partial_t \varepsilon_f + \varepsilon_f \partial_l u_l + u_l \partial_l \varepsilon_f - m
+
+where:
+
+* :math:`\tau_{\mathrm{s}}` is the SUPG/PSPG stabilization parameter defined in :doc:`../../multiphysics/fluid_dynamics/stabilization`;
+* :math:`\gamma = \nu + c^* \lVert \mathbf{u} \rVert` is the grad-div parameter, with :math:`c^*` the ``grad-div length scale``. The grad-div term is only added when ``grad div = true``;
+* the time derivatives are discretized with a BDF scheme. All :math:`\varepsilon_f` factors are evaluated at :math:`t^{n+1}`, and :math:`\partial_t \varepsilon_f` is only included when ``void fraction time derivative = true``;
+* the particle-fluid term is :math:`\frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} = -\frac{1}{\rho_f} \Pi \left( \sum_i k_r \mathbf{F}^{\mathrm{tw}}_i \right) + \beta \left( \Pi \mathbf{v}_{\mathrm{p}} - \mathbf{u} \right)`, where :math:`\Pi` denotes the projection on a finite element field, :math:`\mathbf{F}^{\mathrm{tw}}_i` gathers the two-way coupled forces on particle :math:`i` (Saffman and Magnus lift, plus the drag when the coupling is fully explicit), :math:`\mathbf{v}_{\mathrm{p}}` is the particle velocity and :math:`\beta` is the momentum transfer coefficient divided by :math:`\rho_f`, which is zero when the coupling is fully explicit. The pressure gradient, shear and buoyancy forces act on the particles only.
+
+The derivatives of :math:`\tau_{\mathrm{s}}` and :math:`\gamma` with respect to :math:`\mathbf{u}` are neglected in the Jacobian.
 
 Void Fraction
 --------------
@@ -190,8 +252,8 @@ where :math:`\mathbf{1}_{\{\mathbf{x}_i \in \Omega_e\}}` is the indicator functi
 .. math::
 
     \begin{align}
-        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{A}} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i}- \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i}\right)\\
-        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{B}} d\mathbf{x} &= \sum_{i} \left(-\mathbf{F}_{\mathrm{fp},i}\right)
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{A}} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i}- \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} - \mathbf{F}_{\mathrm{Ar},i}\right)\\
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{B}} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\mathrm{Ar},i}\right)
     \end{align}
 
 The Satellite Point Method
@@ -226,7 +288,7 @@ The void fraction at the quadrature point using QCM is calculated as:
 The weighting function is also used to compute the fluid–particle momentum exchange term. Integrating this term over the computational domain demonstrates that the formulation also satisfies Newton’s third law for both kernels (the corresponding expression is shown for Model B without loss of generality):
 
 .. math:: 
-      \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{\left(-\mathbf{F}_{{\mathrm{fp},i}} \right) k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )} \times w_q|J| = \sum_{i} \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
+      \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{-\left(\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\mathrm{Ar},i} \right) k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )} \times w_q|J| = \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\mathrm{Ar},i} \right)
 
 where :math:`w_q|J|` is the weight at the quadrature point located at :math:`\mathbf{x}_q`, multiplied by the volume of the cell containing the quadrature point. 
 
