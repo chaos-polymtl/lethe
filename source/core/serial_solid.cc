@@ -148,21 +148,6 @@ std::vector<
   std::pair<typename Triangulation<spacedim>::active_cell_iterator,
             typename Triangulation<dim, spacedim>::active_cell_iterator>>
 SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
-  const parallel::TriangulationBase<spacedim> &background_tr)
-{
-  BackgroundCellsSearchTree<spacedim> background_cells_search_tree;
-  background_cells_search_tree.build(background_tr);
-
-  return map_solid_in_background_triangulation(background_cells_search_tree);
-}
-
-
-
-template <int dim, int spacedim>
-std::vector<
-  std::pair<typename Triangulation<spacedim>::active_cell_iterator,
-            typename Triangulation<dim, spacedim>::active_cell_iterator>>
-SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
   const BackgroundCellsSearchTree<spacedim> &background_cells_search_tree)
 {
   std::vector<

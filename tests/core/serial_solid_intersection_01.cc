@@ -58,10 +58,14 @@ test()
 
   SerialSolid<2, 3> solid(param, 0);
 
+  // Build the R-tree of the locally owned background cells
+  BackgroundCellsSearchTree<3> background_cells_search_tree;
+  background_cells_search_tree.build(*background_tria);
+
   // Calculate the intersections between the background triangulation and the
   // floating solid
   auto cell_and_triangle_intersection =
-    solid.map_solid_in_background_triangulation(*background_tria);
+    solid.map_solid_in_background_triangulation(background_cells_search_tree);
   deallog << "Cell pairs (background, solid)" << std::endl;
   for (auto &cell_pair : cell_and_triangle_intersection)
     {
