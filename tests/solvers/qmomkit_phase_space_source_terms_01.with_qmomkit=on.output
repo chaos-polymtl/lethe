@@ -1,9 +1,0 @@
-
-DEAL::Constant growth: passed
-DEAL::Linear growth: passed
-DEAL::Function growth: passed
-DEAL::Constant nucleation: passed
-DEAL::Function nucleation: passed
-DEAL::Linear growth with constant nucleation: passed
-DEAL::Constant coalescence: passed
-DEAL::Function coalescence: passed
