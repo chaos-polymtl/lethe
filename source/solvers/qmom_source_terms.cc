@@ -57,7 +57,7 @@ QMOMConstantGrowth::compute_growth_rates(
   std::vector<double>       &growth_rates) const
 {
   AssertDimension(growth_rates.size(), abscissas.size());
-  std::fill(growth_rates.begin(), growth_rates.end(), growth_coefficient);
+  std::ranges::fill(growth_rates, growth_coefficient);
 }
 
 QMOMLinearGrowth::QMOMLinearGrowth(const double growth_coefficient)
@@ -207,7 +207,7 @@ QMOMCoalescenceModelBase::compute_moment_rates(
   std::vector<double>       &moment_rates) const
 {
   AssertDimension(weights.size(), abscissas.size());
-  std::fill(moment_rates.begin(), moment_rates.end(), 0.);
+  std::ranges::fill(moment_rates, 0.);
 
   // Double sum over the ordered pairs of nodes, hence the factor 1/2. It does
   // not assume that the kernel of the function model is symmetric.
@@ -353,5 +353,5 @@ QMOMSourceTerms::compute_nucleation_moment_rates(
   if (nucleation_model)
     nucleation_model->compute_moment_rates(time, local_scalars, moment_rates);
   else
-    std::fill(moment_rates.begin(), moment_rates.end(), 0.);
+    std::ranges::fill(moment_rates, 0.);
 }
