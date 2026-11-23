@@ -306,7 +306,7 @@ QMOMSourceTerms::QMOMSourceTerms(const Parameters::QMOM &qmom_parameters)
                                          abscissas,
                                          growth_rates);
     else
-      std::fill(growth_rates.begin(), growth_rates.end(), 0.);
+      std::ranges::fill(growth_rates, 0.);
   };
 
   // Coalescence: its rate depends on the quadrature of the current stage of
