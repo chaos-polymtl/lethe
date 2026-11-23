@@ -9,7 +9,7 @@ This subsection defines the parameters of the quadrature method of moments (QMOM
 
 The QMOM physics transports ``number of scalars`` user-defined scalar fields and ``number of moments`` :math:`K` moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, discretized with a discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`). 
 
-Each time step is split into the transport of the scalars and moments in physical space, followed by their evolution in phase space (growth, nucleation and coalescence) by QMOMKit. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+Each time step is split into the transport of the moments in physical space, then the transport of the scalars in physical space, followed by the evolution of the moments in phase space (growth, nucleation and coalescence) by QMOMKit. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
 
 .. seealso::
     The governing equations, the discretization and the phase-space models are described in :doc:`../../theory/multiphysics/qmom/qmom_equations`.
@@ -19,7 +19,7 @@ Each time step is split into the transport of the scalars and moments in physica
 
 .. warning::
 
-  The QMOM physics is under development. Only the transport of the moments in physical space, with their source terms, and their growth, nucleation and coalescence in phase space are implemented. The following features are not available yet and stop the simulation with an error: the scalars (``number of scalars`` must be 0) and the ``strang`` splitting scheme.
+  The QMOM physics is under development. Only the transport of the scalars and moments in physical space, with their source terms, and the growth, nucleation and coalescence of the moments in phase space are implemented. The scalars are only coupled to the particles by the ``lipid_nanoparticle_production`` process (see :ref:`qmom-lipid-nanoparticle-production`). The ``strang`` splitting scheme is not available yet and stops the simulation with an error.
 
 Related parameters in other subsections:
 
@@ -75,12 +75,8 @@ The default values of the QMOM parameters are given in the text box below:
 
     subsection lipid nanoparticle production
       # Operating conditions
-      set operating temperature         = 295
-      set flow rate ratio               = 3
-      set total flow rate               = 2e-07
-      set mixing time scale             = 0
-      set initial concentration organic = 1
-      set ion concentration mixture     = 1
+      set operating temperature     = 295
+      set ion concentration mixture = 1
 
       # Aqueous phase
       set density aqueous                  = 997
@@ -97,6 +93,24 @@ The default values of the QMOM parameters are given in the text box below:
       # Mixture and particles
       set viscosity mixture = 0.002
       set shape factor      = 0.5235987755982988
+
+      # Lipid
+      set lipid molecular volume = 6.0173e-28
+      set lipid molar mass       = 0.38665
+      set lipid density          = 1067
+
+      # Nucleation
+      set nucleation factor         = 2e+22
+      set surface tension           = 0.01
+      set nuclei standard deviation = 2e-10
+
+      # Growth
+      set growth factor = 11.88
+
+      # Coalescence
+      set peg factor        = 6.5e-06
+      set surface potential = 0.01
+      set hamaker constant  = 1.7e-22
     end
 
     subsection physical constants
@@ -125,7 +139,7 @@ General
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
-  * ``lie``: physical-space transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t` (first-order accurate).
+  * ``lie``: physical-space transport of the moments and then of the scalars over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t` (first-order accurate).
   * ``strang``: phase-space evolution over :math:`\Delta t / 2`, physical-space transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t / 2` (second-order accurate).
 
 .. note::
@@ -189,14 +203,7 @@ Process Parameters
 
 * ``lipid nanoparticle production``: process parameters of the production of lipid nanoparticles (LNP), in SI units. 
 
-  .. note::
-    The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
-
   * ``operating temperature``: temperature of the mixture, in :math:`\text{K}`.
-  * ``flow rate ratio``: ratio of the aqueous phase flow rate to the organic phase flow rate.
-  * ``total flow rate``: total flow rate of the aqueous and organic phases, in :math:`\text{m}^{3} \cdot \text{s}^{-1}`.
-  * ``mixing time scale``: time scale of the mixing of the aqueous and organic phases, in :math:`\text{s}`.
-  * ``initial concentration organic``: lipid concentration in the organic phase before mixing, in :math:`\text{mol} \cdot \text{m}^{-3}`.
   * ``ion concentration mixture``: ion concentration in the mixture, in :math:`\text{mol} \cdot \text{m}^{-3}`.
   * ``density aqueous`` and ``density organic``: densities of the aqueous and organic phases, in :math:`\text{kg} \cdot \text{m}^{-3}`.
   * ``molar mass aqueous`` and ``molar mass organic``: molar masses of the aqueous and organic phases, in :math:`\text{kg} \cdot \text{mol}^{-1}`.
@@ -204,6 +211,16 @@ Process Parameters
   * ``permittivity aqueous`` and ``permittivity organic``: relative permittivities of the aqueous and organic phases.
   * ``viscosity mixture``: dynamic viscosity of the mixture of the aqueous and organic phases, in Pa s.
   * ``shape factor``: volume shape factor of the particles, which is :math:`\pi/6` for spheres.
+  * ``lipid molecular volume``, ``lipid molar mass`` and ``lipid density``: molecular volume of the lipid, in :math:`\text{m}^{3}`, its molar mass, in :math:`\text{kg} \cdot \text{mol}^{-1}`, and its density in the particles, in :math:`\text{kg} \cdot \text{m}^{-3}`. The default values are those of cholesterol.
+  * ``nucleation factor``: pre-exponential factor :math:`A` of the nucleation rate, in :math:`\text{m}^{-3} \cdot \text{s}^{-1}`.
+  * ``surface tension``: surface tension (interfacial energy) :math:`\gamma` of the particles, in :math:`\text{N} \cdot \text{m}^{-1}`.
+  * ``nuclei standard deviation``: standard deviation of the size of the nuclei, in :math:`\text{m}`.
+  * ``growth factor``: kinetic coefficient :math:`k_g` of the growth rate, in :math:`\text{m}^{3} \cdot \text{kg}^{-1} \cdot \text{s}^{-1}`.
+  * ``peg factor``: steric hindrance factor :math:`k_{PEG}` of the PEG lipids, the maximum attachment efficiency of the coalescence, between 0 and 1.
+  * ``surface potential``: surface potential of the particles, in :math:`\text{V}`.
+  * ``hamaker constant``: Hamaker constant of the particles in the mixture, in :math:`\text{J}`.
+
+  The models that use these parameters are described in :ref:`qmom-lipid-nanoparticle-production`. The composition of the mixture is given by the ethanol concentration. The initial and inlet concentrations of ethanol and free lipids, in :math:`\text{kg} \cdot \text{m}^{-3}`, are given by the ``scalars`` of the initial conditions and of the ``dirichlet`` boundary conditions of the QMOM fields (see :ref:`qmom-functions`).
 
 * ``physical constants``: physical constants, in SI units.
 
@@ -211,6 +228,8 @@ Process Parameters
   * ``avogadro number``: Avogadro number, in 1/mol.
   * ``elementary charge``: elementary charge, in C.
   * ``permittivity vacuum``: vacuum permittivity, in F/m.
+
+.. _qmom-functions:
 
 Functions of the QMOM fields
 ----------------------------

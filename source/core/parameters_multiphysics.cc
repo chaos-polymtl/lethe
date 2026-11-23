@@ -1112,8 +1112,10 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
         case QMOMProcess::generic:
           break;
         case QMOMProcess::lipid_nanoparticle_production:
-          process_scalar_names      = {"ethanol_concentration",
-                                       "free_lipids_concentration"};
+          // The scalars are named and ordered after the enumerators
+          for (const std::string_view name :
+               magic_enum::enum_names<QMOMLipidNanoparticleScalar>())
+            process_scalar_names.emplace_back(name);
           process_number_of_moments = 8; // 4-node quadrature
           break;
       }
@@ -1179,31 +1181,6 @@ Parameters::QMOMLipidNanoparticleProduction::declare_parameters(
                         defaults.operating_temperature),
                       Patterns::Double(0.),
                       "Operating temperature [K]");
-
-    prm.declare_entry(
-      "flow rate ratio",
-      Patterns::Tools::Convert<double>::to_string(defaults.flow_rate_ratio),
-      Patterns::Double(0.),
-      "Ratio of the aqueous phase flow rate to the organic phase flow rate [-]");
-
-    prm.declare_entry(
-      "total flow rate",
-      Patterns::Tools::Convert<double>::to_string(defaults.total_flow_rate),
-      Patterns::Double(0.),
-      "Total flow rate of the aqueous and organic phases [m^3/s]");
-
-    prm.declare_entry(
-      "mixing time scale",
-      Patterns::Tools::Convert<double>::to_string(defaults.mixing_time_scale),
-      Patterns::Double(0.),
-      "Mixing time scale of the aqueous and organic phases [s]");
-
-    prm.declare_entry(
-      "initial concentration organic",
-      Patterns::Tools::Convert<double>::to_string(
-        defaults.initial_concentration_organic),
-      Patterns::Double(0.),
-      "Initial lipid concentration in the organic phase [mol/m^3]");
 
     prm.declare_entry("ion concentration mixture",
                       Patterns::Tools::Convert<double>::to_string(
@@ -1272,6 +1249,67 @@ Parameters::QMOMLipidNanoparticleProduction::declare_parameters(
       Patterns::Tools::Convert<double>::to_string(defaults.shape_factor),
       Patterns::Double(0.),
       "Volume shape factor of the particles, pi/6 for spheres [-]");
+
+    prm.declare_entry("lipid molecular volume",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.lipid_molecular_volume),
+                      Patterns::Double(0.),
+                      "Molecular volume of the lipid [m^3]");
+
+    prm.declare_entry("lipid molar mass",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.lipid_molar_mass),
+                      Patterns::Double(0.),
+                      "Molar mass of the lipid [kg/mol]");
+
+    prm.declare_entry("lipid density",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.lipid_density),
+                      Patterns::Double(0.),
+                      "Density of the lipid in the particles [kg/m^3]");
+
+    prm.declare_entry(
+      "nucleation factor",
+      Patterns::Tools::Convert<double>::to_string(defaults.nucleation_factor),
+      Patterns::Double(0.),
+      "Pre-exponential factor of the nucleation rate [1/(m^3 s)]");
+
+    prm.declare_entry(
+      "surface tension",
+      Patterns::Tools::Convert<double>::to_string(defaults.surface_tension),
+      Patterns::Double(0.),
+      "Surface tension (interfacial energy) of the particles [N/m]");
+
+    prm.declare_entry("nuclei standard deviation",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nuclei_standard_deviation),
+                      Patterns::Double(0.),
+                      "Standard deviation of the size of the nuclei [m]");
+
+    prm.declare_entry("growth factor",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.growth_factor),
+                      Patterns::Double(0.),
+                      "Kinetic coefficient of the growth rate [m^3/(kg s)]");
+
+    prm.declare_entry("peg factor",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.peg_factor),
+                      Patterns::Double(0., 1.),
+                      "Steric hindrance factor of the PEG lipids, the maximum "
+                      "attachment efficiency of the coalescence [-]");
+
+    prm.declare_entry("surface potential",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.surface_potential),
+                      Patterns::Double(),
+                      "Surface potential of the particles [V]");
+
+    prm.declare_entry("hamaker constant",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.hamaker_constant),
+                      Patterns::Double(0.),
+                      "Hamaker constant of the particles in the mixture [J]");
   }
   prm.leave_subsection();
 }
@@ -1282,12 +1320,7 @@ Parameters::QMOMLipidNanoparticleProduction::parse_parameters(
 {
   prm.enter_subsection("lipid nanoparticle production");
   {
-    operating_temperature = prm.get_double("operating temperature");
-    flow_rate_ratio       = prm.get_double("flow rate ratio");
-    total_flow_rate       = prm.get_double("total flow rate");
-    mixing_time_scale     = prm.get_double("mixing time scale");
-    initial_concentration_organic =
-      prm.get_double("initial concentration organic");
+    operating_temperature     = prm.get_double("operating temperature");
     ion_concentration_mixture = prm.get_double("ion concentration mixture");
     density_aqueous           = prm.get_double("density aqueous");
     molar_mass_aqueous        = prm.get_double("molar mass aqueous");
@@ -1298,9 +1331,19 @@ Parameters::QMOMLipidNanoparticleProduction::parse_parameters(
     molar_mass_organic   = prm.get_double("molar mass organic");
     mole_fraction_solubility_organic =
       prm.get_double("mole fraction solubility organic");
-    permittivity_organic = prm.get_double("permittivity organic");
-    viscosity_mixture    = prm.get_double("viscosity mixture");
-    shape_factor         = prm.get_double("shape factor");
+    permittivity_organic      = prm.get_double("permittivity organic");
+    viscosity_mixture         = prm.get_double("viscosity mixture");
+    shape_factor              = prm.get_double("shape factor");
+    lipid_molecular_volume    = prm.get_double("lipid molecular volume");
+    lipid_molar_mass          = prm.get_double("lipid molar mass");
+    lipid_density             = prm.get_double("lipid density");
+    nucleation_factor         = prm.get_double("nucleation factor");
+    surface_tension           = prm.get_double("surface tension");
+    nuclei_standard_deviation = prm.get_double("nuclei standard deviation");
+    growth_factor             = prm.get_double("growth factor");
+    peg_factor                = prm.get_double("peg factor");
+    surface_potential         = prm.get_double("surface potential");
+    hamaker_constant          = prm.get_double("hamaker constant");
   }
   prm.leave_subsection();
 }

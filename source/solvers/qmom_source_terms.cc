@@ -12,6 +12,8 @@
 #include <deal.II/base/point.h>
 #include <deal.II/base/utilities.h>
 
+#include <magic_enum.hpp>
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
@@ -293,16 +295,326 @@ QMOMFunctionCoalescence::compute_kernel(
   return coalescence_function.value(Point<2>(first_size, second_size));
 }
 
+QMOMLipidNanoparticleMixture::QMOMLipidNanoparticleMixture(
+  const Parameters::QMOMLipidNanoparticleProduction &process_parameters,
+  const Parameters::QMOMPhysicalConstants           &physical_constants)
+  : parameters(process_parameters)
+  , constants(physical_constants)
+  , thermal_energy(physical_constants.boltzmann_constant *
+                   process_parameters.operating_temperature)
+  , capillary_length(4. * process_parameters.surface_tension *
+                     process_parameters.lipid_molecular_volume / thermal_energy)
+{}
+
+QMOMLipidNanoparticleLocalState
+QMOMLipidNanoparticleMixture::compute_local_state(
+  const std::vector<double> &local_scalars) const
+{
+  AssertDimension(
+    local_scalars.size(),
+    magic_enum::enum_count<Parameters::QMOMLipidNanoparticleScalar>());
+
+  // The transported concentrations may slightly overshoot their physical
+  // bounds, so the volume fraction is clipped to [0, 1] and the free lipid
+  // concentration to non-negative values
+  const double organic_volume_fraction = std::clamp(
+    local_scalars[Parameters::get_scalar_index(
+      Parameters::QMOMLipidNanoparticleScalar::ethanol_concentration)] /
+      parameters.density_organic,
+    0.,
+    1.);
+  const double aqueous_volume_fraction = 1. - organic_volume_fraction;
+
+  // ln x = phi_a ln x_a + phi_o ln x_o
+  const double mole_fraction_solubility =
+    std::exp(aqueous_volume_fraction *
+               std::log(parameters.mole_fraction_solubility_aqueous) +
+             organic_volume_fraction *
+               std::log(parameters.mole_fraction_solubility_organic));
+
+  // C_inf = M_l x / (1 - x) (phi_a rho_a / M_a + phi_o rho_o / M_o)
+  const double solubility =
+    parameters.lipid_molar_mass * mole_fraction_solubility /
+    (1. - mole_fraction_solubility) *
+    (aqueous_volume_fraction * parameters.density_aqueous /
+       parameters.molar_mass_aqueous +
+     organic_volume_fraction * parameters.density_organic /
+       parameters.molar_mass_organic);
+
+  const double free_lipids_concentration = std::max(
+    local_scalars[Parameters::get_scalar_index(
+      Parameters::QMOMLipidNanoparticleScalar::free_lipids_concentration)],
+    0.);
+
+  return {aqueous_volume_fraction,
+          solubility,
+          free_lipids_concentration / solubility};
+}
+
+double
+QMOMLipidNanoparticleMixture::compute_equilibrium_supersaturation(
+  const double size) const
+{
+  Assert(size > 0., ExcLowerRangeType<double>(size, 0.));
+  return std::exp(capillary_length / size);
+}
+
+double
+QMOMLipidNanoparticleMixture::compute_critical_size(
+  const double supersaturation) const
+{
+  Assert(supersaturation > 1., ExcLowerRangeType<double>(supersaturation, 1.));
+  return capillary_length / std::log(supersaturation);
+}
+
+double
+QMOMLipidNanoparticleMixture::compute_inverse_debye_length(
+  const double aqueous_volume_fraction) const
+{
+  // The permittivity depends on the local composition of the mixture
+  const double relative_permittivity =
+    aqueous_volume_fraction * parameters.permittivity_aqueous +
+    (1. - aqueous_volume_fraction) * parameters.permittivity_organic;
+
+  return std::sqrt(
+    2. * Utilities::fixed_power<2>(constants.elementary_charge) *
+    constants.avogadro_number * parameters.ion_concentration_mixture /
+    (constants.permittivity_vacuum * relative_permittivity * thermal_energy));
+}
+
+double
+QMOMLipidNanoparticleMixture::compute_electrostatic_prefactor(
+  const double aqueous_volume_fraction) const
+{
+  const double relative_permittivity =
+    aqueous_volume_fraction * parameters.permittivity_aqueous +
+    (1. - aqueous_volume_fraction) * parameters.permittivity_organic;
+  const double potential_factor =
+    std::tanh(constants.elementary_charge * parameters.surface_potential /
+              (4. * thermal_energy));
+
+  // 128 pi N_A c_i k_B T / kappa^2, with kappa^2 proportional to c_i, is
+  // written without c_i, so that it stays finite without ions
+  return 64. * numbers::PI * constants.permittivity_vacuum *
+         relative_permittivity *
+         Utilities::fixed_power<2>(thermal_energy /
+                                   constants.elementary_charge) *
+         Utilities::fixed_power<2>(potential_factor);
+}
+
+QMOMLipidNanoparticleGrowth::QMOMLipidNanoparticleGrowth(
+  const QMOMLipidNanoparticleMixture &mixture)
+  : mixture(mixture)
+{}
+
+void
+QMOMLipidNanoparticleGrowth::compute_growth_rates(
+  const double /*time*/,
+  const std::vector<double> &local_scalars,
+  const std::vector<double> &abscissas,
+  std::vector<double>       &growth_rates) const
+{
+  AssertDimension(growth_rates.size(), abscissas.size());
+
+  const QMOMLipidNanoparticleLocalState state =
+    mixture.compute_local_state(local_scalars);
+
+  for (unsigned int node = 0; node < abscissas.size(); ++node)
+    {
+      const double size = abscissas[node];
+      if (size <= 0.)
+        {
+          growth_rates[node] = 0.;
+          continue;
+        }
+
+      // G = k_g xi C_inf (S - S*(xi)), negative below the equilibrium size
+      growth_rates[node] = mixture.parameters.growth_factor * size *
+                           state.solubility *
+                           (state.supersaturation -
+                            mixture.compute_equilibrium_supersaturation(size));
+    }
+}
+
+QMOMLipidNanoparticleNucleation::QMOMLipidNanoparticleNucleation(
+  const QMOMLipidNanoparticleMixture &mixture)
+  : mixture(mixture)
+  , exponent_coefficient(
+      16. * numbers::PI *
+      Utilities::fixed_power<3>(mixture.parameters.surface_tension) *
+      Utilities::fixed_power<2>(mixture.parameters.lipid_molecular_volume) /
+      (3. * Utilities::fixed_power<3>(mixture.thermal_energy)))
+{}
+
+double
+QMOMLipidNanoparticleNucleation::compute_nucleation_rate(
+  const double supersaturation) const
+{
+  // Nucleation only happens in a supersaturated mixture
+  if (supersaturation <= 1.)
+    return 0.;
+
+  return mixture.parameters.nucleation_factor *
+         std::exp(-exponent_coefficient /
+                  Utilities::fixed_power<2>(std::log(supersaturation)));
+}
+
+void
+QMOMLipidNanoparticleNucleation::compute_moment_rates(
+  const double /*time*/,
+  const std::vector<double> &local_scalars,
+  std::vector<double>       &moment_rates) const
+{
+  const double supersaturation =
+    mixture.compute_local_state(local_scalars).supersaturation;
+  const double nucleation_rate = compute_nucleation_rate(supersaturation);
+
+  // Close to saturation, the critical size diverges while the rate vanishes:
+  // the moments of the nuclei are not evaluated, to avoid 0 * inf
+  if (!(nucleation_rate > 0.))
+    {
+      std::ranges::fill(moment_rates, 0.);
+      return;
+    }
+
+  const QMOMLogNormalNuclei nuclei(
+    mixture.compute_critical_size(supersaturation),
+    mixture.parameters.nuclei_standard_deviation);
+  nuclei.fill_moment_rates(nucleation_rate, moment_rates);
+}
+
+QMOMLipidNanoparticleCoalescence::QMOMLipidNanoparticleCoalescence(
+  const QMOMLipidNanoparticleMixture &mixture)
+  : mixture(mixture)
+  , log_step(std::log(max_separation / min_separation) / n_intervals)
+  , separations(n_intervals + 1)
+{
+  static_assert(n_intervals % 2 == 0,
+                "The Simpson rule requires an even number of intervals.");
+
+  // The end points are set exactly, so that the integral covers the whole
+  // interval despite the round-off of the exponential
+  for (unsigned int i = 0; i <= n_intervals; ++i)
+    separations[i] = min_separation * std::exp(i * log_step);
+  separations.front() = min_separation;
+  separations.back()  = max_separation;
+}
+
+double
+QMOMLipidNanoparticleCoalescence::compute_stability_ratio(
+  const double first_size,
+  const double second_size,
+  const double aqueous_volume_fraction) const
+{
+  const double first_radius   = 0.5 * first_size;
+  const double second_radius  = 0.5 * second_size;
+  const double radius_sum     = first_radius + second_radius;
+  const double radius_product = first_radius * second_radius;
+
+  // Terms of the electrostatic repulsion that do not depend on the distance:
+  // Phi_el(a) = electrostatic_scale exp(-kappa a)
+  const double inverse_debye_length =
+    mixture.compute_inverse_debye_length(aqueous_volume_fraction);
+  const double electrostatic_scale =
+    mixture.compute_electrostatic_prefactor(aqueous_volume_fraction) *
+    radius_product / radius_sum;
+
+  const double hamaker_constant = mixture.parameters.hamaker_constant;
+  const double thermal_energy   = mixture.thermal_energy;
+
+  // Integrand in the logarithm of the distance a, hence the factor a of
+  // da = a d(ln a): exp(Phi(a) / (k_B T)) a / (a + r_s)^2
+  const auto integrand = [&](const double separation) {
+    // van der Waals attraction of two spheres
+    const double near_term =
+      Utilities::fixed_power<2>(separation) + 2. * separation * radius_sum;
+    const double far_term = near_term + 4. * radius_product;
+    const double van_der_waals_energy =
+      -hamaker_constant / 6. *
+      (2. * radius_product / near_term + 2. * radius_product / far_term +
+       std::log(near_term / far_term));
+
+    const double electrostatic_energy =
+      electrostatic_scale * std::exp(-inverse_debye_length * separation);
+
+    return std::exp((van_der_waals_energy + electrostatic_energy) /
+                    thermal_energy) *
+           separation / Utilities::fixed_power<2>(separation + radius_sum);
+  };
+
+  // Simpson rule on the logarithmic grid
+  double integral =
+    integrand(separations.front()) + integrand(separations.back());
+  for (unsigned int i = 1; i < n_intervals; ++i)
+    integral += (i % 2 == 0 ? 2. : 4.) * integrand(separations[i]);
+  integral *= log_step / 3.;
+
+  // Tail beyond max_separation, where the interaction energy vanishes
+  integral += 1. / (max_separation + radius_sum);
+
+  return radius_sum * integral;
+}
+
+double
+QMOMLipidNanoparticleCoalescence::compute_kernel(
+  const double /*time*/,
+  const std::vector<double> &local_scalars,
+  const double               first_size,
+  const double               second_size) const
+{
+  const Parameters::QMOMLipidNanoparticleProduction &parameters =
+    mixture.parameters;
+  const double aqueous_volume_fraction =
+    mixture.compute_local_state(local_scalars).aqueous_volume_fraction;
+
+  // Brownian (Smoluchowski) kernel
+  const double brownian_kernel =
+    2. * mixture.thermal_energy *
+    Utilities::fixed_power<2>(first_size + second_size) /
+    (3. * parameters.viscosity_mixture * first_size * second_size);
+
+  // Attachment efficiency of the Fuchs model, limited by the PEG lipids
+  const double attachment_efficiency = std::min(
+    parameters.peg_factor /
+      compute_stability_ratio(first_size, second_size, aqueous_volume_fraction),
+    parameters.peg_factor);
+
+  return brownian_kernel * attachment_efficiency;
+}
+
 QMOMSourceTerms::QMOMSourceTerms(const Parameters::QMOM &qmom_parameters)
 {
-  if (qmom_parameters.enable_growth)
-    growth_model = QMOMGrowthModelBase::model_cast(qmom_parameters.growth);
-  if (qmom_parameters.enable_nucleation)
-    nucleation_model =
-      QMOMNucleationModelBase::model_cast(qmom_parameters.nucleation);
-  if (qmom_parameters.enable_coalescence)
-    coalescence_model =
-      QMOMCoalescenceModelBase::model_cast(qmom_parameters.coalescence);
+  switch (qmom_parameters.process)
+    {
+      case Parameters::QMOMProcess::generic:
+        if (qmom_parameters.enable_growth)
+          growth_model =
+            QMOMGrowthModelBase::model_cast(qmom_parameters.growth);
+        if (qmom_parameters.enable_nucleation)
+          nucleation_model =
+            QMOMNucleationModelBase::model_cast(qmom_parameters.nucleation);
+        if (qmom_parameters.enable_coalescence)
+          coalescence_model =
+            QMOMCoalescenceModelBase::model_cast(qmom_parameters.coalescence);
+        break;
+      case Parameters::QMOMProcess::lipid_nanoparticle_production:
+        // The models of the process replace those of the "growth",
+        // "nucleation" and "coalescence" subsections, but are still enabled
+        // one by one
+        lipid_mixture = std::make_unique<QMOMLipidNanoparticleMixture>(
+          qmom_parameters.lipid_nanoparticle_production,
+          qmom_parameters.physical_constants);
+        if (qmom_parameters.enable_growth)
+          growth_model =
+            std::make_unique<QMOMLipidNanoparticleGrowth>(*lipid_mixture);
+        if (qmom_parameters.enable_nucleation)
+          nucleation_model =
+            std::make_unique<QMOMLipidNanoparticleNucleation>(*lipid_mixture);
+        if (qmom_parameters.enable_coalescence)
+          coalescence_model =
+            std::make_unique<QMOMLipidNanoparticleCoalescence>(*lipid_mixture);
+        break;
+    }
 
 #ifdef LETHE_WITH_QMOMKIT
   // Growth: the velocity of the nodes is their growth rate. The last
@@ -365,4 +677,51 @@ QMOMSourceTerms::compute_nucleation_moment_rates(
     nucleation_model->compute_moment_rates(time, local_scalars, moment_rates);
   else
     std::ranges::fill(moment_rates, 0.);
+}
+
+bool
+QMOMSourceTerms::update_local_scalars(const std::vector<double> &moments_before,
+                                      const std::vector<double> &moments_after,
+                                      std::vector<double>       &scalars) const
+{
+  if (!lipid_mixture)
+    return true;
+
+  // Order of the moment proportional to the volume of the particles
+  constexpr unsigned int volume_moment_order = 3;
+  AssertIndexRange(volume_moment_order, moments_before.size());
+  AssertDimension(moments_before.size(), moments_after.size());
+  AssertDimension(
+    scalars.size(),
+    magic_enum::enum_count<Parameters::QMOMLipidNanoparticleScalar>());
+
+  // The mass of lipid per unit volume in the particles is rho_l k_v M_3
+  const Parameters::QMOMLipidNanoparticleProduction &parameters =
+    lipid_mixture->parameters;
+  const double lipid_mass_per_volume_moment =
+    parameters.lipid_density * parameters.shape_factor;
+  double      &free_lipids_concentration = scalars[Parameters::get_scalar_index(
+    Parameters::QMOMLipidNanoparticleScalar::free_lipids_concentration)];
+  const double free_lipids_concentration_before = free_lipids_concentration;
+  free_lipids_concentration -=
+    lipid_mass_per_volume_moment *
+    (moments_after[volume_moment_order] - moments_before[volume_moment_order]);
+
+  if (free_lipids_concentration >= 0.)
+    return true;
+
+  // Round-off of the lipid mass, free and in the particles
+  constexpr double round_off_relative_tolerance = 1e-12;
+  const double     lipid_mass_scale =
+    std::abs(free_lipids_concentration_before) +
+    lipid_mass_per_volume_moment *
+      std::max(std::abs(moments_before[volume_moment_order]),
+               std::abs(moments_after[volume_moment_order]));
+  if (free_lipids_concentration >=
+      -round_off_relative_tolerance * lipid_mass_scale)
+    {
+      free_lipids_concentration = 0.;
+      return true;
+    }
+  return false;
 }

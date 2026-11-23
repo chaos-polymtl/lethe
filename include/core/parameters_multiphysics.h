@@ -15,6 +15,8 @@
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/utilities.h>
 
+#include <magic_enum.hpp>
+
 #include <memory>
 #include <numbers>
 #include <string>
@@ -751,24 +753,47 @@ namespace Parameters
   };
 
   /**
+   * @brief Scalars imposed by the lipid nanoparticle production process, in
+   * the order of the QMOM scalars. Their names are the names of the scalars,
+   * used for the output:
+   *  - ethanol_concentration: ethanol (organic phase) concentration [kg/m^3];
+   *  - free_lipids_concentration: concentration of the lipids that are not in
+   *    the particles [kg/m^3].
+   */
+  enum class QMOMLipidNanoparticleScalar : std::int8_t
+  {
+    ethanol_concentration,
+    free_lipids_concentration
+  };
+
+  /**
+   * @brief Get the index of a scalar of the lipid nanoparticle production in
+   * the QMOM scalars.
+   *
+   * @param[in] scalar Scalar of the process.
+   *
+   * @return Index of the scalar, which is also its QMOM component.
+   */
+  constexpr unsigned int
+  get_scalar_index(const QMOMLipidNanoparticleScalar scalar)
+  {
+    return static_cast<unsigned int>(magic_enum::enum_integer(scalar));
+  }
+
+  /**
    * @brief Process parameters of the lipid nanoparticle (LNP) production
    * simulated with the QMOM physics: operating conditions, properties of the
-   * aqueous and organic phases and shape factor of the particles. All of them
-   * are in SI units.
+   * aqueous and organic phases, of the lipid and of the particles, and kinetic
+   * parameters of the nucleation, growth and coalescence. All of them are in
+   * SI units. The default lipid properties are those of cholesterol and the
+   * default kinetic parameters are those of Shin et al., Chem. Eng. J. 523
+   * (2025) 167786.
    */
   struct QMOMLipidNanoparticleProduction
   {
     /* Operating conditions */
     /// Operating temperature [K]
     double operating_temperature = 295.;
-    /// Ratio of the aqueous phase flow rate to the organic phase flow rate [-]
-    double flow_rate_ratio = 3.;
-    /// Total flow rate of the aqueous and organic phases [m^3/s]
-    double total_flow_rate = 2e-7;
-    /// Mixing time scale of the aqueous and organic phases [s]
-    double mixing_time_scale = 0.;
-    /// Initial lipid concentration in the organic phase [mol/m^3]
-    double initial_concentration_organic = 1.;
     /// Ion concentration in the mixture [mol/m^3]
     double ion_concentration_mixture = 1.;
 
@@ -797,6 +822,35 @@ namespace Parameters
     double viscosity_mixture = 2e-3;
     /// Volume shape factor of the particles, pi/6 for spheres [-]
     double shape_factor = std::numbers::pi / 6.;
+
+    /* Lipid */
+    /// Molecular volume of the lipid [m^3]
+    double lipid_molecular_volume = 6.0173e-28;
+    /// Molar mass of the lipid [kg/mol]
+    double lipid_molar_mass = 0.38665;
+    /// Density of the lipid in the particles [kg/m^3]
+    double lipid_density = 1067.;
+
+    /* Nucleation */
+    /// Pre-exponential factor of the nucleation rate [1/(m^3 s)]
+    double nucleation_factor = 2e22;
+    /// Surface tension (interfacial energy) of the particles [N/m]
+    double surface_tension = 1e-2;
+    /// Standard deviation of the size of the nuclei [m]
+    double nuclei_standard_deviation = 2e-10;
+
+    /* Growth */
+    /// Kinetic coefficient of the growth rate [m^3/(kg s)]
+    double growth_factor = 11.88;
+
+    /* Coalescence */
+    /// Steric hindrance factor of the PEG lipids, the maximum attachment
+    /// efficiency [-]
+    double peg_factor = 6.5e-6;
+    /// Surface potential of the particles [V]
+    double surface_potential = 1e-2;
+    /// Hamaker constant of the particles in the mixture [J]
+    double hamaker_constant = 1.7e-22;
 
     /**
      * @brief Declare the "lipid nanoparticle production" subsection.

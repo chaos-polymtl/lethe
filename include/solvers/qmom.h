@@ -17,13 +17,16 @@
  * component.
  *
  * Each time step of the fluid dynamics is split (Lie splitting) into:
- *  - the transport of all the components in physical space by the fluid
- *    velocity, with their source terms, solved with an upwind discontinuous
- *    Galerkin discretization and an implicit BDF time integration
- *    (advance_physical_space());
+ *  - the transport of the moments in physical space by the fluid velocity,
+ *    with their source terms, solved with an upwind discontinuous Galerkin
+ *    discretization and an implicit BDF time integration
+ *    (advance_moments_physical_space());
+ *  - the transport of the scalars in physical space, with the same
+ *    discretization and their source terms (advance_scalars_physical_space());
  *  - the evolution of the moments in phase space (nucleation, growth and
- *    coalescence), applied independently at every degree of freedom
- *    (advance_phase_space()), skipped when none of them is enabled.
+ *    coalescence), applied independently at every degree of freedom, with the
+ *    scalars at the end of their transport (advance_phase_space()), skipped
+ *    when none of them is enabled.
  *
  * The transport is linear in the components, since the fluid velocity is
  * given. The QMOM physics is therefore driven by the linear solver strategy:
@@ -254,10 +257,10 @@ public:
 
   /**
    * @brief Advance the components over the current time step with Lie
-   * splitting:
-   * transport in physical space, then evolution in phase space if growth,
-   * nucleation or coalescence is enabled. This is the last function called by
-   * the linear solver strategy.
+   * splitting: transport of the moments and then of the scalars in physical
+   * space, then evolution of the moments in phase space if growth, nucleation
+   * or coalescence is enabled. This is the last function called by the linear
+   * solver strategy.
    */
   void
   solve_linear_system() override;
@@ -431,12 +434,44 @@ private:
   setup_amg();
 
   /**
-   * @brief Transport all the components in physical space over the time
-   * step: solve the transport system of every component, with the matrix and
-   * the right-hand sides assembled by the linear solver strategy.
+   * @brief Transport the moments in physical space over the time step: solve
+   * the transport system of every moment, with the matrix and the right-hand
+   * sides assembled by the linear solver strategy.
    */
   void
-  advance_physical_space();
+  advance_moments_physical_space();
+
+  /**
+   * @brief Transport the scalars in physical space over the time step: solve
+   * the transport system of every scalar, with the right-hand sides assembled
+   * by the linear solver strategy. Does nothing without scalars.
+   *
+   * The scalars are only advected for now, so they share the matrix and the
+   * preconditioner of the moments. They are separated from the moments so
+   * that terms that only apply to the scalars (e.g. diffusion) can be added.
+   * Their source in physical space is the source term of the "QMOM"
+   * subsection of the source term subsection: the exchange of mass with the
+   * particles is applied at the end of the phase-space step (see
+   * advance_phase_space()).
+   */
+  void
+  advance_scalars_physical_space();
+
+  /**
+   * @brief Solve the transport system of one component over the time step,
+   * with the transport matrix and its preconditioner. The system is solved
+   * for the correction of the present solution of the component: the
+   * right-hand side is the residual of that solution, and the tolerance is
+   * relative to it.
+   *
+   * @param[in] component Component to transport: scalar component if
+   * component < n_scalars, moment M_{component - n_scalars} otherwise.
+   * @param[in] rescale_metric Metric used to rescale the residual, given by
+   * get_residual_rescale_metric().
+   */
+  void
+  solve_component_transport(const unsigned int component,
+                            const double       rescale_metric);
 
   /**
    * @brief Evolve the moments in phase space (nucleation, growth and
@@ -449,10 +484,14 @@ private:
    * from it. The mechanisms are the callbacks of phase_space_source_terms:
    * the nodes move with the growth rate, the coalescence changes the moments
    * through the quadrature and the nucleation adds particles. They receive
-   * the scalars of the degree of freedom. Degrees of freedom without particles
-   * (zeroth moment below the cutoff of QMOMKit) only change by nucleation. If
-   * the moments of any degree of freedom cannot be inverted or evolved, an
-   * exception is thrown on every rank.
+   * the scalars of the degree of freedom, which are constant during the step.
+   * Degrees of freedom without particles (zeroth moment below the cutoff of
+   * QMOMKit) only change by nucleation. If the process couples the scalars
+   * to the particles (QMOMSourceTerms::scalars_are_coupled()), the scalars
+   * are then updated with the change of the moments (e.g. the free lipids
+   * consumed by the lipid nanoparticles). If the moments of any degree of
+   * freedom cannot be inverted or evolved, or if its particles consume more
+   * of a scalar than available, an exception is thrown on every rank.
    *
    * @param[in] time_step Duration of the phase-space step, which ends at the
    * current time of the simulation control.

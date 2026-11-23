@@ -131,12 +131,6 @@ QMOM<dim>::QMOM(
     QMOMInvalidNumberOfFluids(simulation_parameters.physical_properties_manager
                                 .get_number_of_fluids()));
 
-  // Features of the QMOM physics that are not implemented yet
-  AssertThrow(n_scalars == 0,
-              ExcMessage("The transport of the QMOM scalars is not "
-                         "implemented yet, but \"number of scalars\" is " +
-                         std::to_string(n_scalars) +
-                         " in the QMOM subsection. Set it to 0."));
   // The steady state of the Lie splitting depends on the time step, and the
   // phase-space evolution needs a physical time step
   using TimeSteppingMethod = Parameters::SimulationControl::TimeSteppingMethod;
@@ -1118,7 +1112,10 @@ QMOM<dim>::solve_linear_system()
   switch (simulation_parameters.multiphysics.qmom_parameters.splitting_scheme)
     {
       case Parameters::QMOMSplittingScheme::lie:
-        advance_physical_space();
+        // The scalars are transported before the phase-space evolution, whose
+        // mechanisms receive their values at the end of the time step
+        advance_scalars_physical_space();
+        advance_moments_physical_space();
         if (has_phase_space_mechanism)
           advance_phase_space(simulation_control->get_time_step());
         break;
@@ -1132,15 +1129,48 @@ QMOM<dim>::solve_linear_system()
 
 template <int dim>
 void
-QMOM<dim>::advance_physical_space()
+QMOM<dim>::advance_moments_physical_space()
 {
-  TimerOutput::Scope t(computing_timer, "Solve linear system");
+  TimerOutput::Scope t(computing_timer, "Solve moments transport");
+
+  // The metric is computed once, since it requires a loop over the mesh
+  const double rescale_metric = this->get_residual_rescale_metric();
+
+  // The moments are the components n_scalars to n_components - 1
+  for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
+    solve_component_transport(n_scalars + i_moment, rescale_metric);
+}
+
+template <int dim>
+void
+QMOM<dim>::advance_scalars_physical_space()
+{
+  if (n_scalars == 0)
+    return;
+
+  TimerOutput::Scope t(computing_timer, "Solve scalars transport");
+
+  // Without diffusion, the scalars are transported by the same operator as
+  // the moments and reuse their matrix and preconditioner. Their source is
+  // the source term of the "QMOM" subsection of the source term subsection:
+  // the exchange of mass with the particles is applied by the phase-space
+  // evolution.
+  const double rescale_metric = this->get_residual_rescale_metric();
+  for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
+    solve_component_transport(i_scalar, rescale_metric);
+}
+
+template <int dim>
+void
+QMOM<dim>::solve_component_transport(const unsigned int component,
+                                     const double       rescale_metric)
+{
+  AssertIndexRange(component, n_components);
 
   const Parameters::LinearSolver &linear_solver_parameters =
     simulation_parameters.linear_solver.at(PhysicsID::qmom);
   const bool verbose =
     linear_solver_parameters.verbosity != Parameters::Verbosity::quiet;
-  const double rescale_metric = this->get_residual_rescale_metric();
 
   // present_solutions are ghosted, hence read-only: the solution is updated
   // in a locally owned copy
@@ -1151,61 +1181,53 @@ QMOM<dim>::advance_physical_space()
   GlobalVectorType completely_distributed_solution(
     locally_owned_dofs, triangulation->get_mpi_communicator());
 
-  const auto preconditioner_type = linear_solver_parameters.preconditioner;
+  // The system is solved for the correction of the present solution: the
+  // right-hand side is the residual of that solution, and the tolerance is
+  // relative to it.
+  locally_owned_present_solution = present_solutions[component];
+  const double current_residual =
+    system_matrix.residual(residual,
+                           locally_owned_present_solution,
+                           system_rhs[component]) /
+    rescale_metric;
+  const double linear_solver_tolerance =
+    std::max(linear_solver_parameters.relative_residual * current_residual,
+             linear_solver_parameters.minimum_residual);
+  if (verbose)
+    this->pcout << "  -Tolerance of iterative solver of "
+                << component_names[component]
+                << " is : " << linear_solver_tolerance << std::endl;
 
-  // All the components share the matrix and the preconditioner: only the
-  // right-hand side changes
-  for (unsigned int component = 0; component < n_components; ++component)
-    {
-      // The system is solved for the correction of the present solution: the
-      // right-hand side is the residual of that solution, and the tolerance
-      // is relative to it.
-      locally_owned_present_solution = present_solutions[component];
-      const double current_residual =
-        system_matrix.residual(residual,
-                               locally_owned_present_solution,
-                               system_rhs[component]) /
-        rescale_metric;
-      const double linear_solver_tolerance =
-        std::max(linear_solver_parameters.relative_residual * current_residual,
-                 linear_solver_parameters.minimum_residual);
-      if (verbose)
-        this->pcout << "  -Tolerance of iterative solver of "
-                    << component_names[component]
-                    << " is : " << linear_solver_tolerance << std::endl;
+  SolverControl solver_control(linear_solver_parameters.max_iterations,
+                               linear_solver_tolerance * rescale_metric,
+                               true,
+                               true);
+  const TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+    false, linear_solver_parameters.max_krylov_vectors);
+  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
-      SolverControl solver_control(linear_solver_parameters.max_iterations,
-                                   linear_solver_tolerance * rescale_metric,
-                                   true,
-                                   true);
-      const TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-        false, linear_solver_parameters.max_krylov_vectors);
-      TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
+  completely_distributed_solution = 0.;
+  if (linear_solver_parameters.preconditioner ==
+      Parameters::LinearSolver::PreconditionerType::ilu)
+    solver.solve(system_matrix,
+                 completely_distributed_solution,
+                 residual,
+                 *ilu_preconditioner);
+  else
+    solver.solve(system_matrix,
+                 completely_distributed_solution,
+                 residual,
+                 *amg_preconditioner);
 
-      completely_distributed_solution = 0.;
-      if (preconditioner_type ==
-          Parameters::LinearSolver::PreconditionerType::ilu)
-        solver.solve(system_matrix,
-                     completely_distributed_solution,
-                     residual,
-                     *ilu_preconditioner);
-      else
-        solver.solve(system_matrix,
-                     completely_distributed_solution,
-                     residual,
-                     *amg_preconditioner);
+  if (verbose)
+    this->pcout << "  -Iterative solver of " << component_names[component]
+                << " took : " << solver_control.last_step()
+                << " steps to reach a residual norm of "
+                << solver_control.last_value() / rescale_metric << std::endl;
 
-      if (verbose)
-        this->pcout << "  -Iterative solver of " << component_names[component]
-                    << " took : " << solver_control.last_step()
-                    << " steps to reach a residual norm of "
-                    << solver_control.last_value() / rescale_metric
-                    << std::endl;
-
-      locally_owned_present_solution += completely_distributed_solution;
-      constraints.distribute(locally_owned_present_solution);
-      present_solutions[component] = locally_owned_present_solution;
-    }
+  locally_owned_present_solution += completely_distributed_solution;
+  constraints.distribute(locally_owned_present_solution);
+  present_solutions[component] = locally_owned_present_solution;
 }
 
 template <int dim>
@@ -1257,11 +1279,23 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
     evolved_moment.reinit(locally_owned_dofs,
                           triangulation->get_mpi_communicator());
 
+  // The scalars only change if the particles exchange mass with them (e.g.
+  // the free lipids consumed by the lipid nanoparticles)
+  const bool scalars_are_coupled =
+    phase_space_source_terms->scalars_are_coupled();
+  std::vector<GlobalVectorType> evolved_scalars(
+    scalars_are_coupled ? n_scalars : 0);
+  for (GlobalVectorType &evolved_scalar : evolved_scalars)
+    evolved_scalar.reinit(locally_owned_dofs,
+                          triangulation->get_mpi_communicator());
+
   // The discontinuous elements are nodal and no degree of freedom is shared
   // between cells, so the moments of each degree of freedom are the moments
   // at its support point and are evolved independently of the others
   std::vector<double> local_scalars(n_scalars);
+  std::vector<double> local_evolved_scalars(n_scalars);
   std::vector<double> local_moments(n_moments);
+  std::vector<double> local_evolved_moments(n_moments);
   std::vector<double> nucleation_moment_rates(n_moments);
   // Error message of the failure of this rank, empty if none
   std::string failure_message;
@@ -1277,20 +1311,18 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
     {
       // The models of the mechanisms may depend on the scalars at this degree
       // of freedom (e.g. through the supersaturation of a process). The
-      // scalars are not evolved in phase space: they keep their values at the
-      // end of the transport in physical space during the whole step.
+      // scalars are not evolved during the phase-space step: they keep their
+      // values at the end of the transport in physical space, and are only
+      // updated with the change of the moments at the end of the step.
       for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
         local_scalars[i_scalar] = present_solutions[i_scalar][dof];
       phase_space_source_terms->set_local_scalars(local_scalars);
 
-      // The moments are left unchanged unless they are evolved below. They
-      // are only inserted: switching to addition is a collective operation.
       for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
-        {
-          local_moments[i_moment] =
-            present_solutions[n_scalars + i_moment][dof];
-          evolved_moments[i_moment][dof] = local_moments[i_moment];
-        }
+        local_moments[i_moment] = present_solutions[n_scalars + i_moment][dof];
+
+      // The moments are left unchanged unless they are evolved below
+      local_evolved_moments = local_moments;
 
       const qmomkit::QmomStateCandidate candidate =
         qmom_case.state_candidate(qmomkit::MomentSet(local_moments),
@@ -1306,52 +1338,76 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
                 phase_space_start_time + 0.5 * time_step,
                 nucleation_moment_rates);
               for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
-                evolved_moments[i_moment][dof] =
-                  local_moments[i_moment] +
+                local_evolved_moments[i_moment] +=
                   time_step * nucleation_moment_rates[i_moment];
             }
-          continue;
         }
-
-      // The moments cannot be inverted into a quadrature
-      if (!candidate.ok())
+      else
         {
-          failure_message =
-            "The QMOM phase-space evolution failed in QMOMKit, which cannot "
-            "invert the moments " +
-            moments_to_string(local_moments) +
-            " of a degree of freedom into a quadrature. If the moments are "
-            "not realizable, refine the mesh or reduce the time step to limit "
-            "the oscillations of the transport in physical space, or set "
-            "\"enable adaptive node count\" to true in the \"phase "
-            "evolution\" subsection of the QMOM subsection.\nQMOMKit message (" +
-            enum_to_string(candidate.status) + "): " + candidate.message;
-          break;
+          // The moments cannot be inverted into a quadrature
+          if (!candidate.ok())
+            {
+              failure_message =
+                "The QMOM phase-space evolution failed in QMOMKit, which "
+                "cannot invert the moments " +
+                moments_to_string(local_moments) +
+                " of a degree of freedom into a quadrature. If the moments are "
+                "not realizable, refine the mesh or reduce the time step to "
+                "limit the oscillations of the transport in physical space, or "
+                "set \"enable adaptive node count\" to true in the \"phase "
+                "evolution\" subsection of the QMOM subsection.\nQMOMKit "
+                "message (" +
+                enum_to_string(candidate.status) + "): " + candidate.message;
+              break;
+            }
+
+          const qmomkit::QmomPhaseSpaceEvolutionResult result =
+            qmomkit::advance_qmom_phase_space(*candidate.state,
+                                              phase_space_start_time,
+                                              time_step,
+                                              phase_space_velocity,
+                                              moment_source,
+                                              boundary_contribution,
+                                              evolution_options);
+
+          // The evolved quadrature cannot be rebuilt into moments
+          if (!result.ok())
+            {
+              failure_message =
+                "The QMOM phase-space evolution failed in QMOMKit, which "
+                "cannot evolve the moments " +
+                moments_to_string(local_moments) +
+                " of a degree of freedom.\nQMOMKit message (" +
+                enum_to_string(result.status) + "): " + result.message;
+              break;
+            }
+
+          local_evolved_moments = result.state.moment_values();
         }
 
-      const qmomkit::QmomPhaseSpaceEvolutionResult result =
-        qmomkit::advance_qmom_phase_space(*candidate.state,
-                                          phase_space_start_time,
-                                          time_step,
-                                          phase_space_velocity,
-                                          moment_source,
-                                          boundary_contribution,
-                                          evolution_options);
-
-      if (!result.ok())
-        {
-          failure_message =
-            "The QMOM phase-space evolution failed in QMOMKit, which cannot "
-            "evolve the moments " +
-            moments_to_string(local_moments) +
-            " of a degree of freedom.\nQMOMKit message (" +
-            enum_to_string(result.status) + "): " + result.message;
-          break;
-        }
-
-      const std::vector<double> &moment_values = result.state.moment_values();
+      // The vectors are only inserted into: switching to addition is a
+      // collective operation
       for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
-        evolved_moments[i_moment][dof] = moment_values[i_moment];
+        evolved_moments[i_moment][dof] = local_evolved_moments[i_moment];
+
+      if (scalars_are_coupled)
+        {
+          local_evolved_scalars = local_scalars;
+          if (!phase_space_source_terms->update_local_scalars(
+                local_moments, local_evolved_moments, local_evolved_scalars))
+            {
+              failure_message =
+                "The QMOM phase-space evolution failed: the degree of freedom "
+                "with the moments " +
+                moments_to_string(local_moments) +
+                " consumed more free lipids than available during the time "
+                "step, since the supersaturation is held constant over the "
+                "phase-space step. Reduce the time step.";
+              break;
+            }
+          for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
+            evolved_scalars[i_scalar][dof] = local_evolved_scalars[i_scalar];
+        }
     }
 
   // A rank that throws alone would leave the others waiting in the next
@@ -1375,6 +1431,11 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
     {
       evolved_moments[i_moment].compress(VectorOperation::insert);
       present_solutions[n_scalars + i_moment] = evolved_moments[i_moment];
+    }
+  for (unsigned int i_scalar = 0; i_scalar < evolved_scalars.size(); ++i_scalar)
+    {
+      evolved_scalars[i_scalar].compress(VectorOperation::insert);
+      present_solutions[i_scalar] = evolved_scalars[i_scalar];
     }
 #else
   // The constructor of the multiphysics interface already stops the
