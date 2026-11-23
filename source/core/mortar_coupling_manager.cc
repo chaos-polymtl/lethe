@@ -1665,14 +1665,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                       all_values_ghost.size()),
     n_dofs_per_cell * n_q_points * q_data_size);
 
-  // Careful here. We build the matrix one side at a time, so the other side
-  // gets a nullptr and everything read from it is zero. That's fine for u and
-  // p, but not for the void fraction: avg(eps) then becomes eps/2, and the
-  // penalty and symmetry terms in the matrix no longer match the residual.
-  // Newton has a really hard time converging with that. So when the evaluator
-  // has coefficients like eps (stored at the end of each quadrature point's
-  // data), we pass a copy of the other side where only those are kept and
-  // the rest is zero.
+  // Storage of coefficients used by both sides of the mortar interface.
   const unsigned int n_coefficients = evaluator->n_coefficients();
   AssertIndexRange(n_coefficients, q_data_size + 1);
 

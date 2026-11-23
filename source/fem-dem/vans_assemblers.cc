@@ -677,6 +677,8 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
         scratch_data.velocity_laplacians[q];
       const Tensor<1, dim> velocity_gradient_divergence =
         scratch_data.velocity_gradient_divergence[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Pressure
       const double         pressure = scratch_data.pressure_values[q];
@@ -728,15 +730,10 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
                                                     h,
                                                     sdt);
 
-      // TODO (mortar): Watch out ici, ça va devoir être advective velocity.
-      // Le assemble_matrix utilise déjà advective_velocity (u - u_rotor), mais
-      // le RHS est encore avec velocity (ici, dans u_mag pis dans le terme de
-      // convection plus bas). Dès que le rotor tourne, le residual pis le
-      // Jacobian vont plus matcher.
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
         // Term εfuj∂jui
-        velocity_gradient * velocity * void_fraction
+        velocity_gradient * advective_velocity * void_fraction
         // Mass Source: mass_source*ui
         + mass_source * velocity
         // Pressure: εf∂ip
@@ -779,7 +776,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
                  scalar_product(transpose(velocity_gradient), grad_phi_u_i) +
                kinematic_viscosity * transpose(velocity_gradient) *
                  void_fraction_gradients * phi_u_i) -
-              velocity_gradient * velocity * void_fraction * phi_u_i
+              velocity_gradient * advective_velocity * void_fraction * phi_u_i
               // Mass Source
               - mass_source * velocity * phi_u_i
               // Pressure and Force
@@ -790,7 +787,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
           if (component_i == dim)
             // Continuity
             local_rhs_i -= (velocity_divergence * void_fraction +
-                            velocity * void_fraction_gradients - mass_source) *
+                            (velocity - advective_velocity) * void_fraction_gradients - mass_source) *
                            phi_p_i;
 
           // PSPG GLS term
