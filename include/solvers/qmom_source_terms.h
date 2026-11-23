@@ -46,9 +46,11 @@
 using namespace dealii;
 
 /**
- * @brief Base class of the growth models. The growth rate G is the velocity of
- * the particle size xi in phase space, in m/s: the abscissa of every node of
- * the quadrature moves with dxi/dt = G, while its weight is unchanged.
+ * @brief Base class of the growth models.
+ *
+ * The growth rate G is the velocity of the particle size xi in phase space, in
+ * m/s: the abscissa of every node of the quadrature moves with dxi/dt = G,
+ * while its weight is unchanged.
  */
 class QMOMGrowthModelBase
 {
@@ -150,8 +152,10 @@ private:
 
 /**
  * @brief Growth rate given by an expression of the particle size xi and of the
- * time t. The expression is evaluated by a parser for every node, which is
- * slower than the other models.
+ * time t.
+ *
+ * The expression is evaluated by a parser for every node, which is slower than
+ * the other models.
  */
 class QMOMFunctionGrowth : public QMOMGrowthModelBase
 {
@@ -187,11 +191,13 @@ private:
 };
 
 /**
- * @brief Base class of the nucleation models. The nucleation creates
- * particles at the rate J, in 1/(m^3 s), whose sizes follow a log-normal
- * distribution: the rate of change of the moment M_k is J times the moment k
- * of the distribution of the nuclei. It does not depend on the particles that
- * already exist, so it also creates particles where there are none.
+ * @brief Base class of the nucleation models.
+ *
+ * The nucleation creates particles at the rate J, in 1/(m^3 s), whose sizes
+ * follow a log-normal distribution: the rate of change of the moment M_k is J
+ * times the moment k of the distribution of the nuclei. It does not depend on
+ * the particles that already exist, so it also creates particles where there
+ * are none.
  */
 class QMOMNucleationModelBase
 {
@@ -227,9 +233,11 @@ public:
 
 /**
  * @brief Log-normal distribution of the sizes of the nuclei, given by its mean
- * size and standard deviation. Its moments are E[xi^k] = exp(k mu + k^2 s^2 /
- * 2), with s^2 = ln(1 + sigma^2 / m^2) and mu = ln(m) - s^2 / 2, where m is the
- * mean size and sigma the standard deviation.
+ * size and standard deviation.
+ *
+ * Its moments are E[xi^k] = exp(k mu + k^2 s^2 / 2), with
+ * s^2 = ln(1 + sigma^2 / m^2) and mu = ln(m) - s^2 / 2, where m is the mean
+ * size and sigma the standard deviation.
  */
 class QMOMLogNormalNuclei
 {
@@ -303,9 +311,10 @@ private:
 };
 
 /**
- * @brief Nucleation rate J given by an expression of the time t: dM_k/dt =
- * J(t) E[xi^k], with E[xi^k] the moments of the log-normal distribution of the
- * nuclei.
+ * @brief Nucleation rate J given by an expression of the time t.
+ *
+ * The moments change at the rate dM_k/dt = J(t) E[xi^k], with E[xi^k] the
+ * moments of the log-normal distribution of the nuclei.
  */
 class QMOMFunctionNucleation : public QMOMNucleationModelBase
 {
@@ -347,11 +356,12 @@ private:
 };
 
 /**
- * @brief Base class of the coalescence models. Two particles of sizes xi_1 and
- * xi_2 merge at the rate given by the kernel beta(xi_1, xi_2), in m^3/s, into
- * a particle of the same total volume, of size (xi_1^3 + xi_2^3)^(1/3). With
- * a quadrature of weights w_i and abscissas xi_i, the rate of change of the
- * moment M_k is:
+ * @brief Base class of the coalescence models.
+ *
+ * Two particles of sizes xi_1 and xi_2 merge at the rate given by the kernel
+ * beta(xi_1, xi_2), in m^3/s, into a particle of the same total volume, of size
+ * (xi_1^3 + xi_2^3)^(1/3). With a quadrature of weights w_i and abscissas xi_i,
+ * the rate of change of the moment M_k is:
  *
  * dM_k/dt = 1/2 sum_i sum_j w_i w_j beta(xi_i, xi_j)
  *           [(xi_i^3 + xi_j^3)^(k/3) - xi_i^k - xi_j^k]
@@ -395,9 +405,10 @@ public:
 
   /**
    * @brief Compute the rate of change of the moments due to the coalescence
-   * of the nodes of a quadrature (see the class description). The pairs that
-   * include a node of non-positive size are skipped, since these nodes hold
-   * no particle that can merge.
+   * of the nodes of a quadrature (see the class description).
+   *
+   * The pairs that include a node of non-positive size are skipped, since these
+   * nodes hold no particle that can merge.
    *
    * @param[in] time Time, in s.
    * @param[in] local_scalars Values of the scalars at the degree of freedom
@@ -452,8 +463,10 @@ private:
 
 /**
  * @brief Coalescence kernel given by an expression of the sizes xi_1 and xi_2
- * of the two particles and of the time t. The expression is evaluated by a
- * parser for every pair of nodes, which is slower than the constant model.
+ * of the two particles and of the time t.
+ *
+ * The expression is evaluated by a parser for every pair of nodes, which is
+ * slower than the constant model.
  */
 class QMOMFunctionCoalescence : public QMOMCoalescenceModelBase
 {
@@ -490,9 +503,10 @@ private:
 };
 
 /**
- * @brief Phase-space mechanisms of the QMOM physics, built from the
- * parameters of the "QMOM" subsection: the models of the enabled mechanisms,
- * wrapped into the callbacks of QMOMKit.
+ * @brief Phase-space mechanisms of the QMOM physics.
+ *
+ * They are built from the parameters of the "QMOM" subsection: the models of
+ * the enabled mechanisms, wrapped into the callbacks of QMOMKit.
  *
  * The callbacks are built once, at construction, and read the local scalars
  * stored in this object: set_local_scalars() must be called at every degree of
@@ -537,8 +551,10 @@ public:
 
   /**
    * @brief Compute the rate of change of the moments due to the nucleation
-   * alone, which is zero if the nucleation is disabled. It is used where there
-   * are no particles, so that there is no quadrature to grow or coalesce.
+   * alone, which is zero if the nucleation is disabled.
+   *
+   * It is used where there are no particles, so that there is no quadrature to
+   * grow or coalesce.
    *
    * @param[in] time Time, in s.
    * @param[out] moment_rates Rates of change dM_k/dt of the moments, of the
@@ -574,8 +590,10 @@ public:
 
   /**
    * @brief Get the phase-space boundary contribution: the nucleation, or zero
-   * if it is disabled. QMOMKit calls a source of particles that does not
-   * depend on the existing particles a boundary contribution.
+   * if it is disabled.
+   *
+   * QMOMKit calls a source of particles that does not depend on the existing
+   * particles a boundary contribution.
    *
    * @return Reference to the boundary contribution.
    */

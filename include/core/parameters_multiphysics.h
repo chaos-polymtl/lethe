@@ -564,8 +564,10 @@ namespace Parameters
   };
 
   /**
-   * @brief Model of the growth rate G, the velocity of the particle size xi in
-   * phase space, in m/s:
+   * @brief Model of the growth rate G: the velocity of the particle size xi in
+   * phase space in m/s.
+   *
+   * The model types are:
    *  - constant: G = a, with a the growth coefficient in m/s;
    *  - linear: G = a xi, with a the growth coefficient in 1/s;
    *  - function: G is a function expression of the size xi and of the time t.
@@ -579,8 +581,9 @@ namespace Parameters
 
   /**
    * @brief Parameters of the growth of the particles in phase space, declared
-   * in the "growth" subsection of the "QMOM" subsection. They are only used
-   * if the growth is enabled. All of them are in SI units.
+   * in the "growth" subsection of the "QMOM" subsection.
+   *
+   * They are only used if the growth is enabled. All of them are in SI units.
    */
   struct QMOMGrowth
   {
@@ -612,8 +615,10 @@ namespace Parameters
   };
 
   /**
-   * @brief Model of the nucleation rate J, the number of particles created per
-   * unit volume and time, in 1/(m^3 s):
+   * @brief Model of the nucleation rate J: the number of particles created per
+   * unit volume and time, in 1/(m^3 s).
+   *
+   * The model types are:
    *  - constant: J = a, with a the nucleation coefficient in 1/(m^3 s);
    *  - function: J is a function expression of the time t.
    */
@@ -625,8 +630,10 @@ namespace Parameters
 
   /**
    * @brief Parameters of the nucleation of the particles in phase space,
-   * declared in the "nucleation" subsection of the "QMOM" subsection. They are
-   * only used if the nucleation is enabled. All of them are in SI units.
+   * declared in the "nucleation" subsection of the "QMOM" subsection.
+   *
+   * They are only used if the nucleation is enabled. All of them are in SI
+   * units.
    */
   struct QMOMNucleation
   {
@@ -665,8 +672,10 @@ namespace Parameters
   };
 
   /**
-   * @brief Model of the coalescence kernel beta, the rate at which two
-   * particles of sizes xi_1 and xi_2 merge, in m^3/s:
+   * @brief Model of the coalescence kernel beta: the rate at which two
+   * particles of sizes xi_1 and xi_2 merge, in m^3/s.
+   *
+   * The model types are:
    *  - constant: beta = a, with a the coalescence coefficient in m^3/s;
    *  - function: beta is a function expression of the sizes xi_1 and xi_2 of
    *    the two particles and of the time t.
@@ -679,8 +688,10 @@ namespace Parameters
 
   /**
    * @brief Parameters of the coalescence of the particles in phase space,
-   * declared in the "coalescence" subsection of the "QMOM" subsection. They
-   * are only used if the coalescence is enabled. All of them are in SI units.
+   * declared in the "coalescence" subsection of the "QMOM" subsection.
+   *
+   * They are only used if the coalescence is enabled. All of them are in SI
+   * units.
    */
   struct QMOMCoalescence
   {
