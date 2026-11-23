@@ -730,6 +730,21 @@ public:
   data_size() const = 0;
 
   /**
+   * @brief Number of coefficient entries stored at the end of the data of each
+   * quadrature point. A coefficient (e.g. the void fraction) is a known field
+   * that multiplies the unknowns: it is not linear in the unknowns and must
+   * not be zeroed when the matrix is assembled one side at a time (see
+   * CouplingOperator::add_system_matrix_entries).
+   *
+   * @return Number of coefficient entries, zero by default.
+   */
+  virtual unsigned int
+  n_coefficients() const
+  {
+    return 0;
+  }
+
+  /**
    * @brief Return relevant dof indices.
    */
   virtual const std::vector<unsigned int> &
@@ -1189,6 +1204,15 @@ public:
 
   unsigned int
   data_size() const override;
+
+  /**
+   * @brief Number of coefficient entries per quadrature point: the void
+   * fraction, stored last.
+   *
+   * @return One.
+   */
+  unsigned int
+  n_coefficients() const override;
 
   void
   local_reinit(

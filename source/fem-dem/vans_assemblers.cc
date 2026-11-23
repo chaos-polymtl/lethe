@@ -728,6 +728,11 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
                                                     h,
                                                     sdt);
 
+      // TODO (mortar): Watch out ici, ça va devoir être advective velocity.
+      // Le assemble_matrix utilise déjà advective_velocity (u - u_rotor), mais
+      // le RHS est encore avec velocity (ici, dans u_mag pis dans le terme de
+      // convection plus bas). Dès que le rotor tourne, le residual pis le
+      // Jacobian vont plus matcher.
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
         // Term εfuj∂jui
@@ -764,9 +769,15 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
                   scalar_product(velocity_gradient, grad_phi_u_i) +
                 kinematic_viscosity * velocity_gradient *
                   void_fraction_gradients * phi_u_i) -
-              (void_fraction * kinematic_viscosity * div_phi_u_i *
-                 velocity_divergence +
-               kinematic_viscosity * velocity_divergence *
+              // Transposed viscous term: ν(∇v,ε∇u^T) + ν(v,∇u^T·∇ε). This
+              // used to be written with (∇·u)(∇·v) and (∇·u)(∇ε·v), which is
+              // only the same thing up to boundary terms. The Jacobian in
+              // assemble_matrix (and the matrix-free operator) uses the ∇u^T
+              // form, so the two did not match and Newton was converging
+              // linearly instead of quadratically. Now everything uses ∇u^T.
+              (void_fraction * kinematic_viscosity *
+                 scalar_product(transpose(velocity_gradient), grad_phi_u_i) +
+               kinematic_viscosity * transpose(velocity_gradient) *
                  void_fraction_gradients * phi_u_i) -
               velocity_gradient * velocity * void_fraction * phi_u_i
               // Mass Source

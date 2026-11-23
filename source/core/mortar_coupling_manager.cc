@@ -1665,6 +1665,30 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                       all_values_ghost.size()),
     n_dofs_per_cell * n_q_points * q_data_size);
 
+  // Careful here. We build the matrix one side at a time, so the other side
+  // gets a nullptr and everything read from it is zero. That's fine for u and
+  // p, but not for the void fraction: avg(eps) then becomes eps/2, and the
+  // penalty and symmetry terms in the matrix no longer match the residual.
+  // Newton has a really hard time converging with that. So when the evaluator
+  // has coefficients like eps (stored at the end of each quadrature point's
+  // data), we pass a copy of the other side where only those are kept and
+  // the rest is zero.
+  const unsigned int n_coefficients = evaluator->n_coefficients();
+  AssertIndexRange(n_coefficients, q_data_size + 1);
+
+  std::vector<Number> coefficients_local;
+  std::vector<Number> coefficients_ghost;
+  if (n_coefficients > 0)
+    {
+      coefficients_local.assign(all_values_local.size(), Number(0));
+      coefficients_ghost.assign(all_values_ghost.size(), Number(0));
+      for (std::size_t k = 0; k < all_values_local.size(); ++k)
+        if (k % q_data_size >= q_data_size - n_coefficients)
+          {
+            coefficients_local[k] = all_values_local[k];
+            coefficients_ghost[k] = all_values_ghost[k];
+          }
+    }
 
   ptr_q                 = 0;
   unsigned int ptr_dofs = 0;
@@ -1699,24 +1723,28 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                     for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
                       {
                         buffer.reinit(n_dofs_per_cell);
+                        const unsigned int offset =
+                          (ptr_q * n_dofs_per_cell + i) * q_data_size;
                         if (b == 0) // local cell
                           evaluator->local_integrate(
                             data,
                             buffer,
                             ptr_q,
                             n_dofs_per_cell,
-                            all_values_local.data() +
-                              (ptr_q * n_dofs_per_cell + i) * q_data_size,
-                            nullptr);
+                            all_values_local.data() + offset,
+                            n_coefficients > 0 ?
+                              coefficients_ghost.data() + offset :
+                              nullptr);
                         else // ghost cell
                           evaluator->local_integrate(
                             data,
                             buffer,
                             ptr_q,
                             n_dofs_per_cell,
-                            nullptr,
-                            all_values_ghost.data() +
-                              (ptr_q * n_dofs_per_cell + i) * q_data_size);
+                            n_coefficients > 0 ?
+                              coefficients_local.data() + offset :
+                              nullptr,
+                            all_values_ghost.data() + offset);
 
                         // Copy data from buffer to cell matrix
                         for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
@@ -2093,6 +2121,14 @@ unsigned int
 VANSCouplingEvaluationSIPG<dim, Number>::data_size() const
 {
   return 3 * dim + 1;
+}
+
+template <int dim, typename Number>
+unsigned int
+VANSCouplingEvaluationSIPG<dim, Number>::n_coefficients() const
+{
+  // The void fraction, written last in local_evaluate()
+  return 1;
 }
 
 template <int dim, typename Number>
