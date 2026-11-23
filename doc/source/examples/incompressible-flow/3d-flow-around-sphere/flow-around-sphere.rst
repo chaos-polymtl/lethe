@@ -177,10 +177,6 @@ We specify the polynomial degree for both pressure and velocity using the ``FEM`
       set pressure degree = 1
     end
 
-.. warning::
-
-    If you choose to use the ``lethe-fluid-block`` solver; only Q2-Q1 elements are supported.
-
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
