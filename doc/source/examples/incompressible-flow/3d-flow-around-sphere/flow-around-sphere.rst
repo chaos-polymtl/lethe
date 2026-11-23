@@ -299,9 +299,6 @@ and the corresponding simulations are launched with:
   lethe-fluid-matrix-free sphere-0.1-matrix-free-x2.prm
   lethe-fluid-matrix-free sphere-0.1-matrix-free-x4.prm
 
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
-
-
 -----------------------
 Results and Discussion
 -----------------------
@@ -354,7 +351,7 @@ The deviation from Stokes law has two sources: the discretization error and the 
 | infinite domain             |              |        |             |                  |
 +-----------------------------+--------------+--------+-------------+------------------+
 
-On the original domain, the drag coefficient converges to approximately 282 when the mesh is refined or the degree of the interpolation is increased. The result of 250.5 obtained with Q1-Q1 elements on the Gmsh mesh is closer to Stokes law only because two errors compensate each other: the coarse mesh underestimates the viscous drag, while the size of the domain increases the drag. This is why the mesh is refined once in ``sphere-0.1.prm``.
+On the original domain, the drag coefficient converges to approximately 282 when the mesh is refined or the degree of the interpolation is increased. The result of 250.5 obtained with Q1-Q1 elements on the coarse Gmsh mesh is closer to Stokes law only because two errors compensate each other: the coarse mesh underestimates the viscous drag, while the size of the domain increases the drag. This is why the mesh is refined once in ``sphere-0.1.prm``.
 
 The deviation of the converged result is due to the size of the domain. In a Stokes flow, the disturbance of the velocity by the sphere decays like :math:`D/r`, where :math:`r` is the distance to the sphere. Upstream of the sphere, the velocity of an unbounded flow is :math:`u = u_{\infty} \left(1 - \frac{3D}{4r} + \frac{D^3}{16 r^3}\right)` on the axis, which is still 12.5% lower than :math:`u_{\infty}` at the inlet of the original domain (:math:`r = 6D`). Imposing :math:`u = u_{\infty}` at the inlet, as well as the slip condition on the lateral walls, confines the flow and increases the drag. Consequently, the deviation decreases like the inverse of the size of the domain: it is approximately halved every time the domain is enlarged twice. The drag coefficient can therefore be extrapolated linearly in :math:`1/\mathrm{domain\ scale}` to an infinite domain from the two largest domains, :math:`C_D(\infty) \approx 2 C_D(4) - C_D(2) = 240.6`, which agrees with Stokes law within 0.25%. Since the domain scale of 4 places the boundaries beyond the distance :math:`D/\mathrm{Re} = 10D` at which inertia becomes as important as viscosity, this extrapolation does not allow to distinguish Stokes law from Oseen's correction.
 
