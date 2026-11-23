@@ -34,7 +34,7 @@ namespace
    */
   template <int dim, typename VisitFunction>
   void
-  for_each_solid_cell_and_neighbor_cell(
+  visit_neighbor_cells_once_per_solid_cell(
     const typename DEM::dem_data_structures<
       dim>::solid_surfaces_mesh_information::value_type &mapped_pairs,
     const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
@@ -251,7 +251,7 @@ particle_solid_surfaces_contact_search(
 
       // The particles of every background cell that neighbors a background
       // cell to which a solid cell is mapped are candidates of the solid cell
-      for_each_solid_cell_and_neighbor_cell<dim>(
+      visit_neighbor_cells_once_per_solid_cell<dim>(
         solid_surfaces_mesh_information[solid_counter],
         cells_total_neighbor_list,
         [&](const auto &solid_cell, const auto &neighbor_cell) {
@@ -426,7 +426,7 @@ particle_solid_surfaces_contact_search(
       // The particles of every mobile background cell that neighbors a
       // background cell to which a solid cell is mapped are candidates of the
       // solid cell
-      for_each_solid_cell_and_neighbor_cell<dim>(
+      visit_neighbor_cells_once_per_solid_cell<dim>(
         solid_surfaces_mesh_information[solid_counter],
         cells_total_neighbor_list,
         [&](const auto &solid_cell, const auto &neighbor_cell) {
