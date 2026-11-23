@@ -43,6 +43,8 @@ Every component :math:`\zeta_c`, scalar or moment, is transported by the velocit
 
   \frac{\partial \zeta_c}{\partial t} + \nabla \cdot (\mathbf{u} \zeta_c) = S_c
 
+The current implementation assumes a purely advective transport: the scalars and moments do not diffuse.
+
 The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c < n_s`, and the moment :math:`M_{c - n_s}` otherwise.
 
 Linear Systems
