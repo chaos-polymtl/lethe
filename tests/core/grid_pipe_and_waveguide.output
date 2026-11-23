@@ -1,6 +1,33 @@
 
 DEAL::==================================================
+DEAL::Case: inner_circle
 DEAL::Grid arguments: "0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 : true"
-DEAL::Number of active cells : 81
-DEAL::Number of vertices     : 136
-DEAL::Mesh volume            : 0.00807426
+DEAL::Number of coarse cells : 81
+DEAL::Boundary id 0 face count : 1
+DEAL::Boundary id 1 face count : 16
+DEAL::Boundary id 2 face count : 16
+DEAL::Boundary id 3 face count : 49
+DEAL::Boundary id 4 face count : 4
+DEAL::Number of active cells after 2 refinements : 5184
+DEAL::All cell measures are positive : yes
+DEAL::Mesh volume  : 0.00866596
+DEAL::Exact volume : 0.00870650
+DEAL::Lateral wall on the cylinder : yes
+DEAL::Waveguide walls planar : yes
+DEAL::Number of vertices on the inner shape : 840
+DEAL::==================================================
+DEAL::Case: inner_square
+DEAL::Grid arguments: "0.07 : 0.05 : 0.1 : 0.05 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 : false"
+DEAL::Number of coarse cells : 81
+DEAL::Boundary id 0 face count : 1
+DEAL::Boundary id 1 face count : 16
+DEAL::Boundary id 2 face count : 16
+DEAL::Boundary id 3 face count : 49
+DEAL::Boundary id 4 face count : 4
+DEAL::Number of active cells after 2 refinements : 5184
+DEAL::All cell measures are positive : yes
+DEAL::Mesh volume  : 0.00866596
+DEAL::Exact volume : 0.00870650
+DEAL::Lateral wall on the cylinder : yes
+DEAL::Waveguide walls planar : yes
+DEAL::Number of vertices on the inner shape : 840
