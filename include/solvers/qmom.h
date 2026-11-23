@@ -434,17 +434,19 @@ private:
   setup_amg();
 
   /**
-   * @brief Transport the moments in physical space over the time step: solve
-   * the transport system of every moment, with the matrix and the right-hand
-   * sides assembled by the linear solver strategy.
+   * @brief Transport the moments in physical space over the time step.
+   *
+   * The transport system of every moment is solved, with the matrix and the
+   * right-hand sides assembled by the linear solver strategy.
    */
   void
   advance_moments_physical_space();
 
   /**
-   * @brief Transport the scalars in physical space over the time step: solve
-   * the transport system of every scalar, with the right-hand sides assembled
-   * by the linear solver strategy. Does nothing without scalars.
+   * @brief Transport the scalars in physical space over the time step.
+   *
+   * The transport system of every scalar is solved, with the right-hand sides
+   * assembled by the linear solver strategy. Does nothing without scalars.
    *
    * The scalars are only advected for now, so they share the matrix and the
    * preconditioner of the moments. They are separated from the moments so
@@ -458,8 +460,9 @@ private:
   advance_scalars_physical_space();
 
   /**
-   * @brief Solve the transport system of one component over the time step,
-   * with the transport matrix and its preconditioner. The system is solved
+   * @brief Solve the transport system of one component over the time step.
+   *
+   * The system is solved with the transport matrix and its preconditioner,
    * for the correction of the present solution of the component: the
    * right-hand side is the residual of that solution, and the tolerance is
    * relative to it.

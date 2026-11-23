@@ -753,9 +753,10 @@ namespace Parameters
   };
 
   /**
-   * @brief Scalars imposed by the lipid nanoparticle production process, in
-   * the order of the QMOM scalars. Their names are the names of the scalars,
-   * used for the output:
+   * @brief Scalars imposed by the lipid nanoparticle production process.
+   *
+   * They are in the order of the QMOM scalars, and their names are the names
+   * of the scalars, used for the output:
    *  - ethanol_concentration: ethanol (organic phase) concentration [kg/m^3];
    *  - free_lipids_concentration: concentration of the lipids that are not in
    *    the particles [kg/m^3].

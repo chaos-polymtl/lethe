@@ -522,8 +522,9 @@ struct QMOMLipidNanoparticleLocalState
 
 /**
  * @brief Properties of the mixture of the lipid nanoparticle (LNP) production
- * shared by its nucleation, growth and coalescence models, following Shin et
- * al., Chem. Eng. J. 523 (2025) 167786.
+ * shared by its nucleation, growth and coalescence models.
+ *
+ * The models follow Shin et al., Chem. Eng. J. 523 (2025) 167786.
  *
  * The local scalars of the process are the ethanol concentration c_e and the
  * free lipid concentration C, both in kg/m^3, ordered as the enumerators of
@@ -598,7 +599,9 @@ public:
 
   /**
    * @brief Compute the part of the electrostatic repulsion energy that does
-   * not depend on the particles:
+   * not depend on the particles.
+   *
+   * This prefactor is
    * 128 pi N_A c_i k_B T / kappa^2 tanh^2(e psi / (4 k_B T))
    * = 64 pi eps_0 eps_r (k_B T / e)^2 tanh^2(e psi / (4 k_B T)),
    * since kappa^2 is proportional to the ion concentration c_i. The second
@@ -625,10 +628,11 @@ public:
 };
 
 /**
- * @brief Growth of the lipid nanoparticles, with Ostwald ripening:
- * G = k_g xi C_inf (S - S*(xi)), with k_g the growth factor and S* the
- * equilibrium supersaturation of a particle of size xi. Particles smaller than
- * their equilibrium size (G < 0) dissolve.
+ * @brief Growth of the lipid nanoparticles, with Ostwald ripening.
+ *
+ * The growth rate is G = k_g xi C_inf (S - S*(xi)), with k_g the growth factor
+ * and S* the equilibrium supersaturation of a particle of size xi. Particles
+ * smaller than their equilibrium size (G < 0) dissolve.
  */
 class QMOMLipidNanoparticleGrowth : public QMOMGrowthModelBase
 {
@@ -642,8 +646,9 @@ public:
     const QMOMLipidNanoparticleMixture &mixture);
 
   /**
-   * @brief Compute the growth rate of every node. Nodes of non-positive size
-   * do not grow.
+   * @brief Compute the growth rate of every node.
+   *
+   * Nodes of non-positive size do not grow.
    *
    * @param[in] time Time, in s (unused).
    * @param[in] local_scalars Ethanol and free lipid concentrations, in kg/m^3.
@@ -662,8 +667,9 @@ private:
 };
 
 /**
- * @brief Classical nucleation of the lipid nanoparticles. In a supersaturated
- * mixture (S > 1), the nucleation rate is
+ * @brief Classical nucleation of the lipid nanoparticles.
+ *
+ * In a supersaturated mixture (S > 1), the nucleation rate is
  * J = A exp(-16 pi sigma^3 v_m^2 / (3 (k_B T)^3 (ln S)^2)),
  * with A the nucleation factor, sigma the surface tension and v_m the
  * molecular volume of the lipid. The sizes of the nuclei follow a log-normal
@@ -693,8 +699,10 @@ public:
   compute_nucleation_rate(const double supersaturation) const;
 
   /**
-   * @brief Compute the rate of change of the moments: dM_k/dt = J E[xi^k],
-   * with E[xi^k] the moments of the distribution of the nuclei.
+   * @brief Compute the rate of change of the moments.
+   *
+   * The rates are dM_k/dt = J E[xi^k], with E[xi^k] the moments of the
+   * distribution of the nuclei.
    *
    * @param[in] time Time, in s (unused).
    * @param[in] local_scalars Ethanol and free lipid concentrations, in kg/m^3.
@@ -715,8 +723,10 @@ private:
 };
 
 /**
- * @brief Coalescence of the lipid nanoparticles: Brownian (Smoluchowski)
- * kernel times the attachment efficiency of the Fuchs model,
+ * @brief Coalescence of the lipid nanoparticles.
+ *
+ * The kernel is the Brownian (Smoluchowski) kernel times the attachment
+ * efficiency of the Fuchs model,
  * beta = 2 k_B T (xi_1 + xi_2)^2 / (3 mu xi_1 xi_2) alpha,
  * with mu the viscosity of the mixture and alpha = min(k_PEG / W, k_PEG), with
  * k_PEG the PEG factor and W the stability ratio:
@@ -732,7 +742,9 @@ class QMOMLipidNanoparticleCoalescence : public QMOMCoalescenceModelBase
 {
 public:
   /**
-   * @brief Constructor. Builds the logarithmic grid of the distances.
+   * @brief Constructor.
+   *
+   * Builds the logarithmic grid of the distances.
    *
    * @param[in] mixture Properties of the mixture.
    */
@@ -848,8 +860,9 @@ public:
   set_local_scalars(const std::vector<double> &new_local_scalars);
 
   /**
-   * @brief Indicate whether the phase-space evolution changes the scalars,
-   * i.e. whether update_local_scalars() must be called.
+   * @brief Indicate whether the phase-space evolution changes the scalars.
+   *
+   * If it does, update_local_scalars() must be called.
    *
    * @return True if the particles exchange mass with the scalars.
    */
@@ -861,11 +874,12 @@ public:
 
   /**
    * @brief Update the scalars of a degree of freedom with the change of its
-   * moments over the phase-space step. With the lipid nanoparticle
-   * production, the mass of lipid gained by the particles is taken from the
-   * free lipids: C -= rho_l k_v (M_3 - M_3^0), with rho_l the density of the
-   * lipid and k_v the volume shape factor. The other scalars, and all the
-   * scalars of the generic process, are unchanged.
+   * moments over the phase-space step.
+   *
+   * With the lipid nanoparticle production, the mass of lipid gained by the
+   * particles is taken from the free lipids: C -= rho_l k_v (M_3 - M_3^0), with
+   * rho_l the density of the lipid and k_v the volume shape factor. The other
+   * scalars, and all the scalars of the generic process, are unchanged.
    *
    * Since the supersaturation is constant over the phase-space step, a large
    * time step can consume more free lipids than available. A negative
