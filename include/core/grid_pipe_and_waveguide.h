@@ -4,14 +4,12 @@
 #ifndef lethe_grid_pipe_and_waveguide_h
 #define lethe_grid_pipe_and_waveguide_h
 
-#include <deal.II/base/utilities.h>
+#include <deal.II/base/point.h>
+#include <deal.II/base/types.h>
 
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/manifold_lib.h>
+#include <deal.II/grid/tria.h>
 
-#include <array>
-#include <sstream>
+#include <string>
 
 using namespace dealii;
 
@@ -35,7 +33,7 @@ using namespace dealii;
  *
  * Material IDs are assigned as follows:
  * -0: Cylinder
- * -1: Waveguide (paving stone)
+ * -1: Waveguide
  *
  * A CylindricalManifold (manifold id 1) is attached to the cells of the
  * cylinder that have a face on its lateral wall, so that mesh refinement
@@ -83,14 +81,17 @@ public:
   GridPipeAndWaveguide(const std::string &grid_arguments);
 
   /**
-   * @brief Generate a cylindrical fluid conduit in which a block-shaped waveguide is embedded.
+   * @brief Generate the coarse mesh of the cylinder in which the waveguide is
+   * embedded.
    *
-   * The three parts of the geometry (bottom cylinder, center_cylinder (with the
-   * waveguide), top cylinder) are first merged and returned coarse
+   * The coarse 2D cross section of the cylinder is built by detailed_circle.
+   * In the middle section, it is merged with the rectangle of the waveguide.
+   * The three cross sections are extruded along z, and the three sections are
+   * merged. The material ids, the boundary ids and the cylindrical manifold are
+   * then set on the merged mesh, which is returned without refinement.
    *
-   * @param[in,out] triangulation The triangulation to fill with the mesh.
+   * @param[out] triangulation The empty triangulation to fill with the mesh.
    */
-
   void
   make_grid(Triangulation<dim, spacedim> &triangulation);
 
@@ -120,62 +121,32 @@ public:
 
 private:
   /**
-   * @brief The function detailed_circle is a tool used in the core of the file
+   * @brief Generate the coarse 2D mesh of the cross section of the cylinder,
+   * adapted to be joined to the rectangle of the waveguide.
    *
-   * This function is an extension of the 2D part of the hyper_ball in-built
-   * deal.ii function.
+   * The mesh extends the 2D GridGenerator::hyper_ball of deal.II, which has 8
+   * vertices: an inner square surrounded by four cells. It has 22 vertices and
+   * 16 cells, for three reasons:
+   * - GridGenerator::merge_triangulations joins two meshes only at shared
+   *   vertices. Two vertices of the outer circle are therefore placed at the
+   *   corners (rectangle_length, 0) and (rectangle_length, rectangle_width) of
+   *   the rectangle of the waveguide.
+   * - A band of width rectangle_width crosses the circle along the x-axis, in
+   *   line with the waveguide. The cells in this band stay nearly rectangular,
+   *   which keeps their aspect ratio low, and no cell is triangular.
+   * - The inner shape is either a circle of radius inner_length or a square of
+   *   half-side inner_length. Both shapes use the same cell connectivity: only
+   *   the vertices on the inner shape move.
    *
-   * Since the deal.ii merge function needs the two trangulations to have
-   * overlapped points, we needed to produce a coarse circular mesh with two
-   * points at the exact place where the rectangle would fit. This is why this
-   * function was created.
+   * The mesh has no manifold id: the manifold is set by make_grid on the final
+   * 3D mesh.
    *
-   * There are three main differences between hyper_ball and detailed_circle:
-   *
-   * -Fourteen points were added to the mesh (8 points in the original one)
-   * to link the circle with the rectangle we want to merge and to
-   * prevent triangular cells from being generated.
-   *
-   * - A central rectangle of width equal to the waveguide width crosses the
-   * circle along the x-axis. This minimizes the aspect ratio of the cells
-   * contained within the central rectangle because their shape stay nearly
-   * rectangular.
-   *
-   * - In the original function, a square lies in the center of the circle. An
-   * argument has been added to this function to chose between a square and
-   * a circle. We call this shape the "inner shape" of the circle.
-   *
-   * @param[in] tria
-   * @param[in] p
-   * @param[in] a
-   * @param[in] b
-   * @param[in] r
-   * @param[in] R
-   * @param[in] inner_circle
-   *
-   * @code "detailed_circle(&tria,&p,&a,&b,r,R,inner_circle)" @endcode
-   *
-   * | #   | Field         | Format                         | Required | Description                                                      |
-   * |-----|---------------|--------------------------------|----------|------------------------------------------------------------------|
-   * |  0  | &tria         | Triangulation <dim, spacedim>  | yes      | Triangulation used for the mesh                                  |
-   * |  1  | &p            | Point<spacedim>                | yes      | Center of the circle                                             |
-   * |  2  | a             | double                         | yes      | Rectangle width                                                  |
-   * |  3  | &b            | double                         | yes      | Rectangle length                                                 |
-   * |  4  | r             | double                         | yes      | Outer radius of the circle                                       |
-   * |  5  | R             | double                         | yes      | Inner circle radius or inner square half-side                    |
-   * |  6  | inner_circle  | true/false                     | yes      | True : the inner shape is a circle, False : it is a square       |
-   * Example: @code "0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 :
-   * true" @endcode
+   * @param[out] triangulation The empty triangulation to fill with the mesh.
+   * @param[in] center Center of the circle.
    */
   void
-  detailed_circle(Triangulation<2, 2> &tria,
-                  const Point<2>      &p,
-                  const double        &a,
-                  const double        &b,
-                  const double         r,
-                  const double         R,
-                  const bool           inner_circle);
-
+  detailed_circle(Triangulation<2, 2> &triangulation,
+                  const Point<2>      &center) const;
 
 
   /// Width of the rectangular waveguide

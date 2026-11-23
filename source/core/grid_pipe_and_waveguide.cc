@@ -1,127 +1,105 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 #include <core/grid_pipe_and_waveguide.h>
 
+#include <deal.II/base/utilities.h>
+
 #include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_description.h>
 
-#include <algorithm>
 #include <cmath>
-#include <fstream>
-#include <iostream>
 #include <numbers>
+#include <string>
+#include <vector>
 
 using namespace dealii;
 
 /*
-This file creates a mesh that represents a rectangular volume entering a
-cylinder laterally, perpendicular to its axis.
+This file creates the mesh of a rectangular waveguide that enters a cylinder
+laterally, perpendicular to its axis.
 
-The program is divided into two parts:
+The file is divided into two parts:
 
-1)The function "detailed_circle" is first defined, inspired by
-hyper_ball in the deal.II library. This function creates a 2D coarse mesh of a
-circle which is adapted to be connected with a rectangle on its side.
+1) The function detailed_circle, inspired by GridGenerator::hyper_ball of
+deal.II, creates the coarse 2D mesh of the cross section of the cylinder, which
+is adapted to be joined to the rectangle of the waveguide on its side.
 
-2)The core of the file creates the 3D pipe assembled with the waveguide
+2) The function make_grid assembles the 3D mesh of the cylinder and of the
+waveguide.
 */
 
-// See the doxygen documentation to learn more about this function
+// See the Doxygen documentation in the header
 template <int dim, int spacedim>
 void
-GridPipeAndWaveguide<dim, spacedim>::detailed_circle(Triangulation<2, 2> &tria,
-                                                     const Point<2>      &p,
-                                                     const double        &a,
-                                                     const double        &b,
-                                                     const double         r,
-                                                     const double         R,
-                                                     const bool inner_circle)
+GridPipeAndWaveguide<dim, spacedim>::detailed_circle(
+  Triangulation<2, 2> &triangulation,
+  const Point<2>      &center) const
 {
-  const auto embed_point = [](const double x, const double y) -> Point<2> {
-    return Point<2>(x, y);
-  };
+  /*
+  The band of width rectangle_width that crosses the circle along the x-axis is
+  bounded by the lines y = center[1] +/- half_width.
+  - The vertices of the outer circle on its diagonals are at
+    (+/- outer_diagonal_coordinate, +/- outer_diagonal_coordinate) from the
+    center, and the band crosses the outer circle at
+    x = +/- outer_band_crossing_coordinate from the center.
+  - The vertices of the inner shape on its diagonals are at
+    (+/- inner_diagonal_coordinate, +/- inner_diagonal_coordinate) from the
+    center, and the band crosses the inner shape at
+    x = +/- inner_band_crossing_coordinate from the center. Only these two
+    coordinates depend on the inner shape.
+  */
+  const double half_width                = rectangle_width / 2.;
+  const double outer_diagonal_coordinate = outer_radius / std::numbers::sqrt2;
+  const double outer_band_crossing_coordinate =
+    std::sqrt(outer_radius * outer_radius - half_width * half_width);
+  const double inner_diagonal_coordinate =
+    inner_circle ? inner_length / std::numbers::sqrt2 : inner_length;
+  const double inner_band_crossing_coordinate =
+    inner_circle ?
+      std::sqrt(inner_length * inner_length - half_width * half_width) :
+      inner_length;
 
-  const auto vertices = [&]() -> std::vector<Point<2>> {
-    if (inner_circle)
-      // Inner circle
-      return {
-        p + embed_point(-1., -1.) * (r / std::numbers::sqrt2),
-        p + embed_point(+1., -1.) * (r / std::numbers::sqrt2),
-        p + embed_point(-1., +1.) * (r / std::numbers::sqrt2),
-        p + embed_point(+1., +1.) * (r / std::numbers::sqrt2),
-        // The four points which make the inner square
-        p + embed_point(-1., +1.) * (R / std::numbers::sqrt2),
-        p + embed_point(+1., +1.) * (R / std::numbers::sqrt2),
-        p + embed_point(-1., -1.) * (R / std::numbers::sqrt2),
-        p + embed_point(+1., -1.) * (R / std::numbers::sqrt2),
-        // Two points linked with the rectangle on is left
-        embed_point(b, 0),
-        embed_point(b, a),
-        // The two points (0, r) and (0, -r) from the center of the circle
-        p + embed_point(0, -r),
-        p + embed_point(0, +r),
-        // The two points on the right side of the outer circle that lie along
-        // the width of the rectangle
-        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2),
-        p + embed_point(std::sqrt(r * r - a * a / 4), +a / 2),
-        // The other points where the width of the rectangle intersects the
-        // central square
-        p + embed_point(-(std::sqrt(R * R - a * a / 4)), +a / 2),
-        p + embed_point(-(std::sqrt(R * R - a * a / 4)), -a / 2),
-        p + embed_point(+(std::sqrt(R * R - a * a / 4)), -a / 2),
-        p + embed_point(+(std::sqrt(R * R - a * a / 4)), +a / 2),
-        // The two points of the central square on the circle's axis of symmetry
-        p + embed_point(0, -R),
-        p + embed_point(0, +R),
-        // The two points where the width of the rectangle intersects the axis
-        // of symmetry of the circle
-        p + embed_point(0, +a / 2),
-        p + embed_point(0, -a / 2)};
-
-    else
-      // Inner square
-      return {
-        p + embed_point(-1., -1.) * (r / std::numbers::sqrt2),
-        p + embed_point(+1., -1.) * (r / std::numbers::sqrt2),
-        p + embed_point(-1., +1.) * (r / std::numbers::sqrt2),
-        p + embed_point(+1., +1.) * (r / std::numbers::sqrt2),
-        // The four corners of the inner square, in the same order as the
-        // four points of the inner circle above, since both shapes use the
-        // same cell connectivity
-        p + embed_point(-1., +1.) * R,
-        p + embed_point(+1., +1.) * R,
-        p + embed_point(-1., -1.) * R,
-        p + embed_point(+1., -1.) * R,
-        // The two points attached to the rectangle
-        embed_point(b, 0),
-        embed_point(b, a),
-        // The two points (0, r) and (0, -r) from the center of the circle
-        p + embed_point(0, -r),
-        p + embed_point(0, +r),
-        // The two points on the right side of the outer circle that lie along
-        // the width of the rectangle
-        p + embed_point(std::sqrt(r * r - a * a / 4), -a / 2),
-        p + embed_point(std::sqrt(r * r - a * a / 4), +a / 2),
-        // The other points where the width of the rectangle intersects the
-        // central square
-        p + embed_point(-R, +a / 2),
-        p + embed_point(-R, -a / 2),
-        p + embed_point(+R, -a / 2),
-        p + embed_point(+R, +a / 2),
-        // The two points of the central square on the circle's axis of symmetry
-        p + embed_point(0, -R),
-        p + embed_point(0, +R),
-        // The two points where the width of the rectangle intersects the axis
-        // of symmetry of the circle
-        p + embed_point(0, +a / 2),
-        p + embed_point(0, -a / 2)};
-  }();
+  const std::vector<Point<2>> vertices = {
+    // 0-3: Vertices of the outer circle on its diagonals
+    center + Point<2>(-outer_diagonal_coordinate, -outer_diagonal_coordinate),
+    center + Point<2>(+outer_diagonal_coordinate, -outer_diagonal_coordinate),
+    center + Point<2>(-outer_diagonal_coordinate, +outer_diagonal_coordinate),
+    center + Point<2>(+outer_diagonal_coordinate, +outer_diagonal_coordinate),
+    // 4-7: Vertices of the inner shape on its diagonals
+    center + Point<2>(-inner_diagonal_coordinate, +inner_diagonal_coordinate),
+    center + Point<2>(+inner_diagonal_coordinate, +inner_diagonal_coordinate),
+    center + Point<2>(-inner_diagonal_coordinate, -inner_diagonal_coordinate),
+    center + Point<2>(+inner_diagonal_coordinate, -inner_diagonal_coordinate),
+    // 8-9: Corners of the rectangle of the waveguide where the band crosses
+    // the outer circle on the side of the waveguide
+    Point<2>(rectangle_length, 0.),
+    Point<2>(rectangle_length, rectangle_width),
+    // 10-11: Vertices of the outer circle on the line x = center[0]
+    center + Point<2>(0., -outer_radius),
+    center + Point<2>(0., +outer_radius),
+    // 12-13: Points where the band crosses the outer circle on the side
+    // opposite to the waveguide
+    center + Point<2>(+outer_band_crossing_coordinate, -half_width),
+    center + Point<2>(+outer_band_crossing_coordinate, +half_width),
+    // 14-17: Points where the band crosses the inner shape
+    center + Point<2>(-inner_band_crossing_coordinate, +half_width),
+    center + Point<2>(-inner_band_crossing_coordinate, -half_width),
+    center + Point<2>(+inner_band_crossing_coordinate, -half_width),
+    center + Point<2>(+inner_band_crossing_coordinate, +half_width),
+    // 18-19: Vertices of the inner shape on the line x = center[0]
+    center + Point<2>(0., -inner_length),
+    center + Point<2>(0., +inner_length),
+    // 20-21: Points where the band crosses the line x = center[0]
+    center + Point<2>(0., +half_width),
+    center + Point<2>(0., -half_width)};
 
   std::vector<CellData<2>> cells(16, CellData<2>());
   static constexpr int     circle_cell_vertices[16][4] = {
-    // We start with the 6 squares in the center square
+    // We start with the 6 cells inside the inner shape
     {6, 18, 15, 21},
     {15, 21, 14, 20},
     {14, 20, 4, 19},
@@ -146,15 +124,12 @@ GridPipeAndWaveguide<dim, spacedim>::detailed_circle(Triangulation<2, 2> &tria,
         cells[i].vertices[j] = circle_cell_vertices[i][j];
     }
 
-  tria.create_triangulation(std::vector<Point<2>>(std::begin(vertices),
-                                                  std::end(vertices)),
-                            cells,
-                            SubCellData()); // no boundary information
+  triangulation.create_triangulation(vertices,
+                                     cells,
+                                     SubCellData()); // no boundary information
 }
 
 
-
-// The core of the file begins here
 
 template <int dim, int spacedim>
 GridPipeAndWaveguide<dim, spacedim>::GridPipeAndWaveguide(
@@ -317,66 +292,39 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
 
   else
     {
-      // COARSE 2D PARTS OF THE MESH
+      // COARSE 2D CROSS SECTIONS
 
-      // PART -I-:Creating the Shape of the Medium: The paving stone embedded in
-      // the Cylinder
+      // Rectangle of the waveguide, at 0 <= x <= rectangle_length and
+      // 0 <= y <= rectangle_width. The waveguide only exists in the middle
+      // section, which is why the mesh is built in three sections.
+      Triangulation<2> waveguide_rectangle;
+      GridGenerator::hyper_rectangle(waveguide_rectangle,
+                                     Point<2>(0.0, 0.0),
+                                     Point<2>(rectangle_length,
+                                              rectangle_width));
 
-      // Creating the first shape: a rectangle (after extrusion, this rectangle
-      // will represent the paving stone). This rectangle is the reason why we
-      // divide the volume into three different pieces.
-      Triangulation<2> rect;
-      GridGenerator::hyper_rectangle(
-        rect, Point<2>(0.0, 0.0), Point<2>(rectangle_length, rectangle_width));
-
-      // Creating the second shape: a rough circle with two points located
-      // exactly at the right corners of the rectangle
-      Triangulation<2> disk;
-      // Position of the center of the circle
-      const Point<2> center(rectangle_length +
-                              sqrt(outer_radius * outer_radius -
-                                   rectangle_width * rectangle_width / 4),
+      // Cross section of the cylinder, with two vertices at the corners of the
+      // rectangle at x = rectangle_length. It is the cross section of the
+      // bottom and top sections.
+      const Point<2>   center(rectangle_length +
+                              std::sqrt(outer_radius * outer_radius -
+                                        rectangle_width * rectangle_width / 4),
                             rectangle_width / 2);
-      detailed_circle(disk,
-                      center,
-                      rectangle_width,
-                      rectangle_length,
-                      outer_radius,
-                      inner_length,
-                      inner_circle);
+      Triangulation<2> disk;
+      detailed_circle(disk, center);
 
+      // Cross section of the middle section. The manifold ids are not copied
+      // since they are set on the final 3D mesh.
       Triangulation<2> merged;
-      // The last argument of the following function is
-      // false since it is useless to copy the manifolds ids
-      // because we will set them after
-      GridGenerator::merge_triangulations(rect, disk, merged, 1e-12, false);
-
-      // PART -II-   Creating the bottom cylinder
-      Triangulation<2, 2> base;
-      detailed_circle(base,
-                      center,
-                      rectangle_width,
-                      rectangle_length,
-                      outer_radius,
-                      inner_length,
-                      inner_circle);
-
-      // PART -III-  Creating the top cylinder
-      Triangulation<2, 2> top;
-      detailed_circle(top,
-                      center,
-                      rectangle_width,
-                      rectangle_length,
-                      outer_radius,
-                      inner_length,
-                      inner_circle);
+      GridGenerator::merge_triangulations(
+        waveguide_rectangle, disk, merged, 1e-12, false);
 
       // EXTRUDE
 
       Triangulation<3> extruded_base;
       Triangulation<3> extruded_middle;
       Triangulation<3> extruded_top;
-      GridGenerator::extrude_triangulation(base,
+      GridGenerator::extrude_triangulation(disk,
                                            bottom_resolution,
                                            bottom_height,
                                            extruded_base);
@@ -384,7 +332,7 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
                                            middle_resolution,
                                            middle_height,
                                            extruded_middle);
-      GridGenerator::extrude_triangulation(top,
+      GridGenerator::extrude_triangulation(disk,
                                            top_resolution,
                                            top_height,
                                            extruded_top);

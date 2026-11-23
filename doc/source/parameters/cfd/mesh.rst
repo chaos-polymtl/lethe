@@ -371,6 +371,6 @@ Boundary IDs are assigned as follows:
 Material IDs are assigned as follows:
 
 * ``0``: cylinder;
-* ``1``: waveguide (paving stone).
+* ``1``: waveguide.
 
 A ``CylindricalManifold`` (manifold id ``1``) is attached to every cell of the cylinder that has a face on its lateral wall, so that mesh refinement preserves the shape of the cylinder. The face shared by the cylinder and the waveguide also follows this manifold: the cylinder stays a full cylinder and the waveguide ends on its lateral wall. With an inner circle, the manifold is attached to the whole cells, so that the inner circle is also preserved. With an inner square, it is only attached to the faces on the lateral wall, so that the sides of the square stay straight.
