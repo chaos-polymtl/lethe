@@ -128,24 +128,33 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
       local_background_cell_diameters.reserve(n_locally_owned_cells);
       cubes.reserve(n_locally_owned_cells);
 
+      // Loop on the active background cell
       for (const auto &background_cell : background_tr.active_cell_iterators())
         {
           if (!background_cell->is_locally_owned())
             continue;
 
+          // Center of the background cell and its diameter
           const Point<spacedim> center   = background_cell->center();
           const double          diameter = background_cell->diameter();
 
+          // The bounding box is a cube, centered at the background cell center.
+          // The cube sides are a cell diameter.
           BoundingBox<spacedim> cube(center);
           cube.extend(diameter * (1. + cube_enlargement_relative_tolerance));
+
+          // Store the cubes with all the cubes.
           cubes.emplace_back(
             cube, static_cast<unsigned int>(local_background_cells.size()));
 
+          // Store the locally owned background cell, its center and its
+          // diameter.
           local_background_cells.emplace_back(background_cell);
           local_background_cell_centers.emplace_back(center);
           local_background_cell_diameters.emplace_back(diameter);
         }
 
+      // Pack the cubes into an R-tree
       const auto cube_tree = pack_rtree(cubes);
 
       // Solid cells mapped to each locally owned background cell, in the
@@ -154,24 +163,28 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
         typename Triangulation<dim, spacedim>::active_cell_iterator>>
         solid_cells_of_background_cell(local_background_cells.size());
 
-      // The distance is computed with the first three vertices of the solid
-      // cell
-      std::vector<Point<spacedim>> triangle(solid_tria->begin()->n_vertices());
+      // The distance is computed with the first three vertices of the triangle
+      std::vector<Point<spacedim>> triangles(solid_tria->begin()->n_vertices());
       std::vector<std::pair<BoundingBox<spacedim>, unsigned int>>
         intersected_cubes;
 
       // Loop on the triangles of the solid-surface
-      for (const auto &solid_cell : solid_tria->active_cell_iterators())
+      for (const auto &this_triangle : solid_tria->active_cell_iterators())
         {
-          // Loop on the vertex of the triangle
-          for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)
-            triangle[v] = solid_cell->vertex(v);
+          // Loop on the vertex of the triangle and store the location of its
+          // vertex
+          for (unsigned int v = 0; v < this_triangle->n_vertices(); ++v)
+            triangles[v] = this_triangle->vertex(v);
 
+          // Find the background cell that intersect this triangle with their
+          // bounding box. Intersecting pairs are stored in instersected_cubes.
           intersected_cubes.clear();
           cube_tree.query(boost::geometry::index::intersects(
-                            solid_cell->bounding_box()),
+                            this_triangle->bounding_box()),
                           std::back_inserter(intersected_cubes));
 
+          // Loop on the background cell bounding box that intersect this
+          // triangle.
           for (const auto &intersected_cube : intersected_cubes)
             {
               const unsigned int local_index = intersected_cube.second;
@@ -179,11 +192,13 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
               // Distance between the triangle and the cell center.
               const double distance =
                 LetheGridTools::find_point_triangle_distance(
-                  triangle, local_background_cell_centers[local_index]);
+                  triangles, local_background_cell_centers[local_index]);
 
+              // If the cell center is closer to the triangle then its diameter,
+              // we store it.
               if (distance < local_background_cell_diameters[local_index])
                 solid_cells_of_background_cell[local_index].emplace_back(
-                  solid_cell);
+                  this_triangle);
             }
         }
 
