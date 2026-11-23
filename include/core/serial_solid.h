@@ -10,17 +10,120 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 #include <core/utilities.h>
 
+#include <deal.II/base/bounding_box.h>
 #include <deal.II/base/function.h>
+#include <deal.II/base/point.h>
+
+#include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/mapping_fe.h>
 
+#include <deal.II/grid/tria.h>
+
+#include <deal.II/numerics/rtree.h>
+
 #include <deal.II/particles/particle_handler.h>
 
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 using namespace dealii;
+
+/**
+ * @brief R-tree of the locally owned cells of a background triangulation, used
+ * to find the background cells to which the cells of a solid object are mapped.
+ *
+ * Each locally owned background cell is represented by the cube centered on
+ * its center whose half-width is its diameter. The tree depends only on the
+ * background triangulation, so it is shared by all the solid objects and needs
+ * to be rebuilt only when the background triangulation changes (repartition,
+ * refinement or motion of the grid).
+ *
+ * @tparam spacedim Spatial dimension of the background triangulation.
+ */
+template <int spacedim>
+class BackgroundCellsSearchTree
+{
+public:
+  /**
+   * @brief Pair of the cube of a background cell and the index of the cell in
+   * the containers of this class.
+   */
+  using CubeAndIndex = std::pair<BoundingBox<spacedim>, unsigned int>;
+
+  /**
+   * @brief Build the R-tree of the cubes of the locally owned cells of the
+   * background triangulation and store their cell iterator, center and
+   * diameter.
+   *
+   * @param[in] background_tr Background triangulation.
+   */
+  void
+  build(const parallel::TriangulationBase<spacedim> &background_tr);
+
+  /**
+   * @brief Return the locally owned background cells.
+   *
+   * @return The locally owned background cells, indexed as in the R-tree.
+   */
+  const std::vector<typename Triangulation<spacedim>::active_cell_iterator> &
+  get_cells() const
+  {
+    return cells;
+  }
+
+  /**
+   * @brief Return the centers of the locally owned background cells.
+   *
+   * @return The centers of the locally owned background cells, indexed as in
+   * the R-tree.
+   */
+  const std::vector<Point<spacedim>> &
+  get_cell_centers() const
+  {
+    return cell_centers;
+  }
+
+  /**
+   * @brief Return the diameters of the locally owned background cells.
+   *
+   * @return The diameters of the locally owned background cells, indexed as in
+   * the R-tree.
+   */
+  const std::vector<double> &
+  get_cell_diameters() const
+  {
+    return cell_diameters;
+  }
+
+  /**
+   * @brief Return the R-tree of the cubes of the locally owned background
+   * cells.
+   *
+   * @return The R-tree of the cubes and of their index in the containers.
+   */
+  const RTree<CubeAndIndex> &
+  get_cube_tree() const
+  {
+    return cube_tree;
+  }
+
+private:
+  /// Locally owned background cells.
+  std::vector<typename Triangulation<spacedim>::active_cell_iterator> cells;
+
+  /// Centers of the locally owned background cells.
+  std::vector<Point<spacedim>> cell_centers;
+
+  /// Diameters of the locally owned background cells.
+  std::vector<double> cell_diameters;
+
+  /// R-tree of the cubes of the locally owned background cells.
+  RTree<CubeAndIndex> cube_tree;
+};
 
 /**
  * A class that generates an object to manage a serial triangulation that
@@ -50,7 +153,8 @@ public:
    * center of the background cell and the solid cell is smaller than the
    * diameter of the background cell. An R-tree of the locally owned
    * background cells selects the background cells for which this distance is
-   * computed.
+   * computed. The R-tree is built for this call only; use the overload that
+   * takes a BackgroundCellsSearchTree to reuse it between calls.
    *
    * @param[in] background_tr Background triangulation.
    *
@@ -62,6 +166,27 @@ public:
               typename Triangulation<dim, spacedim>::active_cell_iterator>>
   map_solid_in_background_triangulation(
     const parallel::TriangulationBase<spacedim> &background_tr);
+
+  /**
+   * @brief Map the cells of the solid object to the locally owned background
+   * cells stored in an R-tree.
+   *
+   * A solid cell is mapped to a background cell if the distance between the
+   * center of the background cell and the solid cell is smaller than the
+   * diameter of the background cell. The R-tree selects the background cells
+   * for which this distance is computed.
+   *
+   * @param[in] background_cells_search_tree R-tree of the locally owned cells
+   * of the background triangulation, built on its current state.
+   *
+   * @return The (background cell, solid cell) pairs, ordered by background
+   * cell, then by solid cell.
+   */
+  std::vector<
+    std::pair<typename Triangulation<spacedim>::active_cell_iterator,
+              typename Triangulation<dim, spacedim>::active_cell_iterator>>
+  map_solid_in_background_triangulation(
+    const BackgroundCellsSearchTree<spacedim> &background_cells_search_tree);
 
   /**
    * @brief Manages solid triangulation setup

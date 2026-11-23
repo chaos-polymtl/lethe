@@ -546,6 +546,19 @@ private:
   std::vector<std::shared_ptr<SerialSolid<dim, dim>>> solid_volumes;
 
   /**
+   * @brief R-tree of the locally owned background cells, shared by the solid
+   * objects to map their cells onto the background triangulation.
+   */
+  BackgroundCellsSearchTree<dim> background_cells_search_tree;
+
+  /**
+   * @brief Whether the background triangulation changed since the R-tree of
+   * the locally owned background cells was built, so that it must be rebuilt
+   * before the next mapping of the solid objects.
+   */
+  bool background_cells_search_tree_is_outdated = true;
+
+  /**
    * @brief The container of the distribution objects.
    */
   std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;

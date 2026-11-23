@@ -79,12 +79,91 @@ SerialSolid<dim, spacedim>::SerialSolid(
     }
 }
 
+template <int spacedim>
+void
+BackgroundCellsSearchTree<spacedim>::build(
+  const parallel::TriangulationBase<spacedim> &background_tr)
+{
+  // A solid cell is mapped to a locally owned background cell if the distance
+  // between the center of the background cell and the solid cell is smaller
+  // than the diameter of the background cell. The point of the solid cell
+  // closest to the center then lies in the bounding box of the solid cell and
+  // in the cube centered on the center whose half-width is the diameter. An
+  // R-tree of these cubes thus gives every background cell that a solid cell
+  // can be mapped to, and the distance is only computed for them. The cubes
+  // are enlarged by a small fraction of the diameter so that round-off errors
+  // cannot discard a mapped pair.
+  constexpr double cube_enlargement_relative_tolerance =
+    1e-8; // Not sure if this is required.
+
+  // Bounding box for each cell
+  std::vector<CubeAndIndex> cubes;
+
+  // Number of locally own cells
+  const unsigned int n_locally_owned_cells =
+    background_tr.n_locally_owned_active_cells();
+
+  // Clear and reserve the containers
+  cells.clear();
+  cell_centers.clear();
+  cell_diameters.clear();
+  cells.reserve(n_locally_owned_cells);
+  cell_centers.reserve(n_locally_owned_cells);
+  cell_diameters.reserve(n_locally_owned_cells);
+  cubes.reserve(n_locally_owned_cells);
+
+  // Loop on the active background cell
+  for (const auto &background_cell : background_tr.active_cell_iterators())
+    {
+      if (!background_cell->is_locally_owned())
+        continue;
+
+      // Center of the background cell and its diameter
+      const Point<spacedim> center   = background_cell->center();
+      const double          diameter = background_cell->diameter();
+
+      // The bounding box is a cube, centered at the background cell center.
+      // The cube sides are a cell diameter.
+      BoundingBox<spacedim> cube(center);
+      cube.extend(diameter * (1. + cube_enlargement_relative_tolerance));
+
+      // Store the cubes with all the cubes.
+      cubes.emplace_back(cube, static_cast<unsigned int>(cells.size()));
+
+      // Store the locally owned background cell, its center and its
+      // diameter.
+      cells.emplace_back(background_cell);
+      cell_centers.emplace_back(center);
+      cell_diameters.emplace_back(diameter);
+    }
+
+  // Pack the cubes into an R-tree
+  cube_tree = pack_rtree(cubes);
+}
+
+
+
 template <int dim, int spacedim>
 std::vector<
   std::pair<typename Triangulation<spacedim>::active_cell_iterator,
             typename Triangulation<dim, spacedim>::active_cell_iterator>>
 SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
   const parallel::TriangulationBase<spacedim> &background_tr)
+{
+  BackgroundCellsSearchTree<spacedim> background_cells_search_tree;
+  background_cells_search_tree.build(background_tr);
+
+  return map_solid_in_background_triangulation(background_cells_search_tree);
+}
+
+
+
+template <int dim, int spacedim>
+std::vector<
+  std::pair<typename Triangulation<spacedim>::active_cell_iterator,
+            typename Triangulation<dim, spacedim>::active_cell_iterator>>
+SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
+  const BackgroundCellsSearchTree<spacedim> &background_cells_search_tree)
 {
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
@@ -93,69 +172,15 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
 
   if constexpr (dim == 2)
     {
-      // A solid cell is mapped to a locally owned background cell if the
-      // distance between the center of the background cell and the solid cell
-      // is smaller than the diameter of the background cell. The point of the
-      // solid cell closest to the center then lies in the bounding box of the
-      // solid cell and in the cube centered on the center whose half-width is
-      // the diameter. An R-tree of these cubes thus gives every background
-      // cell that a solid cell can be mapped to, and the distance is only
-      // computed for them. The cubes are enlarged by a small fraction of the
-      // diameter so that round-off errors cannot discard a mapped pair.
-      constexpr double cube_enlargement_relative_tolerance =
-        1e-8; // Not sure if this is required.
-
-      // Locally own cells
-      std::vector<typename Triangulation<spacedim>::active_cell_iterator>
-        local_background_cells;
-
-      // Position of the center of the cells
-      std::vector<Point<spacedim>> local_background_cell_centers;
-
-      // Diameter of each cell
-      std::vector<double> local_background_cell_diameters;
-
-      // Bounding box for each cell
-      std::vector<std::pair<BoundingBox<spacedim>, unsigned int>> cubes;
-
-      // Number of locally own cells
-      const unsigned int n_locally_owned_cells =
-        background_tr.n_locally_owned_active_cells();
-
-      // Reserve the containers
-      local_background_cells.reserve(n_locally_owned_cells);
-      local_background_cell_centers.reserve(n_locally_owned_cells);
-      local_background_cell_diameters.reserve(n_locally_owned_cells);
-      cubes.reserve(n_locally_owned_cells);
-
-      // Loop on the active background cell
-      for (const auto &background_cell : background_tr.active_cell_iterators())
-        {
-          if (!background_cell->is_locally_owned())
-            continue;
-
-          // Center of the background cell and its diameter
-          const Point<spacedim> center   = background_cell->center();
-          const double          diameter = background_cell->diameter();
-
-          // The bounding box is a cube, centered at the background cell center.
-          // The cube sides are a cell diameter.
-          BoundingBox<spacedim> cube(center);
-          cube.extend(diameter * (1. + cube_enlargement_relative_tolerance));
-
-          // Store the cubes with all the cubes.
-          cubes.emplace_back(
-            cube, static_cast<unsigned int>(local_background_cells.size()));
-
-          // Store the locally owned background cell, its center and its
-          // diameter.
-          local_background_cells.emplace_back(background_cell);
-          local_background_cell_centers.emplace_back(center);
-          local_background_cell_diameters.emplace_back(diameter);
-        }
-
-      // Pack the cubes into an R-tree
-      const auto cube_tree = pack_rtree(cubes);
+      // Locally owned background cells, their center and their diameter,
+      // indexed as in the R-tree of their cubes
+      const auto &local_background_cells =
+        background_cells_search_tree.get_cells();
+      const auto &local_background_cell_centers =
+        background_cells_search_tree.get_cell_centers();
+      const auto &local_background_cell_diameters =
+        background_cells_search_tree.get_cell_diameters();
+      const auto &cube_tree = background_cells_search_tree.get_cube_tree();
 
       // Solid cells mapped to each locally owned background cell, in the
       // order of the active cells of the solid triangulation
@@ -165,7 +190,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
 
       // The distance is computed with the first three vertices of the triangle
       std::vector<Point<spacedim>> triangles(solid_tria->begin()->n_vertices());
-      std::vector<std::pair<BoundingBox<spacedim>, unsigned int>>
+      std::vector<typename BackgroundCellsSearchTree<spacedim>::CubeAndIndex>
         intersected_cubes;
 
       // Loop on the triangles of the solid-surface
@@ -736,6 +761,9 @@ SerialSolid<dim, spacedim>::setup_containers()
 }
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur
+template class BackgroundCellsSearchTree<2>;
+template class BackgroundCellsSearchTree<3>;
+
 template class SerialSolid<1, 2>;
 template class SerialSolid<2, 3>;
 template class SerialSolid<2>;
