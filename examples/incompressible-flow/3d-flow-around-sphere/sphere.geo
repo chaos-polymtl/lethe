@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Structured 3D sphere in rectangular domain
@@ -8,9 +8,15 @@ gr=4; 		// Global refinement
 around=10;  	// Refinement around the sphere
 trail=8;	// Refinement of trail of sphere
 near_sphere=1.20;	// Progression of cell refinement to sphere surface
-downstream=16;		// Length of domain downstream of sphere
-upstream=-6;		// Length of domain upstream of sphere (must be negative)
-cross_section=10;	// Half the cross-sectional width/height
+// Scaling factor of the size of the domain (the size of the sphere and the
+// number of cells do not change). It can be changed from the command line:
+//   gmsh -setnumber domain_scale 2 -3 sphere.geo -o sphere-x2.msh
+If (!Exists(domain_scale))
+  domain_scale=1;
+EndIf
+downstream=16*domain_scale;	// Length of domain downstream of sphere
+upstream=-6*domain_scale;	// Length of domain upstream of sphere (must be negative)
+cross_section=10*domain_scale;	// Cross-sectional width/height
 radius=0.5;		// Radius of sphere
 
 // Calculate parameters
