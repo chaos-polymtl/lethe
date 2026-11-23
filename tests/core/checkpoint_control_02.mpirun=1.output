@@ -1,0 +1,7 @@
+
+DEAL:0::Time control: checkpoint at t = 0.300000
+DEAL:0::Time control: checkpoint at t = 0.500000
+DEAL:0::Time control: checkpoint at t = 0.800000
+DEAL:0::Time control: checkpoint at t = 1.00000
+DEAL:0::Wall time control (1.00000e-09 s): checkpoint at time step 2
+DEAL:0::Wall time control (1.00000e-09 s): checkpoint at time step 4

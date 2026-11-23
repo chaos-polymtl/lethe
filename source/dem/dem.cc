@@ -1315,8 +1315,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
       if (packed_insertion_report_and_status())
         {
           // The packing ends the simulation, so this is its last time step.
-          if (checkpoint_controller.is_checkpoint_time_step(
-                simulation_control->get_iteration_number(), true))
+          if (checkpoint_controller.is_checkpoint_time_step(*simulation_control,
+                                                            true,
+                                                            mpi_communicator))
             {
               write_checkpoint(computing_timer,
                                parameters,
@@ -1372,8 +1373,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Write checkpoint if needed
       if (checkpoint_controller.is_checkpoint_time_step(
-            simulation_control->get_iteration_number(),
-            simulation_control->is_at_end()))
+            *simulation_control,
+            simulation_control->is_at_end(),
+            mpi_communicator))
         {
           write_checkpoint(computing_timer,
                            parameters,

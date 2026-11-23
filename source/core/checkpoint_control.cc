@@ -4,9 +4,66 @@
 #include <core/checkpoint_control.h>
 #include <core/utilities.h>
 
+#include <cmath>
 #include <fstream>
 
 using namespace dealii;
+
+bool
+CheckpointControl::is_checkpoint_time_step(
+  SimulationControl &simulation_control,
+  const bool         is_last_time_step,
+  const MPI_Comm    &mpi_communicator)
+{
+  if (!restart)
+    return false;
+
+  bool is_checkpoint = is_last_time_step;
+  switch (checkpoint_control)
+    {
+      case Parameters::Restart::CheckpointControlType::iteration:
+        is_checkpoint =
+          is_checkpoint || (simulation_control.get_iteration_number() %
+                              checkpointing_frequency ==
+                            0);
+        break;
+      case Parameters::Restart::CheckpointControlType::time:
+        {
+          // A checkpoint is written when the time crosses a multiple of the
+          // time frequency. The tolerance, the same as
+          // SimulationControlTransient::output_time_tolerance, prevents
+          // round-off errors in the time from delaying or skipping a
+          // checkpoint.
+          constexpr double time_tolerance = 1e-6;
+          const double     margin         = time_tolerance * time_frequency;
+          is_checkpoint =
+            is_checkpoint ||
+            std::floor((simulation_control.get_current_time() + margin) /
+                       time_frequency) >
+              std::floor((simulation_control.get_previous_time() + margin) /
+                         time_frequency);
+          break;
+        }
+      case Parameters::Restart::CheckpointControlType::wall_time:
+        // The wall time differs between ranks, so rank 0 decides, at log
+        // iterations only.
+        if (simulation_control.is_verbose_iteration())
+          is_checkpoint =
+            Utilities::MPI::broadcast(mpi_communicator,
+                                      wall_time_timer.wall_time() >=
+                                        wall_time_frequency,
+                                      0) ||
+            is_checkpoint;
+        break;
+    }
+
+  if (!is_checkpoint)
+    return false;
+
+  increment_checkpoint_id();
+  wall_time_timer.restart();
+  return true;
+}
 
 void
 CheckpointControl::write(const std::string &prefix,

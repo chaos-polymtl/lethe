@@ -4149,6 +4149,27 @@ namespace Parameters
                           defaults.frequency),
                         Patterns::Integer(),
                         "Frequency for checkpointing");
+
+      declare_enum_entry(prm,
+                         "checkpoint control",
+                         defaults.checkpoint_control,
+                         "The control of the checkpoints: at a constant "
+                         "iteration frequency, simulated time frequency or "
+                         "wall time frequency.");
+
+      prm.declare_entry("time frequency",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.time_frequency),
+                        Patterns::Double(0.),
+                        "Simulated time between checkpoints, for the time "
+                        "checkpoint control");
+
+      prm.declare_entry("wall time frequency",
+                        Patterns::Tools::Convert<double>::to_string(
+                          defaults.wall_time_frequency),
+                        Patterns::Double(0.),
+                        "Wall time between checkpoints in seconds, for the "
+                        "wall_time checkpoint control");
     }
     prm.leave_subsection();
   }
@@ -4162,6 +4183,26 @@ namespace Parameters
       checkpoint = prm.get_bool("checkpoint");
       restart    = prm.get_bool("restart");
       frequency  = prm.get_integer("frequency");
+      checkpoint_control =
+        string_to_enum<CheckpointControlType>(prm.get("checkpoint control"));
+      time_frequency      = prm.get_double("time frequency");
+      wall_time_frequency = prm.get_double("wall time frequency");
+
+      AssertThrow(checkpoint_control != CheckpointControlType::time ||
+                    time_frequency > 0.,
+                  ExcMessage("The time frequency of the checkpoints must be "
+                             "positive with the time checkpoint control, but "
+                             "it is " +
+                             std::to_string(time_frequency) +
+                             ". Set 'time frequency' in subsection restart."));
+      AssertThrow(checkpoint_control != CheckpointControlType::wall_time ||
+                    wall_time_frequency > 0.,
+                  ExcMessage("The wall time frequency of the checkpoints must "
+                             "be positive with the wall_time checkpoint "
+                             "control, but it is " +
+                             std::to_string(wall_time_frequency) +
+                             ". Set 'wall time frequency' in subsection "
+                             "restart."));
     }
     prm.leave_subsection();
   }
