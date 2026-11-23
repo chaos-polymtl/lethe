@@ -469,10 +469,6 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
   // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
 
-  // The locally owned cells changed, so the R-tree of the background cells
-  // must be rebuilt before the next mapping of the solid objects
-  background_cells_search_tree_is_outdated = true;
-
   // If PBC are enabled, update the periodic cells
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
@@ -710,13 +706,9 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
   // Map solid objects if the action was triggered
   if (action_manager->check_solid_object_search())
     {
-      // Rebuild the R-tree of the background cells if the background
-      // triangulation changed since it was built
-      if (background_cells_search_tree_is_outdated)
-        {
-          background_cells_search_tree.build(triangulation);
-          background_cells_search_tree_is_outdated = false;
-        }
+      // Rebuild the R-tree of the background cells if they changed
+      if (action_manager->check_background_cells_search_tree_update())
+        background_cells_search_tree.build(triangulation);
 
       // Store the information about the floating mesh and background mesh
       // intersection
@@ -1258,12 +1250,6 @@ DEMSolver<dim, PropertiesIndex>::solve()
       grid_motion_object->move_grid(triangulation);
       boundary_cell_object.update_boundary_info_after_grid_motion(
         updated_boundary_points_and_normal_vectors);
-
-      // The background cells moved, so the R-tree of the background cells
-      // must be rebuilt before the next mapping of the solid objects
-      if (parameters.grid_motion.motion_type !=
-          Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
-        background_cells_search_tree_is_outdated = true;
 
       // Insert particle if needed
       insert_particles();
