@@ -10,7 +10,7 @@ In this example, a fluid flows past a sphere.
 Features
 ----------------------------------
 
-- Solvers: ``lethe-fluid`` (with Q1-Q1), ``lethe-fluid-block`` (with Q2-Q1) or ``lethe-fluid-matrix-free`` (with Q2-Q2)
+- Solvers: ``lethe-fluid`` or ``lethe-fluid-matrix-free``
 - Steady-state problem
 - Displays the importance of adaptive mesh refinement
 - Displays the effect of the Reynolds number on the convergence
@@ -41,9 +41,9 @@ The following schematic describes the simulation and its boundary condition indi
     :align: center
     :name: geometry
 
-Note that the sphere surface has a boundary index of ``0``, the inlet ``1``, the walls parallel to the flow direction have a boundary index of ``2`` and the outlet an index of ``3``. 
+Note that the sphere surface has a boundary index of ``0``, the inlet ``1``, the walls parallel to the flow direction have a boundary index of ``2`` and the outlet an index of ``3``.
 
-As this examples allows for two different Reynolds numbers as well as an adaptive mesh refinement variation, the parameter file section will specify the differences when applicable. 
+As this examples allows for two different Reynolds numbers as well as an adaptive mesh refinement variation, the parameter file section will specify the differences when applicable.
 
 
 --------------
@@ -55,7 +55,7 @@ We first establish the parameters.
 Mesh
 ~~~~
 
-The structured mesh is built using `gmsh <https://gmsh.info/#Download>`_. Geometry parameters can be adapted in the "Variables" section of the .geo file, as shown below. 
+The structured mesh is built using `gmsh <https://gmsh.info/#Download>`_. Geometry parameters can be adapted in the "Variables" section of the .geo file, as shown below.
 
 .. code-block:: text
 
@@ -90,7 +90,7 @@ In the parameter file, the mesh is read by specifying its type and file name:
     end
 
 .. note::
-  
+
   The Gmsh mesh contains 5823 cells. For both static mesh cases (:math:`\mathrm{Re}=0.1` and :math:`\mathrm{Re}=150`), the ``initial refinement`` parameter is used and set to 1, so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains 46,584 cells.
 
 Boundary Conditions
@@ -177,9 +177,9 @@ We specify the polynomial degree for both pressure and velocity using the ``FEM`
       set pressure degree = 1
     end
 
-.. warning:: 
+.. warning::
 
-    If you choose to use the ``lethe-fluid-block`` solver; only Q2-Q1 elements are supported. 
+    If you choose to use the ``lethe-fluid-block`` solver; only Q2-Q1 elements are supported.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
@@ -235,7 +235,7 @@ To increase the accuracy of the drag coefficient, the mesh must be refined in ar
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = adaptive 
+      set type                 = adaptive
       set error estimator      = kelly
       set fraction coarsening  = 0.05
       set fraction refinement  = 0.1
@@ -263,7 +263,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
   lethe-fluid sphere-0.1.prm
 
-or 
+or
 
 .. code-block:: text
   :class: copy-button
@@ -303,7 +303,7 @@ and the corresponding simulations are launched with:
   lethe-fluid-matrix-free sphere-0.1-matrix-free-x2.prm
   lethe-fluid-matrix-free sphere-0.1-matrix-free-x4.prm
 
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
+Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
 
 -----------------------
@@ -313,7 +313,7 @@ Results and Discussion
 First Case Results (:math:`\mathrm{Re}=0.1`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by creating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_). 
+Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by creating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_).
 
 .. image:: images/velocity-0.1.png
     :alt: velocity distribution 0.1
@@ -323,7 +323,7 @@ Using Paraview, the steady-state velocity profile and the pressure profile can b
     :alt: pressure distribution 0.1
     :align: center
 
-We can appreciate the axisymmetrical behavior of the flow. The drag on the sphere is available in the output file ``force.00.dat`` (the other force files ``force.01.dat``, ``force.02.dat``  and ``force.03.dat`` give the forces on the other boundary conditions 1, 2 and 3, respectively). 
+We can appreciate the axisymmetrical behavior of the flow. The drag on the sphere is available in the output file ``force.00.dat`` (the other force files ``force.01.dat``, ``force.02.dat``  and ``force.03.dat`` give the forces on the other boundary conditions 1, 2 and 3, respectively).
 
 .. note::
   We only perform one iteration, therefore we only have one line in the force file. If several iterations are carried out by further refining the mesh several lines will be obtained. The last line of the file shows the force calculated in the last iteration. Since the flow is in the x-direction, the x-direction force ``f_x`` allows us to calculate the drag force.
@@ -371,7 +371,7 @@ The drag coefficients of all the static mesh simulations (matrix-based and matri
 Second Case Results (:math:`\mathrm{Re}=150`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We now consider the case at a Reynolds number of 150. At this value of the Reynolds number, the flow has separated, resulting in an unstable wake and recirculation. 
+We now consider the case at a Reynolds number of 150. At this value of the Reynolds number, the flow has separated, resulting in an unstable wake and recirculation.
 
 The velocity and pressure are once again visualised as well as the mesh used:
 
@@ -401,13 +401,11 @@ Using mesh adaptive refinement, the final mesh contains slightly more than 101,0
     :alt: pressure distribution 150
     :align: center
 
-It is possible to observe that this mesh allows us to obtain a better velocity profile than in the previous example. The resulting drag coefficient of 0.880 is more accurate than the one determined using the static mesh, and does not take much more time to execute than the previous example. 
+It is possible to observe that this mesh allows us to obtain a better velocity profile than in the previous example. The resulting drag coefficient of 0.880 is more accurate than the one determined using the static mesh, and does not take much more time to execute than the previous example.
 
 ---------------------------
 Possibilities for Extension
 ---------------------------
-
-- **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 
 
 - **Domain size:** The domain size study carried out at :math:`\mathrm{Re}=0.1` could be repeated at :math:`\mathrm{Re}=150`, where the disturbance of the flow decays faster and the size of the domain is expected to have a smaller impact.
 
