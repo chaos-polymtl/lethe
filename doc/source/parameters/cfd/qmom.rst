@@ -140,49 +140,49 @@ Phase-Space Source Terms
 
   * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set, instead of stopping the simulation with an error.
   * ``relative tolerance``: relative tolerance of the adaptive Runge-Kutta integration of the growth of the quadrature nodes in phase space.
-  * ``absolute tolerance``: absolute tolerance of this integration, in m. The default value is much smaller than the particle sizes, so that the ``relative tolerance`` controls the integration.
+  * ``absolute tolerance``: absolute tolerance of this integration, in :math:`\text{m}`. The default value is much smaller than the particle sizes, so that the ``relative tolerance`` controls the integration.
 
 Growth
 """"""
 
-Growth of the particles in phase space, used if ``enable growth`` is ``true``. The growth rate :math:`G` is the velocity of the particle size :math:`\xi` in phase space, in m/s (see :doc:`../../theory/multiphysics/qmom/qmom_equations`).
+Growth of the particles in phase space, used if ``enable growth`` is ``true``. The growth rate :math:`G` is the velocity of the particle size :math:`\xi` in phase space, in :math:`\text{m} \cdot \text{s}^{-1}` (see :doc:`../../theory/multiphysics/qmom/qmom_equations`).
 
 * ``model``: model of the growth rate. The choices are:
 
-  * ``constant``: :math:`G = a`, with :math:`a` the ``growth coefficient`` in m/s. All the sizes increase by the same amount.
-  * ``linear``: :math:`G = a \xi`, with :math:`a` the ``growth coefficient`` in 1/s. All the sizes are multiplied by :math:`\exp(a t)`.
+  * ``constant``: :math:`G = a`, with :math:`a` the ``growth coefficient`` in :math:`\text{m} \cdot \text{s}^{-1}`. All the sizes increase by the same amount.
+  * ``linear``: :math:`G = a \xi`, with :math:`a` the ``growth coefficient`` in :math:`\text{s}^{-1}`. All the sizes are multiplied by :math:`\exp(a t)`.
   * ``function``: :math:`G` is the ``Function expression``. This generic model is slower than the ``constant`` and ``linear`` models, since the expression is evaluated by a parser for every quadrature node, at every stage of the integration and at every degree of freedom: use it only for a growth rate that no other model provides.
 
 * ``growth coefficient``: coefficient :math:`a` of the ``constant`` and ``linear`` models.
-* ``Function expression``: growth rate of the ``function`` model, in m/s, as an expression of the particle size ``xi``, in m, and of the time ``t``, in s (e.g. ``set Function expression = 2 * xi``). The expression cannot depend on the position.
+* ``Function expression``: growth rate of the ``function`` model, in :math:`\text{m} \cdot \text{s}^{-1}`, as an expression of the particle size ``xi``, in :math:`\text{m}`, and of the time ``t``, in :math:`\text{s}` (e.g. ``set Function expression = 2 * xi``). The expression cannot depend on the position.
 
 Nucleation
 """"""""""
 
-Nucleation of the particles in phase space, used if ``enable nucleation`` is ``true``. The nucleation rate :math:`J` is the number of particles created per unit volume and time, in 1/(m\ :sup:`3` s). The sizes of the nuclei follow a log-normal distribution (see :doc:`../../theory/multiphysics/qmom/qmom_equations`).
+Nucleation of the particles in phase space, used if ``enable nucleation`` is ``true``. The nucleation rate :math:`J` is the number of particles created per unit volume and time, in :math:`\text{m}^{-3} \cdot \text{s}^{-1}`. The sizes of the nuclei follow a log-normal distribution (see :doc:`../../theory/multiphysics/qmom/qmom_equations`).
 
 * ``model``: model of the nucleation rate. The choices are:
 
-  * ``constant``: :math:`J = a`, with :math:`a` the ``nucleation coefficient`` in 1/(m\ :sup:`3` s).
+  * ``constant``: :math:`J = a`, with :math:`a` the ``nucleation coefficient`` in :math:`\text{m}^{-3} \cdot \text{s}^{-1}`.
   * ``function``: :math:`J` is the ``Function expression``. This generic model is slower than the ``constant`` model, since the expression is evaluated by a parser at every stage of the integration and at every degree of freedom.
 
 * ``nucleation coefficient``: coefficient :math:`a` of the ``constant`` model.
-* ``Function expression``: nucleation rate of the ``function`` model, in 1/(m\ :sup:`3` s), as an expression of the time ``t``, in s (e.g. ``set Function expression = 1e19 * exp(-t)``). The expression cannot depend on the position.
-* ``nuclei mean size``: mean size :math:`m` of the log-normal distribution of the sizes of the nuclei, in m.
-* ``nuclei standard deviation``: standard deviation :math:`\sigma` of this distribution, in m. It must be strictly positive: nuclei of a single size would have moments that can only be inverted into a single quadrature node.
+* ``Function expression``: nucleation rate of the ``function`` model, in :math:`\text{m}^{-3} \cdot \text{s}^{-1}`, as an expression of the time ``t``, in :math:`\text{s}` (e.g. ``set Function expression = 1e19 * exp(-t)``). The expression cannot depend on the position.
+* ``nuclei mean size``: mean size :math:`m` of the log-normal distribution of the sizes of the nuclei, in :math:`\text{m}`.
+* ``nuclei standard deviation``: standard deviation :math:`\sigma` of this distribution, in :math:`\text{m}`. It must be strictly positive: nuclei of a single size would have moments that can only be inverted into a single quadrature node.
 
 Coalescence
 """"""""""""
 
-Coalescence of the particles in phase space, used if ``enable coalescence`` is ``true``. The coalescence kernel :math:`\beta` is the rate at which two particles merge into a particle of the same volume, in m\ :sup:`3`/s (see :doc:`../../theory/multiphysics/qmom/qmom_equations`).
+Coalescence of the particles in phase space, used if ``enable coalescence`` is ``true``. The coalescence kernel :math:`\beta` is the rate at which two particles merge into a particle of the same volume, in :math:`\text{m}^{3} \cdot \text{s}^{-1}` (see :doc:`../../theory/multiphysics/qmom/qmom_equations`).
 
 * ``model``: model of the coalescence kernel. The choices are:
 
-  * ``constant``: :math:`\beta = a`, with :math:`a` the ``coalescence coefficient`` in m\ :sup:`3`/s.
+  * ``constant``: :math:`\beta = a`, with :math:`a` the ``coalescence coefficient`` in :math:`\text{m}^{3} \cdot \text{s}^{-1}`.
   * ``function``: :math:`\beta` is the ``Function expression``. This generic model is slower than the ``constant`` model, since the expression is evaluated by a parser for every pair of quadrature nodes, at every stage of the integration and at every degree of freedom.
 
 * ``coalescence coefficient``: coefficient :math:`a` of the ``constant`` model.
-* ``Function expression``: coalescence kernel of the ``function`` model, in m\ :sup:`3`/s, as an expression of the sizes ``xi_1`` and ``xi_2`` of the two particles, in m, and of the time ``t``, in s (e.g. ``set Function expression = 1e-18 * (xi_1 + xi_2) / 1e-7``). The expression cannot depend on the position.
+* ``Function expression``: coalescence kernel of the ``function`` model, in :math:`\text{m}^{3} \cdot \text{s}^{-1}`, as an expression of the sizes ``xi_1`` and ``xi_2`` of the two particles, in :math:`\text{m}`, and of the time ``t``, in :math:`\text{s}` (e.g. ``set Function expression = 1e-18 * (xi_1 + xi_2) / 1e-7``). The expression cannot depend on the position.
 
 Process Parameters
 ^^^^^^^^^^^^^^^^^^
@@ -192,14 +192,14 @@ Process Parameters
   .. note::
     The default values correspond to a water/ethanol formulation in a microfluidic mixer at room temperature: a flow rate ratio of 3 and a total flow rate of 12 mL/min.
 
-  * ``operating temperature``: temperature of the mixture, in K.
+  * ``operating temperature``: temperature of the mixture, in :math:`\text{K}`.
   * ``flow rate ratio``: ratio of the aqueous phase flow rate to the organic phase flow rate.
-  * ``total flow rate``: total flow rate of the aqueous and organic phases, in m\ :sup:`3`/s.
-  * ``mixing time scale``: time scale of the mixing of the aqueous and organic phases, in s.
-  * ``initial concentration organic``: lipid concentration in the organic phase before mixing, in mol/m\ :sup:`3`.
-  * ``ion concentration mixture``: ion concentration in the mixture, in mol/m\ :sup:`3`.
-  * ``density aqueous`` and ``density organic``: densities of the aqueous and organic phases, in kg/m\ :sup:`3`.
-  * ``molar mass aqueous`` and ``molar mass organic``: molar masses of the aqueous and organic phases, in kg/mol.
+  * ``total flow rate``: total flow rate of the aqueous and organic phases, in :math:`\text{m}^{3} \cdot \text{s}^{-1}`.
+  * ``mixing time scale``: time scale of the mixing of the aqueous and organic phases, in :math:`\text{s}`.
+  * ``initial concentration organic``: lipid concentration in the organic phase before mixing, in :math:`\text{mol} \cdot \text{m}^{-3}`.
+  * ``ion concentration mixture``: ion concentration in the mixture, in :math:`\text{mol} \cdot \text{m}^{-3}`.
+  * ``density aqueous`` and ``density organic``: densities of the aqueous and organic phases, in :math:`\text{kg} \cdot \text{m}^{-3}`.
+  * ``molar mass aqueous`` and ``molar mass organic``: molar masses of the aqueous and organic phases, in :math:`\text{kg} \cdot \text{mol}^{-1}`.
   * ``mole fraction solubility aqueous`` and ``mole fraction solubility organic``: mole fraction solubility of the lipid in the pure aqueous and organic phases, between 0 and 1.
   * ``permittivity aqueous`` and ``permittivity organic``: relative permittivities of the aqueous and organic phases.
   * ``viscosity mixture``: dynamic viscosity of the mixture of the aqueous and organic phases, in Pa s.
@@ -242,19 +242,19 @@ The initial conditions (see :doc:`initial_conditions`), the values of the ``diri
   * ``type``: family of the particle size distribution. The moments of each family are computed analytically by QMOMKit. The choices are:
 
     * ``none``: no particles. All the moments are zero and the ``Function expression`` of the distribution is ignored.
-    * ``normal``: normal distribution, with parameters the mean and the standard deviation of the size, in m. It is only meaningful when the standard deviation is much smaller than the mean, since the normal distribution extends to negative sizes.
-    * ``lognormal``: log-normal distribution, with parameters the mean and the standard deviation of the natural logarithm of the size. The median size, in m, is the exponential of the first parameter.
-    * ``gamma``: gamma distribution, with parameters the shape and the scale, in m.
-    * ``weibull``: Weibull distribution, with parameters the shape and the scale, in m.
+    * ``normal``: normal distribution, with parameters the mean and the standard deviation of the size, in :math:`\text{m}`. It is only meaningful when the standard deviation is much smaller than the mean, since the normal distribution extends to negative sizes.
+    * ``lognormal``: log-normal distribution, with parameters the mean and the standard deviation of the natural logarithm of the size. The median size, in :math:`\text{m}`, is the exponential of the first parameter.
+    * ``gamma``: gamma distribution, with parameters the shape and the scale, in :math:`\text{m}`.
+    * ``weibull``: Weibull distribution, with parameters the shape and the scale, in :math:`\text{m}`.
     * ``beta``: beta distribution on the interval :math:`[0, 1]`, with shape parameters :math:`\alpha` and :math:`\beta`.
     * ``chi``: chi distribution, with parameter the number of degrees of freedom.
     * ``chi_squared``: chi-squared distribution, with parameter the number of degrees of freedom.
 
-  * ``Function expression``: number density of the particles, **in particles per m**\ :sup:`3`, followed by the parameters of the distribution, as functions of space and time, separated by semicolons. The number of expressions is therefore 3 for the ``normal``, ``lognormal``, ``gamma``, ``weibull`` and ``beta`` distributions, and 2 for the ``chi`` and ``chi_squared`` distributions.
+  * ``Function expression``: number density of the particles, **in particles per** :math:`\text{m}^{3}`, followed by the parameters of the distribution, as functions of space and time, separated by semicolons. The number of expressions is therefore 3 for the ``normal``, ``lognormal``, ``gamma``, ``weibull`` and ``beta`` distributions, and 2 for the ``chi`` and ``chi_squared`` distributions.
 
 The moment of order :math:`k` is :math:`M_k = n \, \mathrm{E}[L^k]`, where :math:`n` is the number density and :math:`L` the size of the particles. In particular, :math:`M_0` is the number density. A number density of 0 gives zero moments whatever the distribution.
 
-For example, with ``set number of scalars = 2``, two scalars and a log-normal distribution of :math:`10^{18}` particles per m\ :sup:`3` with a median size of 100 nm, at the inlet of the domain:
+For example, with ``set number of scalars = 2``, two scalars and a log-normal distribution of :math:`10^{18}` particles per :math:`\text{m}^{3}` with a median size of :math:`100\ \text{nm}`, at the inlet of the domain:
 
 .. code-block:: text
 
