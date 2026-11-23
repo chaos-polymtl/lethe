@@ -34,9 +34,10 @@ recreate_folder "$folder"
 rm -f $plots $data
 rm -rf sphere-0.1 sphere-150 sphere-0.1-matrix-free sphere-0.1-matrix-free-x2 \
        sphere-0.1-matrix-free-x4 sphere-150-matrix-free
-rm -f sphere-x2.msh sphere-x4.msh
+rm -f sphere.msh sphere-x2.msh sphere-x4.msh
 
-# Create the meshes of the enlarged domains
+# Create the mesh of the original domain and the meshes of the enlarged domains
+gmsh -3 sphere.geo -o sphere.msh > "$folder/log-mesh"
 for scale in 2 4; do
   gmsh -setnumber domain_scale $scale -3 sphere.geo -o sphere-x$scale.msh > "$folder/log-mesh-x$scale"
 done

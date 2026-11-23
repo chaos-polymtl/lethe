@@ -22,6 +22,7 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-flow-around-sphere``).
 
+- Geometry file used to generate the Gmsh mesh: ``sphere.geo``
 - Parameter file for :math:`\mathrm{Re}=0.1`: ``sphere-0.1.prm``
 - Parameter file for :math:`\mathrm{Re}=150`: ``sphere-150.prm``
 - Parameter file for :math:`\mathrm{Re}=150` using adaptive mesh refinement: ``sphere-adapt.prm``
@@ -78,6 +79,13 @@ The structured mesh is built using `gmsh <https://gmsh.info/#Download>`_. Geomet
 .. note::
 
   The domain is constructed so that the wake has sufficient distance to develop downstream and there is a sufficient cross-sectional area to limit the effects of the boundary conditions on the flow at :math:`\mathrm{Re}=150`. At :math:`\mathrm{Re}=0.1`, the disturbance of the flow by the sphere decays much more slowly and the size of the domain has a significant impact on the drag coefficient. This is why the ``domain_scale`` variable can be used to enlarge the domain, as discussed in the results section.
+
+The mesh must be generated from the example folder before launching the simulations:
+
+.. code-block:: text
+  :class: copy-button
+
+  gmsh -3 sphere.geo -o sphere.msh
 
 In the parameter file, the mesh is read by specifying its type and file name:
 
@@ -252,7 +260,7 @@ The ``min refinement level`` refers to the base mesh which has been used in the 
 Running the Simulation
 ----------------------
 
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
+Once the mesh ``sphere.msh`` has been generated (see the Mesh section), launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
   :class: copy-button
