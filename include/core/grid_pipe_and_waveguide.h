@@ -37,12 +37,14 @@ using namespace dealii;
  * -0: Cylinder
  * -1: Waveguide (paving stone)
  *
- * A CylindricalManifold (manifold id 1) is attached to every cell of the
- * cylinder that has a face on its lateral wall, so that mesh refinement
+ * A CylindricalManifold (manifold id 1) is attached to the cells of the
+ * cylinder that have a face on its lateral wall, so that mesh refinement
  * preserves the shape of the cylinder. In the middle section, this includes
  * the face shared by the cylinder and the waveguide, which therefore follows
- * the lateral wall of the cylinder. The cells of the waveguide keep the flat
- * manifold.
+ * the lateral wall of the cylinder. With an inner circle, the manifold is set
+ * on the whole cell, so that the inner circle is also preserved. With an inner
+ * square, it is only set on the face on the lateral wall, so that the sides of
+ * the square stay straight. The cells of the waveguide keep the flat manifold.
  *
  * @tparam dim The dimension of the mesh, must be 3.
  * @tparam spacedim The dimension of the space, must be 3.
@@ -67,7 +69,7 @@ public:
    * |  0  | rectangle_width   | double        | yes      | Waveguide width                                                                                          |
    * |  1  | rectangle_length  | double        | yes      | Waveguide length                                                                                         |
    * |  2  | outer_radius      | double        | yes      | Radius of the main cylinder                                                                              |
-   * |  3  | inner_length      | double        | yes      | Depending on the inner shape, it can be the square side or the circle radius                             |
+   * |  3  | inner_length      | double        | yes      | Depending on the inner shape, it is the radius of the inner circle or the half-side of the inner square  |
    * |  4  | bottom_height     | double        | yes      | Height of the bottom cylinder                                                                            |
    * |  5  | middle_height     | double        | yes      | Height of the waveguide                                                                                  |
    * |  6  | top_height        | double        | yes      | Height of the top cylinder                                                                               |
@@ -160,7 +162,7 @@ private:
    * |  2  | a             | double                         | yes      | Rectangle width                                                  |
    * |  3  | &b            | double                         | yes      | Rectangle length                                                 |
    * |  4  | r             | double                         | yes      | Outer radius of the circle                                       |
-   * |  5  | R             | double                         | yes      | Inner circle radius or inner square side                         |
+   * |  5  | R             | double                         | yes      | Inner circle radius or inner square half-side                    |
    * |  6  | inner_circle  | true/false                     | yes      | True : the inner shape is a circle, False : it is a square       |
    * Example: @code "0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 :
    * true" @endcode
@@ -185,7 +187,7 @@ private:
   /// Outer radius of the cylindrical cavity
   double outer_radius;
 
-  /// Inner length (radius if circle, side if square) of the central shape
+  /// Inner length (radius if circle, half-side if square) of the central shape
   double inner_length;
 
   /// Height of the bottom cylinder

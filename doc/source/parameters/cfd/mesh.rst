@@ -344,7 +344,7 @@ This three-dimensional mesh is a waveguide embedded in a cylindrical cavity. The
 * ``rectangle_width`` is the waveguide width;
 * ``rectangle_length`` is the waveguide length;
 * ``outer_radius`` is the radius of the main cylinder;
-* ``inner_length`` depends on the inner shape, since it can be the square side or the circle radius; 
+* ``inner_length`` depends on the inner shape: it is the radius of the inner circle or the half-side of the inner square;
 * ``bottom_height`` is the height of the bottom cylinder; 
 * ``middle_height`` is the height of the waveguide;
 * ``top_height`` is the height of the top cylinder;    
@@ -373,4 +373,4 @@ Material IDs are assigned as follows:
 * ``0``: cylinder;
 * ``1``: waveguide (paving stone).
 
-A ``CylindricalManifold`` (manifold id ``1``) is attached to every cell of the cylinder that has a face on its lateral wall, so that mesh refinement preserves the shape of the cylinder. The face shared by the cylinder and the waveguide also follows this manifold: the cylinder stays a full cylinder and the waveguide ends on its lateral wall.
+A ``CylindricalManifold`` (manifold id ``1``) is attached to every cell of the cylinder that has a face on its lateral wall, so that mesh refinement preserves the shape of the cylinder. The face shared by the cylinder and the waveguide also follows this manifold: the cylinder stays a full cylinder and the waveguide ends on its lateral wall. With an inner circle, the manifold is attached to the whole cells, so that the inner circle is also preserved. With an inner square, it is only attached to the faces on the lateral wall, so that the sides of the square stay straight.

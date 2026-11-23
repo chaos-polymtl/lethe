@@ -87,11 +87,13 @@ GridPipeAndWaveguide<dim, spacedim>::detailed_circle(Triangulation<2, 2> &tria,
         p + embed_point(+1., -1.) * (r / std::numbers::sqrt2),
         p + embed_point(-1., +1.) * (r / std::numbers::sqrt2),
         p + embed_point(+1., +1.) * (r / std::numbers::sqrt2),
-        // The other points that form the inner square
-        p + embed_point(-1., -1.) * R,
-        p + embed_point(+1., -1.) * R,
+        // The four corners of the inner square, in the same order as the
+        // four points of the inner circle above, since both shapes use the
+        // same cell connectivity
         p + embed_point(-1., +1.) * R,
         p + embed_point(+1., +1.) * R,
+        p + embed_point(-1., -1.) * R,
+        p + embed_point(+1., -1.) * R,
         // The two points attached to the rectangle
         embed_point(b, 0),
         embed_point(b, a),
@@ -465,16 +467,23 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
       // MANIFOLD
 
       /*
-      The cylindrical manifold is attached to every cell of the cylinder that
-      has a face on its lateral wall, that is a face whose vertices are all at a
-      distance outer_radius from the axis of the cylinder. The manifold id is
-      set on the whole cell, so that its interior lines and faces also follow
-      the cylinder when the mesh is refined. This includes the cells of the
-      middle section that are next to the waveguide: their face shared with the
-      waveguide is an interior face of the mesh, but it lies on the lateral
-      wall of the cylinder. The manifold ids are set on the merged mesh so that
-      they are the same in the three sections. The cells of the waveguide keep
-      the flat manifold, so that the walls of the waveguide stay planar.
+      The cylindrical manifold is attached to the cells of the cylinder that
+      have a face on its lateral wall, that is a face whose vertices are all at
+      a distance outer_radius from the axis of the cylinder. This includes the
+      cells of the middle section that are next to the waveguide: their face
+      shared with the waveguide is an interior face of the mesh, but it lies on
+      the lateral wall of the cylinder. The manifold ids are set on the merged
+      mesh so that they are the same in the three sections. The cells of the
+      waveguide keep the flat manifold, so that the walls of the waveguide stay
+      planar.
+      - Inner circle: the manifold id is set on the whole cell, so that its
+        edges on the inner circle, whose vertices are all at a distance
+        inner_length from the axis, are also arcs of a circle.
+      - Inner square: the manifold id is only set on the face on the lateral
+        wall. The edges of the cell on the inner square join vertices at
+        different distances from the axis, and the cylindrical manifold would
+        bend them, whereas the sides of the square must stay straight. The
+        interior of the cell is interpolated from its faces when it is refined.
       */
       const double distance_to_axis_tolerance = 1e-8 * outer_radius;
       for (const auto &cell : triangulation.active_cell_iterators())
@@ -497,7 +506,11 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
 
               if (face_is_on_lateral_wall)
                 {
-                  cell->set_all_manifold_ids(cylindrical_manifold_id);
+                  if (inner_circle)
+                    cell->set_all_manifold_ids(cylindrical_manifold_id);
+                  else
+                    cell->face(f)->set_all_manifold_ids(
+                      cylindrical_manifold_id);
                   break;
                 }
             }
