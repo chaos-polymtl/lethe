@@ -477,8 +477,8 @@ private:
                             const double       rescale_metric);
 
   /**
-   * @brief Evolve the moments in phase space (nucleation, growth and
-   * coalescence) at every locally owned degree of freedom, with QMOMKit.
+   * @brief Evolve the moments in phase space at every locally owned degree of
+   freedom, with QMOMKit.
    *
    * Since the element is nodal and discontinuous, the moments of a degree of
    * freedom are the moments at its support point: they are inverted into a

@@ -524,7 +524,7 @@ struct QMOMLipidNanoparticleLocalState
  * @brief Properties of the mixture of the lipid nanoparticle (LNP) production
  * shared by its nucleation, growth and coalescence models.
  *
- * The models follow Shin et al., Chem. Eng. J. 523 (2025) 167786.
+ * The models follow Shin et al., Chem. Eng. J. 523 (2025).
  *
  * The local scalars of the process are the ethanol concentration c_e and the
  * free lipid concentration C, both in kg/m^3, ordered as the enumerators of
@@ -563,9 +563,11 @@ public:
   compute_local_state(const std::vector<double> &local_scalars) const;
 
   /**
-   * @brief Compute the equilibrium supersaturation of a particle,
-   * S* = exp(alpha_cap / xi), the supersaturation below which it dissolves
-   * (Gibbs-Thomson), with alpha_cap the capillary length.
+   * @brief Compute the equilibrium supersaturation of a particle.
+   *
+   * The equilibrium supersaturation is defined by S* = exp(alpha_cap / xi), and
+   represents the supersaturation below which it dissolves (Gibbs-Thomson), with
+   alpha_cap the capillary length.
    *
    * @param[in] size Size xi of the particle, in m (positive).
    *
@@ -575,7 +577,8 @@ public:
   compute_equilibrium_supersaturation(const double size) const;
 
   /**
-   * @brief Compute the critical size of the nuclei, L_c = alpha_cap / ln S.
+   * @brief Compute the critical size of the nuclei.
+   * L_c = alpha_cap / ln S
    *
    * @param[in] supersaturation Supersaturation S, greater than 1.
    *

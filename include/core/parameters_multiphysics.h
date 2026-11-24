@@ -783,12 +783,11 @@ namespace Parameters
 
   /**
    * @brief Process parameters of the lipid nanoparticle (LNP) production
-   * simulated with the QMOM physics: operating conditions, properties of the
-   * aqueous and organic phases, of the lipid and of the particles, and kinetic
-   * parameters of the nucleation, growth and coalescence. All of them are in
-   * SI units. The default lipid properties are those of cholesterol and the
-   * default kinetic parameters are those of Shin et al., Chem. Eng. J. 523
-   * (2025) 167786.
+   * simulated with the QMOM physics.
+
+   * All of them are in SI units. The default lipid properties are those of
+   cholesterol and the default kinetic parameters are those of Shin et al.,
+   Chem. Eng. J. 523 (2025).
    */
   struct QMOMLipidNanoparticleProduction
   {
