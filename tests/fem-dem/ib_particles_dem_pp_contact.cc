@@ -129,8 +129,6 @@ test()
   // curvature of their surface at the contact point.
   parameters->approximate_radius_for_contact = true;
 
-  auto to_string = [](const bool value) { return value ? "true" : "false"; };
-
   deallog << "Dimension " << dim << std::endl;
 
   // Sphere-sphere contact. The distance between the centers is
@@ -140,23 +138,9 @@ test()
     const double radius_two = 0.25;
 
     // Unit vector from the first sphere to the second one.
-    Tensor<1, dim> direction;
-    if constexpr (dim == 2)
-      {
-        direction[0] = 0.6;
-        direction[1] = 0.8;
-      }
-    else
-      {
-        direction[0] = 2. / 3.;
-        direction[1] = 1. / 3.;
-        direction[2] = 2. / 3.;
-      }
-
-    Point<dim> position_one;
-    for (int d = 0; d < dim; ++d)
-      position_one[d] = 0.1 * (d + 1);
-    const Point<dim> position_two =
+    const Tensor<1, dim> direction    = get_pair_direction<dim>();
+    const Point<dim>     position_one = get_pair_origin<dim>();
+    const Point<dim>     position_two =
       position_one + (radius_one + radius_two - normal_overlap) * direction;
 
     const std::vector<IBParticle<dim>> particles{
@@ -168,15 +152,12 @@ test()
     const Tensor<1, 3> expected_force =
       -hertz_force(particles[0], particles[1]) * tensor_nd_to_3d(direction);
 
-    deallog << "Sphere-sphere contact force is the Hertz force of the full "
-               "overlap: "
-            << to_string((force[0] - expected_force).norm() <
-                         hertz_tolerance * expected_force.norm())
-            << std::endl;
-    deallog << "Sphere-sphere contact forces are opposite: "
-            << to_string((force[0] + force[1]).norm() <
-                         tolerance * expected_force.norm())
-            << std::endl;
+    log_check(
+      "Sphere-sphere contact force is the Hertz force of the full overlap",
+      (force[0] - expected_force).norm() <
+        hertz_tolerance * expected_force.norm());
+    log_check("Sphere-sphere contact forces are opposite",
+              (force[0] + force[1]).norm() < tolerance * expected_force.norm());
   }
 
   // Sphere-box contact. The box is centered at the origin and the sphere
@@ -200,18 +181,15 @@ test()
     Tensor<1, 3> expected_force;
     expected_force[0] = hertz_force(box_first[1], box_first[0]);
 
-    deallog << "Sphere-box contact force is the Hertz force of the full "
-               "overlap: "
-            << to_string((force_sphere_first[0] - expected_force).norm() <
-                         hertz_tolerance * expected_force.norm())
-            << std::endl;
-    deallog << "Sphere-box contact force does not depend on the order of the "
-               "particles: "
-            << to_string((force_sphere_first[0] - force_box_first[1]).norm() <
-                           tolerance * expected_force.norm() &&
-                         (force_sphere_first[1] - force_box_first[0]).norm() <
-                           tolerance * expected_force.norm())
-            << std::endl;
+    log_check("Sphere-box contact force is the Hertz force of the full overlap",
+              (force_sphere_first[0] - expected_force).norm() <
+                hertz_tolerance * expected_force.norm());
+    log_check(
+      "Sphere-box contact force does not depend on the order of the particles",
+      (force_sphere_first[0] - force_box_first[1]).norm() <
+          tolerance * expected_force.norm() &&
+        (force_sphere_first[1] - force_box_first[0]).norm() <
+          tolerance * expected_force.norm());
   }
 }
 

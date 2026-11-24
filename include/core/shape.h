@@ -136,16 +136,19 @@ public:
   }
 
   /**
-   * @brief Return the distance between the current shape and the shape @p shape, the unit normal vector and the contact point. 
-   * 
-   * The distance is negative when the shapes overlap, and its magnitude is then the overlap. It is 
-   * obtained by minimizing the level set of the intersection of the two shapes: this minimum, reached 
-   * at the contact point located halfway between the two surfaces, is half the distance. For shapes 
-   * whose level set is not an exact signed distance, the distance is approximate. The unit normal 
-   * vector points from the current shape toward @p shape and is defined using the closest surface 
-   * point of the two shapes. By default, the distance is not calculated if the bounding boxes of the two 
-   * shapes are not in contact, and DBL_MAX is returned. This behavior can be modified by setting @p 
-   * exact_distance_outside_of_contact to true.
+   * @brief Return the distance between the current shape and the shape @p shape, the unit normal vector and the contact point.
+   *
+   * The distance is negative when the shapes overlap, and its magnitude is then
+   * the overlap. It is obtained by minimizing the level set of the intersection
+   * of the two shapes: this minimum, reached at the contact point located
+   * halfway between the two surfaces, is half the distance. For shapes whose
+   * level set is not an exact signed distance, the distance is approximate. The
+   * unit normal
+   * vector points from the current shape toward @p shape and is defined using the closest surface
+   * point of the two shapes. By default, the distance is not calculated if the
+   * bounding boxes of the two
+   * shapes are not in contact, and DBL_MAX is returned. This behavior can be
+   * modified by setting @p exact_distance_outside_of_contact to true.
    *
    * @param shape The shape with which the distance is evaluated.
    * @param cell The cell that is likely to contain the evaluation point.
@@ -457,16 +460,19 @@ public:
   }
 
   /**
-   * @brief Return the distance between the current shape and the shape @p shape, the unit normal vector and the contact point. 
-   * 
-   * The distance is negative when the shapes overlap, and its magnitude is then the overlap. It is 
-   * obtained by minimizing the level set of the intersection of the two shapes: this minimum, reached 
-   * at the contact point located halfway between the two surfaces, is half the distance. For shapes 
-   * whose level set is not an exact signed distance, the distance is approximate. The unit normal vector 
-   * points from the current shape toward @p shape and is defined using the closest surface point of 
-   * the two shapes. By default, the distance is not calculated if the bounding boxes of the two shapes
-   * are not in contact, and DBL_MAX is returned. This behavior can be modified by setting @p 
-   * exact_distance_outside_of_contact to true.
+   * @brief Return the distance between the current shape and the shape @p shape, the unit normal vector and the contact point.
+   *
+   * The distance is negative when the shapes overlap, and its magnitude is then
+   * the overlap. It is obtained by minimizing the level set of the intersection
+   * of the two shapes: this minimum, reached at the contact point located
+   * halfway between the two surfaces, is half the distance. For shapes whose
+   * level set is not an exact signed distance, the distance is approximate. The
+   * unit normal vector
+   * points from the current shape toward @p shape and is defined using the closest surface point of
+   * the two shapes. By default, the distance is not calculated if the bounding
+   * boxes of the two shapes
+   * are not in contact, and DBL_MAX is returned. This behavior can be modified
+   * by setting @p exact_distance_outside_of_contact to true.
    *
    * @param shape The shape with which the distance is evaluated.
    * @param candidate_points The initial guess points used in the minimization.
@@ -1469,14 +1475,15 @@ public:
 
 
   /**
-   * @brief Return the distance between the current sphere and the shape @p shape, the unit normal vector and the contact point. 
-   * 
-   * The distance is negative when the shapes overlap, and its magnitude is then the overlap. This 
-   * function is an optimized version of the general shape distance calculation for the case of a sphere: 
+   * @brief Return the distance between the current sphere and the shape @p shape, the unit normal vector and the contact point.
+   *
+   * The distance is negative when the shapes overlap, and its magnitude is then
+   * the overlap. This function is an optimized version of the general shape
+   * distance calculation for the case of a sphere:
    * when @p shape is a sphere, the distance is exact and the contact point is located halfway between
-   * the two surfaces. Otherwise, the distance is the level set of @p shape at the center of the sphere 
-   * minus the radius of the sphere. The unit normal vector points from the current sphere toward @p 
-   * shape.
+   * the two surfaces. Otherwise, the distance is the level set of @p shape at the center of the sphere
+   * minus the radius of the sphere. The unit normal vector points from the
+   * current sphere toward @p shape.
    *
    * @param shape The shape with which the distance is evaluated.
    * @param cell The cell that is likely to contain the center of the sphere.
@@ -1495,14 +1502,15 @@ public:
     bool exact_distance_outside_of_contact = false) override;
 
   /**
-   * @brief Return the distance between the current sphere and the shape @p shape, the unit normal vector and the contact point. 
-   * 
-   * The distance is negative when the shapes overlap, and its magnitude is then the overlap. This
-   * function is an optimized version of the general shape distance calculation for the case of a sphere: 
+   * @brief Return the distance between the current sphere and the shape @p shape, the unit normal vector and the contact point.
+   *
+   * The distance is negative when the shapes overlap, and its magnitude is then
+   * the overlap. This function is an optimized version of the general shape
+   * distance calculation for the case of a sphere:
    * when @p shape is a sphere, the distance is exact and the contact point is located halfway between
-   * the two surfaces. Otherwise, the distance is the level set of @p shape at the center of the sphere 
-   * minus the radius of the sphere. The unit normal vector points from the current sphere toward @p 
-   * shape.
+   * the two surfaces. Otherwise, the distance is the level set of @p shape at the center of the sphere
+   * minus the radius of the sphere. The unit normal vector points from the
+   * current sphere toward @p shape.
    *
    * @param shape The shape with which the distance is evaluated.
    * @param candidate_points Unused in this implementation.
