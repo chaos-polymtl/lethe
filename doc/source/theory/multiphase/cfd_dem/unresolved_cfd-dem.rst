@@ -135,7 +135,7 @@ Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B
 Weak Formulation of Model A
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lethe does not discretize the conservative left-hand side of the Model A momentum equation directly. Using mass conservation, it is rewritten as:
+Let :math:`p` be the kinematic pressure, :math:`\tilde{\boldsymbol{\tau}} = \tau / \rho_f = \nu \left( \nabla \mathbf{u} + \nabla \mathbf{u}^T \right)` the kinematic viscous stress and :math:`\mathbf{f}` a body force per unit mass (source term and dynamic flow control). Lethe does not discretize the conservative left-hand side of the Model A momentum equation directly. Using mass conservation, it is rewritten as:
 
 .. math::
     \partial_t \left( \varepsilon_f \mathbf{u} \right) + \nabla \cdot \left( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right) &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + \mathbf{u} \left( \partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) \right) \\
