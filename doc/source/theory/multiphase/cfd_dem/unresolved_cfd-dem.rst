@@ -1,5 +1,5 @@
 ===========================
-Unresolved CFD-DEM 
+Unresolved CFD-DEM
 ===========================
 
 Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton's second law of motion to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume-Averaged Navier-Stokes (VANS) equations.
@@ -21,7 +21,7 @@ Applying Newton's second law and Euler's law of angular motion on the particle :
 
 .. math::
     m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \mathbf{F}_{\mathrm{fp},i} + \mathbf{F}_{\mathbf{g},i} + \sum_{j} \left( \mathbf{F}_{\mathrm{c},ij} + \mathbf{F}_{\mathrm{nc},ij} \right) \\
-    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i} + \sum_{j}\left ( \mathbf{M}_{\mathrm{c},ij} + \mathbf{M}_{\mathrm{r},ij} \right ) 
+    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i} + \sum_{j}\left ( \mathbf{M}_{\mathrm{c},ij} + \mathbf{M}_{\mathrm{r},ij} \right )
 
 where:
 
@@ -66,7 +66,7 @@ The VANS equations can be derived by averaging the continuity and momentum conse
 
 Using this function, local mean values of any fluid- or solid-phase property, :math:`\bar{a}(\mathbf{x},t)` and :math:`\bar{b}(\mathbf{x},t)`, respectively, can be defined at a scale larger than the particle diameter yet smaller than the macroscopic length scale of the problem, as per the following:
 
-.. math:: 
+.. math::
     :label: eq:average_definition
 
         \begin{align}
@@ -90,12 +90,12 @@ Models A and B differ from each other in the way the momentum equation is calcul
 
 Model A:
 
-.. math:: 
+.. math::
     \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right )  = \frac{1}{\rho_f} \left (-\varepsilon_f \nabla p^* + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}} \right )
 
 Model B:
 
-.. math:: 
+.. math::
     \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) = \frac{1}{\rho_f} \left (-\nabla p^* + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}\right )
 
 where:
@@ -103,7 +103,7 @@ where:
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
 * :math:`\tau = \rho_f \nu \left( \nabla \mathbf{u} + \nabla \mathbf{u}^T \right)` is the viscous stress tensor, with :math:`\nu` the kinematic viscosity. Since :math:`\nabla \cdot \mathbf{u} = -\left( \partial_t \varepsilon_f + \mathbf{u} \cdot \nabla \varepsilon_f \right) / \varepsilon_f` does not vanish, :math:`\tau` is not traceless: its dilatational part :math:`-\frac{2}{3} \rho_f \nu \left( \nabla \cdot \mathbf{u} \right) \mathbf{I}` is not included;
-* :math:`\mathbf{f}_{\mathrm{pf},\mathrm{A}}` and :math:`\mathbf{f}_{\mathrm{pf},\mathrm{B}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. 
+* :math:`\mathbf{f}_{\mathrm{pf},\mathrm{A}}` and :math:`\mathbf{f}_{\mathrm{pf},\mathrm{B}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively.
 
 It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:
 
@@ -135,23 +135,29 @@ Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B
 Weak Formulation of Model A
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Let :math:`p` be the kinematic pressure, :math:`\tilde{\boldsymbol{\tau}} = \tau / \rho_f = \nu \left( \nabla \mathbf{u} + \nabla \mathbf{u}^T \right)` the kinematic viscous stress, :math:`m` a mass source, so that the continuity equation reads :math:`\partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) = m`, and :math:`\mathbf{f}` a body force per unit mass (source term and dynamic flow control). Lethe does not discretize the conservative left-hand side of the Model A momentum equation directly. Using mass conservation, it is rewritten as:
+Lethe does not discretize the conservative left-hand side of the Model A momentum equation directly. Using mass conservation, it is rewritten as:
 
 .. math::
-    \partial_t \left( \varepsilon_f \mathbf{u} \right) + \nabla \cdot \left( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right) &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + \mathbf{u} \left( \partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) \right) = \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} \\
-    \partial_t \left( \varepsilon_f u_k \right) + \partial_l \left( \varepsilon_f u_l u_k \right) &= \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + u_k \left( \partial_t \varepsilon_f + \partial_l \left( \varepsilon_f u_l \right) \right) = \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k
+    \partial_t \left( \varepsilon_f \mathbf{u} \right) + \nabla \cdot \left( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right) &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + \mathbf{u} \left( \partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) \right) \\
+    &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u}
 
-Both forms are equivalent for the exact solution, but not after discretization, since the continuity equation is only satisfied weakly. The strong form solved by Lethe is therefore:
-
-.. math::
-    \partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) &= m \\
-    \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} &= -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tilde{\boldsymbol{\tau}} + \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} + \varepsilon_f \mathbf{f}
-
-or, in index notation, with :math:`\tilde{\tau}_{lk} = \nu \left( \partial_l u_k + \partial_k u_l \right)`:
+or, in Einstein notation:
 
 .. math::
-    \partial_t \varepsilon_f + \partial_l \left( \varepsilon_f u_l \right) &= m \\
-    \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k &= -\varepsilon_f \partial_k p + \varepsilon_f \partial_l \tilde{\tau}_{lk} + \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} + \varepsilon_f f_k
+    \partial_t \left( \varepsilon_f u_k \right) + \partial_l \left( \varepsilon_f u_l u_k \right) &= \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + u_k \left( \partial_t \varepsilon_f + \partial_l \left( \varepsilon_f u_l \right) \right) \\
+    &= \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k
+
+The conservative and rewritten forms are equivalent for the exact solution, but not after discretization, since the continuity equation is only satisfied weakly. The strong form solved by Lethe is therefore:
+
+.. math::
+    \partial_t \varepsilon_f + \nabla \cdot \left( \varepsilon_f \mathbf{u} \right) &= 0 \\
+    \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} &= -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tilde{\boldsymbol{\tau}} + \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} + \varepsilon_f \mathbf{f}
+
+or, in Einstein notation, with :math:`\tilde{\tau}_{lk} = \nu \left( \partial_l u_k + \partial_k u_l \right)`:
+
+.. math::
+    \partial_t \varepsilon_f + \partial_l \left( \varepsilon_f u_l \right) &= 0 \\
+    \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k &= -\varepsilon_f \partial_k p + \varepsilon_f \partial_l \tilde{\tau}_{lk} + \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} + \varepsilon_f f_k
 
 Since :math:`\varepsilon_f` remains outside the derivatives in Model A, only :math:`p` and :math:`\tilde{\boldsymbol{\tau}}` are integrated by parts, which leaves explicit void fraction gradient terms:
 
@@ -162,28 +168,28 @@ Since :math:`\varepsilon_f` remains outside the derivatives in Model A, only :ma
 where :math:`\varepsilon_f` is the projected finite element field described in the Void Fraction section below, so its gradient is defined. Let :math:`\mathcal{V}` be the velocity space satisfying the Dirichlet conditions, :math:`\mathcal{V}_0` its homogeneous counterpart and :math:`\mathcal{Q}` the pressure space. The weak form is: find :math:`(\mathbf{u}, p) \in \mathcal{V} \times \mathcal{Q}` such that, for all :math:`(\mathbf{v}, q) \in \mathcal{V}_0 \times \mathcal{Q}`:
 
 .. math::
-    & \left( q, \partial_t \varepsilon_f + \varepsilon_f \nabla \cdot \mathbf{u} + \mathbf{u} \cdot \nabla \varepsilon_f - m \right)_{\Omega} = 0 \\
-    & \left( \mathbf{v}, \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} \right)_{\Omega} - \left( \nabla \cdot \mathbf{v}, \varepsilon_f p \right)_{\Omega} - \left( \mathbf{v}, p \nabla \varepsilon_f \right)_{\Omega} + \left( \nabla \mathbf{v}, \varepsilon_f \tilde{\boldsymbol{\tau}} \right)_{\Omega} + \left( \mathbf{v}, \tilde{\boldsymbol{\tau}} \nabla \varepsilon_f \right)_{\Omega} \\
+    & \left( q, \partial_t \varepsilon_f + \varepsilon_f \nabla \cdot \mathbf{u} + \mathbf{u} \cdot \nabla \varepsilon_f \right)_{\Omega} = 0 \\
+    & \left( \mathbf{v}, \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} \right)_{\Omega} - \left( \nabla \cdot \mathbf{v}, \varepsilon_f p \right)_{\Omega} - \left( \mathbf{v}, p \nabla \varepsilon_f \right)_{\Omega} + \left( \nabla \mathbf{v}, \varepsilon_f \tilde{\boldsymbol{\tau}} \right)_{\Omega} + \left( \mathbf{v}, \tilde{\boldsymbol{\tau}} \nabla \varepsilon_f \right)_{\Omega} \\
     & \quad - \left( \mathbf{v}, \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} + \varepsilon_f \mathbf{f} \right)_{\Omega} + \left( \tau_{\mathrm{s}} \nabla q, \mathbf{R} \right)_{\Omega_e} + \left( \tau_{\mathrm{s}} \left( \mathbf{u} \cdot \nabla \right) \mathbf{v}, \mathbf{R} \right)_{\Omega_e} + \left( \nabla \cdot \mathbf{v}, \gamma R_c \right)_{\Omega} = 0
 
-or, in index notation:
+or, in Einstein notation:
 
 .. math::
-    & \left( q, \partial_t \varepsilon_f + \varepsilon_f \partial_l u_l + u_l \partial_l \varepsilon_f - m \right)_{\Omega} = 0 \\
-    & \left( v_k, \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k \right)_{\Omega} - \left( \partial_k v_k, \varepsilon_f p \right)_{\Omega} - \left( v_k, p \partial_k \varepsilon_f \right)_{\Omega} + \left( \partial_l v_k, \varepsilon_f \tilde{\tau}_{lk} \right)_{\Omega} + \left( v_k, \tilde{\tau}_{lk} \partial_l \varepsilon_f \right)_{\Omega} \\
+    & \left( q, \partial_t \varepsilon_f + \varepsilon_f \partial_l u_l + u_l \partial_l \varepsilon_f \right)_{\Omega} = 0 \\
+    & \left( v_k, \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k \right)_{\Omega} - \left( \partial_k v_k, \varepsilon_f p \right)_{\Omega} - \left( v_k, p \partial_k \varepsilon_f \right)_{\Omega} + \left( \partial_l v_k, \varepsilon_f \tilde{\tau}_{lk} \right)_{\Omega} + \left( v_k, \tilde{\tau}_{lk} \partial_l \varepsilon_f \right)_{\Omega} \\
     & \quad - \left( v_k, \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} + \varepsilon_f f_k \right)_{\Omega} + \left( \tau_{\mathrm{s}} \partial_k q, R_k \right)_{\Omega_e} + \left( \tau_{\mathrm{s}} u_l \partial_l v_k, R_k \right)_{\Omega_e} + \left( \partial_k v_k, \gamma R_c \right)_{\Omega} = 0
 
 The boundary term :math:`\left( \mathbf{v}, \varepsilon_f \left( \tilde{\boldsymbol{\tau}} - p \mathbf{I} \right) \mathbf{n} \right)_{\partial \Omega}` is discarded, so where no Dirichlet condition is applied, the natural condition is :math:`\varepsilon_f \left( \tilde{\boldsymbol{\tau}} - p \mathbf{I} \right) \mathbf{n} = \mathbf{0}`. The SUPG/PSPG terms use the strong residual of the momentum equation, :math:`\mathbf{R}`, and the grad-div term uses the strong residual of the continuity equation, :math:`R_c`:
 
 .. math::
-    \mathbf{R} &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + m \mathbf{u} + \varepsilon_f \nabla p - \varepsilon_f \nu \left( \nabla^2 \mathbf{u} + \nabla \left( \nabla \cdot \mathbf{u} \right) \right) - \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} - \varepsilon_f \mathbf{f} \\
-    R_c &= \partial_t \varepsilon_f + \varepsilon_f \nabla \cdot \mathbf{u} + \mathbf{u} \cdot \nabla \varepsilon_f - m
+    \mathbf{R} &= \varepsilon_f \partial_t \mathbf{u} + \varepsilon_f \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} + \varepsilon_f \nabla p - \varepsilon_f \nu \left( \nabla^2 \mathbf{u} + \nabla \left( \nabla \cdot \mathbf{u} \right) \right) - \frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} - \varepsilon_f \mathbf{f} \\
+    R_c &= \partial_t \varepsilon_f + \varepsilon_f \nabla \cdot \mathbf{u} + \mathbf{u} \cdot \nabla \varepsilon_f
 
-or, in index notation:
+or, in Einstein notation:
 
 .. math::
-    R_k &= \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + m u_k + \varepsilon_f \partial_k p - \varepsilon_f \nu \left( \partial_l \partial_l u_k + \partial_k \partial_l u_l \right) - \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} - \varepsilon_f f_k \\
-    R_c &= \partial_t \varepsilon_f + \varepsilon_f \partial_l u_l + u_l \partial_l \varepsilon_f - m
+    R_k &= \varepsilon_f \partial_t u_k + \varepsilon_f u_l \partial_l u_k + \varepsilon_f \partial_k p - \varepsilon_f \nu \left( \partial_l \partial_l u_k + \partial_k \partial_l u_l \right) - \frac{1}{\rho_f} f_{\mathrm{pf},\mathrm{A},k} - \varepsilon_f f_k \\
+    R_c &= \partial_t \varepsilon_f + \varepsilon_f \partial_l u_l + u_l \partial_l \varepsilon_f
 
 where:
 
@@ -203,14 +209,14 @@ Determining the void fraction is an important step in unresolved CFD-DEM, as can
 
 This equation can be used in practice to calculate the void fraction at a given point :math:`\mathbf{x}`:
 
-.. math:: 
+.. math::
     :label: eq:eps_definition
 
     \varepsilon_f(\mathbf{x},t) \approx 1 - \sum_{i} V_{\mathrm{p},i} k_r(\lVert \mathbf{x}-\mathbf{x_i} \rVert)
 
 In the finite element method, the void fraction is initially calculated at quadrature points. However, the solution of the VANS equation requires not only the void fraction, but its gradient. Therefore, it is necessary to be able to represent the void fraction using a finite element interpolation (e.g. Lagrange Q elements). The best polynomial representation of the void fraction can be obtained by solving the following minimization problem (which is essentially an  :math:`\mathcal{L}^2` projection  [#larson2013]_):
 
-.. math:: 
+.. math::
     \min_{\varepsilon_{f,j} \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \varphi_j - \epsilon_{f} \right )^2 \varphi_i
 
 where :math:`\epsilon_{f}` is the void fraction, :math:`\varphi_j` is the finite element shape function of the void fraction, and :math:`\varepsilon_{f,j}` the nodal values of the projected void fraction. Then, we assemble and solve the following:
@@ -231,15 +237,15 @@ The Particle Centroid Method
 The PCM [#peng2014]_ is a simple and commonly used method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
 .. image:: images/void_frac1.png
-   :width: 49% 
+   :width: 49%
 .. image:: images/void_frac2.png
    :width: 49%
 
-This results in the PCM being discontinuous in space and time. Consequently, the PCM method significantly relies on the smoothing of the void fraction to lead to a sufficiently smooth void fraction field. We refer the reader to [#geitani2023]_  for an extensive discussion on this topic. 
+This results in the PCM being discontinuous in space and time. Consequently, the PCM method significantly relies on the smoothing of the void fraction to lead to a sufficiently smooth void fraction field. We refer the reader to [#geitani2023]_  for an extensive discussion on this topic.
 
 The void fraction in a cell using PCM can be written as:
 
-.. math:: 
+.. math::
     \epsilon_f = 1 - \frac{\sum_{i,\Omega_e}^{n_\mathrm{p}} V_{\mathrm{p},i}}{V_{\Omega_e}}
 
 where :math:`n_\mathrm{p}` is the number of particles whose centroids lie inside the cell :math:`\Omega_e` of volume :math:`V_{\Omega_e}`. Comparing this equation with equation :eq:`eq:eps_definition`, we can see that this is equivalent to using the following weighting function:
@@ -258,15 +264,15 @@ where :math:`\mathbf{1}_{\{\mathbf{x}_i \in \Omega_e\}}` is the indicator functi
 
 The Satellite Point Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-This method divides each particle into pseudo-particles where the sum of the volume of all pseudo-particles in a single particle is equal to the volume of the particle. Then, each pseudo-particle is treated similarly to the PCM, that is, the centroid of each pseudo-particle is tracked, and the entire volume of the pseudo-particle is considered in a given cell if its centroid lies within. 
+This method divides each particle into pseudo-particles where the sum of the volume of all pseudo-particles in a single particle is equal to the volume of the particle. Then, each pseudo-particle is treated similarly to the PCM, that is, the centroid of each pseudo-particle is tracked, and the entire volume of the pseudo-particle is considered in a given cell if its centroid lies within.
 
 .. image:: images/spm.png
-   :width: 49% 
+   :width: 49%
    :align: center
-   
-The void fraction in a cell using SPM can be written as: 
 
-.. math:: 
+The void fraction in a cell using SPM can be written as:
+
+.. math::
        \epsilon_f = 1 - \frac{\sum_{i}^{n_\mathrm{p}}\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}
 
 where :math:`n_{\mathrm{sp}}` is the number of pseudo-particles :math:`j` belonging to particle :math:`i` and with a centroid inside the cell :math:`\Omega_e` with volume :math:`V_{\Omega_e}`, and :math:`V_{\mathrm{sp}}` is the volume of the satellite point.  The corresponding weighting function is thus:
@@ -282,15 +288,15 @@ The Quadrature Centered Method (QCM) [#geitani2023]_  is an analytical method th
 
 The void fraction at the quadrature point using QCM is calculated as:
 
-.. math:: 
+.. math::
       \epsilon_f (\mathbf{x}_q,t) = 1-\sum_{i}{k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right ) V_{\mathrm{p},i}}
-    
+
 The weighting function is also used to compute the fluid–particle momentum exchange term. Integrating this term over the computational domain demonstrates that the formulation also satisfies Newton’s third law for both kernels (the corresponding expression is shown for Model B without loss of generality):
 
-.. math:: 
+.. math::
       \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{-\left(\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\mathrm{Ar},i} \right) k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )} \times w_q|J| = \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\mathrm{Ar},i} \right)
 
-where :math:`w_q|J|` is the weight at the quadrature point located at :math:`\mathbf{x}_q`, multiplied by the volume of the cell containing the quadrature point. 
+where :math:`w_q|J|` is the weight at the quadrature point located at :math:`\mathbf{x}_q`, multiplied by the volume of the cell containing the quadrature point.
 
 Two types of weighting kernels centered on the quadrature points can be used in Lethe: a top hat kernel defined using the intersection of the particles with a sphere and a Gaussian kernel.
 
@@ -299,12 +305,12 @@ The Particle-Sphere Intersection Kernel
 A sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value at this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
 
 .. image:: images/qcm.png
-   :width: 49% 
+   :width: 49%
    :align: center
 
 The resulting kernel is a smoothed top-hat kernel defined by the intersection of the particles with the sphere centered at the quadrature point, as follows:
 
-.. math:: 
+.. math::
       k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )  = \frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}
 
 where :math:`S_q` is the sphere centered at :math:`\mathbf{x}_q`, and :math:`V_{p\cap S_q}` is the intersection volume of the particle with the sphere. The division by the product of the latter term and :math:`\sum_{q}{V_{\mathrm{p}\cap S_q}}` is done to ensure mass conservation over the whole domain.
@@ -315,19 +321,19 @@ The Gaussian Kernel
 ^^^^^^^^^^^^^^^^^^^
 The Gaussian kernel is defined as a smooth function that assigns weights to particles based on their distance from the quadrature point, as follows:
 
-.. math:: 
+.. math::
       k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )  = \frac{G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )}{\sum_{q}G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )}\frac{1}{w_q|J|}
 
 where :math:`G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )` is the Gaussian function defined as:
- 
-.. math:: 
+
+.. math::
     G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right ) = \frac{1}{(2\pi\sigma^2)^{3/2}} \exp\left(-\frac{\lVert \mathbf{x}_q - \mathbf{x}_i \rVert^2}{2\sigma^2}\right)
 
 with :math:`\sigma` being the standard deviation of the Gaussian distribution, controlling the spread of the kernel. This kernel is also normalized to ensure mass conservation over the whole domain.
 
 Regardless of its type, the kernel must be sufficiently wide to ensure that all particles in the domain contribute to the averaged void fraction. This can be achieved by selecting an adequate number of quadrature points together with an appropriate kernel length, :math:`R_{\rm{qcm}}` (radius of the sphere intersection kernel and standard deviation for the Gaussian kernel). However, in Lethe, the kernel length is currently constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the weighting kernel length cannot extend beyond this local neighborhood, otherwise, the averaged fields will be biased. Consequently, the kernel length must satisfy:
 
-.. math:: 
+.. math::
     R_{\rm{qcm}} \leq h_{\Omega}
 
 where :math:`h_{\Omega}` denotes the characteristic cell size to ensure access to the particles.
