@@ -150,6 +150,7 @@ std::vector<
 SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
   const BackgroundCellsSearchTree<spacedim> &background_cells_search_tree)
 {
+  // Vector of pair. A pair is a background cell and a triangle (solid-cell)
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
               typename Triangulation<dim, spacedim>::active_cell_iterator>>
@@ -169,6 +170,8 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
 
       // The distance is computed with the first three vertices of the triangle
       std::vector<Point<spacedim>> triangles(solid_tria->begin()->n_vertices());
+
+      // Vector that will contain all the cubes that intersect this triangle.
       std::vector<typename BackgroundCellsSearchTree<spacedim>::CubeAndIndex>
         intersected_cubes;
 
