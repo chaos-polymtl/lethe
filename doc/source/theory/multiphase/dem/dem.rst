@@ -546,16 +546,22 @@ Particle-wall Resistances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For particle-wall contacts, conduction is mostly computed the same way, except for minor differences.
-For the macrocontact and the solid layers resistances, they are only considered for the particle. In the same way,
-the interstitial gas macrogap resistance is halved as there is only a macrogap around the particle and not the wall. 
+For the macrocontact and the solid layers resistances, they are only considered for the particle.
 
 .. math::
 
    R_L &= \frac{1}{4 k_j r_c } \\
-   R_c &= R_{c,j} = \frac{L_j}{k_j A_j} \\
-   R_G &= \frac{1}{2} \, \frac{2}{\pi k_g \left[S \ln\left(\frac{S-B}{S-A}\right) + B - A\right]} \\
+   R_c &= R_{c,j} = \frac{L_j}{k_j A_j}
 
-As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`R_{\mathrm{e}}` are taken equal to :math:`2r_j` and :math:`r_j` respectively.
+For the interstitial gas macrogap, a particle on a flat wall is the sphere-flat geometry of Bahrami *et al.* [#bahrami2004]_, with the particle radius :math:`r_j` and the gas parameter :math:`M` of the particle and wall surfaces:
+
+.. math::
+
+   R_G = \frac{1}{2 \pi k_g \left[S \ln\left(\frac{S}{S-A}\right) - A\right]}, \quad S = r_j - \frac{r_c^2}{2 r_j} + M, \quad A = \sqrt{r_j^2 - r_c^2}
+
+The particle-particle expression is twice this sphere-flat resistance evaluated with :math:`M/2`. Lethe therefore computes the particle-wall macrogap resistance as half of the particle-particle one, evaluated with :math:`r_h = r_j` and :math:`2M`.
+
+As the radius of the wall can be seen as infinite, :math:`r_h` and :math:`R_{\mathrm{e}}` are taken equal to :math:`2r_j` and :math:`r_j` respectively in the contact mechanics.
 
 .. figure:: images/particle_wall_resistances.png
     :width: 700
@@ -594,5 +600,7 @@ References
 .. [#vanlew2016] \J. T. Van Lew, “On thermal characterization of breeder pebble beds with microscale numerical modeling of thermofluid and pebble-pebble interactions,” (Order No. 10158428), Ph.D. thesis, University of California, Los Angeles, 2016. Available: `<https://www.proquest.com/dissertations-theses/on-thermal-characterization-breeder-pebble-beds/docview/1839265662/se-2>`_\.
 
 .. [#bahrami2006] \M. Bahrami, M. M. Yovanovich, and J. R. Culham, “Effective thermal conductivity of rough spherical packed beds,” Int. J. Heat Mass Transf., vol. 49, no. 19–20, pp. 3691–3701, Sep. 2006, doi: `10.1016/j.ijheatmasstransfer.2006.02.021 <https://doi.org/10.1016/j.ijheatmasstransfer.2006.02.021>`_\.
+
+.. [#bahrami2004] \M. Bahrami, M. M. Yovanovich, and J. R. Culham, “Thermal joint resistances of nonconforming rough surfaces with gas-filled gaps,” J. Thermophys. Heat Transf., vol. 18, no. 3, pp. 326–332, Jul. 2004, doi: `10.2514/1.5482 <https://doi.org/10.2514/1.5482>`_\.
 
 .. [#zhou2010] \Z. Y. Zhou, A. B. Yu, and P. Zulli, “A new computational method for studying heat transfer in fluid bed reactors,” Powder Technol., vol. 197, no. 1–2, pp. 102–110, Sep. 2010, doi: `10.1016/j.powtec.2009.09.002 <https://doi.org/10.1016/j.powtec.2009.09.002>`_\.

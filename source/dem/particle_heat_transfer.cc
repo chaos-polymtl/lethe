@@ -245,16 +245,28 @@ calculate_contact_thermal_conductance(
                                                    maximum_pressure,
                                                    effective_microhardness);
 
-  double resistance_gas_macrogap =
-    calculate_interstitial_gas_macrogap_resistance(harmonic_radius,
-                                                   thermal_conductivity_gas,
-                                                   contact_radius_squared,
-                                                   gas_parameter_m);
-
-  // For particle-wall contacts, there is only a macrogap around the particle
-  // and not the wall, so only half of the resistance is kept.
-  if constexpr (is_particle_wall_contact)
-    resistance_gas_macrogap *= 0.5;
+  // A particle on a flat wall is the sphere-flat geometry of Bahrami et al.
+  // (2004), Eq. (25), with the particle radius and the gas parameter of the
+  // particle and wall surfaces. The function
+  // calculate_interstitial_gas_macrogap_resistance implemented in lethe is the
+  // two-sphere form of Bahrami et al. (2006), Eq. (14), which equals twice the
+  // sphere-flat resistance evaluated with half of the gas parameter. The
+  // sphere-flat resistance is thus half of the two-sphere one evaluated with
+  // the particle radius and twice the gas parameter.
+  const double resistance_gas_macrogap = [&]() {
+    if constexpr (is_particle_wall_contact)
+      return 0.5 * calculate_interstitial_gas_macrogap_resistance(
+                     radius_one,
+                     thermal_conductivity_gas,
+                     contact_radius_squared,
+                     2. * gas_parameter_m);
+    else
+      return calculate_interstitial_gas_macrogap_resistance(
+        harmonic_radius,
+        thermal_conductivity_gas,
+        contact_radius_squared,
+        gas_parameter_m);
+  }();
 
   // Calculation of the final thermal conductance (1 / total resistance)
   // conductance = 1 / resistance contact area pathway + 1 / resistance magrogap
