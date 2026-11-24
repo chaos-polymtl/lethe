@@ -365,7 +365,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_function(
   // The current time of the function is set for time-dependant functions
   void_fraction_parameters->void_fraction.set_time(time);
 
-  // The function is directly interpolate at the nodes.
+  // The function is directly interpolated at the nodes.
   // This is not an L2 projection, but a direct evaluation.
   // This may lead to some issues on coarses meshes if a high-order
   // interpolation (>FE_Q(1)) is used.

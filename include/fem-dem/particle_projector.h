@@ -399,6 +399,16 @@ public:
   setup_dofs() override;
 
   /**
+   * @brief Set the mapping as the rotated mapping when mortar is enabled.
+   *
+   */
+  void
+  set_mapping(std::shared_ptr<Mapping<dim>> mapping_cache)
+  {
+    this->mapping = std::move(mapping_cache);
+  }
+
+  /**
    * @brief Request that all DoFHandlers managed by this projector also
    * distribute multigrid level DoFs the next time setup_dofs() is called.
    * This is required by the local-smoothing multigrid (LSMG) preconditioner

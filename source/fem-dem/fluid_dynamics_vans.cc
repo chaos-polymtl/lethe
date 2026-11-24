@@ -89,6 +89,10 @@ FluidDynamicsVANS<dim, PropertiesIndex>::setup_dofs()
 
   FluidDynamicsMatrixBased<dim>::setup_dofs();
 
+  // If mortar is enabled, pass the rotated mapping to the particle projector for void fraction calculation
+  if (this->simulation_parameters.mortar_parameters.enable)
+    particle_projector.set_mapping(this->mapping_cache);
+
   // Provide the void fraction dof_handler and present solution to the
   // multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::void_fraction,
@@ -1351,6 +1355,7 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
       this->multiphysics->update_boundary_conditions();
 
       this->dynamic_flow_control();
+      this->update_mortar_configuration();
 
       if (this->simulation_control->is_at_start())
         {
@@ -1365,7 +1370,6 @@ FluidDynamicsVANS<dim, PropertiesIndex>::solve()
           calculate_void_fraction(this->simulation_control->get_current_time());
         }
 
-      this->update_mortar_configuration();
       this->iterate();
 
       this->postprocess(false);

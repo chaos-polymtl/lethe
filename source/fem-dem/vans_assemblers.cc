@@ -787,7 +787,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
           if (component_i == dim)
             // Continuity
             local_rhs_i -= (velocity_divergence * void_fraction +
-                            (velocity - advective_velocity) * void_fraction_gradients - mass_source) *
+                            advective_velocity * void_fraction_gradients - mass_source) *
                            phi_p_i;
 
           // PSPG GLS term
@@ -805,7 +805,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
             {
               local_rhs_i -= gamma *
                              (void_fraction * velocity_divergence +
-                              velocity * void_fraction_gradients) *
+                              advective_velocity * void_fraction_gradients) *
                              div_phi_u_i;
             }
 
