@@ -19,6 +19,7 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/rtree.h>
 
+#include <algorithm>
 #include <fstream>
 
 template <int dim, int spacedim>
@@ -166,18 +167,15 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
         background_cells_search_tree.get_cell_diameters();
       const auto &cube_tree = background_cells_search_tree.get_cube_tree();
 
-      // Solid cells mapped to each locally owned background cell, in the
-      // order of the active cells of the solid triangulation
-      std::vector<std::vector<
-        typename Triangulation<dim, spacedim>::active_cell_iterator>>
-        solid_cells_of_background_cell(local_background_cells.size());
-
       // The distance is computed with the first three vertices of the triangle
       std::vector<Point<spacedim>> triangles(solid_tria->begin()->n_vertices());
       std::vector<typename BackgroundCellsSearchTree<spacedim>::CubeAndIndex>
         intersected_cubes;
 
-      // Loop on the triangles of the solid-surface
+      // Loop on the triangles of the solid-surface. The active cells are
+      // visited in the order of their active cell index, so the pairs are
+      // stored grouped by triangle: all the pairs of a triangle are next to
+      // each other in mapped_solid.
       for (const auto &this_triangle : solid_tria->active_cell_iterators())
         {
           // Loop on the vertex of the triangle and store the location of its
@@ -191,6 +189,16 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
           cube_tree.query(boost::geometry::index::intersects(
                             this_triangle->bounding_box()),
                           std::back_inserter(intersected_cubes));
+
+          // The R-tree gives the cubes in no particular order. Sorting them
+          // by local index stores the background cells of a triangle in the
+          // order of the locally owned cells. The broad search inserts the
+          // particles in the candidates of the triangle in that same order.
+          std::sort(intersected_cubes.begin(),
+                    intersected_cubes.end(),
+                    [](const auto &cube_a, const auto &cube_b) {
+                      return cube_a.second < cube_b.second;
+                    });
 
           // Loop on the background cell bounding box that intersect this
           // triangle.
@@ -206,19 +214,10 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
               // If the cell center is closer to the triangle then its diameter,
               // we store it.
               if (distance < local_background_cell_diameters[local_index])
-                solid_cells_of_background_cell[local_index].emplace_back(
-                  this_triangle);
+                mapped_solid.emplace_back(local_background_cells[local_index],
+                                          this_triangle);
             }
         }
-
-      // Store the pairs ordered by background cell, then by solid cell
-      for (unsigned int local_index = 0;
-           local_index < local_background_cells.size();
-           ++local_index)
-        for (const auto &solid_cell :
-             solid_cells_of_background_cell[local_index])
-          mapped_solid.emplace_back(local_background_cells[local_index],
-                                    solid_cell);
     }
   else if constexpr (dim == 3)
     {

@@ -149,8 +149,8 @@ public:
    * @param[in] background_cells_search_tree R-tree of the locally owned cells
    * of the background triangulation, built on its current state.
    *
-   * @return The (background cell, solid cell) pairs, ordered by background
-   * cell, then by solid cell.
+   * @return The (background cell, solid cell) pairs, ordered by solid cell,
+   * then by background cell.
    */
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
