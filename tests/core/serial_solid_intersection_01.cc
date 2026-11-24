@@ -6,6 +6,10 @@
  * generator and calculates the cells that it cuts on an hyper_ball.
  * The list of cut cells/triangles combo is printed and a vtu file with the
  * intersections is generated.
+ *
+ * The meshes are coarse so that the list stays short: the plane is made of 8
+ * triangles and the ball of 56 cells. The plane is placed near the top of the
+ * ball, so that it is mapped to only some of the cells of the ball.
  */
 
 #include <core/parameters.h>
@@ -37,7 +41,7 @@ test()
 
   // Mesh of the fluid
   GridGenerator::hyper_ball(*background_tria, {0.2, 0, 0}, 2);
-  background_tria->refine_global(3);
+  background_tria->refine_global(1);
 
   // Generate the serial solid
 
@@ -46,9 +50,9 @@ test()
   param->solid_mesh.type               = Parameters::Mesh<2, 3>::Type::dealii;
   param->solid_mesh.grid_type          = "hyper_rectangle";
   param->solid_mesh.grid_arguments     = "-2, -1 : 2, 1 : false";
-  param->solid_mesh.initial_refinement = 3;
+  param->solid_mesh.initial_refinement = 0;
   param->solid_mesh.simplex            = true;
-  param->solid_mesh.translation        = Tensor<1, 3>({0., 0., 0.});
+  param->solid_mesh.translation        = Tensor<1, 3>({0., 0., 1.5});
   param->solid_mesh.rotation_axis      = Tensor<1, 3>({1., 0., 0.});
   param->solid_mesh.rotation_angle     = 0.;
 
