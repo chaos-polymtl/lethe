@@ -13,6 +13,7 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
 
 #include <deal.II/multigrid/mg_coarse.h>
 #include <deal.II/multigrid/mg_constrained_dofs.h>
@@ -177,17 +178,19 @@ protected:
    * @brief Set up AMG object needed for coarse-grid solver or
    * preconditioning.
    *
+   * @param[in] min_level_matrix Assembled matrix of the coarsest level.
    */
   void
-  setup_AMG();
+  setup_AMG(const TrilinosWrappers::SparseMatrix &min_level_matrix);
 
   /**
    * @brief Set up ILU object needed for coarse-grid solver or
    * preconditioning.
    *
+   * @param[in] min_level_matrix Assembled matrix of the coarsest level.
    */
   void
-  setup_ILU();
+  setup_ILU(const TrilinosWrappers::SparseMatrix &min_level_matrix);
 
   /// Min level of the multigrid hierarchy
   unsigned int minlevel;
@@ -383,6 +386,11 @@ public:
 
   /**
    * @brief Transfer the current temperature solution to the different multigrid levels and compute the thermal buoyancy term in each of the multigrid operators.
+   *
+   * The temperature DoF handlers of the levels and the transfer between them
+   * only depend on the mesh. They are built at the first call and reused by the
+   * following calls, since a new preconditioner object is created whenever the
+   * mesh changes.
    *
    * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
    * @param[in] temperature_present_solution Present solution of the temperature
