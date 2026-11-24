@@ -178,6 +178,10 @@ apply_jacobian(
   AffineConstraints<double> constraints;
   constraints.close();
 
+  Parameters::Stabilization stabilization_parameters;
+  stabilization_parameters.stabilization =
+    Parameters::Stabilization::NavierStokesStabilization::pspg_supg;
+
   NavierStokesStabilizedOperator<dim, double> jacobian;
   jacobian.reinit(
     mapping,
@@ -186,7 +190,7 @@ apply_jacobian(
     QGauss<dim>(fe_degree + 1),
     std::shared_ptr<Function<dim>>(),
     properties_manager,
-    Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
+    stabilization_parameters,
     numbers::invalid_unsigned_int,
     simulation_control,
     boundary_conditions,
