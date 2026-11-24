@@ -362,21 +362,20 @@ Sphere<dim>::distance_to_shape_with_cell_guess(
     {
       Tensor<1, dim> center_to_center_vector =
         shape.get_position() - this->position;
-      distance = (center_to_center_vector.norm() - this->effective_radius -
-                  shape.effective_radius) /
-                 2;
+      distance = center_to_center_vector.norm() - this->effective_radius -
+                 shape.effective_radius;
       normal = center_to_center_vector / center_to_center_vector.norm();
+      // The contact point is located halfway between the two surfaces.
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
   else
     {
-      distance = (shape.value_with_cell_guess(this->position, cell) -
-                  this->effective_radius) /
-                 2;
+      distance = shape.value_with_cell_guess(this->position, cell) -
+                 this->effective_radius;
       normal = -shape.gradient_with_cell_guess(this->position, cell);
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
 
   return std::make_tuple(distance, normal, contact_point);
@@ -399,19 +398,19 @@ Sphere<dim>::distance_to_shape(Shape<dim>              &shape,
     {
       Tensor<1, dim> center_to_center_vector =
         shape.get_position() - this->position;
-      distance = (center_to_center_vector.norm() - this->effective_radius -
-                  shape.effective_radius) /
-                 2;
+      distance = center_to_center_vector.norm() - this->effective_radius -
+                 shape.effective_radius;
       normal = center_to_center_vector / center_to_center_vector.norm();
+      // The contact point is located halfway between the two surfaces.
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
   else
     {
-      distance = (shape.value(this->position) - this->effective_radius) / 2;
+      distance = shape.value(this->position) - this->effective_radius;
       normal   = -shape.gradient(this->position);
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
 
   return std::make_tuple(distance, normal, contact_point);

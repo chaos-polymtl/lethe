@@ -240,9 +240,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 }
 
               // Calculation of normal overlap
-              double                  normal_overlap;
-              Point<dim>              contact_point;
-              Tensor<1, dim>          normal;
               std::vector<Point<dim>> contact_points_candidate;
 
               auto iterator =
@@ -261,44 +258,29 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                       (particle_one.radius /
                        (particle_one.radius + particle_two.radius)));
                 }
-              // The normal vector goes from particle one to particle two.
-              if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                  typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
+              // The normal vector goes from particle one to particle two. The
+              // routine of the sphere is used whenever one of the particles is
+              // a sphere. When only particle two is a sphere, the normal it
+              // returns goes from particle two to particle one, so it is
+              // flipped.
+              const bool only_particle_two_is_a_sphere =
+                typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
+                typeid(*particle_two.shape) == typeid(Sphere<dim>);
+              const auto contact_state =
+                only_particle_two_is_a_sphere ?
+                  particle_two.shape->distance_to_shape(
+                    *particle_one.shape, contact_points_candidate) :
+                  particle_one.shape->distance_to_shape(
                     *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
-              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
-                    *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
-              else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_two.shape->distance_to_shape(
-                    *particle_one.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = -std::get<Tensor<1, dim>>(
-                    contact_state); // Flip the normal since it returns the
-                                            // normal using the second particle;
-                }
-              else
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
-                    *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
+
+              // The overlap is the opposite of the distance between the shapes.
+              const double normal_overlap = -std::get<double>(contact_state);
+              const Point<dim> contact_point =
+                std::get<Point<dim>>(contact_state);
+              const Tensor<1, dim> normal =
+                only_particle_two_is_a_sphere ?
+                  -std::get<Tensor<1, dim>>(contact_state) :
+                  std::get<Tensor<1, dim>>(contact_state);
               previous_wall_contact_point[particle_one.particle_id]
                                          [particle_two.particle_id] =
                                            contact_point;
@@ -786,7 +768,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               auto contact_state =
                 particle.shape->distance_to_shape(*contact_plane,
                                                   contact_point_candidate);
-              double   normal_overlap = -2 * std::get<double>(contact_state);
+              double   normal_overlap = -std::get<double>(contact_state);
               Point<3> contact_point =
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
               // The shape distance routine returns the wall-to-particle
