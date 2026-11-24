@@ -141,8 +141,8 @@ Protected Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a2f527f5706be4e927a422d4a61c26fde" id="r_a2f527f5706be4e927a422d4a61c26fde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f527f5706be4e927a422d4a61c26fde">setup_AMG</a> ()</td></tr>
-<tr class="memitem:a350b1509f91f1de140b869396074af09" id="r_a350b1509f91f1de140b869396074af09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a350b1509f91f1de140b869396074af09">setup_ILU</a> ()</td></tr>
+<tr class="memitem:a1e7ae544791cebf9a51faff75db5ff2f" id="r_a1e7ae544791cebf9a51faff75db5ff2f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e7ae544791cebf9a51faff75db5ff2f">setup_AMG</a> (const TrilinosWrappers::SparseMatrix &amp;min_level_matrix)</td></tr>
+<tr class="memitem:a4791a8742316c213738bee809bb20fa5" id="r_a4791a8742316c213738bee809bb20fa5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4791a8742316c213738bee809bb20fa5">setup_ILU</a> (const TrilinosWrappers::SparseMatrix &amp;min_level_matrix)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-attribs" class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -191,7 +191,7 @@ Protected Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 class MFNavierStokesPreconditionGMGBase&lt; dim &gt;</div><p>A geometric multigrid preconditioner compatible with the matrix-free solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00047">47</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00048">48</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a22a7d063fcf432847fc5ddb5ea61b953" name="a22a7d063fcf432847fc5ddb5ea61b953"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a22a7d063fcf432847fc5ddb5ea61b953">&#9670;&#160;</a></span>ChebyshevSmootherType</h2>
@@ -218,11 +218,11 @@ template&lt;int dim&gt; </div>
 <div class="line">    PreconditionChebyshev&lt;<a class="code hl_typedef" href="#a9f9732358468a055aa6d38c0d547fef5">OperatorType</a>,</div>
 <div class="line">                          <a class="code hl_typedef" href="#a83497d7eb659c193af08115bb14d49ce">MGVectorType</a>,</div>
 <div class="line">                          <a class="code hl_typedef" href="#a7b3203e280f8d5dfa56f1a573a96eb97">SmootherPreconditionerType</a>&gt;</div>
-<div class="ttc" id="aclassMFNavierStokesPreconditionGMGBase_html_a7b3203e280f8d5dfa56f1a573a96eb97"><div class="ttname"><a href="#a7b3203e280f8d5dfa56f1a573a96eb97">MFNavierStokesPreconditionGMGBase::SmootherPreconditionerType</a></div><div class="ttdeci">PreconditionBase&lt; MGVectorType &gt; SmootherPreconditionerType</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00068">fluid_dynamics_matrix_free.h:68</a></div></div>
-<div class="ttc" id="aclassMFNavierStokesPreconditionGMGBase_html_a83497d7eb659c193af08115bb14d49ce"><div class="ttname"><a href="#a83497d7eb659c193af08115bb14d49ce">MFNavierStokesPreconditionGMGBase::MGVectorType</a></div><div class="ttdeci">LinearAlgebra::distributed::Vector&lt; MGNumber &gt; MGVectorType</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00059">fluid_dynamics_matrix_free.h:59</a></div></div>
-<div class="ttc" id="aclassMFNavierStokesPreconditionGMGBase_html_a9f9732358468a055aa6d38c0d547fef5"><div class="ttname"><a href="#a9f9732358468a055aa6d38c0d547fef5">MFNavierStokesPreconditionGMGBase::OperatorType</a></div><div class="ttdeci">NavierStokesOperatorBase&lt; dim, MGNumber &gt; OperatorType</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00067">fluid_dynamics_matrix_free.h:67</a></div></div>
+<div class="ttc" id="aclassMFNavierStokesPreconditionGMGBase_html_a7b3203e280f8d5dfa56f1a573a96eb97"><div class="ttname"><a href="#a7b3203e280f8d5dfa56f1a573a96eb97">MFNavierStokesPreconditionGMGBase::SmootherPreconditionerType</a></div><div class="ttdeci">PreconditionBase&lt; MGVectorType &gt; SmootherPreconditionerType</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00069">fluid_dynamics_matrix_free.h:69</a></div></div>
+<div class="ttc" id="aclassMFNavierStokesPreconditionGMGBase_html_a83497d7eb659c193af08115bb14d49ce"><div class="ttname"><a href="#a83497d7eb659c193af08115bb14d49ce">MFNavierStokesPreconditionGMGBase::MGVectorType</a></div><div class="ttdeci">LinearAlgebra::distributed::Vector&lt; MGNumber &gt; MGVectorType</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00060">fluid_dynamics_matrix_free.h:60</a></div></div>
+<div class="ttc" id="aclassMFNavierStokesPreconditionGMGBase_html_a9f9732358468a055aa6d38c0d547fef5"><div class="ttname"><a href="#a9f9732358468a055aa6d38c0d547fef5">MFNavierStokesPreconditionGMGBase::OperatorType</a></div><div class="ttdeci">NavierStokesOperatorBase&lt; dim, MGNumber &gt; OperatorType</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00068">fluid_dynamics_matrix_free.h:68</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00071">71</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00072">72</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -252,7 +252,7 @@ template&lt;int dim&gt; </div>
 <div class="line">    <a class="code hl_class" href="classPreconditionAdapter.html">PreconditionAdapter&lt;MGVectorType, TrilinosVectorType&gt;</a>&gt;</div>
 <div class="ttc" id="aclassPreconditionAdapter_html"><div class="ttname"><a href="classPreconditionAdapter.html">PreconditionAdapter</a></div><div class="ttdoc">A wrapper class around a preconditioner to be able to handle vector types that are not supported by t...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00111">fluid_dynamics_matrix_free.cc:112</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00080">80</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00081">81</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -278,7 +278,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00065">65</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00066">66</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -304,7 +304,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00061">61</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00062">62</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -330,7 +330,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00053">53</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00054">54</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -356,7 +356,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00059">59</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00060">60</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -382,7 +382,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00050">50</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00051">51</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -408,7 +408,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00067">67</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00068">68</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -436,7 +436,7 @@ template&lt;int dim&gt; </div>
 <b>Initial value:</b><div class="fragment"><div class="line"> </div>
 <div class="line">    PreconditionMG&lt;dim, MGVectorType, GCTransferType&gt;</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00077">77</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00078">78</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -464,7 +464,7 @@ template&lt;int dim&gt; </div>
 <b>Initial value:</b><div class="fragment"><div class="line"> </div>
 <div class="line">    PreconditionMG&lt;dim, MGVectorType, LSTransferType&gt;</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00075">75</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00076">76</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -490,7 +490,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00068">68</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00069">69</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -518,7 +518,7 @@ template&lt;int dim&gt; </div>
 <b>Initial value:</b><div class="fragment"><div class="line"> </div>
 <div class="line">    PreconditionRelaxation&lt;OperatorType, SmootherPreconditionerType&gt;</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00069">69</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00070">70</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -544,7 +544,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00060">60</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00061">61</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +570,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00058">58</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00059">59</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -613,7 +613,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00755">755</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">dof_handler</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">dof_handler_fe_q_iso_q1</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00325">mg_setup_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00328">mg_vmult_timer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00076">SimulationParameters&lt; dim &gt;::mortar_parameters</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">pcout</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">simulation_parameters</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00321">use_manifold_for_normal</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">dof_handler</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00306">dof_handler_fe_q_iso_q1</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00328">mg_setup_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00331">mg_vmult_timer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00076">SimulationParameters&lt; dim &gt;::mortar_parameters</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">pcout</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">simulation_parameters</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00324">use_manifold_for_normal</a>.</p>
 
 </div>
 </div>
@@ -704,9 +704,9 @@ template&lt;int dim&gt; </div>
 <p>Getter function for all level operators. </p>
 <dl class="section return"><dt>Returns</dt><dd>Multigrid object that contains all level operators. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02456">2456</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02472">2472</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">mg_operators</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">mg_operators</a>.</p>
 
 </div>
 </div>
@@ -730,9 +730,9 @@ template&lt;int dim&gt; </div>
 <p>Getter function for all level smoother preconditioners. </p>
 <dl class="section return"><dt>Returns</dt><dd>Multigrid object that contains all level smoother preconditioners. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02464">2464</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02480">2480</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00229">mg_smoother_preconditioners</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00232">mg_smoother_preconditioners</a>.</p>
 
 </div>
 </div>
@@ -755,9 +755,9 @@ template&lt;int dim&gt; </div>
 
 <p>Initialize smoother, coarse grid solver and multigrid object needed for the geometric multigrid preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01877">1877</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01887">1887</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01837">Parameters::LinearSolver::amg</a>, <a class="el" href="parameters_8h_source.html#l01925">Parameters::LinearSolver::chebyshev</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00248">coarse_grid_precondition</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00257">coarse_grid_solver</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">coarse_grid_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00263">coarse_grid_solver_control_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00269">coarse_grid_solver_intermediate</a>, <a class="el" href="parameters_8h_source.html#l01957">Parameters::LinearSolver::direct</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00254">direct_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00291">gc_multigrid_preconditioner</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00276">gc_multigrid_preconditioner_intermediate</a>, <a class="el" href="parameters_8h_source.html#l01839">Parameters::LinearSolver::gcmg</a>, <a class="el" href="parameters_8h_source.html#l01954">Parameters::LinearSolver::gmres</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00246">PreconditionASM&lt; VectorType &gt;::initialize()</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">intlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00225">ls_mg_interface_in</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00287">ls_multigrid_preconditioner</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00280">ls_multigrid_preconditioner_intermediate</a>, <a class="el" href="parameters_8h_source.html#l01838">Parameters::LinearSolver::lsmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">maxlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00283">mg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00260">mg_coarse</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00266">mg_coarse_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00221">mg_interface_matrix_in</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00272">mg_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">mg_matrix</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00325">mg_setup_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00234">mg_smoother</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00229">mg_smoother_preconditioners</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00244">mg_transfer_gc</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00241">mg_transfer_ls</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00328">mg_vmult_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00193">minlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">pcout</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02471">setup_AMG()</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02580">setup_ILU()</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01837">Parameters::LinearSolver::amg</a>, <a class="el" href="parameters_8h_source.html#l01925">Parameters::LinearSolver::chebyshev</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">coarse_grid_precondition</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00260">coarse_grid_solver</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00254">coarse_grid_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00266">coarse_grid_solver_control_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00272">coarse_grid_solver_intermediate</a>, <a class="el" href="parameters_8h_source.html#l01957">Parameters::LinearSolver::direct</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00257">direct_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">gc_multigrid_preconditioner</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00279">gc_multigrid_preconditioner_intermediate</a>, <a class="el" href="parameters_8h_source.html#l01839">Parameters::LinearSolver::gcmg</a>, <a class="el" href="parameters_8h_source.html#l01954">Parameters::LinearSolver::gmres</a>, <a class="el" href="parameters_8h_source.html#l01836">Parameters::LinearSolver::ilu</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00246">PreconditionASM&lt; VectorType &gt;::initialize()</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00202">intlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00228">ls_mg_interface_in</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00290">ls_multigrid_preconditioner</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00283">ls_multigrid_preconditioner_intermediate</a>, <a class="el" href="parameters_8h_source.html#l01838">Parameters::LinearSolver::lsmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">maxlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00286">mg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00263">mg_coarse</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00269">mg_coarse_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00224">mg_interface_matrix_in</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00275">mg_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00221">mg_matrix</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00328">mg_setup_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00237">mg_smoother</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00232">mg_smoother_preconditioners</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00247">mg_transfer_gc</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00244">mg_transfer_ls</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00331">mg_vmult_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">minlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">pcout</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02487">setup_AMG()</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02593">setup_ILU()</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -780,9 +780,9 @@ template&lt;int dim&gt; </div>
 
 <p>Prints relevant multigrid information. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02428">2428</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02444">2444</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00306">coarse_grid_iterations</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">coarse_grid_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00263">coarse_grid_solver_control_intermediate</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">pcout</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00309">coarse_grid_iterations</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00254">coarse_grid_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00266">coarse_grid_solver_control_intermediate</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">pcout</a>.</p>
 
 </div>
 </div>
@@ -842,12 +842,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00787">787</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l02604">Parameters::Mortar&lt; dim &gt;::circular</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00203">coarse_grid_triangulations</a>, <a class="el" href="#af7665874c6bc00f8bd9dc52337439f26">create_level_operator()</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">dof_handler</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">dof_handler_fe_q_iso_q1</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00206">dof_handlers</a>, <a class="el" href="solid__constraints_8h.html#a25b91b4918e765b79d007f78482eadb5">establish_solid_domain()</a>, <a class="el" href="solid__constraints_8h.html#a6620cc1447abda2c071f7cec8ede3151">establish_solid_domain_lsmg()</a>, <a class="el" href="parameters_8h_source.html#l00065">Parameters::extra_verbose</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00031">BoundaryConditions::function</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00032">BoundaryConditions::function_weak</a>, <a class="el" href="parameters_8h_source.html#l01839">Parameters::LinearSolver::gcmg</a>, <a class="el" href="parameters_8h_source.html#l01898">Parameters::LinearSolver::h</a>, <a class="el" href="parameters_8h_source.html#l01900">Parameters::LinearSolver::hp</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">intlevel</a>, <a class="el" href="parameters_8h_source.html#l02605">Parameters::Mortar&lt; dim &gt;::linear</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00225">ls_mg_interface_in</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00223">ls_mg_operators</a>, <a class="el" href="parameters_8h_source.html#l01838">Parameters::LinearSolver::lsmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00209">mappings</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">maxlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00238">mg_constrained_dofs</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00325">mg_setup_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00244">mg_transfer_gc</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00241">mg_transfer_ls</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00193">minlevel</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00028">BoundaryConditions::none</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00029">BoundaryConditions::noslip</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00036">BoundaryConditions::outlet</a>, <a class="el" href="parameters_8h_source.html#l01899">Parameters::LinearSolver::p</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00033">BoundaryConditions::partial_slip</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">pcout</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00037">BoundaryConditions::periodic</a>, <a class="el" href="parameters_8h_source.html#l01901">Parameters::LinearSolver::ph</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00034">BoundaryConditions::pressure</a>, <a class="el" href="multiphysics_8h_source.html#l00081">pressure</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00787">reinit()</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l01787">LetheGridTools::rotate_mapping()</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">simulation_parameters</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00030">BoundaryConditions::slip</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00212">transfers</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00321">use_manifold_for_normal</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l02604">Parameters::Mortar&lt; dim &gt;::circular</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00206">coarse_grid_triangulations</a>, <a class="el" href="#af7665874c6bc00f8bd9dc52337439f26">create_level_operator()</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">dof_handler</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00306">dof_handler_fe_q_iso_q1</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00209">dof_handlers</a>, <a class="el" href="solid__constraints_8h.html#a25b91b4918e765b79d007f78482eadb5">establish_solid_domain()</a>, <a class="el" href="solid__constraints_8h.html#a6620cc1447abda2c071f7cec8ede3151">establish_solid_domain_lsmg()</a>, <a class="el" href="parameters_8h_source.html#l00065">Parameters::extra_verbose</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00031">BoundaryConditions::function</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00032">BoundaryConditions::function_weak</a>, <a class="el" href="parameters_8h_source.html#l01839">Parameters::LinearSolver::gcmg</a>, <a class="el" href="parameters_8h_source.html#l01898">Parameters::LinearSolver::h</a>, <a class="el" href="parameters_8h_source.html#l01900">Parameters::LinearSolver::hp</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00202">intlevel</a>, <a class="el" href="parameters_8h_source.html#l02605">Parameters::Mortar&lt; dim &gt;::linear</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00228">ls_mg_interface_in</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00226">ls_mg_operators</a>, <a class="el" href="parameters_8h_source.html#l01838">Parameters::LinearSolver::lsmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00212">mappings</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">maxlevel</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00241">mg_constrained_dofs</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00328">mg_setup_timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00247">mg_transfer_gc</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00244">mg_transfer_ls</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">minlevel</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00028">BoundaryConditions::none</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00029">BoundaryConditions::noslip</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00036">BoundaryConditions::outlet</a>, <a class="el" href="parameters_8h_source.html#l01899">Parameters::LinearSolver::p</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00033">BoundaryConditions::partial_slip</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">pcout</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00037">BoundaryConditions::periodic</a>, <a class="el" href="parameters_8h_source.html#l01901">Parameters::LinearSolver::ph</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00034">BoundaryConditions::pressure</a>, <a class="el" href="multiphysics_8h_source.html#l00081">pressure</a>, <a class="el" href="parameters_8h_source.html#l00063">Parameters::quiet</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00787">reinit()</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l01787">LetheGridTools::rotate_mapping()</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">simulation_parameters</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00030">BoundaryConditions::slip</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">transfers</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00324">use_manifold_for_normal</a>.</p>
 
 </div>
 </div>
-<a id="a2f527f5706be4e927a422d4a61c26fde" name="a2f527f5706be4e927a422d4a61c26fde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f527f5706be4e927a422d4a61c26fde">&#9670;&#160;</a></span>setup_AMG()</h2>
+<a id="a1e7ae544791cebf9a51faff75db5ff2f" name="a1e7ae544791cebf9a51faff75db5ff2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e7ae544791cebf9a51faff75db5ff2f">&#9670;&#160;</a></span>setup_AMG()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -860,7 +860,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt; dim &gt;::setup_AMG </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const TrilinosWrappers::SparseMatrix &amp;</td>          <td class="paramname"><span class="paramname"><em>min_level_matrix</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -872,15 +872,21 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Set up AMG object needed for coarse-grid solver or preconditioning. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">min_level_matrix</td><td>Assembled matrix of the coarsest level. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02471">2471</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02487">2487</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00248">coarse_grid_precondition</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">dof_handler</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00206">dof_handlers</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="parameters_8h_source.html#l01839">Parameters::LinearSolver::gcmg</a>, <a class="el" href="parameters_8h_source.html#l01838">Parameters::LinearSolver::lsmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00193">minlevel</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">coarse_grid_precondition</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">dof_handler</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00209">dof_handlers</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="parameters_8h_source.html#l01839">Parameters::LinearSolver::gcmg</a>, <a class="el" href="parameters_8h_source.html#l01838">Parameters::LinearSolver::lsmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">minlevel</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">simulation_parameters</a>.</p>
 
 </div>
 </div>
-<a id="a350b1509f91f1de140b869396074af09" name="a350b1509f91f1de140b869396074af09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a350b1509f91f1de140b869396074af09">&#9670;&#160;</a></span>setup_ILU()</h2>
+<a id="a4791a8742316c213738bee809bb20fa5" name="a4791a8742316c213738bee809bb20fa5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4791a8742316c213738bee809bb20fa5">&#9670;&#160;</a></span>setup_ILU()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -893,7 +899,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classMFNavierStokesPreconditionGMGBase.html">MFNavierStokesPreconditionGMGBase</a>&lt; dim &gt;::setup_ILU </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const TrilinosWrappers::SparseMatrix &amp;</td>          <td class="paramname"><span class="paramname"><em>min_level_matrix</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -905,10 +911,16 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Set up ILU object needed for coarse-grid solver or preconditioning. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">min_level_matrix</td><td>Assembled matrix of the coarsest level. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02580">2580</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02593">2593</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00248">coarse_grid_precondition</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">mg_operators</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00193">minlevel</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">coarse_grid_precondition</a>, <a class="el" href="multiphysics_8h_source.html#l00031">fluid_dynamics</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -942,9 +954,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02407">2407</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02423">2423</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00306">coarse_grid_iterations</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">coarse_grid_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00263">coarse_grid_solver_control_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00291">gc_multigrid_preconditioner</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00287">ls_multigrid_preconditioner</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00309">coarse_grid_iterations</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00254">coarse_grid_solver_control</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00266">coarse_grid_solver_control_intermediate</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">gc_multigrid_preconditioner</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00290">ls_multigrid_preconditioner</a>.</p>
 
 </div>
 </div>
@@ -973,7 +985,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector holding number of coarse grid iterations. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00306">306</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00309">309</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1001,7 +1013,7 @@ template&lt;int dim&gt; </div>
 
 <p>Coarse grid solver (algebraic multigrid, ILU, direct solver). </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00248">248</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">251</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1029,7 +1041,7 @@ template&lt;int dim&gt; </div>
 
 <p>GMRES as coarse grid solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00257">257</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00260">260</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1057,7 +1069,7 @@ template&lt;int dim&gt; </div>
 
 <p>Solver control for the coarse grid solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00251">251</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00254">254</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1085,7 +1097,7 @@ template&lt;int dim&gt; </div>
 
 <p>Solver control for the coarse grid solver (intermediate level). </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00263">263</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00266">266</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1113,7 +1125,7 @@ template&lt;int dim&gt; </div>
 
 <p>GMRES as coarse grid solver (intermediate level). </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00269">269</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00272">272</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1141,7 +1153,7 @@ template&lt;int dim&gt; </div>
 
 <p>Triangulations for the global coarsening case. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00203">203</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00206">206</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1169,7 +1181,7 @@ template&lt;int dim&gt; </div>
 
 <p>Solver control for the direct solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00254">254</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00257">257</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1197,7 +1209,7 @@ template&lt;int dim&gt; </div>
 
 <p>Describes the layout of DoFs and the type of FE. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">300</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">303</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1225,7 +1237,7 @@ template&lt;int dim&gt; </div>
 
 <p>Describes the layout of DoFs for FE_Q_iso_Q1 elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00303">303</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00306">306</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1253,7 +1265,7 @@ template&lt;int dim&gt; </div>
 
 <p>DoF handlers for each of the levels of the global coarsening algorithm. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00206">206</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00209">209</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1281,7 +1293,7 @@ template&lt;int dim&gt; </div>
 
 <p>Global coarsening multigrid preconditioner object. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00291">291</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">294</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1309,7 +1321,7 @@ template&lt;int dim&gt; </div>
 
 <p>Global coarsening multigrid preconditioner object (intermediate level). </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00276">276</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00279">279</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1337,7 +1349,7 @@ template&lt;int dim&gt; </div>
 
 <p>Intermediate level of the multigrid hierarchy. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">199</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00202">202</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1363,7 +1375,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00225">225</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00228">228</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1389,7 +1401,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00223">223</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00226">226</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1417,7 +1429,7 @@ template&lt;int dim&gt; </div>
 
 <p>Local smoothing multigrid preconditioner object. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00287">287</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00290">290</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1445,7 +1457,7 @@ template&lt;int dim&gt; </div>
 
 <p>Local smoothing multigrid preconditioner object (intermediate level). </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00280">280</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00283">283</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1473,7 +1485,7 @@ template&lt;int dim&gt; </div>
 
 <p>MappingQCache for each of the levels of the global coarsening algorithm. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00209">209</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00212">212</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1501,7 +1513,7 @@ template&lt;int dim&gt; </div>
 
 <p>Max level of the multigrid hierarchy. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">196</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00199">199</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1529,7 +1541,7 @@ template&lt;int dim&gt; </div>
 
 <p>Multigrid method. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00283">283</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00286">286</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1557,7 +1569,7 @@ template&lt;int dim&gt; </div>
 
 <p>Multigrid wrapper for the coarse grid solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00260">260</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00263">263</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1585,7 +1597,7 @@ template&lt;int dim&gt; </div>
 
 <p>Multigrid wrapper for the coarse grid solver (intermediate level). </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00266">266</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00269">269</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1612,7 +1624,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Collection of boundary constraints and refinement edge constrations for the different levels in the local smoothing approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00238">238</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00241">241</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1640,7 +1652,7 @@ template&lt;int dim&gt; </div>
 
 <p>Interface edge matrix needed only for local smoothing. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00221">221</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00224">224</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1668,7 +1680,7 @@ template&lt;int dim&gt; </div>
 
 <p>Multigrid method (intermediate level). </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00272">272</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00275">275</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1696,7 +1708,7 @@ template&lt;int dim&gt; </div>
 
 <p>Multigrid level object storing all operators. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">218</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00221">221</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1724,7 +1736,7 @@ template&lt;int dim&gt; </div>
 
 <p>Level operators for the geometric multigrid. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">215</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00218">218</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1752,7 +1764,7 @@ template&lt;int dim&gt; </div>
 
 <p>Timer for specific geometric multigrid components. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00325">325</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00328">328</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1779,7 +1791,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Smoother object. Stored through the type-erased base so that either a relaxation-based (PreconditionRelaxation) or a Chebyshev-based (PreconditionChebyshev) smoother can be selected at runtime. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00234">234</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00237">237</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1807,7 +1819,7 @@ template&lt;int dim&gt; </div>
 
 <p>Preconditioners associated to smoothers. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00229">229</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00232">232</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1835,7 +1847,7 @@ template&lt;int dim&gt; </div>
 
 <p>Transfer operator for global coarsening. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00244">244</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00247">247</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1863,7 +1875,7 @@ template&lt;int dim&gt; </div>
 
 <p>Transfer operator for global coarsening for the temperature. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00317">317</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00320">320</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1891,7 +1903,7 @@ template&lt;int dim&gt; </div>
 
 <p>Transfer operator for local smoothing. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00241">241</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00244">244</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1919,7 +1931,7 @@ template&lt;int dim&gt; </div>
 
 <p>Internal timer for vmult timings. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00328">328</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00331">331</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1947,7 +1959,7 @@ template&lt;int dim&gt; </div>
 
 <p>Min level of the multigrid hierarchy. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00193">193</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00196">196</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -1975,7 +1987,7 @@ template&lt;int dim&gt; </div>
 
 <p>Conditional Ostream. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00294">294</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">297</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2003,7 +2015,7 @@ template&lt;int dim&gt; </div>
 
 <p>Simulation parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00297">297</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00300">300</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2030,7 +2042,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Temperature DoF handlers for each of the levels of the global coarsening algorithm </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00310">310</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00313">313</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2058,7 +2070,7 @@ template&lt;int dim&gt; </div>
 
 <p>Transfers for each of the levels of the global coarsening algorithm. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00212">212</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00215">215</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2085,7 +2097,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Temperature transfers for each of the levels of the global coarsening algorithm </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00314">314</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00317">317</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -2112,7 +2124,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Boolean that indicates whether manifolds are used for the normal vectors computation in slip BCs </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00321">321</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00324">324</a> of file <a class="el" href="fluid__dynamics__matrix__free_8h_source.html">fluid_dynamics_matrix_free.h</a>.</p>
 
 </div>
 </div>
