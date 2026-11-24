@@ -8,3 +8,4 @@ Quadrature Method of Moments
     :titlesonly:
 
     qmom_equations
+    lnp_production

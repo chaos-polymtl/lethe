@@ -17,10 +17,6 @@ Each time step is split into the transport of the moments in physical space, the
 .. caution::
     All the parameters of the QMOM physics are in SI units.
 
-.. warning::
-
-  The QMOM physics is under development. Only the transport of the scalars and moments in physical space, with their source terms, and the growth, nucleation and coalescence of the moments in phase space are implemented. The scalars are only coupled to the particles by the ``lipid_nanoparticle_production`` process (see :ref:`qmom-lipid-nanoparticle-production`). The ``strang`` splitting scheme is not available yet and stops the simulation with an error.
-
 Related parameters in other subsections:
 
 * the time-stepping ``method`` of the :doc:`simulation_control` subsection must be ``bdf1``, ``bdf2`` or ``bdf3``, and ``bdf1`` if the growth, the nucleation or the coalescence is enabled.
@@ -142,8 +138,8 @@ General
   * ``lie``: physical-space transport of the moments and then of the scalars over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t` (first-order accurate).
   * ``strang``: phase-space evolution over :math:`\Delta t / 2`, physical-space transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t / 2` (second-order accurate).
 
-.. note::
-  See :doc:`../../theory/multiphysics/qmom/qmom_equations` for details on the splitting schemes.
+.. warning::
+  The ``strang`` splitting scheme is not available yet and stops the simulation with an error. See :doc:`../../theory/multiphysics/qmom/qmom_equations` for details on the splitting schemes.
 
 Phase-Space Source Terms
 ^^^^^^^^^^^^^^^^^^^^^^^^

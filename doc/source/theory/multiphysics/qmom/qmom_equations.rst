@@ -115,67 +115,6 @@ Degrees of freedom without particles (:math:`M_0` below :math:`10^{-30}`) have n
 
 The moments must nevertheless be realizable, i.e. be the moments of a distribution of positive sizes: the simulation stops with an error at the first time step where they cannot be inverted, for example because of the oscillations of the transport near steep gradients. Optionally, QMOMKit may instead reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set.
 
-.. _qmom-lipid-nanoparticle-production:
-
-Lipid Nanoparticle Production
------------------------------
-
-With the lipid nanoparticle production process, the nucleation, growth and coalescence are given by the models of Shin et al. [#shin2025]_, whose parameters are in the ``lipid nanoparticle production`` subsection of :doc:`../../../parameters/cfd/qmom`: the generic growth, nucleation and coalescence models are ignored, but each mechanism is still enabled by its ``enable`` parameter. The two scalars are the ethanol concentration :math:`c_e` and the free lipid concentration :math:`C`, both in :math:`\text{kg} \cdot \text{m}^{-3}`.
-
-Solubility and Supersaturation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-At every degree of freedom, the organic (ethanol) volume fraction is :math:`\phi_o = c_e / \rho_o`, clipped to :math:`[0, 1]`, and the aqueous volume fraction is :math:`\phi_a = 1 - \phi_o`. The mole fraction solubility :math:`x` of the lipid in the mixture, its solubility :math:`C_\infty` and the supersaturation :math:`S` are:
-
-.. math::
-
-  \ln x = \phi_a \ln x_a + \phi_o \ln x_o, \quad C_\infty = \frac{M_l x}{1 - x} \left(\frac{\phi_a \rho_a}{M_a} + \frac{\phi_o \rho_o}{M_o}\right), \quad S = \frac{\max(C, 0)}{C_\infty}
-
-where :math:`M_l` is the molar mass of the lipid and :math:`x_a`, :math:`\rho_a`, :math:`M_a`, :math:`x_o`, :math:`\rho_o` and :math:`M_o` are the mole fraction solubilities, densities and molar masses of the aqueous and organic phases. The capillary length is :math:`\alpha = 4 \gamma v_m / (k_B T)`, where :math:`\gamma` is the surface tension, :math:`v_m` the molecular volume of the lipid, :math:`k_B` the Boltzmann constant and :math:`T` the operating temperature.
-
-Growth
-^^^^^^
-
-The growth includes Ostwald ripening: particles smaller than their equilibrium size dissolve.
-
-.. math::
-
-  G = k_g \xi C_\infty \left(S - e^{\alpha / \xi}\right)
-
-with :math:`k_g` the growth factor.
-
-Nucleation
-^^^^^^^^^^
-
-The nucleation only happens in a supersaturated mixture (:math:`S > 1`), at the rate:
-
-.. math::
-
-  J = A \exp\left(-\frac{16 \pi \gamma^3 v_m^2}{3 (k_B T)^3 (\ln S)^2}\right)
-
-with :math:`A` the nucleation factor. The sizes of the nuclei follow a log-normal distribution of mean the critical size :math:`L_c = \alpha / \ln S` and of standard deviation the nuclei standard deviation.
-
-Coalescence
-^^^^^^^^^^^
-
-The coalescence kernel is the Brownian kernel times the attachment efficiency of the Fuchs model, limited by the PEG factor :math:`k_{PEG}`:
-
-.. math::
-
-  \beta = \frac{2 k_B T (\xi_1 + \xi_2)^2}{3 \mu \xi_1 \xi_2} \min\left(\frac{k_{PEG}}{W}, k_{PEG}\right), \quad W = r_s \int_0^\infty \frac{\exp\left(\Phi(a) / (k_B T)\right)}{(a + r_s)^2} \mathrm{d} a
-
-where :math:`\mu` is the viscosity of the mixture, :math:`r_s` the sum of the radii of the particles, :math:`a` the distance between their surfaces and :math:`\Phi` the sum of their van der Waals attraction (Hamaker constant) and electrostatic repulsion (surface potential). The Debye length uses the ion concentration of the mixture and the relative permittivity of the local mixture, :math:`\phi_a \varepsilon_a + \phi_o \varepsilon_o`. The integral is computed with the Simpson rule on 400 logarithmic intervals of :math:`a` between :math:`10^{-13}` and :math:`10^{-5}\ \text{m}`. This model is much more expensive than the constant coalescence model.
-
-Consumption of the Free Lipids
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The particles consume the free lipids: at the end of the phase-space step, the free lipid concentration of every degree of freedom loses the mass of lipid gained by its particles:
-
-.. math::
-
-  C \leftarrow C - \rho_l k_v \left(M_3 - M_3^0\right)
-
-where :math:`\rho_l` is the density of the lipid in the particles, :math:`k_v` the volume shape factor and :math:`M_3^0` the moment :math:`M_3` at the beginning of the step. The lipid mass is therefore conserved. Since the supersaturation is constant during the phase-space step, a time step that is too large for the kinetics consumes more free lipids than available: the simulation then stops with an error, and the time step must be reduced.
 
 References
 ----------
@@ -190,5 +129,3 @@ References
 .. [#marchisio2003b] \Marchisio, D. L., Vigil, R. D., & Fox, R. O. (2003). Quadrature method of moments for aggregation–breakage processes. Journal of Colloid and Interface Science, 258(2), 322-334. doi: `10.1016/S0021-9797(02)00054-1 <https://doi.org/10.1016/S0021-9797(02)00054-1>`_\.
 
 .. [#friedlander2000] \Friedlander, S. K. (2000). Smoke, dust, and haze: Fundamentals of aerosol dynamics (2nd ed.). Oxford University Press.
-
-.. [#shin2025] Shin, Devos, Udepurkar, Inguva, Myerson and Braatz, "Mechanistic modeling of lipid nanoparticle (LNP) precipitation via population balance equations (PBEs)", Chemical Engineering Journal 523 (2025) 167786.
