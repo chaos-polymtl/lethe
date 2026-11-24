@@ -636,42 +636,50 @@ VANSOperator<dim, number>::do_cell_integral_local(
       const auto tau = this->stabilization_parameter[cell][q];
 
       // The PSPG and SUPG terms share two strong forms of the momentum
-      // equation, which are computed once per quadrature point:
-      // - the strong residual linearized around the previous Newton iterate
-      //   and applied to the increment (δu, δp):
-      //   ɛ∂t δu + ɛ(u·∇)δu + ɛ(δu·∇)u + ɛ∇δp - νɛ∆δu - νɛ∇(∇·δu) + βδu + mδu,
-      // - the strong residual of the previous Newton iterate:
-      //   ɛ∂t u + ɛ(u·∇)u + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - ɛf - f_pf + mu.
-      // The viscous terms are zero when the hessians are disabled.
+      // equation, which are computed once per quadrature point. The viscous
+      // terms are zero when the hessians are disabled.
+
+      // Will contain the strong residual linearized around the previous Newton
+      // iterate and applied to the increment (δu, δp):
+      // ɛ∂t δu + ɛ(u·∇)δu + ɛ(δu·∇)u + ɛ∇δp - νɛ∆δu - νɛ∇(∇·δu) + βδu + mδu
       Tensor<1, dim, VectorizedArray<number>> linearized_strong_residual;
+      // Will contain the strong residual of the previous Newton iterate:
+      // ɛ∂t u + ɛ(u·∇)u + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - ɛf - f_pf + mu
       Tensor<1, dim, VectorizedArray<number>> previous_strong_residual;
 
       // Weak form Jacobian
       value_result[dim] = 0;
       for (int i = 0; i < dim; ++i)
         {
-          // (u·∇)δu + (δu·∇)u
+          // Will contain (u·∇)δu + (δu·∇)u
           VectorizedArray<number> linearized_advection = 0.;
-          // (u·∇)u
+          // Will contain (u·∇)u
           VectorizedArray<number> previous_advection = 0.;
-          // ∆δu + ∇(∇·δu) and ∆u + ∇(∇·u)
-          VectorizedArray<number> viscous_term          = 0.;
+          // Will contain ∆δu + ∇(∇·δu)
+          VectorizedArray<number> viscous_term = 0.;
+          // Will contain ∆u + ∇(∇·u)
           VectorizedArray<number> previous_viscous_term = 0.;
           for (int k = 0; k < dim; ++k)
             {
+              // (u·∇)δu + (δu·∇)u
               linearized_advection += gradient[i][k] * previous_values[k] +
                                       previous_gradient[i][k] * value[k];
+              // (u·∇)u
               previous_advection +=
                 previous_gradient[i][k] * previous_values[k];
+              // ∆δu + ∇(∇·δu)
               viscous_term += hessian_diagonal[i][k] + hessian[k][k][i];
+              // ∆u + ∇(∇·u)
               previous_viscous_term +=
                 previous_hessian_diagonal[i][k] + previous_hessian[k][k][i];
             }
 
+          // ɛ(u·∇)δu + ɛ(δu·∇)u - νɛ∆δu - νɛ∇(∇·δu) + ɛ∇δp + βδu + mδu
           linearized_strong_residual[i] =
             vf_value * (linearized_advection -
                         kinematic_viscosity * viscous_term + gradient[dim][i]) +
             (beta_momentum_transfer + mass_source) * value[i];
+          // ɛ(u·∇)u - νɛ∆u - νɛ∇(∇·u) + ɛ∇p - ɛf - f_pf + mu
           previous_strong_residual[i] =
             vf_value * (previous_advection -
                         kinematic_viscosity * previous_viscous_term +
@@ -707,11 +715,14 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
           if (transient)
             {
-              // +(v,ɛ ∂t δu)
+              // Will contain ɛ∂t δu
               const VectorizedArray<number> time_derivative =
                 vf_value * time_derivative_coefficient * value[i];
+              // +(v,ɛ ∂t δu)
               value_result[i] += time_derivative;
+              // +ɛ∂t δu
               linearized_strong_residual[i] += time_derivative;
+              // +ɛ∂t u
               previous_strong_residual[i] +=
                 vf_value * (time_derivative_coefficient * previous_values[i] +
                             previous_time_derivatives[i]);
@@ -727,12 +738,16 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // (∇·v,γ(ɛ∇·δu+δu·∇ɛ))
       if (cfd_dem_parameters.grad_div == true)
         {
+          // Will contain the linearized continuity equation: ɛ∇·δu + δu·∇ɛ
           VectorizedArray<number> continuity = 0.;
+          // ɛ∇·δu + δu·∇ɛ
           for (int k = 0; k < dim; ++k)
             continuity += vf_value * gradient[k][k] + value[k] * vf_gradient[k];
 
+          // Will contain γ(ɛ∇·δu + δu·∇ɛ)
           const VectorizedArray<number> grad_div_term =
             grad_div_gamma(cell, q) * continuity;
+          // +(∇·v,γ(ɛ∇·δu + δu·∇ɛ))
           for (int i = 0; i < dim; ++i)
             gradient_result[i][i] += grad_div_term;
         }
@@ -912,24 +927,29 @@ VANSOperator<dim, number>::local_evaluate_residual(
           value_result[dim] -= mass_source;
 
           // The PSPG and SUPG terms share the strong residual of the momentum
-          // equation, which is computed once per quadrature point:
-          // ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf.
-          // The viscous terms are zero when the hessians are disabled.
+          // equation, which is computed once per quadrature point. The viscous
+          // terms are zero when the hessians are disabled.
+
+          // Will contain the strong residual of the momentum equation:
+          // ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf
           Tensor<1, dim, VectorizedArray<number>> strong_residual;
 
           // Weak form
           for (int i = 0; i < dim; ++i)
             {
-              // (u·∇)u
+              // Will contain (u·∇)u
               VectorizedArray<number> advection = 0.;
-              // ∆u + ∇(∇·u)
+              // Will contain ∆u + ∇(∇·u)
               VectorizedArray<number> viscous_term = 0.;
               for (int k = 0; k < dim; ++k)
                 {
+                  // (u·∇)u
                   advection += gradient[i][k] * value[k];
+                  // ∆u + ∇(∇·u)
                   viscous_term += hessian_diagonal[i][k] + hessian[k][k][i];
                 }
 
+              // ɛ(u·∇)u - νɛ∆u - νɛ∇(∇·u) + ɛ∇p - f_pf - ɛf + mu
               strong_residual[i] =
                 vf_value * (advection - kinematic_viscosity * viscous_term +
                             gradient[dim][i]) -
@@ -953,13 +973,15 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // +(v,ɛ(u·∇)u)
               value_result[i] += vf_value * advection;
 
-              // +(v,ɛ∂t u)
               if (transient)
                 {
+                  // Will contain ɛ∂t u
                   const VectorizedArray<number> time_derivative =
                     vf_value * (time_derivative_coefficient * value[i] +
                                 previous_time_derivatives[i]);
+                  // +(v,ɛ∂t u)
                   value_result[i] += time_derivative;
+                  // +ɛ∂t u
                   strong_residual[i] += time_derivative;
                 }
 
@@ -988,12 +1010,16 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ-m))
           if (cfd_dem_parameters.grad_div == true)
             {
-              // Strong form of the continuity equation ∂tɛ+ɛ∇·u+u·∇ɛ-m
+              // Will contain the strong form of the continuity equation:
+              // ∂tɛ + ɛ∇·u + u·∇ɛ - m
+              // ∂tɛ - m
               auto continuity_residual = vf_time_derivative - mass_source;
+              // +ɛ∇·u + u·∇ɛ
               for (int k = 0; k < dim; ++k)
                 continuity_residual +=
                   vf_value * gradient[k][k] + value[k] * vf_gradient[k];
 
+              // +(∇·v,γ(∂tɛ + ɛ∇·u + u·∇ɛ - m))
               for (int i = 0; i < dim; ++i)
                 gradient_result[i][i] +=
                   grad_div_gamma(cell, q) * continuity_residual;

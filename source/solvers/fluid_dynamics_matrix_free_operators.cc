@@ -1881,40 +1881,48 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       const auto tau = this->stabilization_parameter[cell][q];
 
       // The SUPG, PSPG and GLS terms share two strong forms of the momentum
-      // equation, which are computed once per quadrature point:
-      // - the strong residual linearized around the previous Newton iterate
-      //   and applied to the increment (δu, δp):
-      //   (u_adv·∇)δu + (δu·∇)u - ν∆δu + ∇δp + ∂t δu,
-      // - the strong residual of the previous Newton iterate:
-      //   (u_adv·∇)u - ν∆u + ∇p - f + ∂t u.
-      // The laplacian terms are zero when the hessians are disabled.
+      // equation, which are computed once per quadrature point. The laplacian
+      // terms are zero when the hessians are disabled.
+
+      // Will contain the strong residual linearized around the previous Newton
+      // iterate and applied to the increment (δu, δp):
+      // (u_adv·∇)δu + (δu·∇)u - ν∆δu + ∇δp + ∂t δu
       Tensor<1, dim, VectorizedArray<number>> linearized_strong_residual;
+      // Will contain the strong residual of the previous Newton iterate:
+      // (u_adv·∇)u - ν∆u + ∇p - f + ∂t u
       Tensor<1, dim, VectorizedArray<number>> previous_strong_residual;
 
       // Weak form Jacobian
       for (int i = 0; i < dim; ++i)
         {
-          // (u_adv·∇)δu + (δu·∇)u
+          // Will contain (u_adv·∇)δu + (δu·∇)u
           VectorizedArray<number> linearized_advection = 0.;
-          // (u_adv·∇)u
+          // Will contain (u_adv·∇)u
           VectorizedArray<number> previous_advection = 0.;
-          // ∆δu and ∆u
-          VectorizedArray<number> laplacian          = 0.;
+          // Will contain ∆δu
+          VectorizedArray<number> laplacian = 0.;
+          // Will contain ∆u
           VectorizedArray<number> previous_laplacian = 0.;
           for (int k = 0; k < dim; ++k)
             {
+              // (u_adv·∇)δu + (δu·∇)u
               linearized_advection +=
                 gradient[i][k] * previous_advective_values[k] +
                 previous_gradient[i][k] * value[k];
+              // (u_adv·∇)u
               previous_advection +=
                 previous_gradient[i][k] * previous_advective_values[k];
+              // ∆δu
               laplacian += hessian_diagonal[i][k];
+              // ∆u
               previous_laplacian += previous_hessian_diagonal[i][k];
             }
 
+          // (u_adv·∇)δu + (δu·∇)u - ν∆δu + ∇δp
           linearized_strong_residual[i] = linearized_advection -
                                           kinematic_viscosity * laplacian +
                                           gradient[dim][i];
+          // (u_adv·∇)u - ν∆u + ∇p - f
           previous_strong_residual[i] =
             previous_advection - kinematic_viscosity * previous_laplacian +
             previous_gradient[dim][i] - source_value[i];
@@ -1926,8 +1934,10 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             {
               // +(v,∂t δu)
               value_result[i] += time_derivative_coefficient * value[i];
+              // +∂t δu
               linearized_strong_residual[i] +=
                 time_derivative_coefficient * value[i];
+              // +∂t u
               previous_strong_residual[i] +=
                 time_derivative_coefficient * previous_values[i] +
                 previous_time_derivatives[i];
@@ -1937,7 +1947,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
           gradient_result[i] = kinematic_viscosity * gradient[i];
           // -(∇·v,δp)
           gradient_result[i][i] += -value[dim];
-          // +(q,∇δu)
+          // +(q,∇·δu)
           value_result[dim] += gradient[i][i];
         }
 
@@ -2126,37 +2136,44 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::hessian_type  hessian_result;
 
           // The SUPG, PSPG and GLS terms share the strong residual of the
-          // momentum equation, which is computed once per quadrature point:
-          // (u_adv·∇)u - ν∆u + ∇p - f + ∂t u.
+          // momentum equation, which is computed once per quadrature point.
           // The laplacian term is zero when the hessians are disabled.
+
+          // Will contain the strong residual of the momentum equation:
+          // (u_adv·∇)u - ν∆u + ∇p - f + ∂t u
           Tensor<1, dim, VectorizedArray<number>> strong_residual;
 
           // Weak form
           for (int i = 0; i < dim; ++i)
             {
-              // (u_adv·∇)u
+              // Will contain (u_adv·∇)u
               VectorizedArray<number> advection = 0.;
-              // ∆u
+              // Will contain ∆u
               VectorizedArray<number> laplacian = 0.;
               for (int k = 0; k < dim; ++k)
                 {
+                  // (u_adv·∇)u
                   advection += gradient[i][k] * advective_value[k];
+                  // ∆u
                   laplacian += hessian_diagonal[i][k];
                 }
 
-              // +(v,(u·∇)u - f)
+              // +(v,(u_adv·∇)u - f)
               value_result[i] = advection - source_value[i];
 
+              // (u_adv·∇)u - ν∆u + ∇p - f
               strong_residual[i] = advection - kinematic_viscosity * laplacian +
                                    gradient[dim][i] - source_value[i];
 
-              // +(v,∂t u)
               if (transient)
                 {
+                  // Will contain ∂t u
                   const VectorizedArray<number> time_derivative =
                     time_derivative_coefficient * value[i] +
                     previous_time_derivatives[i];
+                  // +(v,∂t u)
                   value_result[i] += time_derivative;
+                  // +∂t u
                   strong_residual[i] += time_derivative;
                 }
 
@@ -2388,7 +2405,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         {
           // -(∇·v,δp)
           gradient_result[i][i] = -value[dim];
-          // +(q,∇δu)
+          // +(q,∇·δu)
           value_result[dim] += gradient[i][i];
           // ν(∇v,(∇δu + ∇δuT))
           gradient_result[i] += kinematic_viscosity * shear_rate[i];
@@ -2679,7 +2696,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                   tau * ((1.0 / (dt * a_ii)) * value[i] +
                          previous_time_derivatives[i]);
             }
-          // +(∇p)τ∇·q
+          // +(∇p)·τ∇q
           gradient_result[dim] += tau * gradient[dim];
 
           // SUPG term
