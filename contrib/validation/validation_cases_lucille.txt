@@ -40,6 +40,7 @@ examples/incompressible-flow/2d-taylor-couette-nitsche          128 lethe-fluid-
 # lethe-fluid-sharp
 examples/sharp-immersed-boundary/sedimentation-1-cuboid         128 lethe-fluid-sharp
 examples/sharp-immersed-boundary/sedimentation-1-particle       128 lethe-fluid-sharp
+examples/sharp-immersed-boundary/sedimentation-2-particles      128 lethe-fluid-sharp
 
 # lethe-particles
 examples/dem/3d-rectangular-hopper                               64 lethe-particles
