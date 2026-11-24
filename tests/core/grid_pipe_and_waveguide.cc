@@ -3,19 +3,24 @@
 
 /**
  * @brief Tests the generation of the mesh of a waveguide embedded in a
- * cylinder, with an inner circle and with an inner square. The grid is only
- * implemented in 3D, so only dim = spacedim = 3 is tested.
+ * cylinder. The grid is only implemented in 3D, so only dim = spacedim = 3 is
+ * tested.
+ *
+ * Two layouts of the cross section are tested: the simplest one (an inner
+ * square divided into 2 columns and 3 rows, a single layer of ring cells), and
+ * the layout of the heated rotating drum example, with more cells, pulled
+ * corners and a band of 3 rows.
  *
  * The number of boundary faces per boundary id is reported on the coarse mesh.
- * The mesh is then refined twice, and the test reports:
+ * The mesh is then refined, and the test reports:
  * - whether all the cells have a positive measure;
  * - the volume of the mesh, next to the exact volume of the union of the
  *   cylinder and of the waveguide, which it approaches as the mesh is refined;
  * - whether the lateral wall of the cylinder, including the faces shared by
  *   the cylinder and the waveguide, lies on the cylinder;
  * - whether the walls of the waveguide are planar;
- * - the number of vertices on the inner shape, which shows that the refined
- *   edges of the inner shape follow it.
+ * - the number of vertices on the sides of the inner rectangle, which shows
+ *   that its refined edges stay straight.
  */
 
 // Deal.II
@@ -141,53 +146,52 @@ waveguide_walls_are_planar(const Triangulation<3, 3> &triangulation,
 }
 
 /**
- * @brief Count the vertices that lie on the inner shape.
+ * @brief Count the vertices that lie on the sides of the inner rectangle.
  *
- * The inner shape is the circle of radius inner_length, or the square of
- * half-side inner_length, centered on the axis of the cylinder. In the coarse
- * cross section, it is made of 10 edges. After 2 global refinements, each
- * plane z = constant of vertices therefore has 40 vertices on the inner shape,
- * provided that the refined edges follow the inner shape: arcs of the circle,
- * or straight sides of the square.
+ * The inner rectangle [-inner_half_width, inner_half_width] x
+ * [-inner_half_height, inner_half_height] is centered on the axis of the
+ * cylinder. Its sides stay straight after refinement only if the vertices
+ * added on them stay on the lines x = +/- inner_half_width and
+ * y = +/- inner_half_height, so that the number of vertices on these lines
+ * would drop if they were bent. The corners pulled inward are not on them.
  *
  * @param[in] triangulation The mesh to check.
  * @param[in] center Position of the axis of the cylinder in the (x, y) plane.
- * @param[in] inner_length Radius of the inner circle or half-side of the inner
- * square.
- * @param[in] inner_circle True if the inner shape is a circle, false if it is
- * a square.
- * @param[in] tolerance Tolerance on the distance to the inner shape.
+ * @param[in] inner_half_width Half-width of the inner rectangle.
+ * @param[in] inner_half_height Half-height of the inner rectangle.
+ * @param[in] tolerance Tolerance on the distance to the sides.
  *
- * @return The number of vertices on the inner shape.
+ * @return The number of vertices on the sides of the inner rectangle.
  */
 unsigned int
-count_vertices_on_inner_shape(const Triangulation<3, 3> &triangulation,
-                              const Point<2>            &center,
-                              const double               inner_length,
-                              const bool                 inner_circle,
-                              const double               tolerance)
+count_vertices_on_inner_rectangle(const Triangulation<3, 3> &triangulation,
+                                  const Point<2>            &center,
+                                  const double               inner_half_width,
+                                  const double               inner_half_height,
+                                  const double               tolerance)
 {
-  unsigned int n_vertices_on_inner_shape = 0;
+  unsigned int n_vertices_on_inner_rectangle = 0;
   for (const auto &vertex : triangulation.get_vertices())
     {
-      const double x_from_axis = vertex[0] - center[0];
-      const double y_from_axis = vertex[1] - center[1];
+      const double x_from_axis = std::abs(vertex[0] - center[0]);
+      const double y_from_axis = std::abs(vertex[1] - center[1]);
 
-      // Radius of the circle, or half-side of the square, centered on the
-      // axis, that passes through the vertex
-      const double radius_or_half_side =
-        inner_circle ?
-          std::sqrt(x_from_axis * x_from_axis + y_from_axis * y_from_axis) :
-          std::max(std::abs(x_from_axis), std::abs(y_from_axis));
-
-      if (std::abs(radius_or_half_side - inner_length) < tolerance)
-        ++n_vertices_on_inner_shape;
+      const bool on_left_or_right_side =
+        std::abs(x_from_axis - inner_half_width) < tolerance &&
+        y_from_axis < inner_half_height + tolerance;
+      const bool on_top_or_bottom_side =
+        std::abs(y_from_axis - inner_half_height) < tolerance &&
+        x_from_axis < inner_half_width + tolerance;
+      if (on_left_or_right_side || on_top_or_bottom_side)
+        ++n_vertices_on_inner_rectangle;
     }
-  return n_vertices_on_inner_shape;
+  return n_vertices_on_inner_rectangle;
 }
 
 void
-run_test(const std::string &case_name, const std::string &grid_arguments)
+run_test(const std::string &case_name,
+         const std::string &grid_arguments,
+         const unsigned int n_refinements)
 {
   deallog << "==================================================" << std::endl;
   deallog << "Case: " << case_name << std::endl;
@@ -196,14 +200,14 @@ run_test(const std::string &case_name, const std::string &grid_arguments)
   // Geometry, in the order of the grid arguments
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
-  const double rectangle_width  = Utilities::string_to_double(arguments[0]);
-  const double rectangle_length = Utilities::string_to_double(arguments[1]);
-  const double outer_radius     = Utilities::string_to_double(arguments[2]);
-  const double inner_length     = Utilities::string_to_double(arguments[3]);
-  const double bottom_height    = Utilities::string_to_double(arguments[4]);
-  const double middle_height    = Utilities::string_to_double(arguments[5]);
-  const double top_height       = Utilities::string_to_double(arguments[6]);
-  const bool   inner_circle     = (arguments[10] == "true");
+  const double rectangle_width   = Utilities::string_to_double(arguments[0]);
+  const double rectangle_length  = Utilities::string_to_double(arguments[1]);
+  const double outer_radius      = Utilities::string_to_double(arguments[2]);
+  const double inner_half_width  = Utilities::string_to_double(arguments[3]);
+  const double inner_half_height = Utilities::string_to_double(arguments[4]);
+  const double bottom_height     = Utilities::string_to_double(arguments[11]);
+  const double middle_height     = Utilities::string_to_double(arguments[12]);
+  const double top_height        = Utilities::string_to_double(arguments[13]);
 
   Triangulation<3, 3> triangulation;
   Grid                grid(grid_arguments);
@@ -223,7 +227,6 @@ run_test(const std::string &case_name, const std::string &grid_arguments)
     deallog << "Boundary id " << static_cast<int>(id)
             << " face count : " << count << std::endl;
 
-  const unsigned int n_refinements = 2;
   triangulation.refine_global(n_refinements);
   deallog << "Number of active cells after " << n_refinements
           << " refinements : " << triangulation.n_active_cells() << std::endl;
@@ -275,9 +278,12 @@ run_test(const std::string &case_name, const std::string &grid_arguments)
                 "yes" :
                 "no")
           << std::endl;
-  deallog << "Number of vertices on the inner shape : "
-          << count_vertices_on_inner_shape(
-               triangulation, center, inner_length, inner_circle, tolerance)
+  deallog << "Number of vertices on the sides of the inner rectangle : "
+          << count_vertices_on_inner_rectangle(triangulation,
+                                               center,
+                                               inner_half_width,
+                                               inner_half_height,
+                                               tolerance)
           << std::endl;
 
   // Write the refined mesh in VTK format, so that it can be opened in ParaView
@@ -297,16 +303,20 @@ main()
       initlog();
 
       // Input arguments:
-      // rectangle width  | rectangle length  | outer radius
-      // inner length     | bottom height     | middle height
-      // top height       | bottom resolution | middle resolution
-      // top resolution   | inner circle
-      run_test(
-        "inner_circle",
-        "0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 : true");
-      run_test(
-        "inner_square",
-        "0.07 : 0.05 : 0.1 : 0.05 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 : false");
+      // rectangle width   | rectangle length  | outer radius
+      // inner half-width  | inner half-height | corner angle
+      // corner pull       | n columns         | n strip rows
+      // n band rows       | n ring layers     | bottom height
+      // middle height     | top height        | bottom resolution
+      // middle resolution | top resolution
+      run_test("simple_layout",
+               "0.07 : 0.05 : 0.1 : 0.05 : 0.05 : 45 : 0 : 2 : 1 : 1 : 1 : "
+               "0.1 : 0.07 : 0.1 : 3 : 2 : 3",
+               2);
+      run_test("heated_drum_layout",
+               "0.04318 : 0.1 : 0.069 : 0.0363 : 0.0363 : 39.2 : 0.27 : 5 : "
+               "1 : 3 : 2 : 0.04932 : 0.08636 : 0.04932 : 5 : 7 : 5",
+               1);
     }
   catch (std::exception &exc)
     {

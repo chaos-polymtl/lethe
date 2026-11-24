@@ -11,9 +11,11 @@
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_description.h>
 
+#include <algorithm>
 #include <cmath>
 #include <numbers>
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace dealii;
@@ -22,114 +24,50 @@ using namespace dealii;
 This file creates the mesh of a rectangular waveguide that enters a cylinder
 laterally, perpendicular to its axis.
 
-The file is divided into two parts:
-
-1) The function detailed_circle, inspired by GridGenerator::hyper_ball of
-deal.II, creates the coarse 2D mesh of the cross section of the cylinder, which
-is adapted to be joined to the rectangle of the waveguide on its side.
-
-2) The function make_grid assembles the 3D mesh of the cylinder and of the
-waveguide.
+The function make_cross_section creates the coarse 2D mesh of the cross section:
+a structured O-grid of the cylinder around an inner rectangle, and in the middle
+section the waveguide. The function make_grid extrudes the cross sections of
+the three sections and assembles the 3D mesh.
 */
 
-// See the Doxygen documentation in the header
-template <int dim, int spacedim>
-void
-GridPipeAndWaveguide<dim, spacedim>::detailed_circle(
-  Triangulation<2, 2> &triangulation,
-  const Point<2>      &center) const
+namespace
 {
-  /*
-  The band of width rectangle_width that crosses the circle along the x-axis is
-  bounded by the lines y = center[1] +/- half_width.
-  - The vertices of the outer circle on its diagonals are at
-    (+/- outer_diagonal_coordinate, +/- outer_diagonal_coordinate) from the
-    center, and the band crosses the outer circle at
-    x = +/- outer_band_crossing_coordinate from the center.
-  - The vertices of the inner shape on its diagonals are at
-    (+/- inner_diagonal_coordinate, +/- inner_diagonal_coordinate) from the
-    center, and the band crosses the inner shape at
-    x = +/- inner_band_crossing_coordinate from the center. Only these two
-    coordinates depend on the inner shape.
-  */
-  const double half_width                = rectangle_width / 2.;
-  const double outer_diagonal_coordinate = outer_radius / std::numbers::sqrt2;
-  const double outer_band_crossing_coordinate =
-    std::sqrt(outer_radius * outer_radius - half_width * half_width);
-  const double inner_diagonal_coordinate =
-    inner_circle ? inner_length / std::numbers::sqrt2 : inner_length;
-  const double inner_band_crossing_coordinate =
-    inner_circle ?
-      std::sqrt(inner_length * inner_length - half_width * half_width) :
-      inner_length;
+  /**
+   * @brief Return whether a quadrilateral cell is valid, that is whether the
+   * Jacobian of its bilinear map is positive at its four vertices.
+   *
+   * @param[in] vertices The vertices of the mesh.
+   * @param[in] cell The cell, with its vertices in the lexicographic order of
+   * deal.II: (0, 0), (1, 0), (0, 1) and (1, 1) in the reference cell.
+   *
+   * @return True if the Jacobian is positive at the four vertices.
+   */
+  bool
+  cell_is_valid(const std::vector<Point<2>> &vertices, const CellData<2> &cell)
+  {
+    // Edges of the cell along the two directions of the reference cell
+    const Tensor<1, 2> bottom_edge =
+      vertices[cell.vertices[1]] - vertices[cell.vertices[0]];
+    const Tensor<1, 2> top_edge =
+      vertices[cell.vertices[3]] - vertices[cell.vertices[2]];
+    const Tensor<1, 2> left_edge =
+      vertices[cell.vertices[2]] - vertices[cell.vertices[0]];
+    const Tensor<1, 2> right_edge =
+      vertices[cell.vertices[3]] - vertices[cell.vertices[1]];
 
-  const std::vector<Point<2>> vertices = {
-    // 0-3: Vertices of the outer circle on its diagonals
-    center + Point<2>(-outer_diagonal_coordinate, -outer_diagonal_coordinate),
-    center + Point<2>(+outer_diagonal_coordinate, -outer_diagonal_coordinate),
-    center + Point<2>(-outer_diagonal_coordinate, +outer_diagonal_coordinate),
-    center + Point<2>(+outer_diagonal_coordinate, +outer_diagonal_coordinate),
-    // 4-7: Vertices of the inner shape on its diagonals
-    center + Point<2>(-inner_diagonal_coordinate, +inner_diagonal_coordinate),
-    center + Point<2>(+inner_diagonal_coordinate, +inner_diagonal_coordinate),
-    center + Point<2>(-inner_diagonal_coordinate, -inner_diagonal_coordinate),
-    center + Point<2>(+inner_diagonal_coordinate, -inner_diagonal_coordinate),
-    // 8-9: Corners of the rectangle of the waveguide where the band crosses
-    // the outer circle on the side of the waveguide
-    Point<2>(rectangle_length, 0.),
-    Point<2>(rectangle_length, rectangle_width),
-    // 10-11: Vertices of the outer circle on the line x = center[0]
-    center + Point<2>(0., -outer_radius),
-    center + Point<2>(0., +outer_radius),
-    // 12-13: Points where the band crosses the outer circle on the side
-    // opposite to the waveguide
-    center + Point<2>(+outer_band_crossing_coordinate, -half_width),
-    center + Point<2>(+outer_band_crossing_coordinate, +half_width),
-    // 14-17: Points where the band crosses the inner shape
-    center + Point<2>(-inner_band_crossing_coordinate, +half_width),
-    center + Point<2>(-inner_band_crossing_coordinate, -half_width),
-    center + Point<2>(+inner_band_crossing_coordinate, -half_width),
-    center + Point<2>(+inner_band_crossing_coordinate, +half_width),
-    // 18-19: Vertices of the inner shape on the line x = center[0]
-    center + Point<2>(0., -inner_length),
-    center + Point<2>(0., +inner_length),
-    // 20-21: Points where the band crosses the line x = center[0]
-    center + Point<2>(0., +half_width),
-    center + Point<2>(0., -half_width)};
-
-  std::vector<CellData<2>> cells(16, CellData<2>());
-  static constexpr int     circle_cell_vertices[16][4] = {
-    // We start with the 6 cells inside the inner shape
-    {6, 18, 15, 21},
-    {15, 21, 14, 20},
-    {14, 20, 4, 19},
-    {18, 7, 21, 16},
-    {21, 16, 20, 17},
-    {20, 17, 19, 5},
-    // We fill in the outer cells, starting from the top left
-    {9, 14, 2, 4},
-    {8, 15, 9, 14},
-    {0, 6, 8, 15},
-    {0, 10, 6, 18},
-    {10, 1, 18, 7},
-    {7, 1, 16, 12},
-    {16, 12, 17, 13},
-    {17, 13, 5, 3},
-    {19, 5, 11, 3},
-    {4, 19, 2, 11}};
-
-  for (unsigned int i = 0; i < 16; ++i)
-    {
-      for (unsigned int j = 0; j < 4; ++j)
-        cells[i].vertices[j] = circle_cell_vertices[i][j];
-    }
-
-  triangulation.create_triangulation(vertices,
-                                     cells,
-                                     SubCellData()); // no boundary information
-}
-
-
+    // At each vertex, the Jacobian is the cross product of the two edges that
+    // start from it
+    const std::vector<std::pair<Tensor<1, 2>, Tensor<1, 2>>> vertex_edges = {
+      {bottom_edge, left_edge},
+      {bottom_edge, right_edge},
+      {top_edge, left_edge},
+      {top_edge, right_edge}};
+    for (const auto &[first_edge, second_edge] : vertex_edges)
+      if (first_edge[0] * second_edge[1] - first_edge[1] * second_edge[0] <= 0.)
+        return false;
+    return true;
+  }
+} // namespace
 
 template <int dim, int spacedim>
 GridPipeAndWaveguide<dim, spacedim>::GridPipeAndWaveguide(
@@ -139,46 +77,69 @@ GridPipeAndWaveguide<dim, spacedim>::GridPipeAndWaveguide(
     Utilities::split_string_list(grid_arguments, ':');
 
   AssertThrow(
-    arguments.size() == 10 || arguments.size() == 11,
+    arguments.size() == 17,
     ExcMessage(
-      "The pipe_and_waveguide grid needs 10 or 11 grid arguments, but " +
+      "The pipe_and_waveguide grid needs 17 grid arguments, but " +
       Utilities::to_string(arguments.size()) +
       " were given. The grid arguments are rectangle_width : "
-      "rectangle_length : outer_radius : inner_length : bottom_height : "
+      "rectangle_length : outer_radius : inner_half_width : "
+      "inner_half_height : corner_angle : corner_pull : n_columns : "
+      "n_strip_rows : n_band_rows : n_ring_layers : bottom_height : "
       "middle_height : top_height : bottom_resolution : middle_resolution : "
-      "top_resolution : inner_circle, where inner_circle is optional and is "
-      "true by default."));
+      "top_resolution."));
 
-  // Lengths
-  rectangle_width  = Utilities::string_to_double(arguments[0]);
-  rectangle_length = Utilities::string_to_double(arguments[1]);
-  outer_radius     = Utilities::string_to_double(arguments[2]);
-  inner_length     = Utilities::string_to_double(arguments[3]);
-  bottom_height    = Utilities::string_to_double(arguments[4]);
-  middle_height    = Utilities::string_to_double(arguments[5]);
-  top_height       = Utilities::string_to_double(arguments[6]);
+  // Lengths and parameters of the inner rectangle
+  rectangle_width   = Utilities::string_to_double(arguments[0]);
+  rectangle_length  = Utilities::string_to_double(arguments[1]);
+  outer_radius      = Utilities::string_to_double(arguments[2]);
+  inner_half_width  = Utilities::string_to_double(arguments[3]);
+  inner_half_height = Utilities::string_to_double(arguments[4]);
+  corner_angle      = Utilities::string_to_double(arguments[5]);
+  corner_pull       = Utilities::string_to_double(arguments[6]);
+  bottom_height     = Utilities::string_to_double(arguments[11]);
+  middle_height     = Utilities::string_to_double(arguments[12]);
+  top_height        = Utilities::string_to_double(arguments[13]);
 
   AssertThrow(
     rectangle_width > 0. && rectangle_length > 0. && outer_radius > 0. &&
-      inner_length > 0. && bottom_height > 0. && middle_height > 0. &&
-      top_height > 0.,
+      inner_half_width > 0. && inner_half_height > 0. && bottom_height > 0. &&
+      middle_height > 0. && top_height > 0.,
     ExcMessage(
       "The lengths of the pipe_and_waveguide grid must be positive, but "
       "rectangle_width = " +
       Utilities::to_string(rectangle_width) +
       ", rectangle_length = " + Utilities::to_string(rectangle_length) +
       ", outer_radius = " + Utilities::to_string(outer_radius) +
-      ", inner_length = " + Utilities::to_string(inner_length) +
+      ", inner_half_width = " + Utilities::to_string(inner_half_width) +
+      ", inner_half_height = " + Utilities::to_string(inner_half_height) +
       ", bottom_height = " + Utilities::to_string(bottom_height) +
       ", middle_height = " + Utilities::to_string(middle_height) +
       " and top_height = " + Utilities::to_string(top_height) +
       ". Give a positive value to each of them."));
 
-  // Resolutions. They are read as signed integers so that a negative value is
-  // reported instead of being converted to a large unsigned integer.
-  const int n_bottom_slices = Utilities::string_to_int(arguments[7]);
-  const int n_middle_slices = Utilities::string_to_int(arguments[8]);
-  const int n_top_slices    = Utilities::string_to_int(arguments[9]);
+  // Numbers of cells and of slices. They are read as signed integers so that
+  // a negative value is reported instead of being converted to a large
+  // unsigned integer.
+  const int n_columns_argument     = Utilities::string_to_int(arguments[7]);
+  const int n_strip_rows_argument  = Utilities::string_to_int(arguments[8]);
+  const int n_band_rows_argument   = Utilities::string_to_int(arguments[9]);
+  const int n_ring_layers_argument = Utilities::string_to_int(arguments[10]);
+  const int n_bottom_slices        = Utilities::string_to_int(arguments[14]);
+  const int n_middle_slices        = Utilities::string_to_int(arguments[15]);
+  const int n_top_slices           = Utilities::string_to_int(arguments[16]);
+
+  AssertThrow(
+    n_columns_argument >= 1 && n_strip_rows_argument >= 1 &&
+      n_band_rows_argument >= 1 && n_ring_layers_argument >= 1,
+    ExcMessage(
+      "n_columns, n_strip_rows, n_band_rows and n_ring_layers are numbers of "
+      "cells of the cross section of the pipe_and_waveguide grid, so each of "
+      "them must be at least 1, but they are " +
+      Utilities::to_string(n_columns_argument) + ", " +
+      Utilities::to_string(n_strip_rows_argument) + ", " +
+      Utilities::to_string(n_band_rows_argument) + " and " +
+      Utilities::to_string(n_ring_layers_argument) +
+      ". Set each of them to 1 or more."));
 
   AssertThrow(
     n_bottom_slices >= 2 && n_middle_slices >= 2 && n_top_slices >= 2,
@@ -191,88 +152,334 @@ GridPipeAndWaveguide<dim, spacedim>::GridPipeAndWaveguide(
       Utilities::to_string(n_middle_slices) + " and " +
       Utilities::to_string(n_top_slices) + ". Set each of them to 2 or more."));
 
+  n_columns         = n_columns_argument;
+  n_strip_rows      = n_strip_rows_argument;
+  n_band_rows       = n_band_rows_argument;
+  n_ring_layers     = n_ring_layers_argument;
   bottom_resolution = n_bottom_slices;
   middle_resolution = n_middle_slices;
   top_resolution    = n_top_slices;
 
-  // Inner shape. inner_circle is optional and is true by default.
-  inner_circle = true;
-  if (arguments.size() == 11)
-    {
-      AssertThrow(arguments[10] == "true" || arguments[10] == "false",
-                  ExcMessage(
-                    "The last grid argument of the pipe_and_waveguide grid, "
-                    "inner_circle, must be true or false, but it is \"" +
-                    arguments[10] + "\"."));
-      inner_circle = (arguments[10] == "true");
-    }
+  /*
+  Geometric conditions on the inner rectangle:
+  - it contains the band of width rectangle_width that continues the waveguide,
+    with a strip on each side of the band;
+  - its corners are inside the cylinder;
+  - its corners are joined to the lateral wall between the edges of the band
+    and the y-axis, so that the cells of the ring follow each other around the
+    rectangle.
+  The cells of the cross section are also checked, in make_cross_section.
+  */
+  AssertThrow(
+    inner_half_height > rectangle_width / 2.,
+    ExcMessage(
+      "The inner rectangle of the pipe_and_waveguide grid must contain the "
+      "band of width rectangle_width that continues the waveguide, which "
+      "requires inner_half_height > rectangle_width / 2, but "
+      "inner_half_height = " +
+      Utilities::to_string(inner_half_height) +
+      " and rectangle_width = " + Utilities::to_string(rectangle_width) +
+      ". Increase inner_half_height above " +
+      Utilities::to_string(rectangle_width / 2.) + "."));
+
+  AssertThrow(
+    inner_half_width * inner_half_width +
+        inner_half_height * inner_half_height <
+      outer_radius * outer_radius,
+    ExcMessage(
+      "The corners of the inner rectangle of the pipe_and_waveguide grid must "
+      "be inside the cylinder, which requires sqrt(inner_half_width^2 + "
+      "inner_half_height^2) < outer_radius, but inner_half_width = " +
+      Utilities::to_string(inner_half_width) +
+      ", inner_half_height = " + Utilities::to_string(inner_half_height) +
+      " and outer_radius = " + Utilities::to_string(outer_radius) +
+      ". Decrease inner_half_width or inner_half_height."));
+
+  const double band_edge_angle =
+    std::asin(rectangle_width / 2. / outer_radius) * 180. / std::numbers::pi;
+  AssertThrow(
+    corner_angle > band_edge_angle && corner_angle < 90.,
+    ExcMessage(
+      "corner_angle, the angle from the x-axis of the point of the lateral "
+      "wall joined to a corner of the inner rectangle of the "
+      "pipe_and_waveguide grid, must be between the angle of the edges of "
+      "the band, " +
+      Utilities::to_string(band_edge_angle) + ", and 90 degrees, but it is " +
+      Utilities::to_string(corner_angle) + "."));
+
+  AssertThrow(
+    corner_pull >= 0. && corner_pull < 0.5,
+    ExcMessage(
+      "corner_pull, the fraction of the sides of the corner cells by which the "
+      "corners of the inner rectangle of the pipe_and_waveguide grid are "
+      "pulled inward, must be in [0, 0.5), but it is " +
+      Utilities::to_string(corner_pull) + "."));
 
   /*
-  Geometric conditions that prevent the generation of inverted cells.
-
-  A band of width rectangle_width crosses the cylinder along the x-axis, in
-  line with the waveguide. The inner shape must contain this band and must be
-  strictly inside the outer circle.
-  - Inner circle of radius inner_length: the points where the edges of the band
-    (y = +/- rectangle_width / 2) cross the inner circle must lie between the
-    vertices of the inner circle at +/- 45 degrees from the x-axis, hence
-    rectangle_width / 2 < inner_length / sqrt(2). Together with
-    inner_length < outer_radius, this also ensures that the band crosses the
-    outer circle between its vertices at +/- 45 degrees.
-  - Inner square of vertices (+/- inner_length, +/- inner_length): the band
-    must be narrower than the square, hence rectangle_width / 2 < inner_length,
-    and the corners of the square must be inside the outer circle, hence
-    inner_length < outer_radius / sqrt(2).
+  The number of columns of the waveguide is chosen so that its cells are close
+  to squares. At the junction, the lateral wall bulges into the waveguide, so
+  the cells of the last column must be longer than the depth of this bulge.
   */
-  if (inner_circle)
-    {
-      AssertThrow(
-        inner_length < outer_radius,
-        ExcMessage(
-          "With an inner circle, inner_length (the radius of the inner "
-          "circle) must be smaller than outer_radius, but inner_length = " +
-          Utilities::to_string(inner_length) +
-          " and outer_radius = " + Utilities::to_string(outer_radius) +
-          ". Decrease inner_length or increase outer_radius."));
+  n_waveguide_columns = static_cast<unsigned int>(
+    std::max(1L,
+             std::lround(rectangle_length * n_band_rows / rectangle_width)));
+  const double wall_bulge_depth =
+    outer_radius - std::sqrt(outer_radius * outer_radius -
+                             rectangle_width * rectangle_width / 4.);
+  AssertThrow(
+    rectangle_length / n_waveguide_columns > wall_bulge_depth,
+    ExcMessage(
+      "The cells of the waveguide of the pipe_and_waveguide grid must be "
+      "longer than the depth " +
+      Utilities::to_string(wall_bulge_depth) +
+      " by which the lateral wall bulges into the waveguide, but they are " +
+      Utilities::to_string(rectangle_length / n_waveguide_columns) +
+      " long. Decrease n_band_rows or increase rectangle_length."));
+}
 
-      AssertThrow(
-        rectangle_width < std::numbers::sqrt2 * inner_length,
-        ExcMessage(
-          "With an inner circle, the inner circle must contain the band of "
-          "width rectangle_width that crosses the cylinder, which requires "
-          "rectangle_width < sqrt(2) * inner_length, but rectangle_width = " +
-          Utilities::to_string(rectangle_width) +
-          " and inner_length = " + Utilities::to_string(inner_length) +
-          ". Increase inner_length above rectangle_width / sqrt(2) = " +
-          Utilities::to_string(rectangle_width / std::numbers::sqrt2) +
-          " or decrease rectangle_width."));
-    }
-  else
-    {
-      AssertThrow(
-        rectangle_width / 2. < inner_length,
-        ExcMessage(
-          "With an inner square, the inner square must contain the band of "
-          "width rectangle_width that crosses the cylinder, which requires "
-          "rectangle_width / 2 < inner_length, but rectangle_width = " +
-          Utilities::to_string(rectangle_width) +
-          " and inner_length = " + Utilities::to_string(inner_length) +
-          ". Increase inner_length above rectangle_width / 2 = " +
-          Utilities::to_string(rectangle_width / 2.) +
-          " or decrease rectangle_width."));
+template <int dim, int spacedim>
+std::vector<double>
+GridPipeAndWaveguide<dim, spacedim>::row_heights() const
+{
+  const double half_band_width = rectangle_width / 2.;
+  const double strip_row_height =
+    (inner_half_height - half_band_width) / n_strip_rows;
+  const double band_row_height = rectangle_width / n_band_rows;
 
-      AssertThrow(
-        inner_length < outer_radius / std::numbers::sqrt2,
-        ExcMessage(
-          "With an inner square, the corners of the inner square must be "
-          "inside the outer circle, which requires inner_length < "
-          "outer_radius / sqrt(2), but inner_length = " +
-          Utilities::to_string(inner_length) +
-          " and outer_radius = " + Utilities::to_string(outer_radius) +
-          ". Decrease inner_length below outer_radius / sqrt(2) = " +
-          Utilities::to_string(outer_radius / std::numbers::sqrt2) +
-          " or increase outer_radius."));
+  std::vector<double> heights;
+  heights.reserve(2 * n_strip_rows + n_band_rows + 1);
+  for (unsigned int s = 0; s < n_strip_rows; ++s)
+    heights.push_back(-inner_half_height + s * strip_row_height);
+  for (unsigned int b = 0; b < n_band_rows; ++b)
+    heights.push_back(-half_band_width + b * band_row_height);
+  for (unsigned int s = 0; s < n_strip_rows; ++s)
+    heights.push_back(half_band_width + s * strip_row_height);
+  heights.push_back(inner_half_height);
+  return heights;
+}
+
+template <int dim, int spacedim>
+double
+GridPipeAndWaveguide<dim, spacedim>::wall_angle_of_right_side(
+  const double height) const
+{
+  const double half_band_width = rectangle_width / 2.;
+  const double tolerance       = 1e-12 * outer_radius;
+
+  // In the band, the row line ends on the lateral wall at the same height
+  if (std::abs(height) <= half_band_width + tolerance)
+    return std::asin(std::clamp(height / outer_radius, -1., 1.));
+
+  // In the strips, the angle varies linearly with the height, from the edge of
+  // the band to the corner of the rectangle
+  const double band_edge_angle = std::asin(half_band_width / outer_radius);
+  const double corner_angle_in_radians = corner_angle * std::numbers::pi / 180.;
+  const double fraction                = (std::abs(height) - half_band_width) /
+                          (inner_half_height - half_band_width);
+  const double angle =
+    band_edge_angle + fraction * (corner_angle_in_radians - band_edge_angle);
+  return height > 0. ? angle : -angle;
+}
+
+template <int dim, int spacedim>
+void
+GridPipeAndWaveguide<dim, spacedim>::make_cross_section(
+  const Point<2>      &center,
+  const bool           with_waveguide,
+  Triangulation<2, 2> &triangulation) const
+{
+  const std::vector<double> heights    = row_heights();
+  const unsigned int        n_rows     = heights.size() - 1;
+  const double corner_angle_in_radians = corner_angle * std::numbers::pi / 180.;
+  const unsigned int n_boundary_vertices = 2 * (n_columns + n_rows);
+
+  std::vector<Point<2>>    vertices;
+  std::vector<CellData<2>> cells;
+  vertices.reserve((n_columns + 1) * (n_rows + 1) +
+                   n_ring_layers * n_boundary_vertices +
+                   n_waveguide_columns * (n_band_rows + 1));
+  cells.reserve(n_columns * n_rows + n_ring_layers * n_boundary_vertices +
+                n_waveguide_columns * n_band_rows);
+
+  // INNER RECTANGLE
+
+  // The vertex (i, j) is at the intersection of the column line i and of the
+  // row line j, and its index is j (n_columns + 1) + i
+  for (unsigned int j = 0; j <= n_rows; ++j)
+    for (unsigned int i = 0; i <= n_columns; ++i)
+      vertices.push_back(
+        center +
+        Point<2>(-inner_half_width +
+                   2. * inner_half_width * static_cast<double>(i) / n_columns,
+                 heights[j]));
+
+  // The four corners are pulled inward along the diagonal of their cell, by
+  // the fraction corner_pull of the sides of the cell. The angle of the
+  // rectangle at its corners then exceeds 90 degrees, and the two cells of the
+  // ring at each corner share less than 270 degrees, which makes them less
+  // skewed.
+  const double column_width = 2. * inner_half_width / n_columns;
+  const double strip_row_height =
+    (inner_half_height - rectangle_width / 2.) / n_strip_rows;
+  for (const unsigned int i : {0U, n_columns})
+    for (const unsigned int j : {0U, n_rows})
+      {
+        const double direction_x = (i == 0) ? 1. : -1.;
+        const double direction_y = (j == 0) ? 1. : -1.;
+        vertices[j * (n_columns + 1) + i] +=
+          Tensor<1, 2>({direction_x * corner_pull * column_width,
+                        direction_y * corner_pull * strip_row_height});
+      }
+
+  for (unsigned int j = 0; j < n_rows; ++j)
+    for (unsigned int i = 0; i < n_columns; ++i)
+      {
+        CellData<2> cell;
+        cell.vertices[0] = j * (n_columns + 1) + i;
+        cell.vertices[1] = j * (n_columns + 1) + i + 1;
+        cell.vertices[2] = (j + 1) * (n_columns + 1) + i;
+        cell.vertices[3] = (j + 1) * (n_columns + 1) + i + 1;
+        cell.material_id = cylinder_material_id;
+        cells.push_back(cell);
+      }
+
+  // RING
+
+  // The boundary of the inner rectangle is traversed counterclockwise from its
+  // bottom left corner: bottom side from left to right, right side from bottom
+  // to top, top side from right to left and left side from top to bottom. Each
+  // of its vertices is joined to the point of the lateral wall at the angle
+  // wall_angles from the x-axis.
+  std::vector<unsigned int> boundary_vertices;
+  std::vector<double>       wall_angles;
+  boundary_vertices.reserve(n_boundary_vertices);
+  wall_angles.reserve(n_boundary_vertices);
+  const double top_and_bottom_wall_angle =
+    std::numbers::pi - 2. * corner_angle_in_radians;
+  for (unsigned int i = 0; i < n_columns; ++i)
+    {
+      boundary_vertices.push_back(i);
+      wall_angles.push_back(std::numbers::pi + corner_angle_in_radians +
+                            top_and_bottom_wall_angle * static_cast<double>(i) /
+                              n_columns);
     }
+  for (unsigned int j = 0; j < n_rows; ++j)
+    {
+      boundary_vertices.push_back(j * (n_columns + 1) + n_columns);
+      wall_angles.push_back(wall_angle_of_right_side(heights[j]));
+    }
+  for (unsigned int i = n_columns; i > 0; --i)
+    {
+      boundary_vertices.push_back(n_rows * (n_columns + 1) + i);
+      wall_angles.push_back(corner_angle_in_radians +
+                            top_and_bottom_wall_angle *
+                              static_cast<double>(n_columns - i) / n_columns);
+    }
+  for (unsigned int j = n_rows; j > 0; --j)
+    {
+      boundary_vertices.push_back(j * (n_columns + 1));
+      wall_angles.push_back(std::numbers::pi -
+                            wall_angle_of_right_side(heights[j]));
+    }
+
+  // The vertex k of the layer l of the ring lies on the segment between the
+  // boundary vertex k and its point of the lateral wall, at the fraction
+  // l / n_ring_layers of the segment. The vertices of the layer 0 are the
+  // boundary vertices, and those of the last layer are on the lateral wall.
+  std::vector<std::vector<unsigned int>> ring_vertices(n_ring_layers + 1,
+                                                       boundary_vertices);
+  for (unsigned int l = 1; l <= n_ring_layers; ++l)
+    for (unsigned int k = 0; k < n_boundary_vertices; ++k)
+      {
+        const Point<2> boundary_point = vertices[boundary_vertices[k]];
+        const Point<2> wall_point =
+          center + Point<2>(outer_radius * std::cos(wall_angles[k]),
+                            outer_radius * std::sin(wall_angles[k]));
+        const double fraction = static_cast<double>(l) / n_ring_layers;
+        ring_vertices[l][k]   = vertices.size();
+        vertices.push_back(l == n_ring_layers ?
+                             wall_point :
+                             boundary_point +
+                               fraction * (wall_point - boundary_point));
+      }
+
+  // The cell k of the layer l joins the vertices k and k + 1 of the layers l
+  // and l + 1. Its first reference direction goes from the vertex k + 1 to the
+  // vertex k, and its second one goes outward, so that it is positively
+  // oriented.
+  for (unsigned int l = 0; l < n_ring_layers; ++l)
+    for (unsigned int k = 0; k < n_boundary_vertices; ++k)
+      {
+        const unsigned int next = (k + 1) % n_boundary_vertices;
+        CellData<2>        cell;
+        cell.vertices[0] = ring_vertices[l][next];
+        cell.vertices[1] = ring_vertices[l][k];
+        cell.vertices[2] = ring_vertices[l + 1][next];
+        cell.vertices[3] = ring_vertices[l + 1][k];
+        cell.material_id = cylinder_material_id;
+        cells.push_back(cell);
+      }
+
+  // WAVEGUIDE
+
+  // The vertex (i, j) of the waveguide is at the intersection of the column
+  // line i and of the row line j of the band. The column lines are evenly
+  // spaced between the port (x = 0) and rectangle_length, except the last
+  // one: its vertices are the vertices of the band on the lateral wall, which
+  // the waveguide shares with the ring.
+  if (with_waveguide)
+    {
+      std::vector<std::vector<unsigned int>> waveguide_vertices(
+        n_band_rows + 1, std::vector<unsigned int>(n_waveguide_columns + 1));
+      for (unsigned int j = 0; j <= n_band_rows; ++j)
+        {
+          // The row line j of the band is the row line n_strip_rows + j of the
+          // rectangle. On the left side, which is traversed last, the boundary
+          // vertex of the row line j_row has the index
+          // 2 n_columns + n_rows + (n_rows - j_row).
+          const unsigned int row_line = n_strip_rows + j;
+          const unsigned int wall_vertex =
+            ring_vertices[n_ring_layers]
+                         [2 * n_columns + n_rows + (n_rows - row_line)];
+          waveguide_vertices[j][n_waveguide_columns] = wall_vertex;
+
+          const double row_y = vertices[wall_vertex][1];
+          for (unsigned int i = 0; i < n_waveguide_columns; ++i)
+            {
+              waveguide_vertices[j][i] = vertices.size();
+              vertices.emplace_back(rectangle_length * static_cast<double>(i) /
+                                      n_waveguide_columns,
+                                    row_y);
+            }
+        }
+
+      for (unsigned int j = 0; j < n_band_rows; ++j)
+        for (unsigned int i = 0; i < n_waveguide_columns; ++i)
+          {
+            CellData<2> cell;
+            cell.vertices[0] = waveguide_vertices[j][i];
+            cell.vertices[1] = waveguide_vertices[j][i + 1];
+            cell.vertices[2] = waveguide_vertices[j + 1][i];
+            cell.vertices[3] = waveguide_vertices[j + 1][i + 1];
+            cell.material_id = waveguide_material_id;
+            cells.push_back(cell);
+          }
+    }
+
+  for (const auto &cell : cells)
+    AssertThrow(
+      cell_is_valid(vertices, cell),
+      ExcMessage(
+        "The grid arguments of the pipe_and_waveguide grid give an inverted "
+        "cell in the cross section, with inner_half_width = " +
+        Utilities::to_string(inner_half_width) +
+        ", inner_half_height = " + Utilities::to_string(inner_half_height) +
+        ", corner_angle = " + Utilities::to_string(corner_angle) +
+        " and corner_pull = " + Utilities::to_string(corner_pull) +
+        ". Move the corners of the inner rectangle closer to the direction "
+        "of corner_angle, or decrease corner_pull."));
+
+  triangulation.create_triangulation(vertices, cells, SubCellData());
 }
 
 template <int dim, int spacedim>
@@ -294,45 +501,34 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
     {
       // COARSE 2D CROSS SECTIONS
 
-      // Rectangle of the waveguide, at 0 <= x <= rectangle_length and
-      // 0 <= y <= rectangle_width. The waveguide only exists in the middle
-      // section, which is why the mesh is built in three sections.
-      Triangulation<2> waveguide_rectangle;
-      GridGenerator::hyper_rectangle(waveguide_rectangle,
-                                     Point<2>(0.0, 0.0),
-                                     Point<2>(rectangle_length,
-                                              rectangle_width));
-
-      // Cross section of the cylinder, with two vertices at the corners of the
-      // rectangle at x = rectangle_length. It is the cross section of the
-      // bottom and top sections.
+      // The axis of the cylinder is placed so that the lateral wall passes
+      // through the corners (rectangle_length, 0) and
+      // (rectangle_length, rectangle_width) of the waveguide. The waveguide
+      // only exists in the middle section, which is why the mesh is built in
+      // three sections.
       const Point<2>   center(rectangle_length +
                               std::sqrt(outer_radius * outer_radius -
-                                        rectangle_width * rectangle_width / 4),
-                            rectangle_width / 2);
-      Triangulation<2> disk;
-      detailed_circle(disk, center);
-
-      // Cross section of the middle section. The manifold ids are not copied
-      // since they are set on the final 3D mesh.
-      Triangulation<2> merged;
-      GridGenerator::merge_triangulations(
-        waveguide_rectangle, disk, merged, 1e-12, false);
+                                        rectangle_width * rectangle_width / 4.),
+                            rectangle_width / 2.);
+      Triangulation<2> cylinder_cross_section;
+      Triangulation<2> middle_cross_section;
+      make_cross_section(center, false, cylinder_cross_section);
+      make_cross_section(center, true, middle_cross_section);
 
       // EXTRUDE
 
       Triangulation<3> extruded_base;
       Triangulation<3> extruded_middle;
       Triangulation<3> extruded_top;
-      GridGenerator::extrude_triangulation(disk,
+      GridGenerator::extrude_triangulation(cylinder_cross_section,
                                            bottom_resolution,
                                            bottom_height,
                                            extruded_base);
-      GridGenerator::extrude_triangulation(merged,
+      GridGenerator::extrude_triangulation(middle_cross_section,
                                            middle_resolution,
                                            middle_height,
                                            extruded_middle);
-      GridGenerator::extrude_triangulation(disk,
+      GridGenerator::extrude_triangulation(cylinder_cross_section,
                                            top_resolution,
                                            top_height,
                                            extruded_top);
@@ -361,18 +557,15 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
                                                         &extruded_middle,
                                                         &extruded_top};
 
-      // The manifold ids are not copied since they are set on the merged mesh
+      // The manifold ids are not copied since they are set on the merged mesh.
+      // The material ids, set on the cross sections, are kept by the extrusion
+      // and the merge.
       GridGenerator::merge_triangulations(parts, triangulation, 1e-12, false);
 
 
-      // BOUNDARY AND MATERIAL IDs
+      // BOUNDARY IDs
 
       /*
-      Material ids:
-      - cylinder_material_id: cells of the cylinder (x > rectangle_length)
-      - waveguide_material_id: cells of the waveguide (x <= rectangle_length)
-
-      Boundary ids:
       - waveguide_port_boundary_id: end face of the waveguide (x = 0)
       - waveguide_wall_boundary_id: other boundary faces of the waveguide
       - bottom_boundary_id: bottom surface of the cylinder
@@ -380,17 +573,11 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
       - top_boundary_id: top surface of the cylinder
         (z = middle_height + top_height)
       - cylinder_wall_boundary_id: lateral wall of the cylinder
-
-      The material id of a cell is set first, since it is used to distinguish
-      the walls of the waveguide from the walls of the cylinder.
       */
-
-      for (auto &cell : triangulation.active_cell_iterators())
+      for (const auto &cell : triangulation.active_cell_iterators())
         {
           const bool cell_is_in_waveguide =
-            cell->center()[0] <= rectangle_length;
-          cell->set_material_id(cell_is_in_waveguide ? waveguide_material_id :
-                                                       cylinder_material_id);
+            cell->material_id() == waveguide_material_id;
 
           for (const auto f : cell->face_indices())
             {
@@ -415,23 +602,19 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
       // MANIFOLD
 
       /*
-      The cylindrical manifold is attached to the cells of the cylinder that
-      have a face on its lateral wall, that is a face whose vertices are all at
-      a distance outer_radius from the axis of the cylinder. This includes the
-      cells of the middle section that are next to the waveguide: their face
-      shared with the waveguide is an interior face of the mesh, but it lies on
-      the lateral wall of the cylinder. The manifold ids are set on the merged
-      mesh so that they are the same in the three sections. The cells of the
-      waveguide keep the flat manifold, so that the walls of the waveguide stay
-      planar.
-      - Inner circle: the manifold id is set on the whole cell, so that its
-        edges on the inner circle, whose vertices are all at a distance
-        inner_length from the axis, are also arcs of a circle.
-      - Inner square: the manifold id is only set on the face on the lateral
-        wall. The edges of the cell on the inner square join vertices at
-        different distances from the axis, and the cylindrical manifold would
-        bend them, whereas the sides of the square must stay straight. The
-        interior of the cell is interpolated from its faces when it is refined.
+      The cylindrical manifold is attached to the faces of the cells of the
+      cylinder that lie on its lateral wall, that is the faces whose vertices
+      are all at a distance outer_radius from the axis of the cylinder. This
+      includes the faces shared by the cylinder and the waveguide in the middle
+      section: they are interior faces of the mesh, but they lie on the lateral
+      wall of the cylinder. The manifold ids are set on the merged mesh so that
+      they are the same in the three sections.
+
+      Only the faces receive the manifold id. The other edges of these cells
+      join vertices at different distances from the axis, and the cylindrical
+      manifold would bend them, whereas the inner rectangle, the layers of the
+      ring and the walls of the waveguide must stay straight. The interior of
+      the cells is interpolated from their faces when they are refined.
       */
       const double distance_to_axis_tolerance = 1e-8 * outer_radius;
       for (const auto &cell : triangulation.active_cell_iterators())
@@ -454,11 +637,7 @@ GridPipeAndWaveguide<dim, spacedim>::make_grid(
 
               if (face_is_on_lateral_wall)
                 {
-                  if (inner_circle)
-                    cell->set_all_manifold_ids(cylindrical_manifold_id);
-                  else
-                    cell->face(f)->set_all_manifold_ids(
-                      cylindrical_manifold_id);
+                  cell->face(f)->set_all_manifold_ids(cylindrical_manifold_id);
                   break;
                 }
             }

@@ -10,6 +10,7 @@
 #include <deal.II/grid/tria.h>
 
 #include <string>
+#include <vector>
 
 using namespace dealii;
 
@@ -21,8 +22,21 @@ using namespace dealii;
  * - A central cylinder into which the rectangular-based waveguide is embedded
  * - A top cylinder
  *
- * Note that the mesh of the cylinder is inspired from the hyper_ball function
- * of the deal.II library.
+ * The cross section of the cylinder is a structured O-grid, designed so that
+ * its cells are close to squares:
+ * - an inner rectangle around the axis, divided into columns and rows. A band
+ *   of rows of width rectangle_width continues the waveguide through the
+ *   cylinder, and a strip of rows lies on each side of the band;
+ * - a ring of layers of cells between the inner rectangle and the lateral wall.
+ *   On the left and right sides, the rows of the band end on the lateral wall
+ * at the same height, so that the edges of the band end at the corners
+ *   (rectangle_length, 0) and (rectangle_length, rectangle_width) of the
+ *   waveguide. The corners of the inner rectangle are joined to the lateral
+ * wall at the angle corner_angle from the x-axis, and they are pulled inward so
+ *   that the cells of the ring at the corners are less skewed.
+ * In the middle section, the waveguide is divided into columns and into the
+ * rows of the band, which it shares at the junction with the cylinder. Its
+ * number of columns is chosen so that its cells are close to squares.
  *
  * Boundary IDs are assigned as follows:
  * -0: Waveguide port (end face of the waveguide at x = 0)
@@ -35,14 +49,14 @@ using namespace dealii;
  * -0: Cylinder
  * -1: Waveguide
  *
- * A CylindricalManifold (manifold id 1) is attached to the cells of the
- * cylinder that have a face on its lateral wall, so that mesh refinement
- * preserves the shape of the cylinder. In the middle section, this includes
- * the face shared by the cylinder and the waveguide, which therefore follows
- * the lateral wall of the cylinder. With an inner circle, the manifold is set
- * on the whole cell, so that the inner circle is also preserved. With an inner
- * square, it is only set on the face on the lateral wall, so that the sides of
- * the square stay straight. The cells of the waveguide keep the flat manifold.
+ * A CylindricalManifold (manifold id 1) is attached to the faces of the cells
+ * of the cylinder that lie on its lateral wall, so that mesh refinement
+ * preserves the shape of the cylinder. In the middle section, this includes the
+ * face shared by the cylinder and the waveguide, which therefore follows the
+ * lateral wall of the cylinder. The other faces and the cells keep the flat
+ * manifold, so that the inner rectangle and the walls of the waveguide stay
+ * straight, and the interior of the cells next to the lateral wall is
+ * interpolated from their faces when they are refined.
  *
  * @tparam dim The dimension of the mesh, must be 3.
  * @tparam spacedim The dimension of the space, must be 3.
@@ -55,28 +69,36 @@ class GridPipeAndWaveguide
 public:
   /**
    * @brief Constructor that parses grid parameters from a colon-separated
-   * string.
+   * string, and checks that they define a valid mesh.
    *
    * @param[in] grid_arguments A string with the following format:
-   * @code "rectangle_width : rectangle_length : outer_radius : inner_length :
-   * bottom_height : middle_height : top_height : bottom_resolution :
-   * middle_resolution : top_resolution : inner_circle" @endcode
+   * @code "rectangle_width : rectangle_length : outer_radius :
+   * inner_half_width : inner_half_height : corner_angle : corner_pull :
+   * n_columns : n_strip_rows : n_band_rows : n_ring_layers : bottom_height :
+   * middle_height : top_height : bottom_resolution : middle_resolution :
+   * top_resolution" @endcode
    *
-   * | #   | Field             | Format        | Required | Description                                                                                              |
-   * |-----|-------------------|---------------|----------|----------------------------------------------------------------------------------------------------------|
-   * |  0  | rectangle_width   | double        | yes      | Waveguide width                                                                                          |
-   * |  1  | rectangle_length  | double        | yes      | Waveguide length                                                                                         |
-   * |  2  | outer_radius      | double        | yes      | Radius of the main cylinder                                                                              |
-   * |  3  | inner_length      | double        | yes      | Depending on the inner shape, it is the radius of the inner circle or the half-side of the inner square  |
-   * |  4  | bottom_height     | double        | yes      | Height of the bottom cylinder                                                                            |
-   * |  5  | middle_height     | double        | yes      | Height of the waveguide                                                                                  |
-   * |  6  | top_height        | double        | yes      | Height of the top cylinder                                                                               |
-   * |  7  | bottom_resolution | unsigned int  | yes      | Number of slices generated by the extrusion of the bottom cylinder (at least 2)                          |
-   * |  8  | middle_resolution | unsigned int  | yes      | Number of slices generated by the extrusion of the center cylinder (at least 2)                          |
-   * |  9  | top_resolution    | unsigned int  | yes      | Number of slices generated by the extrusion of the top cylinder (at least 2)                             |
-   * |  10 | inner_circle      | true/false    | no       | True (default): The inner shape is a circle False: Inner square                                          |
-   * Example: @code "0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 :
-   * true" @endcode
+   * | #   | Field             | Format        | Description                                                                                         |
+   * |-----|-------------------|---------------|-----------------------------------------------------------------------------------------------------|
+   * |  0  | rectangle_width   | double        | Waveguide width (along y)                                                                           |
+   * |  1  | rectangle_length  | double        | Waveguide length (along x)                                                                          |
+   * |  2  | outer_radius      | double        | Radius of the cylinder                                                                              |
+   * |  3  | inner_half_width  | double        | Half-width of the inner rectangle (along x)                                                         |
+   * |  4  | inner_half_height | double        | Half-height of the inner rectangle (along y), larger than rectangle_width / 2                       |
+   * |  5  | corner_angle      | double        | Angle (degrees) from the x-axis of the point of the lateral wall joined to a corner of the rectangle |
+   * |  6  | corner_pull       | double        | Fraction of the sides of the corner cells by which the corners of the rectangle are pulled inward   |
+   * |  7  | n_columns         | unsigned int  | Number of columns of the inner rectangle                                                            |
+   * |  8  | n_strip_rows      | unsigned int  | Number of rows of each strip, on each side of the band                                              |
+   * |  9  | n_band_rows       | unsigned int  | Number of rows of the band and of the waveguide                                                     |
+   * |  10 | n_ring_layers     | unsigned int  | Number of layers of the ring                                                                        |
+   * |  11 | bottom_height     | double        | Height of the bottom cylinder                                                                       |
+   * |  12 | middle_height     | double        | Height of the waveguide                                                                             |
+   * |  13 | top_height        | double        | Height of the top cylinder                                                                          |
+   * |  14 | bottom_resolution | unsigned int  | Number of slices of the extrusion of the bottom cylinder (at least 2)                               |
+   * |  15 | middle_resolution | unsigned int  | Number of slices of the extrusion of the middle cylinder (at least 2)                               |
+   * |  16 | top_resolution    | unsigned int  | Number of slices of the extrusion of the top cylinder (at least 2)                                  |
+   * Example: @code "0.04318 : 0.1 : 0.069 : 0.0363 : 0.0363 : 39.2 : 0.27 : 5 :
+   * 1 : 3 : 2 : 0.04932 : 0.08636 : 0.04932 : 5 : 7 : 5" @endcode
    */
   GridPipeAndWaveguide(const std::string &grid_arguments);
 
@@ -84,11 +106,11 @@ public:
    * @brief Generate the coarse mesh of the cylinder in which the waveguide is
    * embedded.
    *
-   * The coarse 2D cross section of the cylinder is built by detailed_circle.
-   * In the middle section, it is merged with the rectangle of the waveguide.
-   * The three cross sections are extruded along z, and the three sections are
-   * merged. The material ids, the boundary ids and the cylindrical manifold are
-   * then set on the merged mesh, which is returned without refinement.
+   * The coarse 2D cross section of the cylinder, and in the middle section of
+   * the cylinder and the waveguide, are built by make_cross_section. The three
+   * cross sections are extruded along z, and the three sections are merged. The
+   * boundary ids and the cylindrical manifold are then set on the merged mesh,
+   * which is returned without refinement.
    *
    * @param[out] triangulation The empty triangulation to fill with the mesh.
    */
@@ -121,50 +143,106 @@ public:
 
 private:
   /**
+   * @brief Return the heights of the rows of the inner rectangle, relative to
+   * the axis of the cylinder.
+   *
+   * The n_strip_rows rows of each strip divide it evenly, and so do the
+   * n_band_rows rows of the band, so that the edges of the band, at the heights
+   * -rectangle_width / 2 and rectangle_width / 2, are row heights.
+   *
+   * @return The heights of the 2 n_strip_rows + n_band_rows + 1 lines between
+   * the rows, from -inner_half_height to inner_half_height.
+   */
+  std::vector<double>
+  row_heights() const;
+
+  /**
+   * @brief Return the angle from the x-axis of the point of the lateral wall to
+   * which the end of a row line on the right side of the inner rectangle is
+   * joined. The left side is the mirror image of the right side.
+   *
+   * In the band, the line ends on the lateral wall at the same height, so that
+   * the cells of the ring in the band are close to rectangles and the edges of
+   * the band end at the corners of the waveguide. In the strips, the angle
+   * varies linearly with the height, from the angle of the edges of the band to
+   * corner_angle at the corners of the rectangle.
+   *
+   * @param[in] height Height of the row line, relative to the axis.
+   *
+   * @return The angle in radians.
+   */
+  double
+  wall_angle_of_right_side(const double height) const;
+
+  /**
    * @brief Generate the coarse 2D mesh of the cross section of the cylinder,
-   * adapted to be joined to the rectangle of the waveguide.
+   * and of the waveguide if requested.
    *
-   * The mesh extends the 2D GridGenerator::hyper_ball of deal.II, which has 8
-   * vertices: an inner square surrounded by four cells. It has 22 vertices and
-   * 16 cells, for three reasons:
-   * - GridGenerator::merge_triangulations joins two meshes only at shared
-   *   vertices. Two vertices of the outer circle are therefore placed at the
-   *   corners (rectangle_length, 0) and (rectangle_length, rectangle_width) of
-   *   the rectangle of the waveguide.
-   * - A band of width rectangle_width crosses the circle along the x-axis, in
-   *   line with the waveguide. The cells in this band stay nearly rectangular,
-   *   which keeps their aspect ratio low, and no cell is triangular.
-   * - The inner shape is either a circle of radius inner_length or a square of
-   *   half-side inner_length. Both shapes use the same cell connectivity: only
-   *   the vertices on the inner shape move.
+   * The inner rectangle is divided into n_columns columns and into the rows
+   * given by row_heights, and its corners are pulled inward by corner_pull
+   * times the sides of their cell. Its boundary is then traversed
+   * counterclockwise, and each of its vertices is joined to a point of the
+   * lateral wall by n_ring_layers cells of the ring. The waveguide is divided
+   * into n_waveguide_columns columns and n_band_rows rows, and its vertices at
+   * the junction are the vertices of the band on the lateral wall, so that the
+   * two parts share them.
    *
+   * The cells of the cylinder and of the waveguide receive their material ids.
    * The mesh has no manifold id: the manifold is set by make_grid on the final
    * 3D mesh.
    *
+   * @param[in] center Position of the axis of the cylinder.
+   * @param[in] with_waveguide Whether the cells of the waveguide are added.
    * @param[out] triangulation The empty triangulation to fill with the mesh.
-   * @param[in] center Center of the circle.
    */
   void
-  detailed_circle(Triangulation<2, 2> &triangulation,
-                  const Point<2>      &center) const;
+  make_cross_section(const Point<2>      &center,
+                     const bool           with_waveguide,
+                     Triangulation<2, 2> &triangulation) const;
 
-
-  /// Width of the rectangular waveguide
+  /// Width of the rectangular waveguide (along y)
   double rectangle_width;
 
-  /// Length of the rectangular waveguide
+  /// Length of the rectangular waveguide (along x)
   double rectangle_length;
 
-  /// Outer radius of the cylindrical cavity
+  /// Radius of the cylinder
   double outer_radius;
 
-  /// Inner length (radius if circle, half-side if square) of the central shape
-  double inner_length;
+  /// Half-width of the inner rectangle of the cross section (along x)
+  double inner_half_width;
+
+  /// Half-height of the inner rectangle of the cross section (along y)
+  double inner_half_height;
+
+  /// Angle (degrees) from the x-axis of the point of the lateral wall joined to
+  /// the corner of the inner rectangle
+  double corner_angle;
+
+  /// Fraction of the sides of the corner cells of the inner rectangle by which
+  /// its corners are pulled inward
+  double corner_pull;
+
+  /// Number of columns of the inner rectangle
+  unsigned int n_columns;
+
+  /// Number of rows of each strip of the inner rectangle
+  unsigned int n_strip_rows;
+
+  /// Number of rows of the band and of the waveguide
+  unsigned int n_band_rows;
+
+  /// Number of layers of the ring between the inner rectangle and the wall
+  unsigned int n_ring_layers;
+
+  /// Number of columns of the waveguide, chosen so that its cells are close to
+  /// squares
+  unsigned int n_waveguide_columns;
 
   /// Height of the bottom cylinder
   double bottom_height;
 
-  /// Height of the center section (waveguide embedded in cylinder)
+  /// Height of the middle section (waveguide embedded in the cylinder)
   double middle_height;
 
   /// Height of the top cylinder
@@ -173,14 +251,11 @@ private:
   /// Number of slices of the extrusion of the bottom cylinder
   unsigned int bottom_resolution;
 
-  /// Number of slices of the extrusion of the center cylinder
+  /// Number of slices of the extrusion of the middle cylinder
   unsigned int middle_resolution;
 
   /// Number of slices of the extrusion of the top cylinder
   unsigned int top_resolution;
-
-  /// Shape of the inner region: true = circle, false = square
-  bool inner_circle;
 };
 
 

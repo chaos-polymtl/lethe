@@ -1,7 +1,7 @@
 
 DEAL::==================================================
-DEAL::Case: inner_circle
-DEAL::Grid arguments: "0.07 : 0.05 : 0.1 : 0.07 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 : true"
+DEAL::Case: simple_layout
+DEAL::Grid arguments: "0.07 : 0.05 : 0.1 : 0.05 : 0.05 : 45 : 0 : 2 : 1 : 1 : 1 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3"
 DEAL::Number of coarse cells : 81
 DEAL::Boundary id 0 face count : 1
 DEAL::Boundary id 1 face count : 16
@@ -14,20 +14,20 @@ DEAL::Mesh volume  : 0.00866596
 DEAL::Exact volume : 0.00870650
 DEAL::Lateral wall on the cylinder : yes
 DEAL::Waveguide walls planar : yes
-DEAL::Number of vertices on the inner shape : 840
+DEAL::Number of vertices on the sides of the inner rectangle : 840
 DEAL::==================================================
-DEAL::Case: inner_square
-DEAL::Grid arguments: "0.07 : 0.05 : 0.1 : 0.05 : 0.1 : 0.07 : 0.1 : 3 : 2 : 3 : false"
-DEAL::Number of coarse cells : 81
-DEAL::Boundary id 0 face count : 1
-DEAL::Boundary id 1 face count : 16
-DEAL::Boundary id 2 face count : 16
-DEAL::Boundary id 3 face count : 49
-DEAL::Boundary id 4 face count : 4
-DEAL::Number of active cells after 2 refinements : 5184
+DEAL::Case: heated_drum_layout
+DEAL::Grid arguments: "0.04318 : 0.1 : 0.069 : 0.0363 : 0.0363 : 39.2 : 0.27 : 5 : 1 : 3 : 2 : 0.04932 : 0.08636 : 0.04932 : 5 : 7 : 5"
+DEAL::Number of coarse cells : 1036
+DEAL::Boundary id 0 face count : 18
+DEAL::Boundary id 1 face count : 65
+DEAL::Boundary id 2 face count : 65
+DEAL::Boundary id 3 face count : 262
+DEAL::Boundary id 4 face count : 126
+DEAL::Number of active cells after 1 refinements : 8288
 DEAL::All cell measures are positive : yes
-DEAL::Mesh volume  : 0.00866596
-DEAL::Exact volume : 0.00870650
+DEAL::Mesh volume  : 0.00311874
+DEAL::Exact volume : 0.00313131
 DEAL::Lateral wall on the cylinder : yes
 DEAL::Waveguide walls planar : yes
-DEAL::Number of vertices on the inner shape : 840
+DEAL::Number of vertices on the sides of the inner rectangle : 812
