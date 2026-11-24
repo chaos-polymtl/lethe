@@ -339,8 +339,9 @@ private:
     ghost_contact_pair_periodic_candidates;
   typename dem_data_structures<dim>::particle_particle_candidates
     ghost_local_contact_pair_periodic_candidates;
-  typename dem_data_structures<dim>::particle_floating_mesh_candidates
-    particle_floating_mesh_candidates;
+  typename dem_data_structures<
+    dim>::solid_surfaces_particle_triangle_potentially_in_contact
+    solid_surfaces_particle_triangle_potentially_in_contact;
   typename dem_data_structures<dim>::particle_floating_wall_candidates
     particle_floating_wall_candidates;
   typename dem_data_structures<dim>::particle_point_candidates

@@ -8,97 +8,77 @@
 
 using namespace dealii;
 
-namespace
+template <int dim, typename CellFunction>
+void
+for_each_cell_near_solid_cell(
+  const typename DEM::dem_data_structures<
+    dim>::solid_surfaces_mesh_information::value_type &mapped_pairs,
+  const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+                     &cells_total_neighbor_list,
+  const CellFunction &function)
 {
-  /**
-   * @brief Call a function once for every pair of a solid cell and a
-   * background cell that neighbors a background cell to which the solid cell
-   * is mapped.
-   *
-   * Only the mapped background cells that are locally owned or ghost are
-   * considered. The background cells of a solid cell are visited in the order
-   * of the mapped pairs, then in the order of the neighbor lists. A background
-   * cell that neighbors several mapped background cells of the same solid cell
-   * is visited only once, the first time it is reached.
-   *
-   * @tparam dim An integer that denotes the number of spatial dimensions.
-   * @tparam VisitFunction Type of the function called for every pair. It takes
-   * the solid cell and the background cell as arguments.
-   *
-   * @param[in] mapped_pairs The (background cell, solid cell) pairs of one
-   * solid surface mapped in the background triangulation.
-   * @param[in] cells_total_neighbor_list A container in which all the neighbor
-   * cells of the local cells are stored.
-   * @param[in] visit_cell Function called for every pair of a solid cell and a
-   * background cell.
-   */
-  template <int dim, typename VisitFunction>
-  void
-  visit_neighbor_cells_once_per_solid_cell(
-    const typename DEM::dem_data_structures<
-      dim>::solid_surfaces_mesh_information::value_type &mapped_pairs,
-    const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
-                        &cells_total_neighbor_list,
-    const VisitFunction &visit_cell)
-  {
-    if (mapped_pairs.empty())
-      return;
+  if (mapped_pairs.empty())
+    return;
 
-    // Group the pairs by solid cell with a counting sort, which keeps the
-    // order of the pairs of each solid cell
-    const unsigned int n_solid_cells =
-      mapped_pairs.front().second->get_triangulation().n_active_cells();
-    std::vector<unsigned int> first_pair_of_solid_cell(n_solid_cells + 1, 0);
-    for (const auto &mapped_pair : mapped_pairs)
-      ++first_pair_of_solid_cell[mapped_pair.second->active_cell_index() + 1];
-    std::partial_sum(first_pair_of_solid_cell.begin(),
-                     first_pair_of_solid_cell.end(),
-                     first_pair_of_solid_cell.begin());
+  // Group the pairs by solid cell with a counting sort, which keeps the
+  // order of the pairs of each solid cell
+  const unsigned int n_solid_cells =
+    mapped_pairs.front().second->get_triangulation().n_active_cells();
 
-    std::vector<unsigned int> pairs_grouped_by_solid_cell(mapped_pairs.size());
-    std::vector<unsigned int> next_position_of_solid_cell(
-      first_pair_of_solid_cell.begin(), first_pair_of_solid_cell.end() - 1);
-    for (unsigned int pair_index = 0; pair_index < mapped_pairs.size();
-         ++pair_index)
+  std::vector<unsigned int> first_pair_of_solid_cell(n_solid_cells + 1, 0);
+
+  for (const auto &mapped_pair : mapped_pairs)
+    ++first_pair_of_solid_cell[mapped_pair.second->active_cell_index() + 1];
+
+  std::partial_sum(first_pair_of_solid_cell.begin(),
+                   first_pair_of_solid_cell.end(),
+                   first_pair_of_solid_cell.begin());
+
+  std::vector<unsigned int> pairs_grouped_by_solid_cell(mapped_pairs.size());
+  std::vector<unsigned int> next_position_of_solid_cell(
+    first_pair_of_solid_cell.begin(), first_pair_of_solid_cell.end() - 1);
+
+  for (unsigned int pair_index = 0; pair_index < mapped_pairs.size();
+       ++pair_index)
+    {
+      const unsigned int solid_cell_index =
+        mapped_pairs[pair_index].second->active_cell_index();
+      pairs_grouped_by_solid_cell
+        [next_position_of_solid_cell[solid_cell_index]++] = pair_index;
+    }
+
+  // Index of the last solid cell for which each background cell was visited
+  std::vector<unsigned int> last_visiting_solid_cell(
+    mapped_pairs.front().first->get_triangulation().n_active_cells(),
+    numbers::invalid_unsigned_int);
+
+  for (unsigned int solid_cell_index = 0; solid_cell_index < n_solid_cells;
+       ++solid_cell_index)
+    for (unsigned int position = first_pair_of_solid_cell[solid_cell_index];
+         position < first_pair_of_solid_cell[solid_cell_index + 1];
+         ++position)
       {
-        const unsigned int solid_cell_index =
-          mapped_pairs[pair_index].second->active_cell_index();
-        pairs_grouped_by_solid_cell
-          [next_position_of_solid_cell[solid_cell_index]++] = pair_index;
+        const auto &[background_cell, solid_cell] =
+          mapped_pairs[pairs_grouped_by_solid_cell[position]];
+
+        if (!background_cell->is_locally_owned() &&
+            !background_cell->is_ghost())
+          continue;
+
+        for (const auto &neighbor_cell : cells_total_neighbor_list.at(
+               background_cell->global_active_cell_index()))
+          {
+            unsigned int &last_solid_cell =
+              last_visiting_solid_cell[neighbor_cell->active_cell_index()];
+
+            if (last_solid_cell == solid_cell_index)
+              continue;
+            last_solid_cell = solid_cell_index;
+
+            function(solid_cell, neighbor_cell);
+          }
       }
-
-    // Index of the last solid cell for which each background cell was visited
-    std::vector<unsigned int> last_visiting_solid_cell(
-      mapped_pairs.front().first->get_triangulation().n_active_cells(),
-      numbers::invalid_unsigned_int);
-
-    for (unsigned int solid_cell_index = 0; solid_cell_index < n_solid_cells;
-         ++solid_cell_index)
-      for (unsigned int position = first_pair_of_solid_cell[solid_cell_index];
-           position < first_pair_of_solid_cell[solid_cell_index + 1];
-           ++position)
-        {
-          const auto &[background_cell, solid_cell] =
-            mapped_pairs[pairs_grouped_by_solid_cell[position]];
-
-          if (!background_cell->is_locally_owned() &&
-              !background_cell->is_ghost())
-            continue;
-
-          for (const auto &neighbor_cell : cells_total_neighbor_list.at(
-                 background_cell->global_active_cell_index()))
-            {
-              unsigned int &last_solid_cell =
-                last_visiting_solid_cell[neighbor_cell->active_cell_index()];
-              if (last_solid_cell == solid_cell_index)
-                continue;
-              last_solid_cell = solid_cell_index;
-
-              visit_cell(solid_cell, neighbor_cell);
-            }
-        }
-  }
-} // namespace
+}
 
 template <int dim>
 void
@@ -225,22 +205,31 @@ particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
                                         &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+  typename DEM::dem_data_structures<
+    dim>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
     &cells_total_neighbor_list)
 {
   // Clear the candidate container
-  particle_floating_mesh_contact_candidates.clear();
-  particle_floating_mesh_contact_candidates.resize(
+  particle_triangle_contact_candidates.clear();
+  particle_triangle_contact_candidates.resize(
     solid_surfaces_mesh_information.size());
 
+  // Loop on the solid surfaces
   for (unsigned int solid_counter = 0;
        solid_counter < solid_surfaces_mesh_information.size();
        ++solid_counter)
     {
-      auto &candidates =
-        particle_floating_mesh_contact_candidates[solid_counter];
+      // A Map related to this solid surface.
+      // The keys are the cell ids that composed the solid surface.
+      // Those cells are triangles. The value is an ankerl map related to the
+      // particles. The keys and values of that secondary map are the particle
+      // index and iterator of the particles that are potentially in contact
+      // with the.
+
+      // GABO NOTE why is this an ankerl map?
+      auto &candidates = particle_triangle_contact_candidates[solid_counter];
 
       // BB NOTE
       // To look more into this, I am not sure to which extent this is true
@@ -249,19 +238,26 @@ particle_solid_surfaces_contact_search(
       // "I am assuming that triangles in different solids have different unique
       // global ids. If it's not the case, we have to modify the code" - ???
 
-      // The particles of every background cell that neighbors a background
-      // cell to which a solid cell is mapped are candidates of the solid cell
-      visit_neighbor_cells_once_per_solid_cell<dim>(
+      // The particles owned by every background cell that neighbors a
+      // background cell to which a solid cell is mapped are candidates of that
+      // same solid cell
+      for_each_cell_near_solid_cell<dim>(
         solid_surfaces_mesh_information[solid_counter],
         cells_total_neighbor_list,
         [&](const auto &solid_cell, const auto &neighbor_cell) {
+
+          // Particles in the cell
           const auto particles_in_cell =
             particle_handler.particles_in_cell(neighbor_cell);
 
+          // If the cell is empty
           if (particles_in_cell.empty())
             return;
 
+          //
           auto &solid_cell_candidates = candidates[solid_cell];
+
+          // Loop on the particles in the cell
           for (auto particle_in_cell_iterator = particles_in_cell.begin();
                particle_in_cell_iterator != particles_in_cell.end();
                ++particle_in_cell_iterator)
@@ -402,23 +398,23 @@ particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
                                         &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+  typename DEM::dem_data_structures<
+    dim>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
                                                      &cells_total_neighbor_list,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
 {
   // Clear the candidate container
-  particle_floating_mesh_contact_candidates.clear();
-  particle_floating_mesh_contact_candidates.resize(
+  particle_triangle_contact_candidates.clear();
+  particle_triangle_contact_candidates.resize(
     solid_surfaces_mesh_information.size());
 
   for (unsigned int solid_counter = 0;
        solid_counter < solid_surfaces_mesh_information.size();
        ++solid_counter)
     {
-      auto &candidates =
-        particle_floating_mesh_contact_candidates[solid_counter];
+      auto &candidates = particle_triangle_contact_candidates[solid_counter];
 
       // I am assuming that triangles in different solids have different unique
       // global ids. If it's not the case, we have to modify the code
@@ -426,7 +422,7 @@ particle_solid_surfaces_contact_search(
       // The particles of every mobile background cell that neighbors a
       // background cell to which a solid cell is mapped are candidates of the
       // solid cell
-      visit_neighbor_cells_once_per_solid_cell<dim>(
+      for_each_cell_near_solid_cell<dim>(
         solid_surfaces_mesh_information[solid_counter],
         cells_total_neighbor_list,
         [&](const auto &solid_cell, const auto &neighbor_cell) {
@@ -731,9 +727,10 @@ particle_solid_surfaces_contact_search<2>(
   const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<2> &particle_handler,
-  DEM::dem_data_structures<2>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<2>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    2>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<2>::cells_total_neighbor_list
     &cells_total_neighbor_list);
 
 template void
@@ -741,9 +738,10 @@ particle_solid_surfaces_contact_search<3>(
   const DEM::dem_data_structures<3>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<3> &particle_handler,
-  DEM::dem_data_structures<3>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<3>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    3>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<3>::cells_total_neighbor_list
     &cells_total_neighbor_list);
 
 template void
@@ -751,9 +749,10 @@ particle_solid_surfaces_contact_search<2, DEM::DEMProperties::PropertiesIndex>(
   const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<2> &particle_handler,
-  DEM::dem_data_structures<2>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<2>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    2>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<2>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<2, DEM::DEMProperties::PropertiesIndex>
     &sparse_contacts_object);
@@ -763,9 +762,10 @@ particle_solid_surfaces_contact_search<3, DEM::DEMProperties::PropertiesIndex>(
   const DEM::dem_data_structures<3>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<3> &particle_handler,
-  DEM::dem_data_structures<3>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<3>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    3>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<3>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<3, DEM::DEMProperties::PropertiesIndex>
     &sparse_contacts_object);
@@ -776,9 +776,10 @@ particle_solid_surfaces_contact_search<2,
   const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<2> &particle_handler,
-  DEM::dem_data_structures<2>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<2>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    2>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<2>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<2, DEM::CFDDEMProperties::PropertiesIndex>
     &sparse_contacts_object);
@@ -789,9 +790,10 @@ particle_solid_surfaces_contact_search<3,
   const DEM::dem_data_structures<3>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<3> &particle_handler,
-  DEM::dem_data_structures<3>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<3>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    3>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<3>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
     &sparse_contacts_object);
@@ -802,9 +804,10 @@ particle_solid_surfaces_contact_search<2,
   const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<2> &particle_handler,
-  DEM::dem_data_structures<2>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<2>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    2>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<2>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
     &sparse_contacts_object);
@@ -816,9 +819,10 @@ particle_solid_surfaces_contact_search<
   const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<2> &particle_handler,
-  DEM::dem_data_structures<2>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<2>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    2>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<2>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<2, DEM::CFDDEMMPProperties::PropertiesIndex>
     &sparse_contacts_object);
@@ -829,9 +833,10 @@ particle_solid_surfaces_contact_search<3,
   const DEM::dem_data_structures<3>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<3> &particle_handler,
-  DEM::dem_data_structures<3>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<3>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    3>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<3>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
     &sparse_contacts_object);
@@ -843,9 +848,10 @@ particle_solid_surfaces_contact_search<
   const DEM::dem_data_structures<3>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<3> &particle_handler,
-  DEM::dem_data_structures<3>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  DEM::dem_data_structures<3>::cells_total_neighbor_list
+  DEM::dem_data_structures<
+    3>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const DEM::dem_data_structures<3>::cells_total_neighbor_list
     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<3, DEM::CFDDEMMPProperties::PropertiesIndex>
     &sparse_contacts_object);

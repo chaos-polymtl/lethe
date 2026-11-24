@@ -139,7 +139,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
           dim>::particle_floating_wall_from_mesh_candidates,
         ContactType::particle_floating_mesh>(
         particle_floating_mesh_potentially_in_contact[solid_counter],
-        particle_floating_mesh_candidates[solid_counter]);
+        solid_surfaces_particle_triangle_potentially_in_contact[solid_counter]);
     }
 }
 
@@ -327,7 +327,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_broad_search(
           particle_solid_surfaces_contact_search<dim>(
             solid_surfaces_mesh_info,
             particle_handler,
-            particle_floating_mesh_candidates,
+            solid_surfaces_particle_triangle_potentially_in_contact,
             total_neighbor_list);
         }
 
@@ -371,7 +371,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_broad_search(
           particle_solid_surfaces_contact_search<dim>(
             solid_surfaces_mesh_info,
             particle_handler,
-            particle_floating_mesh_candidates,
+            solid_surfaces_particle_triangle_potentially_in_contact,
             total_neighbor_list,
             sparse_contacts_object);
         }
@@ -475,7 +475,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_fine_search(
   if (DEMActionManager::get_action_manager()->check_solid_objects_enabled())
     {
       particle_floating_mesh_fine_search<dim>(
-        particle_floating_mesh_candidates,
+        solid_surfaces_particle_triangle_potentially_in_contact,
         particle_floating_mesh_potentially_in_contact);
     }
 

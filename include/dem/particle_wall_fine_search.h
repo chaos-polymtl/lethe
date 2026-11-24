@@ -67,7 +67,7 @@ template <int dim>
 void
 particle_floating_mesh_fine_search(
   const typename DEM::dem_data_structures<
-    dim>::particle_floating_mesh_candidates
+    dim>::solid_surfaces_particle_triangle_potentially_in_contact
     &particle_floating_mesh_contact_candidates,
   typename DEM::dem_data_structures<
     dim>::particle_floating_mesh_potentially_in_contact

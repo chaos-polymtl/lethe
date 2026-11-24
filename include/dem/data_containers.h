@@ -154,7 +154,7 @@ namespace DEM
                cut_cell_comparison<dim>>;
 
     // [<cell iterator, <particle id, particle iterator>>]
-    using particle_floating_mesh_candidates =
+    using solid_surfaces_particle_triangle_potentially_in_contact =
       std::vector<particle_floating_wall_from_mesh_candidates>;
 
     // [cell iterator]

@@ -168,7 +168,8 @@ particle_floating_wall_fine_search(
 template <int dim>
 void
 particle_floating_mesh_fine_search(
-  const typename dem_data_structures<dim>::particle_floating_mesh_candidates
+  const typename dem_data_structures<
+    dim>::solid_surfaces_particle_triangle_potentially_in_contact
     &particle_floating_mesh_contact_candidates,
   typename dem_data_structures<
     dim>::particle_floating_mesh_potentially_in_contact
@@ -243,14 +244,16 @@ particle_floating_wall_fine_search<3>(
 
 template void
 particle_floating_mesh_fine_search<2>(
-  const typename dem_data_structures<2>::particle_floating_mesh_candidates
+  const typename dem_data_structures<
+    2>::solid_surfaces_particle_triangle_potentially_in_contact
     &particle_floating_mesh_contact_candidates,
   typename dem_data_structures<2>::particle_floating_mesh_potentially_in_contact
     &particle_floating_mesh_potentially_in_contact);
 
 template void
 particle_floating_mesh_fine_search<3>(
-  const typename dem_data_structures<3>::particle_floating_mesh_candidates
+  const typename dem_data_structures<
+    3>::solid_surfaces_particle_triangle_potentially_in_contact
     &particle_floating_mesh_contact_candidates,
   typename dem_data_structures<3>::particle_floating_mesh_potentially_in_contact
     &particle_floating_mesh_potentially_in_contact);

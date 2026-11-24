@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_wall_broad_search_h
@@ -139,19 +139,58 @@ find_particle_floating_wall_contact_pairs(
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
- * @brief Find a two-layered unordered map
- * (particle_floating_mesh_contact_candidates) of particle iterators that
- * shows the candidate particle-floating mesh collision candidates. These
- * collision pairs will be investigated in the fine search to check if they
- * are in contact or not
+ * @brief Call a function once for every distinct background cell near each
+ * solid cell of a solid surface, that is, every background cell that neighbors
+ * a background cell to which the solid cell is mapped.
  *
- * @param solid_surfaces_mesh_information Information of the solid surfaces mapped
- * in the background triangulation.
- * @param particle_handler
- * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact
- * candidates.
- * @param cells_total_neighbor_list A container in which all the neighbor cells
- * of the local cells are stored.
+ * Only the mapped background cells that are locally owned or ghost are
+ * considered. The background cells of a solid cell are visited in the order
+ * of the mapped pairs, then in the order of the neighbor lists. A background
+ * cell that neighbors several mapped background cells of the same solid cell
+ * is visited only once, the first time it is reached.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam CellFunction Type of the function called for every pair. It takes
+ * the solid cell and the background cell as arguments.
+ *
+ * @param[in] mapped_pairs The (background cell - solid cell) pairs of one
+ * solid surface mapped in the background triangulation.
+ * @param[in] cells_total_neighbor_list For each locally owned cell, the cell
+ * itself and the locally owned cells that share a vertex with it. The key is
+ * the global active cell index of the cell, the value is a vector of the cell
+ * iterators.
+ * @param[in] function Function called for every pair of a solid cell and a
+ * background cell.
+ */
+template <int dim, typename CellFunction>
+void
+for_each_cell_near_solid_cell(
+  const typename DEM::dem_data_structures<
+    dim>::solid_surfaces_mesh_information::value_type &mapped_pairs,
+  const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+                     &cells_total_neighbor_list,
+  const CellFunction &function);
+
+/**
+ * @brief Find the particle-triangle contact candidates of the solid surfaces.
+ * The candidates of a triangle (cell of a solid surface mesh) are the particles
+ * located in the background cells that neighbor a background cell to which the
+ * triangle is mapped. The fine search then checks which of them are in contact.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ *
+ * @param[in] solid_surfaces_mesh_information For each solid surface, the
+ * (background cell - triangle) pairs of its triangles mapped in the background
+ * triangulation.
+ * @param[in] particle_handler Particle handler that gives the particles located
+ * in each background cell.
+ * @param[out] particle_triangle_contact_candidates For each solid surface, the
+ * candidate particles of each of its triangles, stored using the particle ids.
+ * Only the triangles that have at least one candidate have an entry.
+ * @param[in] cells_total_neighbor_list For each locally owned cell, the cell
+ * itself and the locally owned cells that share a vertex with it. The key is
+ * the global active cell index of the cell, the value is a vector of the cell
+ * iterators.
  */
 template <int dim>
 void
@@ -159,31 +198,37 @@ particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
                                         &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+  typename DEM::dem_data_structures<
+    dim>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
     &cells_total_neighbor_list);
 
 
 /**
- * @brief Find a two-layered unordered map
- * (particle_floating_mesh_contact_candidates) of particle iterators that
- * shows the candidate particle-floating mesh collision candidates. These
- * collision pairs will be investigated in the fine search to check if they
- * are in contact or not
+ * @brief Find the particle-triangle contact candidates of the solid surfaces.
+ * The candidates of a triangle (cell of a solid surface mesh) are the particles
+ * located in the mobile background cells that neighbor a background cell to
+ * which the triangle is mapped. The fine search then checks which of them are
+ * in contact.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
- * @param solid_surfaces_mesh_information Information of the solid surfaces mapped
- * in the background triangulation.
- * @param particle_handler
- * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact
- * candidates
- * @param cells_total_neighbor_list A container in which all the neighbor cells
- * of the local cells are stored
- * @param sparse_contacts_object The object that contains the
- * information about the mobility status of cells
+ * @param[in] solid_surfaces_mesh_information For each solid surface, the
+ * (background cell - triangle) pairs of its triangles mapped in the background
+ * triangulation.
+ * @param[in] particle_handler Particle handler that gives the particles located
+ * in each background cell.
+ * @param[out] particle_triangle_contact_candidates For each solid surface, the
+ * candidate particles of each of its triangles, stored by particle id. Only the
+ * triangles that have at least one candidate have an entry.
+ * @param[in] cells_total_neighbor_list For each locally owned cell, the cell
+ * itself and the locally owned cells that share a vertex with it. The key is
+ * the global active cell index of the cell, the value is a vector of the cell
+ * iterators.
+ * @param[in] sparse_contacts_object Object that gives the mobility status of
+ * the background cells.
  */
 template <int dim, typename PropertiesIndex>
 void
@@ -191,9 +236,10 @@ particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
                                         &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates,
-  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+  typename DEM::dem_data_structures<
+    dim>::solid_surfaces_particle_triangle_potentially_in_contact
+    &particle_triangle_contact_candidates,
+  const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
                                                      &cells_total_neighbor_list,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
