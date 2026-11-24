@@ -2,7 +2,7 @@
 QMOM Equations
 ==============
 
-Lethe can solve population balance equations with the quadrature method of moments (QMOM). The evolution of the moments in phase space, as well as the computation of the moments of particle size distributions, are done by the `QMOMKit <https://github.com/polycfd/QMOMKit>`_ library. The parameters of the QMOM physics are described in :doc:`../../../parameters/cfd/qmom`.
+Lethe can solve population balance equations with the quadrature method of moments (QMOM) [#mcgraw1997]_ [#marchisio2003]_. The evolution of the moments in phase space, as well as the computation of the moments of particle size distributions, are done by the `QMOMKit <https://github.com/polycfd/QMOMKit>`_ library. The parameters of the QMOM physics are described in :doc:`../../../parameters/cfd/qmom`.
 
 Transported Quantities
 ----------------------
@@ -82,7 +82,7 @@ The trajectories are integrated with an adaptive Runge-Kutta method. Two particu
 Nucleation
 ^^^^^^^^^^
 
-The nucleation creates particles at the rate :math:`J`, the number of particles created per unit volume and time, whose sizes follow a log-normal distribution of mean :math:`m` and standard deviation :math:`\sigma`:
+The nucleation creates particles at the rate :math:`J`, the number of particles created per unit volume and time, whose sizes follow a log-normal distribution of mean :math:`m` and standard deviation :math:`\sigma` [#limpert2001]_ [#marchisio2013]_:
 
 .. math::
 
@@ -93,13 +93,13 @@ The standard deviation :math:`\sigma` must be strictly positive: nuclei of a sin
 Coalescence
 ^^^^^^^^^^^
 
-The coalescence merges two particles of sizes :math:`\xi_i` and :math:`\xi_j` at the rate given by the kernel :math:`\beta`, into a particle of the same volume, of size :math:`(\xi_i^3 + \xi_j^3)^{1/3}`. The moment :math:`M_3` is therefore conserved:
+The coalescence merges two particles of sizes :math:`\xi_i` and :math:`\xi_j` at the rate given by the kernel :math:`\beta`, into a particle of the same volume, of size :math:`(\xi_i^3 + \xi_j^3)^{1/3}`. The moment :math:`M_3` is therefore conserved [#marchisio2003]_ [#marchisio2003b]_:
 
 .. math::
 
   \frac{\mathrm{d} M_k}{\mathrm{d} t} = \frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} w_i w_j \beta(\xi_i, \xi_j, t) \left[ \left(\xi_i^3 + \xi_j^3\right)^{k/3} - \xi_i^k - \xi_j^k \right]
 
-With a constant kernel :math:`\beta = a`, the number density decreases as :math:`\mathrm{d} M_0 / \mathrm{d} t = -a M_0^2 / 2`.
+With a constant kernel :math:`\beta = a`, the number density decreases as :math:`\mathrm{d} M_0 / \mathrm{d} t = -a M_0^2 / 2` [#friedlander2000]_.
 
 Time Integration in Phase Space
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -114,3 +114,17 @@ Realizability
 Degrees of freedom without particles (:math:`M_0` below :math:`10^{-30}`) have no quadrature: only the nucleation changes their moments, with its rate integrated by the midpoint rule.
 
 The moments must nevertheless be realizable, i.e. be the moments of a distribution of positive sizes: the simulation stops with an error at the first time step where they cannot be inverted, for example because of the oscillations of the transport near steep gradients. Optionally, QMOMKit may instead reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set.
+
+References
+----------
+.. [#mcgraw1997] \McGraw, R. (1997). Description of aerosol dynamics by the quadrature method of moments. Aerosol science and Technology, 27(2), 255-265. doi: `10.1080/02786829708965471 <https://doi.org/10.1080/02786829708965471>`_\.
+
+.. [#marchisio2003] \Marchisio, D. L., Pikturna, J. T., Fox, R. O., Vigil, R. D., & Barresi, A. A. (2003). Quadrature method of moments for population‐balance equations. AIChE Journal, 49(5), 1266-1276. doi: `10.1002/aic.690490517 <https://doi.org/10.1002/aic.690490517>`_\.
+
+.. [#limpert2001] \Limpert, E., Stahel, W. A., & Abbt, M. (2001). Log-normal distributions across the sciences: keys and clues. BioScience, 51(5), 341-352. doi: `10.1641/0006-3568(2001)051[0341:LNDATS]2.0.CO;2 <https://doi.org/10.1641/0006-3568(2001)051[0341:LNDATS]2.0.CO;2>`_\.
+
+.. [#marchisio2013] \Marchisio, D. L., & Fox, R. O. (2013). Computational models for polydisperse particulate and multiphase systems. Cambridge University Press. doi: `10.1017/CBO9781139016599 <https://doi.org/10.1017/CBO9781139016599>`_\.
+
+.. [#marchisio2003b] \Marchisio, D. L., Vigil, R. D., & Fox, R. O. (2003). Quadrature method of moments for aggregation–breakage processes. Journal of Colloid and Interface Science, 258(2), 322-334. doi: `10.1016/S0021-9797(02)00054-1 <https://doi.org/10.1016/S0021-9797(02)00054-1>`_\.
+
+.. [#friedlander2000] \Friedlander, S. K. (2000). Smoke, dust, and haze: Fundamentals of aerosol dynamics (2nd ed.). Oxford University Press.
