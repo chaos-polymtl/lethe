@@ -40,7 +40,15 @@ FluidDynamicsSharp<dim>::FluidDynamicsSharp(
   , cfd_dem_parameters(p_nsparam)
   , all_spheres(true)
   , combined_shapes()
-{}
+{
+  // The sharp-interface solver assembles the system with its own functions,
+  // which do not update the history of the fine-scale velocity.
+  AssertThrow(
+    this->simulation_parameters.stabilization.velocity_subscale ==
+      Parameters::Stabilization::VelocitySubscale::quasi_static,
+    ExcMessage(
+      "The dynamic velocity subscale is not available with the sharp-interface immersed boundary solver."));
+}
 
 template <int dim>
 FluidDynamicsSharp<dim>::~FluidDynamicsSharp() = default;

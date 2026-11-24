@@ -7,6 +7,7 @@
 #include <core/exceptions.h>
 #include <core/multiphysics.h>
 
+#include <solvers/fine_scale_velocity_transfer.h>
 #include <solvers/fluid_dynamics_matrix_free_operators.h>
 #include <solvers/navier_stokes_base.h>
 
@@ -22,6 +23,10 @@
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
+
+#include <memory>
+#include <string>
+#include <vector>
 
 using namespace dealii;
 
@@ -502,6 +507,70 @@ protected:
   update_forcing_and_boundary_conditions() override;
 
   /**
+   * @brief Percolate the time vectors of the fluid dynamics. With the dynamic
+   * RBVMS velocity subscale and a BDF scheme, the fine-scale velocity of the
+   * time step that just converged is first stored in the history of the
+   * system operator, while the operator data still describe that time step.
+   */
+  void
+  percolate_time_vectors_fd() override;
+
+  /**
+   * @brief Write the checkpoint of the fluid dynamics. The cell-wise copy of
+   * the history of the dynamic RBVMS fine-scale velocity, attached to the
+   * triangulation by attach_cell_data_to_checkpoint(), is released once the
+   * triangulation has been saved.
+   */
+  void
+  write_checkpoint() override;
+
+  /**
+   * @brief Attach the history of the dynamic RBVMS fine-scale velocity to the
+   * cells of the triangulation, so that it is saved in the checkpoint. The
+   * number of history values per cell is written to the file
+   * <prefix>.fine_scale_velocity, which tells read_cell_data_from_checkpoint()
+   * whether the triangulation holds the history. This number is zero, and
+   * nothing is attached, for the quasi-static velocity subscale and for steady
+   * simulations.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  void
+  attach_cell_data_to_checkpoint(
+    const std::string &checkpoint_file_prefix) override;
+
+  /**
+   * @brief Read the history of the dynamic RBVMS fine-scale velocity attached
+   * to the triangulation by attach_cell_data_to_checkpoint(). If the
+   * checkpoint holds no history (quasi-static velocity subscale, or checkpoint
+   * written without the file <prefix>.fine_scale_velocity), the fine-scale
+   * velocity restarts from zero. If the simulation does not use the history,
+   * the history of the checkpoint is read and discarded, since all the data
+   * attached to a triangulation must be read.
+   *
+   * @param[in] checkpoint_file_prefix Prefix of the checkpoint files.
+   */
+  void
+  read_cell_data_from_checkpoint(
+    const std::string &checkpoint_file_prefix) override;
+
+  /**
+   * @brief Prepare the history of the dynamic RBVMS fine-scale velocity for
+   * the mesh adaptation that is about to be executed. Nothing is done if the
+   * simulation stores no history.
+   */
+  void
+  prepare_cell_data_for_mesh_adaptation() override;
+
+  /**
+   * @brief Transfer the history of the dynamic RBVMS fine-scale velocity to
+   * the adapted mesh. The history of a refined cell is interpolated to its
+   * children, and the history of coarsened cells is projected to their parent.
+   */
+  void
+  transfer_cell_data_after_mesh_adaptation() override;
+
+  /**
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *
@@ -673,6 +742,15 @@ protected:
    *
    */
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
+
+  /**
+   * @brief Object transferring the history of the dynamic RBVMS fine-scale
+   * velocity to a checkpoint or across mesh adaptation. It keeps a cell-wise
+   * copy of the history while the checkpoint is written or the mesh is
+   * adapted.
+   *
+   */
+  std::unique_ptr<FineScaleVelocityTransfer<dim>> fine_scale_velocity_transfer;
 
   /**
    * @brief Geometric multigrid preconditioner.

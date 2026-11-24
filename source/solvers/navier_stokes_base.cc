@@ -1179,6 +1179,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
   multiphysics->prepare_for_mesh_adaptation();
   if (this->average_velocities_are_enabled())
     average_velocities->prepare_for_mesh_adaptation();
+  this->prepare_cell_data_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
 
@@ -1241,6 +1242,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   multiphysics->prepare_for_mesh_adaptation();
   if (this->average_velocities_are_enabled())
     average_velocities->prepare_for_mesh_adaptation();
+  this->prepare_cell_data_for_mesh_adaptation();
 
   // Refine
   this->triangulation->refine_global(1);
@@ -1261,6 +1263,9 @@ NavierStokesBase<dim, VectorType, DofsType>::transfer_solution(
   SolutionTransfer<dim, VectorType>              &solution_transfer,
   std::vector<SolutionTransfer<dim, VectorType>> &previous_solutions_transfer)
 {
+  // Transfer the solver-specific data attached to the cells
+  this->transfer_cell_data_after_mesh_adaptation();
+
   // Set up the vectors for the transfer
   VectorType tmp = init_temporary_vector();
 
@@ -2224,6 +2229,10 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
   multiphysics->read_checkpoint(this->get_checkpoint_slot_label());
 
+  // The solver-specific cell data was attached to the triangulation after the
+  // solutions of all the physics, so it is read last.
+  this->read_cell_data_from_checkpoint(prefix);
+
   // Deserialize all post-processing tables that are currently used
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
@@ -3115,6 +3124,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
     {
+      // The solver-specific cell data is attached after the solutions of all
+      // the physics, in the order in which read_checkpoint() reads them.
+      this->attach_cell_data_to_checkpoint(prefix);
+
       tria->save(prefix + ".triangulation");
     }
 
@@ -3142,6 +3155,30 @@ NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_slot_label() const
   return "_" + Utilities::int_to_string(
                  this->checkpoint_controller.get_next_checkpoint_id());
 }
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::attach_cell_data_to_checkpoint(
+  const std::string & /*checkpoint_file_prefix*/)
+{}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::read_cell_data_from_checkpoint(
+  const std::string & /*checkpoint_file_prefix*/)
+{}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  prepare_cell_data_for_mesh_adaptation()
+{}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  transfer_cell_data_after_mesh_adaptation()
+{}
 
 template <int dim, typename VectorType, typename DofsType>
 void

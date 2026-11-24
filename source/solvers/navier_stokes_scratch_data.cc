@@ -23,7 +23,7 @@ NavierStokesScratchData<dim>::NavierStokesScratchData(
               fe,
               quadrature,
               update_values | update_quadrature_points | update_JxW_values |
-                update_gradients | update_hessians)
+                update_gradients | update_hessians | update_inverse_jacobians)
   , fe_face_values(mapping,
                    fe,
                    face_quadrature,
@@ -61,7 +61,7 @@ NavierStokesScratchData<dim>::NavierStokesScratchData(
               sd.fe_values.get_fe(),
               sd.fe_values.get_quadrature(),
               update_values | update_quadrature_points | update_JxW_values |
-                update_gradients | update_hessians)
+                update_gradients | update_hessians | update_inverse_jacobians)
   , fe_face_values(sd.fe_face_values.get_mapping(),
                    sd.fe_face_values.get_fe(),
                    sd.fe_face_values.get_quadrature(),
