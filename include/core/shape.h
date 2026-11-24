@@ -1479,7 +1479,14 @@ public:
     bool exact_distance_outside_of_contact = false) override;
 
   /**
-   * @brief Return the distance between the current sphere and the shape @p shape, the unit normal vector and the contact point. The distance is negative when the shapes overlap, and its magnitude is then the overlap. This function is an optimized version of the general shape distance calculation for the case of a sphere: when @p shape is a sphere, the distance is exact and the contact point is located halfway between the two surfaces. Otherwise, the distance is the level set of @p shape at the center of the sphere minus the radius of the sphere. The unit normal vector points from the current sphere toward @p shape.
+   * @brief Return the distance between the current sphere and the shape @p shape, the unit normal vector and the contact point. 
+   * 
+   * The distance is negative when the shapes overlap, and its magnitude is then the overlap. This
+   * function is an optimized version of the general shape distance calculation for the case of a sphere: 
+   * when @p shape is a sphere, the distance is exact and the contact point is located halfway between
+   * the two surfaces. Otherwise, the distance is the level set of @p shape at the center of the sphere 
+   * minus the radius of the sphere. The unit normal vector points from the current sphere toward @p 
+   * shape.
    *
    * @param shape The shape with which the distance is evaluated.
    * @param candidate_points Unused in this implementation.
