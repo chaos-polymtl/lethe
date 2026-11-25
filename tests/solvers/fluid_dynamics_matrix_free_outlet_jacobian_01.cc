@@ -183,20 +183,19 @@ apply_jacobian(
     Parameters::Stabilization::NavierStokesStabilization::pspg_supg;
 
   NavierStokesStabilizedOperator<dim, double> jacobian;
-  jacobian.reinit(
-    mapping,
-    dof_handler,
-    constraints,
-    QGauss<dim>(fe_degree + 1),
-    std::shared_ptr<Function<dim>>(),
-    properties_manager,
-    stabilization_parameters,
-    numbers::invalid_unsigned_int,
-    simulation_control,
-    boundary_conditions,
-    false,
-    false,
-    false);
+  jacobian.reinit(mapping,
+                  dof_handler,
+                  constraints,
+                  QGauss<dim>(fe_degree + 1),
+                  std::shared_ptr<Function<dim>>(),
+                  properties_manager,
+                  stabilization_parameters,
+                  numbers::invalid_unsigned_int,
+                  simulation_control,
+                  boundary_conditions,
+                  false,
+                  false,
+                  false);
 
   LinearAlgebra::distributed::Vector<double> linearization_point;
   jacobian.initialize_dof_vector(linearization_point);
