@@ -481,8 +481,10 @@ public:
 
 
 /**
- * @brief Class that assembles a Neumann boundary condition.
- * According to the following weak form: (p-mu*grad_u)*n at the boundary
+ * @brief Class that assembles a pressure boundary condition, imposed as a
+ * prescribed normal traction -p_bc n. This is the Neumann boundary condition
+ * that arises naturally from the weak formulation, in both single-phase and
+ * multiphase flows.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  * @param pressure_boundary_condition The boundary condition objects use to store the function.

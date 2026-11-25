@@ -164,30 +164,26 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   // Loop over all boundary conditions to establish if one of them has face
   // terms, if yes, enable them and add appropriate flags in the matrix-free
-  // additional data
+  // additional data. The flags are accumulated, so that the boundary
+  // conditions which need gradients keep them when they are combined with
+  // boundary conditions which do not.
   for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (type ==
-            BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
-          type == BoundaryConditions::FluidDynamicsBoundaryType::pressure)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
         {
           this->enable_face_terms = true;
-          additional_data.mapping_update_flags_boundary_faces =
+          additional_data.mapping_update_flags_boundary_faces |=
             update_values | update_gradients | update_quadrature_points |
             update_JxW_values | update_normal_vectors;
         }
-      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet ||
+               type ==
+                 BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+               type == BoundaryConditions::FluidDynamicsBoundaryType::
+                         neumann_traction)
         {
           this->enable_face_terms = true;
-          additional_data.mapping_update_flags_boundary_faces =
-            update_values | update_quadrature_points | update_JxW_values |
-            update_normal_vectors;
-        }
-      else if (type ==
-               BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
-        {
-          this->enable_face_terms = true;
-          additional_data.mapping_update_flags_boundary_faces =
+          additional_data.mapping_update_flags_boundary_faces |=
             update_values | update_quadrature_points | update_JxW_values |
             update_normal_vectors;
         }
@@ -1691,39 +1687,28 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
            BoundaryConditions::FluidDynamicsBoundaryType::pressure)
     {
-      integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
-                          EvaluationFlags::EvaluationFlags::gradients);
+      integrator.evaluate(EvaluationFlags::EvaluationFlags::values);
 
       for (const auto q : integrator.quadrature_point_indices())
         {
           typename FEFaceIntegrator::value_type value_result = {};
 
           const auto normal_vector = integrator.normal_vector(q);
-          auto       gradient      = integrator.get_gradient(q);
 
           for (int d = 0; d < dim; ++d)
             {
               // We are assembling the residual, so we need to impose the
-              // target pressure
+              // target pressure as the normal traction -p n. The matrix free
+              // solver assembles the residual and not - the residual, so we
+              // assemble (v, p n).
               if constexpr (assemble_residual)
-                {
-                  // Assemble ν(v,-∇δu·n - p n )
-                  for (int i = 0; i < dim; ++i)
-                    value_result[d] +=
-                      kinematic_viscosity * gradient[d][i] * normal_vector[i];
-
-                  value_result[d] += this->face_target_pressure[face_index][q] *
-                                     normal_vector[d];
-                }
-              // We are just assembling the matrix, the face target pressure
-              // is not part of the assembly process.
+                value_result[d] =
+                  this->face_target_pressure[face_index][q] * normal_vector[d];
+              // The prescribed traction does not depend on the solution, so
+              // it does not contribute to the Jacobian. A zero value is
+              // still submitted so that the integrator returns zero.
               else
-                {
-                  // Assemble ν(v,-∇δu·n )
-                  for (int i = 0; i < dim; ++i)
-                    value_result[d] -=
-                      kinematic_viscosity * gradient[d][i] * normal_vector[i];
-                }
+                value_result[d] = 0;
             }
           integrator.submit_value(value_result, q);
         }
