@@ -19,7 +19,6 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/rtree.h>
 
-#include <algorithm>
 #include <fstream>
 
 template <int dim, int spacedim>
@@ -186,27 +185,18 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
           for (unsigned int v = 0; v < this_triangle->n_vertices(); ++v)
             triangles[v] = this_triangle->vertex(v);
 
-          // Find the background cell that intersect this triangle with their
-          // bounding box. Intersecting pairs are stored in instersected_cubes.
           intersected_cubes.clear();
+          // Find the cubes (associated to each ground cell) that intersect the
+          // bounding box of the triangle. Stores the intersected cubes in
+          // intersected_cubes.
           cube_tree.query(boost::geometry::index::intersects(
                             this_triangle->bounding_box()),
                           std::back_inserter(intersected_cubes));
 
-          // The R-tree gives the cubes in no particular order. Sorting them
-          // by local index stores the background cells of a triangle in the
-          // order of the locally owned cells. The broad search inserts the
-          // particles in the candidates of the triangle in that same order.
-          std::sort(intersected_cubes.begin(),
-                    intersected_cubes.end(),
-                    [](const auto &cube_a, const auto &cube_b) {
-                      return cube_a.second < cube_b.second;
-                    });
-
-          // Loop on the background cell bounding box that intersect this
-          // triangle.
+          // For each intersected_cubes
           for (const auto &intersected_cube : intersected_cubes)
             {
+              // Get the index of the cell associated with the cube.
               const unsigned int local_index = intersected_cube.second;
 
               // Distance between the triangle and the cell center.
@@ -214,8 +204,9 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
                 LetheGridTools::find_point_triangle_distance(
                   triangles, local_background_cell_centers[local_index]);
 
-              // If the cell center is closer to the triangle then its diameter,
-              // we store it.
+              // If the distance between the back ground cell center and the
+              // triangle is smaller than the diameter of the cell,
+              // the triangle is mapped to the cell.
               if (distance < local_background_cell_diameters[local_index])
                 mapped_solid.emplace_back(local_background_cells[local_index],
                                           this_triangle);
