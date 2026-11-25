@@ -30,7 +30,12 @@ The default parameters are:
 
 * ``checkpoint``: controls if a checkpoint of the simulation is created. All the files needed to restart the simulation from this checkpoint (such as ``.pvdhandler``, ``.triangulation``) will be written.
 
-* ``checkpoint control``: what sets when the checkpoints are written, like ``output control`` for the results (see :doc:`simulation_control`). With ``iteration``, a checkpoint is written every ``frequency`` iterations; with ``time``, every ``time frequency`` of simulated time; with ``wall_time``, every ``wall time frequency`` of elapsed wall time. Whatever the control, a checkpoint is also written at the last time step.
+* ``checkpoint control``: control for when the checkpoints are written. The available options are:
+	* ``iteration``: a checkpoint is written every ``frequency`` iterations.
+	* ``time``: a checkpoint is written every ``time frequency`` of simulated time.
+	* ``wall_time``: a checkpoint is written every ``wall time frequency`` of elapsed wall time.
+
+  Whatever the control, a checkpoint is also written at the last time step.
 
 * ``frequency``: number of iteration before the first checkpoint, and between each subsequent checkpoint, for the ``iteration`` control.
 
