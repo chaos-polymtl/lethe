@@ -344,6 +344,7 @@ The script first extracts the profiles of each snapshot that holds statistics (w
 
 The script also prints :math:`\mathrm{Re}_\tau` and the errors on the skin friction coefficient :math:`C_f = 2 \tau_w / (\rho U_b^2)` and on the profiles.
 
+----------------------
 Results and Discussion
 ----------------------
 
