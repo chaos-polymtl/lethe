@@ -37,7 +37,7 @@ The default parameters are:
 
   Whatever the control, a checkpoint is also written at the last time step.
 
-* ``frequency``: number of iteration before the first checkpoint, and between each subsequent checkpoint, for the ``iteration`` control.
+* ``frequency``: number of iterations before the first checkpoint, and between each subsequent checkpoint, for the ``iteration`` control.
 
 * ``time frequency``: simulated time (s) between checkpoints, for the ``time`` control. A checkpoint is written at the first time step that reaches each multiple of this value. This control cannot be used with a ``steady`` simulation.
 
