@@ -49,7 +49,7 @@ Temperature statistics on fluid:
 	 Average: 4.592028e-01
 	 Std-Dev: 4.150242e-01
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 2.424039e+00
+	 boundary 0 : 2.424040e+00
 	 boundary 1 : 1.505992e+00
 	 boundary 2 : -3.466523e+00
 	 boundary 3 : 2.324449e-01
