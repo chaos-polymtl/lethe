@@ -104,7 +104,7 @@ The Debye length uses the ion concentration of the mixture and the relative perm
 Consumption of the Free Lipids
 ------------------------------
 
-The particles consume the free lipids; at the end of the phase-space step, the free lipid concentration of every degree of freedom loses the mass of lipid gained by its particles:
+The particles nucleation and growth consume and release free lipids; at the end of the phase-space step, the free lipid concentration of every degree of freedom loses the mass of lipid gained by its particles:
 
 .. math::
 
