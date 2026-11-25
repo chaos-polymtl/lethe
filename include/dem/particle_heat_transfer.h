@@ -121,7 +121,7 @@ calculate_interstitial_gas_microgap_resistance(
  * contact.
  * @param[in] gas_parameter_m Gas parameter.
  *
- * @return Interstitial gas microgap thermal resistance for the pair in contact.
+ * @return Interstitial gas macrogap thermal resistance for the pair in contact.
  */
 double
 calculate_interstitial_gas_macrogap_resistance(
