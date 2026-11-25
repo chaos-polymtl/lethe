@@ -63,18 +63,20 @@ public:
   virtual void
   serialize(boost::archive::text_oarchive &ar) override
   {
-    ar &particles_of_each_type_remaining &current_inserting_particle_type
-      &insertion_counter;
+    ar &particles_of_each_type_remaining &current_inserting_particle_type;
   }
 
   /**
-   * @brief Deserialize an input archive to the volume insertion object. Checkpoints written before the insertion counter was introduced do not contain it, in which case the counter is reset to zero
+   * @brief Deserialize an input archive to the volume insertion object.
    *
    * @param[in] ar Input archive where the attributes are stored.
    *
    */
   virtual void
-  deserialize(boost::archive::text_iarchive &ar) override;
+  deserialize(boost::archive::text_iarchive &ar) override
+  {
+    ar &particles_of_each_type_remaining &current_inserting_particle_type;
+  }
 
 private:
   /**
@@ -97,11 +99,12 @@ private:
     unsigned int             &inserted_this_step);
 
   /**
-   * @brief Converts id of particles to volume insertion location
+   * @brief Converts the index of an insertion point to the insertion location
+   * of its particle, shifted by the random offsets.
    *
    * @param[out] insertion_location Insertion location of the particle
-   * @param[in] id Particle_id
-   * @param[in] offsets Random offsets indexed by spatial direction
+   * @param[in] id Index of the insertion point in the insertion box
+   * @param[in] offsets Random offsets applied to the insertion location.
    * @param[in] insertion_information DEM insertion parameters declared in the
    * .prm file
    */
@@ -127,10 +130,6 @@ private:
   /// Number of particles of each type that remain to be inserted in the
   /// upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
-
-  /// Number of insertion steps performed so far, used with the insertion
-  /// seed to generate different random offsets at every insertion step
-  unsigned int insertion_counter;
 
   // Number of insertion points in the x, y and z directions
   std::vector<int> number_of_particles_directions;

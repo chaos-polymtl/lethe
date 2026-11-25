@@ -5,8 +5,7 @@
 
 #include <dem/insertion_volume.h>
 
-#include <boost/archive/archive_exception.hpp>
-
+#include <array>
 #include <random>
 
 using namespace DEM;
@@ -28,7 +27,6 @@ InsertionVolume<dim, PropertiesIndex>::InsertionVolume(
                                     dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
-  , insertion_counter(0)
   , acceptance_fct(dem_parameters.insertion_info.insertion_acceptance_fct)
   , maximum_diameter(maximum_particle_diameter)
 {
@@ -91,10 +89,19 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      std::seed_seq seq{static_cast<unsigned int>(
-                          dem_parameters.insertion_info.seed_for_insertion),
-                        insertion_counter++};
-      std::mt19937  generator(seq);
+      // The engine is seeded at every insertion step from the insertion seed,
+      // the particle type being inserted and the number of particles of that
+      // type remaining. The type and the number remaining change at every
+      // insertion step, so each batch gets new offsets. They are also stored
+      // in the checkpoint, so a restarted simulation draws the same offsets
+      // as an uninterrupted one. std::seed_seq combines the three integers
+      // into the seed of the engine.
+      std::seed_seq seed_sequence{
+        static_cast<unsigned int>(
+          dem_parameters.insertion_info.seed_for_insertion),
+        current_inserting_particle_type,
+        particles_of_each_type_remaining};
+      std::mt19937 generator(seed_sequence);
 
       // Call the random number generator for the offsets, generating a random
       // number for each axis of dim
@@ -102,7 +109,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       create_random_number_container(
         random_number_vector,
         dim * inserted_this_step,
-        dem_parameters.insertion_info.insertion_maximum_offset,
+        {0., dem_parameters.insertion_info.insertion_maximum_offset},
         generator);
 
       Point<dim>              insertion_location;
@@ -156,32 +163,6 @@ InsertionVolume<dim, PropertiesIndex>::insert(
     }
 }
 
-
-template <int dim, typename PropertiesIndex>
-void
-InsertionVolume<dim, PropertiesIndex>::deserialize(
-  boost::archive::text_iarchive &ar)
-{
-  ar &particles_of_each_type_remaining &current_inserting_particle_type;
-
-  // Checkpoint written before the insertion counter was introduced do not
-  // contain it. Reading it then reaches the end of the archive, in which case
-  // the counter restarts from zero.
-  try
-    {
-      ar &insertion_counter;
-    }
-  catch (const boost::archive::archive_exception &exception)
-    {
-      if (exception.code !=
-          boost::archive::archive_exception::input_stream_error)
-        throw;
-
-      insertion_counter = 0;
-    }
-}
-
-
 // This function assigns the insertion points of the inserted particles
 template <int dim, typename PropertiesIndex>
 void
@@ -191,54 +172,37 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
   const Tensor<1, dim>                             &offsets,
   const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information)
 {
-  std::vector<int> insertion_index;
-  insertion_index.resize(dim);
+  // Index of the insertion point along each axis. The id runs first along the
+  // first direction of the direction sequence, then along the second and,
+  // in 3D, along the third.
+  std::array<unsigned int, dim> insertion_index{};
 
-  // First direction (axis) to have particles inserted
-  unsigned int axis_0 = insertion_information.direction_sequence[0];
-  unsigned int number_of_particles_0 = number_of_particles_directions[axis_0];
-  insertion_index[axis_0]            = id % number_of_particles_0;
-  insertion_location[axis_0] =
-    axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
-                          insertion_information.distance_threshold -
-                        offsets[axis_0]) *
-                         maximum_diameter;
+  const unsigned int axis_0 = insertion_information.direction_sequence[0];
+  const unsigned int axis_1 = insertion_information.direction_sequence[1];
 
-  // Second direction (axis) to have particles inserted
-  unsigned int axis_1 = insertion_information.direction_sequence.at(1);
+  const unsigned int number_of_particles_0 =
+    number_of_particles_directions[axis_0];
+  const unsigned int number_of_particles_1 =
+    number_of_particles_directions[axis_1];
 
-  if constexpr (dim == 2)
+  insertion_index[axis_0] = id % number_of_particles_0;
+  insertion_index[axis_1] =
+    (id / number_of_particles_0) % number_of_particles_1;
+
+  if constexpr (dim == 3)
     {
-      insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
-      insertion_location[axis_1] =
-        axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                              insertion_information.distance_threshold -
-                            offsets[axis_1]) *
-                             maximum_diameter;
-    }
-  else
-    {
-      unsigned int number_of_particles_1 =
-        number_of_particles_directions[axis_1];
-      insertion_index[axis_1] =
-        static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
-        (number_of_particles_0);
-      insertion_location[axis_1] =
-        axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                              insertion_information.distance_threshold -
-                            offsets[axis_1]) *
-                             maximum_diameter;
-
-      // Third direction (axis) to have particles inserted
-      unsigned int axis_2 = insertion_information.direction_sequence[2];
+      const unsigned int axis_2 = insertion_information.direction_sequence[2];
       insertion_index[axis_2] =
-        static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
-      insertion_location[axis_2] =
-        axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
-                              insertion_information.distance_threshold -
-                            offsets[axis_2]) *
-                             maximum_diameter;
+        id / (number_of_particles_0 * number_of_particles_1);
     }
+
+  // The offsets shift the particle from the center of its insertion point
+  for (int d = 0; d < dim; ++d)
+    insertion_location[d] =
+      axis_min[d] +
+      ((insertion_index[d] + 0.5) * insertion_information.distance_threshold -
+       offsets[d]) *
+        maximum_diameter;
 }
 
 

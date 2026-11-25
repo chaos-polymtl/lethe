@@ -300,18 +300,19 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 
   create_random_number_container(random_number_angular_1,
                                  n_photons_to_insert_this_proc,
-                                 2.0 * M_PI,
+                                 {0., 2.0 * M_PI},
                                  displacement_generator);
 
-  create_random_number_container(random_number_angular_2,
-                                 n_photons_to_insert_this_proc,
-                                 parameters.ray_tracing_info.max_angular_offset,
-                                 displacement_generator);
+  create_random_number_container(
+    random_number_angular_2,
+    n_photons_to_insert_this_proc,
+    {0., parameters.ray_tracing_info.max_angular_offset},
+    displacement_generator);
 
   create_random_number_container(
     random_number_position,
     3 * n_photons_to_insert_this_proc,
-    parameters.ray_tracing_info.max_insertion_offset,
+    {0., parameters.ray_tracing_info.max_insertion_offset},
     insertion_generator);
 
   // For the displacement direction randomness, we need to find two vectors
