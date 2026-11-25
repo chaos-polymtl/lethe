@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1060" height="490" viewBox="0 116 1060 490" role="img" aria-labelledby="title desc">
   <title id="title">Turbulent channel flow domain</title>
-  <desc id="desc">Two parallel walls separated by 2 in the wall-normal y direction. The channel extends 4π in the streamwise x direction and 2π in the spanwise z direction. An arrow marks the mean flow along positive x.</desc>
+  <desc id="desc">Two parallel walls separated by 2δ in the wall-normal y direction, where the half-height δ is 1. The channel extends 4πδ in the streamwise x direction and 2πδ in the spanwise z direction. An arrow marks the mean flow along positive x.</desc>
   <defs>
     <linearGradient id="upper-fill" x1="0" y1="0" x2="0.8" y2="1" gradientUnits="objectBoundingBox">
       <stop stop-color="#f1f7f9"/><stop offset="1" stop-color="#d0e2ea"/>
@@ -39,16 +39,18 @@
     <path d="M684 349 663 340 667 349 663 358Z"/>
   </g>
   <g id="extension-lines" class="extension">
-    <path d="M137 285H90 M137 495H90 M145 510V552 M805 510V552 M817 495H870 M972 380H1025"/>
+    <path d="M137 285H56 M137 495H56 M137 390H112 M145 510V552 M805 510V552 M817 495H870 M972 380H1025"/>
   </g>
   <g id="dimension-arrows" class="dimension">
-    <path d="M100 286V494"/>
+    <path d="M66 286V494"/>
+    <path d="M122 286V389"/>
     <path d="M146 542H804"/>
     <path d="M860 495 1015 380"/>
   </g>
   <g id="dimension-labels" class="math">
-    <text x="475" y="580"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">x</tspan><tspan dy="-5"> = 4π</tspan></text>
-    <text transform="translate(80 390) rotate(-90)"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">y</tspan><tspan dy="-5"> = 2</tspan></text>
-    <text transform="translate(959 464) rotate(-36.57)"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">z</tspan><tspan dy="-5"> = 2π</tspan></text>
+    <text x="475" y="580"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">x</tspan><tspan dy="-5"> = 4π</tspan><tspan font-style="italic">δ</tspan></text>
+    <text transform="translate(46 390) rotate(-90)"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">y</tspan><tspan dy="-5"> = 2</tspan><tspan font-style="italic">δ</tspan></text>
+    <text transform="translate(104 338) rotate(-90)"><tspan font-style="italic">δ</tspan> = 1</text>
+    <text transform="translate(959 464) rotate(-36.57)"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">z</tspan><tspan dy="-5"> = 2π</tspan><tspan font-style="italic">δ</tspan></text>
   </g>
 </svg>

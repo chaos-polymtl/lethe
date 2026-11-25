@@ -37,7 +37,7 @@ Description of the Case
 The fluid flows in the :math:`x` direction between two walls at :math:`y = -\delta` and :math:`y = \delta`. The domain is periodic in the streamwise (:math:`x`) and spanwise (:math:`z`) directions, with lengths :math:`L_x = 4\pi\delta` and :math:`L_z = 2\pi\delta`:
 
 .. image:: images/turbulent-channel.svg
-    :alt: Channel between two parallel walls, of height 2 in y, length 4 pi in x and width 2 pi in z, with the mean flow along x
+    :alt: Channel between two parallel walls, of height 2 delta in y with the half-height delta equal to 1, length 4 pi delta in x and width 2 pi delta in z, with the mean flow along x
     :align: center
     :width: 70%
     :name: channel_geometry
