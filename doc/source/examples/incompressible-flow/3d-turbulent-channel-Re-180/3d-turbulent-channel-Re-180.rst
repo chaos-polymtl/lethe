@@ -278,7 +278,7 @@ Linear Solver
       set minimum residual   = 1e-7
       set preconditioner     = gcmg
 
-      # MG parameters. hp: the coarsest level is Q1 on the coarse mesh.
+      # Multigrid parameters. hp: the coarsest level is Q1 on the coarse mesh.
       set mg verbosity                   = quiet
       set mg enable hessians in jacobian = false
       set mg coarsening type             = hp
@@ -313,7 +313,6 @@ Restart
 
 A checkpoint is written every 2000 time steps. If the simulation stops before its end (e.g., at the time limit of a job on a cluster), it resumes from the last checkpoint with ``restart = true``. The time averages are saved in the checkpoint and resume with it.
 
-
 ----------------------
 Running the Simulation
 ----------------------
@@ -346,7 +345,6 @@ The script first extracts the profiles of each snapshot that holds statistics (w
 The script also prints :math:`\mathrm{Re}_\tau` and the errors on the skin friction coefficient :math:`C_f = 2 \tau_w / (\rho U_b^2)` and on the profiles.
 
 
-----------------------
 Results and Discussion
 ----------------------
 
