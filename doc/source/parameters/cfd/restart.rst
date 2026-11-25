@@ -39,7 +39,7 @@ The default parameters are:
 
 * ``frequency``: number of iterations before the first checkpoint, and between each subsequent checkpoint, for the ``iteration`` control.
 
-* ``time frequency``: simulated time (s) between checkpoints, for the ``time`` control. A checkpoint is written at the first time step that reaches each multiple of this value. This control cannot be used with a ``steady`` simulation.
+* ``time frequency``: simulated time between checkpoints, for the ``time`` control. A checkpoint is written at the first time step that reaches each multiple of this value. This control cannot be used with a ``steady`` simulation.
 
 * ``wall time frequency``: elapsed wall time (s) between checkpoints, for the ``wall_time`` control. It is counted from the start of the simulation, then from the last checkpoint.
 
