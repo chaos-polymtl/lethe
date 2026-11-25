@@ -236,18 +236,6 @@ Post-processing
 
 The time averages of the velocity and of the Reynolds stresses start at :math:`t = 100`, well after the transition (the enstrophy settles after :math:`t \approx 50`). They are written in the ``.vtu`` files with the instantaneous fields. The kinetic energy and the enstrophy of the domain are written at every time step in ``output/kinetic_energy.dat`` and ``output/enstrophy.dat``. The ``forces`` subsection of the parameter file writes the force on each boundary in ``output/force.<id>.dat``; those on the walls (ids 2 and 3) give the wall shear stress.
 
-Stabilization
-~~~~~~~~~~~~~
-
-.. code-block:: text
-
-  subsection stabilization
-    set use default stabilization = false
-    set stabilization             = pspg_supg
-  end
-
-Equal-order Q2-Q2 elements require a pressure stabilization. The PSPG/SUPG stabilization is selected explicitly. See :doc:`../../../parameters/cfd/stabilization` for the other choices.
-
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 

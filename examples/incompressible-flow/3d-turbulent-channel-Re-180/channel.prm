@@ -62,15 +62,6 @@ subsection restart
 end
 
 #---------------------------------------------------
-# Stabilization
-#---------------------------------------------------
-
-subsection stabilization
-  set use default stabilization = false
-  set stabilization             = pspg_supg
-end
-
-#---------------------------------------------------
 # Timer
 #---------------------------------------------------
 
