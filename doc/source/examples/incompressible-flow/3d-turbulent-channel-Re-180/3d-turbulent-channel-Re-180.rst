@@ -314,7 +314,7 @@ The simulation is launched in parallel with the ``lethe-fluid-matrix-free`` exec
 
 .. warning::
 
-  This simulation must be run on a cluster. On the :math:`64 \times 32 \times 64` mesh of the parameter file, it took 3.7 hours on 192 cores (one node of two Intel Xeon 6972P), for about 7,200 time steps. On the :math:`128 \times 64 \times 128` mesh (``initial refinement = 2``), it took 28.5 hours on 384 cores (two nodes of two AMD EPYC 9654), for about 14,600 time steps. To try the case on a workstation, reduce ``time end``, or use the coarse mesh (``initial refinement = 0``), which is too coarse to give accurate statistics.
+  This simulation must be run on a cluster. On the :math:`64 \times 32 \times 64` mesh of the parameter file, it took 3.7 hours on 192 cores (one node of two Intel Xeon 6972P), for about 7,200 time steps. On the :math:`128 \times 64 \times 128` mesh (``initial refinement = 2``), it took 28.5 hours on 384 cores (two nodes of two AMD EPYC 9654), for about 14,600 time steps. The simulation requires more computing power due to the number of time steps required. The case requires at most 20GB of RAM to run and can also be run on a lower core count (e.g. 16), but at the cost of more hours of compute time.
 
 Once the simulation is over, the post-processing script compares the statistics with the DNS of Lee and Moser [#lee2015]_. It needs ``numpy`` and ``matplotlib``. In the folder of the simulation:
 
