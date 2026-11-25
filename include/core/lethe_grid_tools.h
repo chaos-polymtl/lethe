@@ -12,6 +12,8 @@
 
 #include <deal.II/fe/mapping_q_cache.h>
 
+#include <tuple>
+
 using namespace dealii;
 namespace LetheGridTools
 {
@@ -331,8 +333,13 @@ namespace LetheGridTools
   prepare_triangle_projection_data(const std::vector<Point<dim>> &triangle);
 
   /**
-   * @brief Calculates the distance between particles and a triangle (defined using
-   * three vertices). The full calculation is taken from  Geometric Tools for
+   * @brief Finds the contact point between a triangle (defined using three
+   * vertices) and a particle center, the normal contact vector and the contact
+   * type. The particle center is first compared to the plane formed by the
+   * triangle. If the particle is farther from the plane than the defined
+   * cutoff distance, the function returns right away with a
+   * "pass_distance_check = false". Otherwise, the full contact point
+   * calculation is taken from  Geometric Tools for
    * Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to triangle.
    * The entire reference is available at:
    * https://www.sciencedirect.com/science/article/pii/B9781558605947500138
@@ -342,27 +349,30 @@ namespace LetheGridTools
    * readability.
    *
    * @tparam dim An integer that denotes the number of spatial dimensions.
-   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    *
    * @param triangle_data Precomputed particle-independent geometric data of
    * the triangle, from prepare_triangle_projection_data. Reusing it across
    * several particles tested against the same triangle avoids recomputing
    * this triangle's edge vectors, normal and fundamental-form coefficients
    * for each particle.
-   * @param particle A particle_iterator that refers to the particle
-   * located in the background (base) cell
+   * @param particle_position Location of the particle center.
+   * @param cutoff_distance Largest distance between the particle center and
+   * the plane of the triangle for which the projection is calculated.
    *
-   * @return A tuple in which: 0. a bool to determine if the particle is
-   * less than a radius away from the triangle plane, 1. a projected
+   * @return A tuple in which: 0. a bool that is true if the particle center
+   * is at most cutoff_distance away from the triangle plane, 1. a projected
    * location of the particle on the triangle, 2. a normal contact
    * vector between the triangle and the particle, 3. a contact
-   * type between the particle and the triangle.
+   * type between the particle and the triangle. When the bool is false, the
+   * projected location and the normal vector are zero and the contact type is
+   * no_contact.
    */
-  template <int dim, typename PropertiesIndex>
+  template <int dim>
   std::tuple<bool, Point<3>, Tensor<1, 3>, ParticleTriangleContactIndicator>
   find_particle_triangle_projection(
-    const TriangleProjectionData<dim>      &triangle_data,
-    const Particles::ParticleIterator<dim> &particle);
+    const TriangleProjectionData<dim> &triangle_data,
+    const Point<dim>                  &particle_position,
+    const double                       cutoff_distance);
 
   /**
    * @brief Calculates the distance between points and a triangle (defined using

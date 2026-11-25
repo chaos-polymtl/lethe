@@ -172,7 +172,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      */
     virtual void
     declare_parameters(ParameterHandler &prm);
@@ -180,7 +180,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      */
     virtual void
     parse_parameters(ParameterHandler &prm);
@@ -229,6 +229,9 @@ namespace Parameters
 
     /// Project particle velocity onto the fluid mesh.
     bool project_particle_velocity = false;
+
+    /// Output QCM quadrature points and filter characteristics.
+    bool output_qcm = false;
   };
 
   /**
@@ -307,7 +310,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      */
     static void
     declare_parameters(ParameterHandler &prm);
@@ -315,7 +318,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);

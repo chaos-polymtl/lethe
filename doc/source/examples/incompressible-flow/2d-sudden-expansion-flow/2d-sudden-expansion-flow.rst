@@ -102,6 +102,15 @@ The mesh is composed of bilinear quadrilateral elements, and the problem geometr
       set file name = ../two-dimensional-jet.msh
     end
 
+.. note::
+
+  The mesh can be generated from the folder of the example using the following line:
+
+  .. code-block:: text
+    :class: copy-button
+
+    gmsh -2 two-dimensional-jet.geo
+
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 

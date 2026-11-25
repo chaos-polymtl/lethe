@@ -14,6 +14,8 @@
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h
 
+#include <deal.II/base/exceptions.h>
+
 #include <algorithm>
 #include <string>
 
@@ -36,10 +38,23 @@ enum PhysicsID : unsigned int
   CLS = 3,
   /// Cahn-Hilliard (Phase indicator, Potential)
   cahn_hilliard = 4,
-  /// Void fraction
+  /// Void fraction (not an auxiliary physics). Computed by the particle
+  /// projector of the VANS solvers and registered by them in the
+  /// multiphysics interface. Only available with the VANS formulation.
   void_fraction = 5,
   /// Time-harmonic electromagnetics (Electric field, Magnetic field)
-  electromagnetics = 6
+  electromagnetics = 6,
+  /// Euler-Euler solid phase (solid velocity, solid volume fraction)
+  continuum_solid_dynamics = 7,
+  /// Projected particle temperature from DEM (not an auxiliary physics). Like
+  /// the void fraction, it is computed by the particle projector of the VANS
+  /// solvers and registered by them in the multiphysics interface. Only
+  /// available with the VANS formulation in thermal CFD-DEM simulations
+  /// (solver type = dem_mp).
+  particle_temperature = 8,
+  /// Quadrature method of moments (scalars and moments of the particle size
+  /// distribution)
+  qmom = 9
 };
 
 /**
@@ -88,7 +103,7 @@ enum class Variable : unsigned int
  *
  */
 inline PhysicsID
-get_physics_id(std::string physics_name)
+get_physics_id(const std::string &physics_name)
 {
   if (physics_name == "fluid dynamics")
     return PhysicsID::fluid_dynamics;
@@ -104,6 +119,10 @@ get_physics_id(std::string physics_name)
     return PhysicsID::void_fraction;
   else if (physics_name == "electromagnetics")
     return PhysicsID::electromagnetics;
+  else if (physics_name == "continuum solid dynamics")
+    return PhysicsID::continuum_solid_dynamics;
+  else if (physics_name == "qmom")
+    return PhysicsID::qmom;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

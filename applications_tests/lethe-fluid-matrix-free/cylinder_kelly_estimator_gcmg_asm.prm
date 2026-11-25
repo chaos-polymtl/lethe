@@ -171,7 +171,7 @@ subsection linear solver
 
     #smoother
     set mg smoother iterations          = 2
-    set mg smoother preconditioner type = additive schwarz method
+    set mg smoother preconditioner type = additive_schwarz_method
 
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 5

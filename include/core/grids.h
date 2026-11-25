@@ -120,7 +120,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 template <int dim, int spacedim = dim>
 void
 refine_triangulation_at_boundaries(
-  const std::vector<int>                                 boundary_ids,
+  const std::vector<int>                                &boundary_ids,
   const unsigned int                                     n_refinement,
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation)
 {

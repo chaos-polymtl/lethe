@@ -62,7 +62,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -71,7 +71,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -242,7 +242,7 @@ namespace Parameters
                              Utilities::int_to_string(spacedim) +
                              " dimensional point."));
 
-      for (unsigned int i = 0; i < spacedim; ++i)
+      for (int i = 0; i < spacedim; ++i)
         {
           center_of_rotation[i] = temp.at(i);
         }
@@ -268,13 +268,12 @@ namespace Parameters
   class Nitsche
   {
   public:
-    Nitsche()
-    {}
+    Nitsche() = default;
 
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      */
     void
     declare_parameters(ParameterHandler &prm);
@@ -282,7 +281,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);
@@ -308,12 +307,13 @@ namespace Parameters
 
     prm.enter_subsection("nitsche");
     {
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "verbosity",
-        "quiet",
-        Patterns::Selection("quiet|verbose"),
-        "State whether the force on the solid should be printed "
-        "Choices are <quiet|verbose>.");
+        Verbosity::quiet,
+        "State whether the force on the solid should be printed.",
+        deprecated_verbosity_names(),
+        quiet_or_verbose());
 
       prm.declare_entry("number of solids",
                         "0",
@@ -335,11 +335,9 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
-      const std::string op = prm.get("verbosity");
-      if (op == "verbose")
-        verbosity = Verbosity::verbose;
-      if (op == "quiet")
-        verbosity = Verbosity::quiet;
+      verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                            deprecated_verbosity_names(),
+                                            "verbosity");
 
       number_solids = prm.get_integer("number of solids");
       nitsche_solids.resize(number_solids);
@@ -366,13 +364,12 @@ namespace Parameters
   class RigidSolidObject
   {
   public:
-    RigidSolidObject()
-    {}
+    RigidSolidObject() = default;
 
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -381,7 +378,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      * @param[in] id Index of the solid object.
      */
     void
@@ -444,12 +441,10 @@ namespace Parameters
                         Patterns::List(Patterns::Double()),
                         "Solid object center of rotation");
 
-      prm.declare_entry("thermal boundary type",
-                        enum_to_string(
-                          SolidObjectThermalBoundaryType::adiabatic),
-                        Patterns::Selection("adiabatic|isothermal"),
-                        "Choosing thermal boundary type"
-                        "Choices are <adiabatic|isothermal>.");
+      declare_enum_entry(prm,
+                         "thermal boundary type",
+                         SolidObjectThermalBoundaryType::adiabatic,
+                         "Choosing thermal boundary type.");
 
       // Isothermal boundary
       prm.enter_subsection("temperature");
@@ -504,7 +499,7 @@ namespace Parameters
                              Utilities::int_to_string(spacedim) +
                              " dimensional point."));
 
-      for (unsigned int i = 0; i < spacedim; ++i)
+      for (int i = 0; i < spacedim; ++i)
         {
           center_of_rotation[i] = temp.at(i);
         }
@@ -540,13 +535,12 @@ namespace Parameters
   class DEMSolidObjects
   {
   public:
-    DEMSolidObjects()
-    {}
+    DEMSolidObjects() = default;
 
     /**
      * @brief Declare the parameters in the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in,out] prm The parameter handler object.
      */
     void
     declare_parameters(ParameterHandler &prm);
@@ -554,7 +548,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters from the parameter handler.
      *
-     * @param[in,out] prm The parameter handler.
+     * @param[in] prm The parameter handler object.
      */
     void
     parse_parameters(ParameterHandler &prm);

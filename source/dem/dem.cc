@@ -12,6 +12,7 @@
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/input_parameter_inspection.h>
+#include <dem/insertion_packed.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/multiphysics_integrator.h>
 #include <dem/output_force_torque_calculation.h>
@@ -554,11 +555,6 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
 
       action_manager->particle_insertion_step();
     }
-
-  if (parameters.insertion_info.insertion_method ==
-      InsertionInfo<dim>::InsertionMethod::packed)
-    InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-      particle_handler);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -591,19 +587,44 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
           contact_outcome);
     }
 
-  particle_point_line_contact_force_object
-    .calculate_particle_point_contact_force(
-      &contact_manager.get_particle_points_in_contact(),
-      parameters.lagrangian_physical_properties,
-      force);
-
-  if constexpr (dim == 3)
+  // Particle-point and particle-line contacts. Boundary points and lines are
+  // part of the walls, so they use the shift model with the packed insertion
+  // method, like the particle-wall contacts. The displacements are accumulated
+  // in the force container.
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
     {
       particle_point_line_contact_force_object
-        .calculate_particle_line_contact_force(
-          &contact_manager.get_particle_lines_in_contact(),
+        .calculate_particle_point_shift_displacement(
+          contact_manager.get_particle_points_in_contact(),
+          parameters.insertion_info,
+          force);
+
+      if constexpr (dim == 3)
+        {
+          particle_point_line_contact_force_object
+            .calculate_particle_line_shift_displacement(
+              contact_manager.get_particle_lines_in_contact(),
+              parameters.insertion_info,
+              force);
+        }
+    }
+  else // If this is a regular DEM simulation
+    {
+      particle_point_line_contact_force_object
+        .calculate_particle_point_contact_force(
+          &contact_manager.get_particle_points_in_contact(),
           parameters.lagrangian_physical_properties,
           force);
+
+      if constexpr (dim == 3)
+        {
+          particle_point_line_contact_force_object
+            .calculate_particle_line_contact_force(
+              &contact_manager.get_particle_lines_in_contact(),
+              parameters.lagrangian_physical_properties,
+              force);
+        }
     }
 }
 
@@ -612,6 +633,13 @@ void
 DEMSolver<dim, PropertiesIndex>::move_solid_objects()
 {
   if (!action_manager->check_solid_objects_enabled())
+    return;
+
+  // The packed insertion method arranges the particles around the solid
+  // objects at their initial position. Its iterations are pseudo-time steps
+  // that only separate the particles, so the solid objects do not move.
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
     return;
 
   // Move the solid triangulations, previous time must be used here
@@ -768,6 +796,17 @@ DEMSolver<dim, PropertiesIndex>::compute_contact_forces()
     contact_manager.get_ghost_local_periodic_adjacent_particles(),
     simulation_control->get_time_step(),
     contact_outcome);
+
+  // With the packed insertion method, the force container now holds only the
+  // displacements of the particle-particle contacts. They are limited to the
+  // particle radius before the particle-wall and particle-solid contacts add
+  // theirs, so that the other particles cannot push a particle through a wall
+  // or a solid surface.
+  if (parameters.insertion_info.insertion_method ==
+      InsertionInfo<dim>::InsertionMethod::packed)
+    InsertionPacked<dim, PropertiesIndex>::
+      limit_particle_particle_shift_displacement(particle_handler,
+                                                 contact_outcome);
 
   // Update the boundary points and vectors (if grid motion)
   // We have to update the positions of the points on boundary faces and
@@ -975,7 +1014,7 @@ DEMSolver<dim, PropertiesIndex>::report_statistics()
 {
   // Update statistics on the contact list
   double number_of_list_built_since_last_log =
-    double(contact_build_number) - contact_list.total;
+    static_cast<double>(contact_build_number) - contact_list.total;
   contact_list.max =
     std::max(number_of_list_built_since_last_log, contact_list.max);
   contact_list.min =
@@ -1096,8 +1135,11 @@ DEMSolver<dim, PropertiesIndex>::packed_insertion_report_and_status()
   unsigned int number_of_pp_contact_on_proc =
     particle_particle_contact_force_object->get_number_of_contacts();
 
+  // Boundary points and lines are part of the walls, so their contacts are
+  // counted as particle-wall contacts
   unsigned int number_of_pw_contact_on_proc =
-    particle_wall_contact_force_object->get_number_of_contacts();
+    particle_wall_contact_force_object->get_number_of_contacts() +
+    particle_point_line_contact_force_object.get_number_of_contacts();
 
   const unsigned int total_number_of_pp_contacts =
     Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
@@ -1121,11 +1163,14 @@ DEMSolver<dim, PropertiesIndex>::packed_insertion_report_and_status()
 
   particle_particle_contact_force_object->reset_number_of_contacts();
   particle_wall_contact_force_object->reset_number_of_contacts();
+  particle_point_line_contact_force_object.reset_number_of_contacts();
 
-  InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
-    particle_handler, maximum_particle_diameter, displacement);
-  InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-    particle_handler);
+  // Displace the particles using the displacements accumulated by the shift
+  // contact models. A particle may not move by more than the largest particle
+  // diameter during a pseudo-time step. This is important, otherwise a particle
+  // could move to a non-neighboring cell within one pseudo-time step.
+  InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
+    particle_handler, maximum_particle_diameter, contact_outcome, displacement);
 
   // Packed insertion is enabled and simulation will continue.
   return false;
@@ -1268,7 +1313,26 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // that no particle-wall or particle-particle contact remain, we break
       // the simulation control loop.
       if (packed_insertion_report_and_status())
-        break;
+        {
+          // The packing ends the simulation, so this is its last time step.
+          if (checkpoint_controller.is_checkpoint_time_step(
+                simulation_control->get_iteration_number(), true))
+            {
+              write_checkpoint(computing_timer,
+                               parameters,
+                               simulation_control,
+                               particles_pvdhandler,
+                               grid_pvdhandler,
+                               triangulation,
+                               particle_handler,
+                               insertion_object,
+                               solid_surfaces,
+                               pcout,
+                               mpi_communicator,
+                               checkpoint_controller);
+            }
+          break;
+        }
 
       // Visualization
       if (simulation_control->is_output_iteration())
@@ -1308,7 +1372,8 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Write checkpoint if needed
       if (checkpoint_controller.is_checkpoint_time_step(
-            simulation_control->get_iteration_number()))
+            simulation_control->get_iteration_number(),
+            simulation_control->is_at_end()))
         {
           write_checkpoint(computing_timer,
                            parameters,

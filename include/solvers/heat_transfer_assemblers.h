@@ -5,12 +5,15 @@
 #define lethe_heat_transfer_assemblers_h
 
 #include <core/evaporation_model.h>
+#include <core/heat_transfer_boundary_conditions.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_assemblers.h>
+
+#include <utility>
 
 /**
  * @brief A pure virtual class that serves as an interface for all
@@ -126,7 +129,7 @@ public:
  *
  * @param simulation_control Shared pointer of the SimulationControl object
  * controlling the current simulation
- * @param p_boundary_conditions_ht HTBoundaryConditions object that hold
+ * @param p_boundary_conditions_ht HeatTransferBoundaryConditions object that hold
  * boundary condition information for the Heat-Transfer solver
  *
  * @ingroup assemblers
@@ -137,7 +140,7 @@ class HeatTransferAssemblerRobinBC : public HeatTransferAssemblerBase<dim>
 public:
   HeatTransferAssemblerRobinBC(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::HTBoundaryConditions<dim>
+    const BoundaryConditions::HeatTransferBoundaryConditions<dim>
       &p_boundary_conditions_ht)
     : simulation_control(simulation_control)
     , boundary_conditions_ht(p_boundary_conditions_ht)
@@ -162,8 +165,9 @@ public:
   assemble_rhs(const HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData          &copy_data) override;
 
-  const std::shared_ptr<SimulationControl>             simulation_control;
-  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const BoundaryConditions::HeatTransferBoundaryConditions<dim>
+    &boundary_conditions_ht;
 };
 
 
@@ -320,7 +324,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -370,7 +374,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -419,7 +423,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -473,7 +477,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**
@@ -528,7 +532,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
-    , laser_parameters(p_laser_parameters)
+    , laser_parameters(std::move(p_laser_parameters))
   {}
 
   /**

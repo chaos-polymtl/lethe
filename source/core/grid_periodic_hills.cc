@@ -6,6 +6,8 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <cmath>
+
 template <int dim, int spacedim>
 GridPeriodicHills<dim, spacedim>::GridPeriodicHills(
   const std::string &grid_arguments)
@@ -25,8 +27,8 @@ GridPeriodicHills<dim, spacedim>::GridPeriodicHills(
   if (dim == 3)
     repetitions_z = static_cast<int>(arguments_double[4]);
 
-  if (abs(alpha - 1) < 1e-6)
-    alpha = int(alpha);
+  if (std::abs(alpha - 1) < 1e-6)
+    alpha = 1.;
 }
 
 

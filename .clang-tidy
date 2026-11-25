@@ -6,6 +6,37 @@
 #
 # Rationale for disabling warnings:
 #
+# - bugprone-branch-clone:
+#   Flags if/else-if chains that give several cases the same body, e.g. the
+#   boundary condition types that need no constraint, each in its own empty
+#   branch with a comment explaining why. Merging them into one long
+#   condition makes such code harder to read.
+#
+# - bugprone-easily-swappable-parameters:
+#   Flags every function taking two adjacent arguments of the same type (two
+#   doubles, two unsigned ints), which is most of a numerical code.
+#
+# - bugprone-empty-catch:
+#   The only empty handlers catch Mapping::ExcTransformationFailed, which is
+#   how deal.II reports that a point lies outside a cell. Ignoring it is the
+#   intended behavior, and the check cannot be told so inside templates, where
+#   the caught type is dependent.
+#
+# - bugprone-exception-escape:
+#   Flags every destructor, move operation and noexcept function that calls
+#   code which may throw, which is all deal.II code through AssertThrow.
+#
+# - bugprone-implicit-widening-of-multiplication-result:
+#   Flags index arithmetic such as n_dofs_per_cell * dim used as a 64-bit
+#   index, for limited utility.
+#
+# - bugprone-narrowing-conversions:
+#   Conversions between unsigned int, types::global_dof_index and double are
+#   everywhere in deal.II-based code.
+#
+# - bugprone-unchecked-optional-access:
+#   A slow dataflow analysis, for little use of std::optional in Lethe.
+#
 # - selected modernize-* warnings:
 #   Some of these produce a lot of noise for limited utility.
 #
@@ -16,10 +47,46 @@
 #   All modern compilers perform the return value optimization and we prefer
 #   to keep things const.
 #
+# - performance-enum-size:
+#   We don't care if an enum could use a smaller base type than
+#   unsigned int.
+#
+# Check names:
+#   Every check named below, excluded ones included, must exist in clang-tidy
+#   20 (the CI version): run_clang_tidy.sh validates this file with
+#   --verify-config, which rejects unknown names. For this reason,
+#   modernize-avoid-c-style-cast, which only exists from clang-tidy 22 on, is
+#   not excluded. It reports C-style casts, which google-readability-casting
+#   already keeps out of the code, so a run with clang-tidy 22 still agrees
+#   with the CI.
+#
+# CheckOptions:
+#
+# - bugprone-assert-side-effect.AssertMacros:
+#   The assertions that are removed in Release (deal.II's and the C assert). A
+#   side effect in their condition makes Debug and Release behave differently.
+#   AssertThrow is not listed, since it is kept in Release.
+#
+# HeaderFilterRegex:
+#   Lethe headers are reached as source/<module>/../../include/<module>/...,
+#   so the regex must not assume a normalized path. It skips the bundled
+#   include/ankerl/ library.
+#
 
 Checks: >
   -*,
+  bugprone-*,
+  -bugprone-branch-clone,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-empty-catch,
+  -bugprone-exception-escape,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-narrowing-conversions,
+  -bugprone-unchecked-optional-access,
   cppcoreguidelines-pro-type-static-cast-downcast,
+  google-readability-casting,
+  misc-redundant-expression,
+  misc-throw-by-value-catch-by-reference,
   modernize-*,
   -modernize-avoid-c-arrays,
   -modernize-concat-nested-namespaces,
@@ -34,9 +101,14 @@ Checks: >
   -modernize-use-transparent-functors,
   mpi-*,
   performance-*,
+  -performance-enum-size,
   -performance-inefficient-string-concatenation,
   -performance-no-automatic-move,
   -performance-avoid-endl,
   readability-qualified-auto
 
+CheckOptions:
+  bugprone-assert-side-effect.AssertMacros: 'assert,Assert,AssertDimension,AssertIndexRange,AssertIsFinite'
+
+HeaderFilterRegex: '.*/include/(core|dem|solvers|fem-dem)/.*'
 WarningsAsErrors: '*'

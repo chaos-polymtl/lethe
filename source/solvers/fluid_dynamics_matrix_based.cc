@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/checkpoint_control.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
 #include <core/multiphysics.h>
@@ -175,11 +176,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
       this->simulation_parameters.initial_condition->type ==
         Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
     {
-      this->average_velocities->initialize_vectors(
-        this->locally_owned_dofs,
-        this->locally_relevant_dofs,
-        this->fe->n_dofs_per_vertex(),
-        this->mpi_communicator);
+      this->average_velocities->initialize_vectors(this->locally_owned_dofs,
+                                                   this->locally_relevant_dofs,
+                                                   this->mpi_communicator);
     }
 
   double global_volume =
@@ -383,10 +382,26 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_assemblers()
 {
+  // The SDIRK time integration is only implemented for the single-phase
+  // Navier-Stokes equations with a constant density.
+  if (this->simulation_control->is_sdirk())
+    {
+      AssertThrow(!this->simulation_parameters.multiphysics.CLS &&
+                    !this->simulation_parameters.multiphysics.cahn_hilliard,
+                  ExcMessage("SDIRK time-stepping methods are not supported "
+                             "for multiphase flows (CLS or Cahn-Hilliard). "
+                             "Use a BDF method instead."));
+      AssertThrow(this->simulation_parameters.physical_properties_manager
+                    .density_is_constant(),
+                  ExcMessage("SDIRK time-stepping methods are not supported "
+                             "for flows with a variable density. Use a BDF "
+                             "method instead."));
+    }
+
   this->assemblers.clear();
 
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::function_weak))
+        BoundaryConditions::FluidDynamicsBoundaryType::function_weak))
     {
       this->assemblers.emplace_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
@@ -394,21 +409,23 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::partial_slip))
+        BoundaryConditions::FluidDynamicsBoundaryType::partial_slip))
     {
       this->assemblers.emplace_back(
         std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::outlet))
     {
       this->assemblers.emplace_back(
         std::make_shared<OutletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+  if (this->check_existance_of_bc(
+        BoundaryConditions::FluidDynamicsBoundaryType::pressure))
     {
       this->assemblers.emplace_back(
         std::make_shared<PressureBoundaryCondition<dim>>(
@@ -417,7 +434,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
     }
 
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::neumann_traction))
+        BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction))
     {
       this->assemblers.emplace_back(
         std::make_shared<NeumannTractionBoundaryCondition<dim>>(
@@ -1207,6 +1224,10 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->pcout << "************************" << std::endl;
       this->pcout << "---> Simulation Restart " << std::endl;
       this->pcout << "************************" << std::endl;
+      this->checkpoint_controller.read(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
       this->read_checkpoint();
     }
   else if (initial_condition_type ==
@@ -1373,6 +1394,16 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->average_velocity_folder +
         this->simulation_parameters.initial_condition
           ->average_velocity_file_name;
+
+      // Load the checkpoint controller of that simulation, which gives the id
+      // of its last checkpoint
+      const unsigned int checkpoint_id = CheckpointControl::read_checkpoint_id(
+        checkpoint_file_name,
+        "checkpoint file of the checkpoint controller, given by "
+        "'subsection initial conditions' - 'subsection average "
+        "velocity profile' - 'set checkpoint file name'",
+        this->mpi_communicator);
+      checkpoint_file_name += "_" + Utilities::int_to_string(checkpoint_id);
 
       // The average velocity profile needs to come from the results of a
       // simulation. The checkpoint/restart mechanism is used to obtain all the
@@ -2285,12 +2316,9 @@ FluidDynamicsMatrixBased<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->forcing_function->set_time(
-        this->simulation_control->get_current_time());
-
-      // We allow the physics to update their boundary conditions
+      // We allow the physics to update their forcing and boundary conditions
       // according to their own parameters
-      this->update_boundary_conditions();
+      this->update_forcing_and_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
       this->simulation_control->print_progression(this->pcout);

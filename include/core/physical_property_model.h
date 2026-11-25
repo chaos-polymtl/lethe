@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_physical_property_model_h
@@ -6,6 +6,8 @@
 
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+
+#include <cstdint>
 
 using namespace dealii;
 
@@ -34,7 +36,7 @@ DeclException2(PhysicialPropertyModelFieldUndefined,
  * and the suffix _p2 implies that the field is at time t_dt (previous two
  * steps).
  */
-enum field : int
+enum class field : int
 {
   shear_rate,
   temperature,
@@ -44,7 +46,8 @@ enum field : int
   phase_order_cahn_hilliard,
   phase_order_cahn_hilliard_filtered,
   levelset,
-  tracer_concentration
+  tracer_concentration,
+  void_fraction
 };
 
 inline void
@@ -75,24 +78,36 @@ class PhysicalPropertyModel
 {
 public:
   /**
+   * @brief Part of a complex physical property returned by a model. A
+   * PhysicalPropertyModel can only return a single double value, so this flag
+   * is used to select which part of the complex property is returned.
+   */
+  enum class ComplexComponent : std::int8_t
+  {
+    real,
+    imag
+  };
+
+  /**
    * @brief Default constructor. Set the model_depends_on to false for all variables.
    */
   PhysicalPropertyModel()
   {
-    model_depends_on[shear_rate]                = false;
-    model_depends_on[temperature]               = false;
-    model_depends_on[temperature_p1]            = false;
-    model_depends_on[temperature_p2]            = false;
-    model_depends_on[pressure]                  = false;
-    model_depends_on[phase_order_cahn_hilliard] = false;
-    model_depends_on[levelset]                  = false;
-    model_depends_on[tracer_concentration]      = false;
+    model_depends_on[field::shear_rate]                = false;
+    model_depends_on[field::temperature]               = false;
+    model_depends_on[field::temperature_p1]            = false;
+    model_depends_on[field::temperature_p2]            = false;
+    model_depends_on[field::pressure]                  = false;
+    model_depends_on[field::phase_order_cahn_hilliard] = false;
+    model_depends_on[field::levelset]                  = false;
+    model_depends_on[field::tracer_concentration]      = false;
+    model_depends_on[field::void_fraction]             = false;
   }
 
   /**
    * @brief Default virtual destructor. Does not do anything.
    */
-  virtual ~PhysicalPropertyModel(){};
+  virtual ~PhysicalPropertyModel() = default;
 
   /**
    * @brief Returns true if the PhysicalPropertyModel depends on a field, false if not.

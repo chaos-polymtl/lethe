@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/shape.h>
@@ -23,7 +23,6 @@ template <int dim>
 double
 Shape<dim>::displaced_volume()
 {
-  StandardExceptions::ExcNotImplemented();
   return 0.;
 }
 
@@ -262,7 +261,7 @@ template <int dim>
 double
 Shape<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
   return this->value(evaluation_point);
@@ -272,7 +271,7 @@ template <int dim>
 Tensor<1, dim>
 Shape<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
   return this->gradient(evaluation_point);
@@ -363,21 +362,20 @@ Sphere<dim>::distance_to_shape_with_cell_guess(
     {
       Tensor<1, dim> center_to_center_vector =
         shape.get_position() - this->position;
-      distance = (center_to_center_vector.norm() - this->effective_radius -
-                  shape.effective_radius) /
-                 2;
+      distance = center_to_center_vector.norm() - this->effective_radius -
+                 shape.effective_radius;
       normal = center_to_center_vector / center_to_center_vector.norm();
+      // The contact point is located halfway between the two surfaces.
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
   else
     {
-      distance = (shape.value_with_cell_guess(this->position, cell) -
-                  this->effective_radius) /
-                 2;
+      distance = shape.value_with_cell_guess(this->position, cell) -
+                 this->effective_radius;
       normal = -shape.gradient_with_cell_guess(this->position, cell);
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
 
   return std::make_tuple(distance, normal, contact_point);
@@ -400,19 +398,19 @@ Sphere<dim>::distance_to_shape(Shape<dim>              &shape,
     {
       Tensor<1, dim> center_to_center_vector =
         shape.get_position() - this->position;
-      distance = (center_to_center_vector.norm() - this->effective_radius -
-                  shape.effective_radius) /
-                 2;
+      distance = center_to_center_vector.norm() - this->effective_radius -
+                 shape.effective_radius;
       normal = center_to_center_vector / center_to_center_vector.norm();
+      // The contact point is located halfway between the two surfaces.
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
   else
     {
-      distance = (shape.value(this->position) - this->effective_radius) / 2;
+      distance = shape.value(this->position) - this->effective_radius;
       normal   = -shape.gradient(this->position);
       contact_point =
-        this->position + normal * (this->effective_radius + distance);
+        this->position + normal * (this->effective_radius + 0.5 * distance);
     }
 
   return std::make_tuple(distance, normal, contact_point);
@@ -428,8 +426,8 @@ Sphere<dim>::local_curvature_radius(Point<dim> p)
 template <int dim>
 double
 Sphere<dim>::local_curvature_radius_with_cell_guess(
-  const Point<dim>                                     p,
-  const typename DoFHandler<dim>::active_cell_iterator cell)
+  const Point<dim>                                     &p,
+  const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   (void)cell;
   return (this->position - p).norm();
@@ -592,7 +590,7 @@ template <int dim>
 double
 Superquadric<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component = 0*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -666,7 +664,7 @@ template <int dim>
 Tensor<1, dim>
 Superquadric<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -753,7 +751,7 @@ template <int dim>
 double
 OpenCascadeShape<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
@@ -903,7 +901,7 @@ template <int dim>
 Tensor<1, dim>
 OpenCascadeShape<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
   const unsigned int /*component*/)
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
@@ -1313,8 +1311,8 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -1405,8 +1403,8 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
 template <int dim>
 Tensor<1, dim>
 CompositeShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -1634,8 +1632,8 @@ RBFShape<dim>::RBFShape(const std::string  &shape_arguments_str,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   double bounding_box_distance = bounding_box->value(evaluation_point);
@@ -1664,8 +1662,8 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim>                                     &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int /*component*/)
 {
   Point<dim>     centered_point        = evaluation_point;
@@ -1908,7 +1906,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
                   // either
                   continue;
               }
-            catch (TriaAccessorExceptions::ExcCellHasNoParent())
+            catch (const TriaAccessorExceptions::ExcCellHasNoParent &)
               {}
 
           std::shared_ptr<std::vector<size_t>> current_cell_nodes =
@@ -2058,7 +2056,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
             iterable_nodes.swap(*parent_iterator->second);
           }
       }
-    catch (TriaAccessorExceptions::ExcCellHasNoParent())
+    catch (const TriaAccessorExceptions::ExcCellHasNoParent &)
       {}
 
   double       distance, max_distance;
@@ -2337,7 +2335,7 @@ RBFShape<dim>::evaluate_basis_function_derivative(
 template <int dim>
 void
 RBFShape<dim>::swap_iterable_nodes(
-  const typename DoFHandler<dim>::active_cell_iterator cell)
+  const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);

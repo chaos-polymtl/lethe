@@ -105,7 +105,7 @@ The ``multiphysics`` subsection is used to enable the CLS solver.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``) as presented for case J1 in Denner *et al.* [#denner2022]_ The viscosity is deduced from the imposed Ohnesorge number :math:`\left(\mathrm{Oh}=\frac{\mu_1}{\sqrt{\sigma\rho_1 R_\mathrm{inlet}}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
+In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``) as presented for case J1 in Denner *et al.* [#denner2022]_ The viscosity is deduced from the imposed Ohnesorge number :math:`\left(\mathrm{Oh}=\frac{\mu_1}{\sqrt{\sigma\rho_1 R_\mathrm{inlet}}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid_fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
 
 .. code-block:: text
 
@@ -121,7 +121,7 @@ In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``)
       end
       set number of material interactions = 1
       subsection material interaction 0
-        set type = fluid-fluid
+        set type = fluid_fluid
         subsection fluid-fluid interaction
           set surface tension coefficient = 0.0674
         end

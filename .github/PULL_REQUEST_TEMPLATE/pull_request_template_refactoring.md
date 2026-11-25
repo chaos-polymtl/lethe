@@ -40,6 +40,7 @@
 See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing/pull-requests.html) for more information about the pull request process.
 
 Code related list:
+- [ ] I have followed the [coding standards](https://chaos-polymtl.github.io/lethe/documentation/contributing/coding-standards.html)
 - [ ] All in-code documentation related to this PR is up to date (Doxygen format)
 - [ ] Copyright headers are present and up to date
 - [ ] Lethe documentation is up to date

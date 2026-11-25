@@ -24,6 +24,8 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <utility>
+
 /**
  * @brief CLS PDE-based reinitialization solver.
  *
@@ -64,7 +66,7 @@ public:
     , subequations_interface(p_subequations_interface)
     , simulation_parameters(p_simulation_parameters)
     , simulation_control(p_simulation_control)
-    , triangulation(p_triangulation)
+    , triangulation(std::move(p_triangulation))
     , dof_handler(std::make_shared<DoFHandler<dim>>(*this->triangulation))
     , subequation_verbosity(p_simulation_parameters.multiphysics.cls_parameters
                               .reinitialization_method.verbosity)

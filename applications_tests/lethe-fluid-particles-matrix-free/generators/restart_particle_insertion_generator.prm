@@ -94,7 +94,7 @@ subsection cfd-dem
   set coupling frequency            = 200
   set grad-div length scale         = 0.06
   set vans model                    = modelA
-  set drag coupling                 = explicit
+  set drag coupling                 = fully_explicit
 end
 
 #---------------------------------------------------

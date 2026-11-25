@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tracer_reaction_prefactor_model_h
@@ -78,8 +78,7 @@ public:
   /**
    * @brief Default constructor.
    */
-  NoneTracerReactionPrefactor()
-  {}
+  NoneTracerReactionPrefactor() = default;
 
   /**
    * @brief Returns a dummy value.
@@ -243,7 +242,7 @@ public:
                                            "tracer_concentration"));
     if (id != field::tracer_concentration)
       {
-        std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.0);
+        std::ranges::fill(jacobian_vector, 0.0);
         return;
       }
     const auto &concentration_vector =
@@ -477,7 +476,7 @@ public:
       }
     else
       {
-        std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.0);
+        std::ranges::fill(jacobian_vector, 0.0);
       }
   }
 
@@ -719,7 +718,7 @@ public:
           }
       }
     else
-      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.0);
+      std::ranges::fill(jacobian_vector, 0.0);
   }
 
 private:

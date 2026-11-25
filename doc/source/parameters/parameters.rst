@@ -83,4 +83,11 @@ Lethe also has a few head level parameters that are compatible with all applicat
 	* The parameter file format has a sanity checking mechanism in place and will throw an error if an unknown parameter or an invalid value is entered.
 
 .. warning::
+  Since October 2026, the parameters which select an option among a list take the name of the option as it is written in the code, without spaces or hyphens (e.g. ``set verbosity = extra_verbose``, ``set type = function_weak``, ``set rheological model = powerlaw``). The values used previously (e.g. ``extra verbose``, ``function weak``, ``power-law``) are deprecated. They are still accepted, but the following warning is printed on the console and they will be removed in a future version:
+
+  .. code-block:: text
+
+    Warning: the value "extra verbose" of the parameter "verbosity" is deprecated and will be removed. Use "extra_verbose" instead.
+
+.. warning::
   The radioactive particle-tracking (RPT) applications of Lethe has been migrated to a separate repository which is available `here <https://github.com/chaos-polymtl/lethe-rpt>`_.

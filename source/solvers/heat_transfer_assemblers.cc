@@ -10,6 +10,12 @@
 #include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
 
+DeclException1(
+  EmissivityError,
+  double,
+  << "Emissivity : " << arg1
+  << " cannot be larger than 1.0 (black body) or smaller than 0.0");
+
 template <int dim>
 void
 HeatTransferAssemblerCore<dim>::assemble_matrix(
@@ -382,7 +388,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
     {
       if (this->boundary_conditions_ht.type.at(
             scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::convection_radiation)
+          BoundaryConditions::HeatTransferBoundaryType::convection_radiation)
         {
           // Robin boundary condition, loop on faces (Newton's cooling law +
           // Stefan-Boltzmann law) implementation similar to deal.ii step-7
@@ -445,7 +451,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
     {
       if (this->boundary_conditions_ht.type.at(
             scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::convection_radiation)
+          BoundaryConditions::HeatTransferBoundaryType::convection_radiation)
         {
           Function<dim> &h_function = *(this->boundary_conditions_ht.h.at(
             scratch_data.boundary_face_id[f]));
@@ -594,14 +600,15 @@ HeatTransferAssemblerViscousDissipationCLS<dim>::assemble_rhs(
       // Manage viscous dissipation application on specified fluid
       const double filtered_phase_value_q =
         scratch_data.filtered_phase_values[q];
-      if (this->viscous_dissipative_fluid == Parameters::FluidIndicator::fluid1)
+      if (this->viscous_dissipative_fluid ==
+          Parameters::FluidIndicator::fluid_1)
         {
           // if phase = 0, no viscous dissipation
           // if phase = 1, maximum viscous dissipation
           viscous_dissipation_coefficient = filtered_phase_value_q;
         }
       else if (this->viscous_dissipative_fluid ==
-               Parameters::FluidIndicator::fluid0)
+               Parameters::FluidIndicator::fluid_0)
         {
           // if phase = 1, no viscous dissipation
           // if phase = 0, maximum viscous dissipation
@@ -617,7 +624,7 @@ HeatTransferAssemblerViscousDissipationCLS<dim>::assemble_rhs(
         {
           throw(
             std::runtime_error("Invalid viscous dissipative fluid. "
-                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
+                               "Options are 'fluid_0', 'fluid_1' or 'both'."));
         }
 
       // assemble the rhs

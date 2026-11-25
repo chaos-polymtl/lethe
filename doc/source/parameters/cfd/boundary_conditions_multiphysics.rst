@@ -9,8 +9,8 @@ This subsection's purpose is defining the boundary conditions associated to mult
 Heat Transfer
 ^^^^^^^^^^^^^
 
-For heat transfer boundary conditions, the possible ``types`` are ``noflux`` (default), ``temperature`` and ``convection-radiation-flux``.
-The default parameters for ``temperature`` and ``convection-radiation-flux`` are shown:
+For heat transfer boundary conditions, the possible ``types`` are ``noflux`` (default), ``temperature`` and ``convection_radiation``.
+The default parameters for ``temperature`` and ``convection_radiation`` are shown:
 
 .. code-block:: text
 
@@ -33,7 +33,7 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
     end
     subsection bc 2
       set id   = 2
-      set type = convection-radiation-flux
+      set type = convection_radiation
       subsection h
         set Function expression = 0
       end
@@ -70,7 +70,7 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
     * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``;
-    * ``convection-radiation-flux`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity`` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to impose a given heat flux (:math:`q_0`) by using the parameter ``heat_flux``. This BC can be represented by:
+    * ``convection_radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity`` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to impose a given heat flux (:math:`q_0`) by using the parameter ``heat_flux``. This BC can be represented by:
 
     .. math::
         \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4) + q_0
@@ -79,7 +79,7 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 
     .. important::
 
-      The flux represented by the ``convection-radiation-flux`` BC follow the direction of the normal vector to the boundary, i.e., pointing outwards the boundary. As consequence, a positive value for ``heat_flux``, for example, will result on heat being extracted from the boundary.
+      The flux represented by the ``convection_radiation`` BC follow the direction of the normal vector to the boundary, i.e., pointing outwards the boundary. As consequence, a positive value for ``heat_flux``, for example, will result on heat being extracted from the boundary.
 
 .. seealso::
 
@@ -122,6 +122,47 @@ For tracer boundary conditions, the defaults parameters are:
     * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``;
     * ``outlet`` to impose an outflow when using the tracer Discontinuous-Galerkin implementation;
     * ``none`` is a do-nothing boundary condition.
+
+QMOM
+^^^^
+
+The boundary conditions of the quadrature method of moments (see :doc:`qmom`) apply to the scalars and the moments. The possible ``types`` are ``noflux`` (default), ``outlet`` and ``dirichlet``. The parameters for each type of QMOM boundary conditions are:
+
+.. code-block:: text
+
+  subsection boundary conditions qmom
+    set number         = 3
+    set time dependent = false
+    subsection bc 0
+      set id   = 0
+      set type = noflux
+    end
+    subsection bc 1
+      set id   = 1
+      set type = outlet
+    end
+    subsection bc 2
+      set id   = 2
+      set type = dirichlet
+      subsection dirichlet
+        subsection scalars
+          set Function expression = 0
+        end
+        subsection distribution
+          set type                = none
+          set Function expression = 0
+        end
+      end
+    end
+  end
+
+* ``number``, ``time dependent`` and ``id`` are as for the tracer boundary conditions. Every boundary of the mesh must have a QMOM boundary condition, including the walls (type ``noflux``).
+
+* ``type``: This is the type of boundary condition being imposed:
+
+  * ``noflux`` (default): the advective flux is zero, as with the ``none`` type of the tracer. This is the natural choice for walls; use ``outlet`` where the flow leaves the domain.
+  * ``outlet``: a natural boundary condition that prevents backflow.
+  * ``dirichlet``: the scalars and the particle size distribution are imposed, as functions of space and time, in the ``dirichlet`` subsection. The format of this subsection is described in :doc:`qmom`.
 
 CLS
 ^^^
@@ -228,7 +269,7 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (def
 Time-Harmonic Maxwell
 ^^^^^^^^^^^^^^^^^^^^^
 
-For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`` (perfect electric conductor), ``pmc`` (perfect magnetic conductor), ``silver muller``, ``electric field``, ``magnetic field``, ``impedance boundary`` and ``waveguide port``. The default parameters are shown below.
+For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`` (perfect electric conductor), ``pmc`` (perfect magnetic conductor), ``silver_muller``, ``electric_field``, ``magnetic_field``, ``impedance_boundary`` and ``waveguide_port``. The default parameters are shown below.
 
 .. code-block:: text
 
@@ -237,7 +278,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
     set time dependent = false
     subsection bc 0
       set id   = 0
-      set type = silver muller
+      set type = silver_muller
     end
   end
 
@@ -276,7 +317,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           set type = pmc
         end
 
-    * ``silver muller`` for a Silver-Müller absorbing boundary condition. In its standard form, the boundary relation is written as
+    * ``silver_muller`` for a Silver-Müller absorbing boundary condition. In its standard form, the boundary relation is written as
 
       .. math::
         \mathbf{n} \times \mathbf{H} + \sqrt{\frac{\varepsilon_{r,\mathrm{eff}}}{\mu_r}} \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = 0
@@ -287,10 +328,10 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
 
         subsection bc 0
           set id   = 0
-          set type = silver muller
+          set type = silver_muller
         end
 
-    * ``electric field`` to impose a prescribed electric field. The boundary values are taken from the parsed functions in the ``E x/y/z real part`` and ``E x/y/z imag part`` subsections,
+    * ``electric_field`` to impose a prescribed electric field. The boundary values are taken from the parsed functions in the ``E x/y/z real part`` and ``E x/y/z imag part`` subsections,
 
       .. math::
         \mathbf{n} \times \mathbf{E} = \mathbf{n} \times \mathbf{E}^{\mathrm{inc}}
@@ -301,7 +342,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
 
         subsection bc 0
           set id   = 0
-          set type = electric field
+          set type = electric_field
           subsection E x real part
             set Function expression = 1
           end
@@ -322,7 +363,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           end
         end
 
-    * ``magnetic field`` to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the ``H x/y/z real part`` and ``H x/y/z imag part`` subsections,
+    * ``magnetic_field`` to impose a prescribed magnetic field. The boundary values are taken from the parsed functions in the ``H x/y/z real part`` and ``H x/y/z imag part`` subsections,
 
       .. math::
         \mathbf{n} \times \mathbf{H} = \mathbf{n} \times \mathbf{H}^{\mathrm{inc}} - \mathbf{J}_\mathrm{s}
@@ -335,7 +376,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
 
         subsection bc 0
           set id   = 0
-          set type = magnetic field
+          set type = magnetic_field
           subsection H x real part
             set Function expression = 1
           end
@@ -356,7 +397,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           end
         end
 
-    * ``impedance boundary`` to impose an impedance boundary condition. The boundary is governed by the surface admittance :math:`Y_s` supplied through the ``surface admittance real part`` and ``surface admittance imag part`` subsections and the electromagnetic excitation :math:`\mathbf{g}` supplied through the ``excitation x/y/z real part`` and ``excitation x/y/z imag part`` subsections,
+    * ``impedance_boundary`` to impose an impedance boundary condition. The boundary is governed by the surface admittance :math:`Y_s` supplied through the ``surface admittance real part`` and ``surface admittance imag part`` subsections and the electromagnetic excitation :math:`\mathbf{g}` supplied through the ``excitation x/y/z real part`` and ``excitation x/y/z imag part`` subsections,
 
       .. math::
         \mathbf{n} \times \mathbf{H} + Y_s \mathbf{n} \times ( \mathbf{E} \times \mathbf{n} ) = \mathbf{g}
@@ -367,7 +408,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
 
         subsection bc 0
           set id   = 0
-          set type = impedance boundary
+          set type = impedance_boundary
           subsection surface admittance real part
             set Function expression = 0.1
           end
@@ -394,7 +435,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
           end
         end
 
-    * ``waveguide port`` to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, :math:`k_l` is the wave number in the longitudinal direction of the waveguide.
+    * ``waveguide_port`` to impose a waveguide port boundary condition. The parameters for this boundary conditions are defined in the Time-Harmonic Maxwell section of the input file. In the following, :math:`k_l` is the wave number in the longitudinal direction of the waveguide.
 
       For TE modes, the boundary condition is expressed as:
 
@@ -412,7 +453,7 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
 
         subsection bc 0
           set id   = 0
-          set type = waveguide port
+          set type = waveguide_port
         end
 
       .. Seealso::

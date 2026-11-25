@@ -32,6 +32,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
 
+          # Lethe links with mold when it is installed, which is much faster
+          # than the default GNU linker (see LETHE_USE_FAST_LINKER in the
+          # top-level CMakeLists.txt). Install it if the image lacks it.
+          command -v mold > /dev/null || sudo apt-get install -y --no-install-recommends mold
+          mold --version
+
 
 
           echo "Github actions is sane!"

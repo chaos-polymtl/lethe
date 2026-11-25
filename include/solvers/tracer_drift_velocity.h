@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tracer_drift_velocity_h
@@ -38,19 +38,19 @@ flow through the tracer physics.
     }
 
     /**
-     * @brief Declares the parameters required by the drift velocity.
+     * @brief Declare the parameters required by the drift velocity.
      *
-     * @param prm ParameterHandler used to declare the parameters.
+     * @param[in,out] prm The parameter handler object.
      *
      */
     virtual void
     declare_parameters(ParameterHandler &prm);
 
     /**
-     * @brief Parses the parameters required by the analytical solution
+     * @brief Parse the parameters required by the analytical solution
      * within a parameter file
      *
-     * @param prm ParameterHandler used to parse the parameters.
+     * @param[in] prm The parameter handler object.
      *
      */
     virtual void

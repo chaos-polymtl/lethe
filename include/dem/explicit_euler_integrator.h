@@ -25,8 +25,7 @@ template <int dim, typename PropertiesIndex>
 class ExplicitEulerIntegrator : public Integrator<dim, PropertiesIndex>
 {
 public:
-  ExplicitEulerIntegrator()
-  {}
+  ExplicitEulerIntegrator() = default;
 
   /**
    * @brief Integrate the opening step of the scheme. The explicit Euler scheme is

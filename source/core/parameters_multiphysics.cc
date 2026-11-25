@@ -6,6 +6,14 @@
 
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
+#include <deal.II/base/utilities.h>
+
+#include <algorithm>
+#include <cctype>
+#include <memory>
+#include <string>
+#include <vector>
 
 DeclException1(
   SharpeningThresholdError,
@@ -29,59 +37,90 @@ DeclException1(
   << " is equal or smaller than 0." << std::endl
   << "Interface reinitialization method requires an frequency larger than 0.");
 
+DeclException2(
+  QMOMScalarNamesCountError,
+  std::size_t,
+  unsigned int,
+  << "The \"scalar names\" of the QMOM subsection has " << arg1
+  << " names, but the \"number of scalars\" is " << arg2 << "." << std::endl
+  << "Give one name per scalar, or no name to use scalar_0, scalar_1, ...");
+
+DeclException1(
+  QMOMScalarNameError,
+  std::string,
+  << "The scalar name \"" << arg1 << "\" of the QMOM subsection is invalid."
+  << std::endl
+  << "Scalar names may only contain letters, digits and underscores.");
+
+DeclException2(QMOMProcessConflictError,
+               std::string,
+               std::string,
+               << "The \"" << arg1
+               << "\" of the QMOM subsection contradicts the \"" << arg2
+               << "\" process, which imposes it." << std::endl
+               << "Remove \"" << arg1
+               << "\" from the parameter file, or set the "
+               << "process to generic.");
+
+DeclException3(
+  QMOMDistributionExpressionsCountError,
+  std::string,
+  unsigned int,
+  unsigned int,
+  << "The \"" << arg1
+  << "\" particle size distribution of the QMOM physics expects " << arg2
+  << " expressions, but " << arg3 << " are given." << std::endl
+  << "Give the number density, in particles per m^3, followed by the "
+  << "parameters of the distribution.");
+
 namespace Parameters
 {
   namespace
   {
-    std::string
-    to_string(const Parameters::RedistanciationTransformationType type)
-    {
-      switch (type)
-        {
-          case Parameters::RedistanciationTransformationType::tanh:
-            return "tanh";
-          case Parameters::RedistanciationTransformationType::
-            piecewise_polynomial:
-            return "piecewise polynomial";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the "transformation type" parameter
+    const DeprecatedEnumNames<Parameters::RedistanciationTransformationType>
+      deprecated_transformation_type_names = {
+        {"piecewise polynomial",
+         Parameters::RedistanciationTransformationType::piecewise_polynomial}};
 
-    std::string
-    to_string(const Parameters::ReinitializationMethodType type)
-    {
-      switch (type)
-        {
-          case Parameters::ReinitializationMethodType::none:
-            return "none";
-          case Parameters::ReinitializationMethodType::sharpening:
-            return "projection-based interface sharpening";
-          case Parameters::ReinitializationMethodType::pde_based:
-            return "pde-based interface reinitialization";
-          case Parameters::ReinitializationMethodType::geometric:
-            return "geometric interface reinitialization";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
-    }
+    /// Deprecated strings of the interface reinitialization method "type"
+    /// parameter
+    const DeprecatedEnumNames<Parameters::ReinitializationMethodType>
+      deprecated_reinitialization_method_type_names = {
+        {"projection-based interface sharpening",
+         Parameters::ReinitializationMethodType::projection_based_sharpening},
+        {"pde-based interface reinitialization",
+         Parameters::ReinitializationMethodType::pde_based},
+        {"geometric interface reinitialization",
+         Parameters::ReinitializationMethodType::geometric}};
 
-    std::string
-    to_string(const Parameters::ElectromagneticScalingType type)
+    /// Deprecated strings of the "electromagnetic scaling type" parameter
+    const DeprecatedEnumNames<Parameters::ElectromagneticScalingType>
+      deprecated_electromagnetic_scaling_type_names = {
+        {"electric field",
+         Parameters::ElectromagneticScalingType::electric_field},
+        {"magnetic field",
+         Parameters::ElectromagneticScalingType::magnetic_field}};
+
+    /**
+     * @brief Check whether a QMOM scalar name is valid. The names are used as
+     * field names in the output files, so they may only contain letters,
+     * digits and underscores.
+     *
+     * @param[in] scalar_name Name of the scalar.
+     *
+     * @return Whether the name is non-empty and only contains letters, digits
+     * and underscores.
+     */
+    bool
+    is_valid_scalar_name(const std::string &scalar_name)
     {
-      switch (type)
-        {
-          case Parameters::ElectromagneticScalingType::none:
-            return "none";
-          case Parameters::ElectromagneticScalingType::electric_field:
-            return "electric field";
-          case Parameters::ElectromagneticScalingType::magnetic_field:
-            return "magnetic field";
-          case Parameters::ElectromagneticScalingType::power:
-            return "power";
-        }
-      Assert(false, dealii::ExcInternalError());
-      return "";
+      const auto is_valid_character = [](const char character) {
+        return std::isalnum(static_cast<unsigned char>(character)) != 0 ||
+               character == '_';
+      };
+      return !scalar_name.empty() &&
+             std::ranges::all_of(scalar_name, is_valid_character);
     }
   } // namespace
 } // namespace Parameters
@@ -123,6 +162,19 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
       Patterns::Bool(),
       "Time harmonic electromagnetics calculation <true|false>");
 
+    prm.declare_entry("continuum solid dynamics",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        continuum_solid_dynamics),
+                      Patterns::Bool(),
+                      "Euler-Euler solid phase calculation <true|false>");
+
+    prm.declare_entry(
+      "qmom",
+      Patterns::Tools::Convert<bool>::to_string(qmom),
+      Patterns::Bool(),
+      "Quadrature method of moments calculation (requires QMOMKit) "
+      "<true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       Patterns::Tools::Convert<bool>::to_string(
@@ -146,6 +198,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
   cls_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
   time_harmonic_maxwell_parameters.declare_parameters(prm);
+  qmom_parameters.declare_parameters(prm);
 }
 
 template <int dim>
@@ -156,12 +209,14 @@ Parameters::Multiphysics<dim>::parse_parameters(
 {
   prm.enter_subsection("multiphysics");
   {
-    fluid_dynamics   = prm.get_bool("fluid dynamics");
-    heat_transfer    = prm.get_bool("heat transfer");
-    tracer           = prm.get_bool("tracer");
-    CLS              = prm.get_bool("cls");
-    cahn_hilliard    = prm.get_bool("cahn hilliard");
-    electromagnetics = prm.get_bool("electromagnetics");
+    fluid_dynamics           = prm.get_bool("fluid dynamics");
+    heat_transfer            = prm.get_bool("heat transfer");
+    tracer                   = prm.get_bool("tracer");
+    CLS                      = prm.get_bool("cls");
+    cahn_hilliard            = prm.get_bool("cahn hilliard");
+    electromagnetics         = prm.get_bool("electromagnetics");
+    continuum_solid_dynamics = prm.get_bool("continuum solid dynamics");
+    qmom                     = prm.get_bool("qmom");
 
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
@@ -172,6 +227,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
   cls_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
   time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
+  qmom_parameters.parse_parameters(prm);
 }
 
 void
@@ -183,11 +239,12 @@ Parameters::CLS::declare_parameters(ParameterHandler &prm) const
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
 
-    prm.declare_entry("viscous dissipative fluid",
-                      to_string(viscous_dissipative_fluid),
-                      Patterns::Selection("fluid 0|fluid 1|both"),
-                      "Fluid to which the viscous dissipation is applied "
-                      "in the heat equation <fluid 0|fluid 1|both>");
+    declare_enum_entry(prm,
+                       "viscous dissipative fluid",
+                       viscous_dissipative_fluid,
+                       "Fluid to which the viscous dissipation is applied "
+                       "in the heat equation.",
+                       deprecated_fluid_indicator_names());
 
     prm.declare_entry(
       "diffusivity",
@@ -216,16 +273,10 @@ Parameters::CLS::parse_parameters(ParameterHandler &prm)
     phase_filter.parse_parameters(prm);
 
     // Viscous dissipative fluid
-    const std::string op = prm.get("viscous dissipative fluid");
-    if (op == "fluid 1")
-      viscous_dissipative_fluid = Parameters::FluidIndicator::fluid1;
-    else if (op == "fluid 0")
-      viscous_dissipative_fluid = Parameters::FluidIndicator::fluid0;
-    else if (op == "both")
-      viscous_dissipative_fluid = Parameters::FluidIndicator::both;
-    else
-      throw(std::runtime_error("Invalid viscous dissipative fluid. "
-                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
+    viscous_dissipative_fluid =
+      string_to_enum<FluidIndicator>(prm.get("viscous dissipative fluid"),
+                                     deprecated_fluid_indicator_names(),
+                                     "viscous dissipative fluid");
 
     diffusivity = prm.get_double("diffusivity");
 
@@ -240,12 +291,11 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
 {
   prm.enter_subsection("interface reinitialization method");
   {
-    prm.declare_entry(
-      "type",
-      to_string(reinitialization_method_type),
-      Patterns::Selection(
-        "none|projection-based interface sharpening|pde-based interface reinitialization|geometric interface reinitialization"),
-      "CLS interface reinitialization method");
+    declare_enum_entry(prm,
+                       "type",
+                       reinitialization_method_type,
+                       "CLS interface reinitialization method.",
+                       deprecated_reinitialization_method_type_names);
 
     prm.declare_entry(
       "frequency",
@@ -254,13 +304,13 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
       "Reinitialization frequency (number of time steps) at which the "
       "interface reinitialization process will be applied to the CLS "
       "phase indicator field.");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      to_string(verbosity),
-      Patterns::Selection("quiet|verbose|extra verbose"),
+      verbosity,
       "States whether the output from the interface reinitialization method "
-      "should be printed. "
-      "Choices are <quiet|verbose|extra verbose>.");
+      "should be printed.",
+      deprecated_verbosity_names());
 
     sharpening.declare_parameters(prm);
     pde_based_interface_reinitialization.declare_parameters(prm);
@@ -274,47 +324,26 @@ Parameters::CLS_ReinitializationMethod::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface reinitialization method");
   {
-    const std::string t = prm.get("type");
-    if (t == "none")
-      this->reinitialization_method_type =
-        Parameters::ReinitializationMethodType::none;
-    else if (t == "projection-based interface sharpening")
-      {
-        reinitialization_method_type =
-          Parameters::ReinitializationMethodType::sharpening;
-        sharpening.enable = true;
-      }
-    else if (t == "pde-based interface reinitialization")
-      {
-        this->reinitialization_method_type =
-          Parameters::ReinitializationMethodType::pde_based;
-        pde_based_interface_reinitialization.enable = true;
-      }
-    else if (t == "geometric interface reinitialization")
-      {
-        this->reinitialization_method_type =
-          Parameters::ReinitializationMethodType::geometric;
-        geometric_interface_reinitialization.enable = true;
-      }
-    else
-      throw(
-        std::runtime_error("Invalid interface reinitialization method type!"));
+    this->reinitialization_method_type =
+      string_to_enum<Parameters::ReinitializationMethodType>(
+        prm.get("type"), deprecated_reinitialization_method_type_names, "type");
+    if (this->reinitialization_method_type ==
+        Parameters::ReinitializationMethodType::projection_based_sharpening)
+      sharpening.enable = true;
+    else if (this->reinitialization_method_type ==
+             Parameters::ReinitializationMethodType::pde_based)
+      pde_based_interface_reinitialization.enable = true;
+    else if (this->reinitialization_method_type ==
+             Parameters::ReinitializationMethodType::geometric)
+      geometric_interface_reinitialization.enable = true;
 
     this->frequency = prm.get_integer("frequency");
     Assert(this->frequency > 0,
            ReinitializationMethodFrequencyError(this->frequency));
 
-    const std::string op2 = prm.get("verbosity");
-    if (op2 == "quiet")
-      this->verbosity = Parameters::Verbosity::quiet;
-    else if (op2 == "verbose")
-      this->verbosity = Parameters::Verbosity::verbose;
-    else if (op2 == "extra verbose")
-      this->verbosity = Parameters::Verbosity::extra_verbose;
-    else
-      throw(std::invalid_argument("Invalid verbosity level\n "
-                                  "Options are: \n"
-                                  " <quiet|verbose|extra verbose>"));
+    this->verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                                deprecated_verbosity_names(),
+                                                "verbosity");
 
     this->sharpening.parse_parameters(prm);
     this->pde_based_interface_reinitialization.parse_parameters(prm);
@@ -329,14 +358,14 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
   const CLS_InterfaceSharpening defaults;
   prm.enter_subsection("projection-based interface sharpening");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection("constant|adaptive"),
+      defaults.type,
       "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
       "if adaptive the sharpening threshold is determined by binary search, "
-      "to ensure mass conservation of the monitored phase");
+      "to ensure mass conservation of the monitored phase.");
 
     // Parameters for constant sharpening
     prm.declare_entry(
@@ -374,11 +403,13 @@ Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "monitored fluid",
-      to_string(defaults.monitored_fluid),
-      Patterns::Selection("fluid 0|fluid 1"),
-      "Fluid for which conservation is monitored <fluid 0|fluid 1>, used with adaptive sharpening.");
+      defaults.monitored_fluid,
+      "Fluid for which conservation is monitored, used with adaptive sharpening.",
+      deprecated_fluid_indicator_names(),
+      single_fluid_indicators());
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
@@ -411,14 +442,10 @@ Parameters::CLS_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     tolerance               = prm.get_double("tolerance");
 
     // Monitored fluid
-    const std::string op_mf = prm.get("monitored fluid");
-    if (op_mf == "fluid 1")
-      monitored_fluid = Parameters::FluidIndicator::fluid1;
-    else if (op_mf == "fluid 0")
-      monitored_fluid = Parameters::FluidIndicator::fluid0;
-    else
-      throw(std::runtime_error("Invalid monitored fluid. "
-                               "Options are 'fluid 0' or 'fluid 1'."));
+    monitored_fluid =
+      string_to_enum<FluidIndicator>(prm.get("monitored fluid"),
+                                     deprecated_fluid_indicator_names(),
+                                     "monitored fluid");
 
     // Error definitions
     Assert(threshold > 0.0 && threshold < 1.0,
@@ -462,12 +489,13 @@ Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Factor applied to the filter for curvature calculations to damp high-frequency errors");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      to_string(defaults.verbosity),
-      Patterns::Selection("quiet|verbose"),
-      "State whether the output from the surface tension force calculations should be printed "
-      "Choices are <quiet|verbose>.");
+      defaults.verbosity,
+      "State whether the output from the surface tension force calculations should be printed.",
+      deprecated_verbosity_names(),
+      quiet_or_verbose());
 
 
     prm.declare_entry("enable marangoni effect",
@@ -491,13 +519,9 @@ Parameters::CLS_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
 
     output_cls_auxiliary_fields = prm.get_bool("output auxiliary fields");
 
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (op == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
-    else
-      throw(std::runtime_error("Invalid verbosity level"));
+    verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                          deprecated_verbosity_names(),
+                                          "verbosity");
 
     enable_marangoni_effect = prm.get_bool("enable marangoni effect");
   }
@@ -510,16 +534,18 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
   const CLS_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection("none|tanh"),
+      defaults.type,
       "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = 0.5 \\tanh(\\beta(\\alpha-0.5)) + 0.5; "
       "where \\beta is a parameter influencing the interface thickness that "
-      "must be defined");
+      "must be defined.",
+      {},
+      {Parameters::FilterType::none, Parameters::FilterType::tanh});
     prm.declare_entry(
       "beta",
       Patterns::Tools::Convert<double>::to_string(defaults.beta),
@@ -527,11 +553,12 @@ Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
-    prm.declare_entry("verbosity",
-                      to_string(defaults.verbosity),
-                      Patterns::Selection("quiet|verbose|extra verbose"),
-                      "States whether the filtered data should be printed "
-                      "Choices are <quiet|verbose>.");
+    declare_enum_entry(prm,
+                       "verbosity",
+                       defaults.verbosity,
+                       "States whether the filtered data should be printed.",
+                       deprecated_verbosity_names(),
+                       quiet_or_verbose());
   }
   prm.leave_subsection();
 }
@@ -548,13 +575,9 @@ Parameters::CLS_PhaseFilter::parse_parameters(ParameterHandler &prm)
     beta = prm.get_double("beta");
 
     // Verbosity
-    const std::string filter_v = prm.get("verbosity");
-    if (filter_v == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (filter_v == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
-    else
-      throw(std::logic_error("Invalid verbosity level"));
+    verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                          deprecated_verbosity_names(),
+                                          "verbosity");
   }
   prm.leave_subsection();
 }
@@ -642,12 +665,13 @@ Parameters::CLS_GeometricInterfaceReinitialization::declare_parameters(
                         defaults.max_reinitialization_distance),
                       Patterns::Double(),
                       "Maximum reinitialization distance value");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "transformation type",
-      to_string(defaults.transformation_type),
-      Patterns::Selection("tanh|piecewise polynomial"),
+      defaults.transformation_type,
       "Transformation function used to get the phase indicator from the signed "
-      "distance");
+      "distance.",
+      deprecated_transformation_type_names);
     prm.declare_entry("tanh thickness",
                       Patterns::Tools::Convert<double>::to_string(
                         defaults.tanh_thickness),
@@ -666,18 +690,11 @@ Parameters::CLS_GeometricInterfaceReinitialization::parse_parameters(
     this->output_signed_distance = prm.get_bool("output signed distance");
     this->max_reinitialization_distance =
       prm.get_double("max reinitialization distance");
-    const std::string t = prm.get("transformation type");
-    if (t == "tanh")
-      this->transformation_type =
-        Parameters::RedistanciationTransformationType::tanh;
-    else if (t == "piecewise polynomial")
-      {
-        this->transformation_type =
-          Parameters::RedistanciationTransformationType::piecewise_polynomial;
-      }
-    else
-      throw(std::runtime_error(
-        "Invalid transformation type for the geometric interface reinitialization method!"));
+    this->transformation_type =
+      string_to_enum<Parameters::RedistanciationTransformationType>(
+        prm.get("transformation type"),
+        deprecated_transformation_type_names,
+        "transformation type");
     this->tanh_thickness = prm.get_double("tanh thickness");
   }
   prm.leave_subsection();
@@ -689,17 +706,17 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
   const CahnHilliard_PhaseFilter defaults;
   prm.enter_subsection("phase filtration");
   {
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "type",
-      enum_to_string(defaults.type),
-      Patterns::Selection("none|clip|tanh"),
+      defaults.type,
       "CahnHilliard phase filtration type, "
       "if <none> is selected, the phase won't be filtered; "
       "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1); "
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = \\tanh(\\beta\\alpha); "
       "where beta is a parameter influencing the interface thickness that "
-      "must be defined");
+      "must be defined.");
     prm.declare_entry(
       "beta",
       Patterns::Tools::Convert<double>::to_string(defaults.beta),
@@ -707,11 +724,12 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
-    prm.declare_entry("verbosity",
-                      to_string(defaults.verbosity),
-                      Patterns::Selection("quiet|verbose|extra verbose"),
-                      "States whether the filtered data should be printed "
-                      "Choices are <quiet|verbose>.");
+    declare_enum_entry(prm,
+                       "verbosity",
+                       defaults.verbosity,
+                       "States whether the filtered data should be printed.",
+                       deprecated_verbosity_names(),
+                       quiet_or_verbose());
   }
   prm.leave_subsection();
 }
@@ -728,13 +746,9 @@ Parameters::CahnHilliard_PhaseFilter::parse_parameters(ParameterHandler &prm)
     beta = prm.get_double("beta");
 
     // Verbosity
-    const std::string filter_v = prm.get("verbosity");
-    if (filter_v == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (filter_v == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
-    else
-      throw(std::logic_error("Invalid verbosity level"));
+    verbosity = string_to_enum<Verbosity>(prm.get("verbosity"),
+                                          deprecated_verbosity_names(),
+                                          "verbosity");
   }
   prm.leave_subsection();
 }
@@ -755,11 +769,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
 
     prm.enter_subsection("epsilon");
     {
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "method",
-        enum_to_string(epsilon_set_method),
-        Patterns::Selection("automatic|manual"),
-        "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
+        epsilon_set_method,
+        "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual).");
 
       prm.declare_entry(
         "value",
@@ -767,11 +781,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
         Patterns::Double(),
         "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
 
-      prm.declare_entry(
+      declare_enum_entry(
+        prm,
         "verbosity",
-        enum_to_string(epsilon_verbosity),
-        Patterns::Selection("quiet|verbose"),
-        "Display the value of epsilon for each time iteration if set to verbose");
+        epsilon_verbosity,
+        "Display the value of epsilon for each time iteration if set to verbose.");
     }
     prm.leave_subsection();
   }
@@ -805,6 +819,443 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
   prm.leave_subsection();
 }
 
+void
+Parameters::QMOMPhaseEvolution::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMPhaseEvolution defaults;
+  prm.enter_subsection("phase evolution");
+  {
+    prm.declare_entry("enable adaptive node count",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_adaptive_node_count),
+                      Patterns::Bool(),
+                      "Enable adaptive quadrature node count <true|false>");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhaseEvolution::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("phase evolution");
+  {
+    enable_adaptive_node_count = prm.get_bool("enable adaptive node count");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOM defaults;
+  prm.enter_subsection("QMOM");
+  {
+    declare_enum_entry(prm,
+                       "process",
+                       defaults.process,
+                       "Process simulated. A process other than generic "
+                       "imposes the scalars and the number of moments.");
+
+    prm.declare_entry("number of scalars",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.number_of_scalars),
+                      Patterns::Integer(0),
+                      "Number of scalars transported together with the "
+                      "moments");
+
+    prm.declare_entry("scalar names",
+                      "",
+                      Patterns::List(Patterns::Anything()),
+                      "Comma-separated names of the scalars, used for the "
+                      "output. If empty, the scalars are named scalar_0, "
+                      "scalar_1, ...");
+
+    prm.declare_entry("number of moments",
+                      Patterns::Tools::Convert<unsigned int>::to_string(
+                        defaults.number_of_moments),
+                      Patterns::Integer(1),
+                      "Number of transported moments. The quadrature has "
+                      "half as many nodes, rounded up.");
+
+    declare_enum_entry(prm,
+                       "splitting scheme",
+                       defaults.splitting_scheme,
+                       "Operator splitting scheme between the physical-space "
+                       "transport and the phase-space evolution");
+
+    prm.declare_entry("enable nucleation",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_nucleation),
+                      Patterns::Bool(),
+                      "Include the nucleation source <true|false>");
+
+    prm.declare_entry("enable coalescence",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_coalescence),
+                      Patterns::Bool(),
+                      "Include the coalescence source <true|false>");
+
+    prm.declare_entry("enable growth",
+                      Patterns::Tools::Convert<bool>::to_string(
+                        defaults.enable_growth),
+                      Patterns::Bool(),
+                      "Include the growth source <true|false>");
+
+    phase_evolution.declare_parameters(prm);
+    lipid_nanoparticle_production.declare_parameters(prm);
+    physical_constants.declare_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOM::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("QMOM");
+  {
+    process           = string_to_enum<QMOMProcess>(prm.get("process"));
+    number_of_scalars = prm.get_integer("number of scalars");
+    number_of_moments = prm.get_integer("number of moments");
+    scalar_names      = Utilities::split_string_list(prm.get("scalar names"));
+
+    // A process other than generic imposes its scalars and its number of
+    // moments. The entries of the parameter file are ignored, but must not
+    // contradict the process.
+    std::vector<std::string> process_scalar_names;
+    unsigned int             process_number_of_moments = number_of_moments;
+    switch (process)
+      {
+        case QMOMProcess::generic:
+          break;
+        case QMOMProcess::lipid_nanoparticle_production:
+          process_scalar_names      = {"ethanol_concentration",
+                                       "free_lipids_concentration"};
+          process_number_of_moments = 8; // 4-node quadrature
+          break;
+      }
+    if (process != QMOMProcess::generic)
+      {
+        const QMOM defaults;
+        AssertThrow(number_of_scalars == defaults.number_of_scalars ||
+                      number_of_scalars == process_scalar_names.size(),
+                    QMOMProcessConflictError("number of scalars",
+                                             enum_to_string(process)));
+        AssertThrow(scalar_names.empty() ||
+                      scalar_names == process_scalar_names,
+                    QMOMProcessConflictError("scalar names",
+                                             enum_to_string(process)));
+        AssertThrow(number_of_moments == defaults.number_of_moments ||
+                      number_of_moments == process_number_of_moments,
+                    QMOMProcessConflictError("number of moments",
+                                             enum_to_string(process)));
+        number_of_scalars = process_scalar_names.size();
+        scalar_names      = process_scalar_names;
+        number_of_moments = process_number_of_moments;
+      }
+    number_of_nodes = (number_of_moments + 1) / 2;
+
+    if (scalar_names.empty())
+      for (unsigned int i_scalar = 0; i_scalar < number_of_scalars; ++i_scalar)
+        scalar_names.emplace_back("scalar_" + std::to_string(i_scalar));
+    AssertThrow(scalar_names.size() == number_of_scalars,
+                QMOMScalarNamesCountError(scalar_names.size(),
+                                          number_of_scalars));
+    for (const std::string &scalar_name : scalar_names)
+      AssertThrow(is_valid_scalar_name(scalar_name),
+                  QMOMScalarNameError(scalar_name));
+
+    splitting_scheme = string_to_enum<Parameters::QMOMSplittingScheme>(
+      prm.get("splitting scheme"));
+
+    enable_nucleation  = prm.get_bool("enable nucleation");
+    enable_coalescence = prm.get_bool("enable coalescence");
+    enable_growth      = prm.get_bool("enable growth");
+
+    phase_evolution.parse_parameters(prm);
+    lipid_nanoparticle_production.parse_parameters(prm);
+    physical_constants.parse_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMLipidNanoparticleProduction::declare_parameters(
+  ParameterHandler &prm) const
+{
+  const QMOMLipidNanoparticleProduction defaults;
+  prm.enter_subsection("lipid nanoparticle production");
+  {
+    prm.declare_entry("operating temperature",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.operating_temperature),
+                      Patterns::Double(0.),
+                      "Operating temperature [K]");
+
+    prm.declare_entry(
+      "flow rate ratio",
+      Patterns::Tools::Convert<double>::to_string(defaults.flow_rate_ratio),
+      Patterns::Double(0.),
+      "Ratio of the aqueous phase flow rate to the organic phase flow rate [-]");
+
+    prm.declare_entry(
+      "total flow rate",
+      Patterns::Tools::Convert<double>::to_string(defaults.total_flow_rate),
+      Patterns::Double(0.),
+      "Total flow rate of the aqueous and organic phases [m^3/s]");
+
+    prm.declare_entry(
+      "mixing time scale",
+      Patterns::Tools::Convert<double>::to_string(defaults.mixing_time_scale),
+      Patterns::Double(0.),
+      "Mixing time scale of the aqueous and organic phases [s]");
+
+    prm.declare_entry(
+      "initial concentration organic",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.initial_concentration_organic),
+      Patterns::Double(0.),
+      "Initial lipid concentration in the organic phase [mol/m^3]");
+
+    prm.declare_entry("ion concentration mixture",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.ion_concentration_mixture),
+                      Patterns::Double(0.),
+                      "Ion concentration in the mixture [mol/m^3]");
+
+    prm.declare_entry("density aqueous",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.density_aqueous),
+                      Patterns::Double(0.),
+                      "Density of the aqueous phase [kg/m^3]");
+
+    prm.declare_entry("molar mass aqueous",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.molar_mass_aqueous),
+                      Patterns::Double(0.),
+                      "Molar mass of the aqueous phase [kg/mol]");
+
+    prm.declare_entry(
+      "mole fraction solubility aqueous",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.mole_fraction_solubility_aqueous),
+      Patterns::Double(0., 1.),
+      "Mole fraction solubility of the lipid in the pure aqueous phase [-]");
+
+    prm.declare_entry("permittivity aqueous",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_aqueous),
+                      Patterns::Double(0.),
+                      "Relative permittivity of the aqueous phase [-]");
+
+    prm.declare_entry("density organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.density_organic),
+                      Patterns::Double(0.),
+                      "Density of the organic phase [kg/m^3]");
+
+    prm.declare_entry("molar mass organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.molar_mass_organic),
+                      Patterns::Double(0.),
+                      "Molar mass of the organic phase [kg/mol]");
+
+    prm.declare_entry(
+      "mole fraction solubility organic",
+      Patterns::Tools::Convert<double>::to_string(
+        defaults.mole_fraction_solubility_organic),
+      Patterns::Double(0., 1.),
+      "Mole fraction solubility of the lipid in the pure organic phase [-]");
+
+    prm.declare_entry("permittivity organic",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_organic),
+                      Patterns::Double(0.),
+                      "Relative permittivity of the organic phase [-]");
+
+    prm.declare_entry(
+      "viscosity mixture",
+      Patterns::Tools::Convert<double>::to_string(defaults.viscosity_mixture),
+      Patterns::Double(0.),
+      "Dynamic viscosity of the aqueous and organic mixture [Pa s]");
+
+    prm.declare_entry(
+      "shape factor",
+      Patterns::Tools::Convert<double>::to_string(defaults.shape_factor),
+      Patterns::Double(0.),
+      "Volume shape factor of the particles, pi/6 for spheres [-]");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMLipidNanoparticleProduction::parse_parameters(
+  ParameterHandler &prm)
+{
+  prm.enter_subsection("lipid nanoparticle production");
+  {
+    operating_temperature = prm.get_double("operating temperature");
+    flow_rate_ratio       = prm.get_double("flow rate ratio");
+    total_flow_rate       = prm.get_double("total flow rate");
+    mixing_time_scale     = prm.get_double("mixing time scale");
+    initial_concentration_organic =
+      prm.get_double("initial concentration organic");
+    ion_concentration_mixture = prm.get_double("ion concentration mixture");
+    density_aqueous           = prm.get_double("density aqueous");
+    molar_mass_aqueous        = prm.get_double("molar mass aqueous");
+    mole_fraction_solubility_aqueous =
+      prm.get_double("mole fraction solubility aqueous");
+    permittivity_aqueous = prm.get_double("permittivity aqueous");
+    density_organic      = prm.get_double("density organic");
+    molar_mass_organic   = prm.get_double("molar mass organic");
+    mole_fraction_solubility_organic =
+      prm.get_double("mole fraction solubility organic");
+    permittivity_organic = prm.get_double("permittivity organic");
+    viscosity_mixture    = prm.get_double("viscosity mixture");
+    shape_factor         = prm.get_double("shape factor");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhysicalConstants::declare_parameters(
+  ParameterHandler &prm) const
+{
+  const QMOMPhysicalConstants defaults;
+  prm.enter_subsection("physical constants");
+  {
+    prm.declare_entry("boltzmann constant",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.boltzmann_constant),
+                      Patterns::Double(0.),
+                      "Boltzmann constant [J/K]");
+
+    prm.declare_entry("avogadro number",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.avogadro_number),
+                      Patterns::Double(0.),
+                      "Avogadro number [1/mol]");
+
+    prm.declare_entry("elementary charge",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.elementary_charge),
+                      Patterns::Double(0.),
+                      "Elementary charge [C]");
+
+    prm.declare_entry("permittivity vacuum",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.permittivity_vacuum),
+                      Patterns::Double(0.),
+                      "Vacuum permittivity [F/m]");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMPhysicalConstants::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("physical constants");
+  {
+    boltzmann_constant  = prm.get_double("boltzmann constant");
+    avogadro_number     = prm.get_double("avogadro number");
+    elementary_charge   = prm.get_double("elementary charge");
+    permittivity_vacuum = prm.get_double("permittivity vacuum");
+  }
+  prm.leave_subsection();
+}
+
+unsigned int
+Parameters::get_number_of_distribution_parameters(
+  const QMOMDistributionType distribution_type)
+{
+  switch (distribution_type)
+    {
+      case QMOMDistributionType::none:
+        return 0;
+      case QMOMDistributionType::normal:
+      case QMOMDistributionType::lognormal:
+      case QMOMDistributionType::gamma:
+      case QMOMDistributionType::weibull:
+      case QMOMDistributionType::beta:
+        return 2;
+      case QMOMDistributionType::chi:
+      case QMOMDistributionType::chi_squared:
+        return 1;
+    }
+  AssertThrow(false, ExcInternalError());
+  return 0;
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("scalars");
+  {
+    // The number of scalars is not known yet: a single expression is declared
+    // by default, which is valid for a single scalar and ignored without
+    // scalars
+    Functions::ParsedFunction<dim>::declare_parameters(prm);
+  }
+  prm.leave_subsection();
+
+  prm.enter_subsection("distribution");
+  {
+    declare_enum_entry(prm,
+                       "type",
+                       QMOMDistributionType::none,
+                       "Family of the particle size distribution from which "
+                       "the moments are computed.");
+    Functions::ParsedFunction<dim>::declare_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::parse_parameters(ParameterHandler &prm)
+{
+  // The expressions are split as in FunctionParser, so that the number of
+  // components of each function matches the number of expressions
+  const auto count_expressions = [&prm]() {
+    return static_cast<unsigned int>(
+      Utilities::split_string_list(prm.get("Function expression"), ';').size());
+  };
+
+  prm.enter_subsection("scalars");
+  {
+    scalars =
+      std::make_shared<Functions::ParsedFunction<dim>>(count_expressions());
+    scalars->parse_parameters(prm);
+  }
+  prm.leave_subsection();
+
+  prm.enter_subsection("distribution");
+  {
+    distribution_type = string_to_enum<QMOMDistributionType>(prm.get("type"));
+    const unsigned int n_expressions = count_expressions();
+    if (distribution_type != QMOMDistributionType::none)
+      {
+        const unsigned int n_expected_expressions =
+          1 + get_number_of_distribution_parameters(distribution_type);
+        AssertThrow(n_expressions == n_expected_expressions,
+                    QMOMDistributionExpressionsCountError(
+                      prm.get("type"), n_expected_expressions, n_expressions));
+      }
+    distribution =
+      std::make_shared<Functions::ParsedFunction<dim>>(n_expressions);
+    distribution->parse_parameters(prm);
+  }
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::QMOMFunctions<dim>::set_time(const double time)
+{
+  scalars->set_time(time);
+  distribution->set_time(time);
+}
+
 template <int dim>
 void
 Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
@@ -814,10 +1265,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
   {
     prm.enter_subsection("time coupling strategy");
     {
-      prm.declare_entry("type",
-                        enum_to_string(time_coupling_strategy),
-                        Patterns::Selection("none|iteration|time|threshold"),
-                        "The type of time coupling strategy to use.");
+      declare_enum_entry(prm,
+                         "type",
+                         time_coupling_strategy,
+                         "The type of time coupling strategy to use.");
 
       prm.declare_entry(
         "coupling iteration",
@@ -854,11 +1305,12 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
       Patterns::Double(0),
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
 
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "electromagnetic scaling type",
-      to_string(electromagnetic_scaling_type),
-      Patterns::Selection("none|electric field|magnetic field|power"),
-      "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.");
+      electromagnetic_scaling_type,
+      "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.",
+      deprecated_electromagnetic_scaling_type_names);
 
     prm.declare_entry(
       "electric field amplitude",
@@ -879,9 +1331,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
                       "Number of waveguide inlets in the simulation.");
 
     // Declare a fixed maximum number of waveguide inlets.
-    // Only the ones specified by "number of waveguide inlets" will be parsed.
-    // This is necessary because declare_parameters runs before the file is
-    // read, so we can't know the actual number of inlets at declaration time.
+    // Only the ones specified by "number of waveguide inlets" will be
+    // parsed. This is necessary because declare_parameters runs before the
+    // file is read, so we can't know the actual number of inlets at
+    // declaration time.
     constexpr unsigned int max_waveguide_inlets = 10;
 
     for (unsigned int inlet = 0; inlet < max_waveguide_inlets; ++inlet)
@@ -902,10 +1355,10 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 
           prm.enter_subsection("waveguide mode");
           {
-            prm.declare_entry(
+            declare_enum_entry(
+              prm,
               "mode type",
-              "TE",
-              Patterns::Selection("TE|TM"),
+              Parameters::WaveguideMode::TE,
               "The waveguide mode excitation for a rectangular waveguide can be either Transverse Electric (TE) or Transverse Magnetic (TM).");
 
             prm.declare_entry(
@@ -975,30 +1428,15 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
       prm.get_double("electromagnetic frequency") *
       dimensions.electromagnetic_frequency_scaling;
 
-    const std::string op_scaling_type = prm.get("electromagnetic scaling type");
-    if (op_scaling_type == "none")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::none;
-    else if (op_scaling_type == "electric field")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::electric_field;
-    else if (op_scaling_type == "magnetic field")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::magnetic_field;
-    else if (op_scaling_type == "power")
-      TimeHarmonicMaxwell::electromagnetic_scaling_type =
-        Parameters::ElectromagneticScalingType::power;
-    else
-      AssertThrow(false,
-                  ExcMessage(
-                    "Invalid electromagnetic scaling type. "
-                    "Options are <none|electric field|magnetic field|power>."));
+    TimeHarmonicMaxwell::electromagnetic_scaling_type =
+      string_to_enum<Parameters::ElectromagneticScalingType>(
+        prm.get("electromagnetic scaling type"),
+        deprecated_electromagnetic_scaling_type_names,
+        "electromagnetic scaling type");
 
-
-
-    // The user always provides the electric and magnetic field amplitudes in
-    // dimensional units (V/m and A/m respectively). The scaling factors will be
-    // applied in the time_harmonic_maxwell class.
+    // The user always provides the electric and magnetic field amplitudes
+    // in dimensional units (V/m and A/m respectively). The scaling factors
+    // will be applied in the time_harmonic_maxwell class.
     TimeHarmonicMaxwell::electric_field_amplitude =
       prm.get_double("electric field amplitude");
 
@@ -1008,8 +1446,8 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
     TimeHarmonicMaxwell::number_of_waveguide_inlets =
       prm.get_integer("number of waveguide inlets");
 
-    // Ensure that the number of waveguide inlets is smaller than the maximum
-    // declared in declare_parameters.
+    // Ensure that the number of waveguide inlets is smaller than the
+    // maximum declared in declare_parameters.
     AssertThrow(
       TimeHarmonicMaxwell::number_of_waveguide_inlets <= 10,
       ExcMessage(
@@ -1045,20 +1483,8 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
 
           prm.enter_subsection("waveguide mode");
           {
-            const std::string op_mode_type = prm.get("mode type");
-            if (op_mode_type == "TE")
-              {
-                TimeHarmonicMaxwell::waveguide_mode[inlet] =
-                  Parameters::WaveguideMode::TE;
-              }
-            else if (op_mode_type == "TM")
-              {
-                TimeHarmonicMaxwell::waveguide_mode[inlet] =
-                  Parameters::WaveguideMode::TM;
-              }
-            else
-              throw(std::runtime_error("Invalid waveguide mode type. "
-                                       "Options are 'TE' or 'TM'."));
+            TimeHarmonicMaxwell::waveguide_mode[inlet] =
+              string_to_enum<Parameters::WaveguideMode>(prm.get("mode type"));
 
             TimeHarmonicMaxwell::mode_order_m[inlet] =
               prm.get_integer("mode order m");
@@ -1091,8 +1517,8 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
             }
 
           // In 3D, verify that the provided corners define a coplanar
-          // quadrilateral. This is not useful in 2D as any 2 points are always
-          // collinear.
+          // quadrilateral. This is not useful in 2D as any 2 points are
+          // always collinear.
           if constexpr (dim == 3)
             {
               const Tensor<1, dim> vec1 =
@@ -1105,11 +1531,12 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
                 tmp_corners[3] -
                 tmp_corners[0]; // Vector from corner 1 to corner 4
 
-              // The triple scalar product (determinant) scales as the volume of
-              // the parallelepiped defined by the three vectors. So we make the
-              // it dimensionless by a characteristic volume (product of the
-              // norms of the three vectors). This way we can set a tolerance
-              // that is independent of the actual size of the waveguide.
+              // The triple scalar product (determinant) scales as the
+              // volume of the parallelepiped defined by the three vectors.
+              // So we make the it dimensionless by a characteristic volume
+              // (product of the norms of the three vectors). This way we
+              // can set a tolerance that is independent of the actual size
+              // of the waveguide.
               const double determinant =
                 scalar_product(vec3, cross_product_3d(vec1, vec2)) /
                 (vec1.norm() * vec2.norm() * vec3.norm());
@@ -1145,3 +1572,5 @@ template struct Parameters::TimeHarmonicMaxwell<2>;
 template struct Parameters::TimeHarmonicMaxwell<3>;
 template struct Parameters::Multiphysics<2>;
 template struct Parameters::Multiphysics<3>;
+template struct Parameters::QMOMFunctions<2>;
+template struct Parameters::QMOMFunctions<3>;

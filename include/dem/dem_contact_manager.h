@@ -49,7 +49,7 @@ public:
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-      periodic_boundaries_cells_information);
+      &periodic_boundaries_cells_information);
 
   /**
    * @brief Execute functions to clear and update the neighbor lists of all the
@@ -64,7 +64,7 @@ public:
   update_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-      periodic_boundaries_cells_information)
+      &periodic_boundaries_cells_information)
   {
     cells_local_neighbor_list.clear();
     cells_ghost_neighbor_list.clear();
@@ -154,7 +154,7 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler,
     BoundaryCellsInformation<dim>         &boundary_cell_object,
     const typename dem_data_structures<dim>::solid_surfaces_mesh_information
-                                                      solid_surfaces_mesh_info,
+                                                     &solid_surfaces_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
     const AdaptiveSparseContacts<dim, PropertiesIndex>

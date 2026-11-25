@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_time_integration_utilities_h
@@ -63,7 +63,7 @@ time_stepping_is_sdirk(
   return (
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk43);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk45);
 }
 
 /**

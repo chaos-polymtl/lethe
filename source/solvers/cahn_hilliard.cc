@@ -64,7 +64,7 @@ CahnHilliard<dim>::setup_assemblers()
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
         GridTools::minimal_cell_diameter(*triangulation),
-      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+      this->simulation_parameters.cahn_hilliard_boundary_conditions));
 
   // Free angle of contact boundary condition
   this->assemblers.emplace_back(
@@ -76,7 +76,7 @@ CahnHilliard<dim>::setup_assemblers()
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
         GridTools::minimal_cell_diameter(*triangulation),
-      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+      this->simulation_parameters.cahn_hilliard_boundary_conditions));
 
   // Core assembler
   this->assemblers.emplace_back(
@@ -678,12 +678,15 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       error_table.set_scientific("error_phase_order", true);
       error_table.set_scientific("error_chemical_potential", true);
 
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.analytical_solution->get_filename() +
-        "_cahn_hilliard.dat";
-      std::ofstream output(filename.c_str());
-      error_table.write_text(output);
+      if (this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_cahn_hilliard.dat";
+          std::ofstream output(filename.c_str());
+          error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
@@ -722,16 +725,6 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
         {
           this->write_phase_energy();
         }
-    }
-
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::iteration)
-    {
-      announce_string(this->pcout, "Cahn-Hilliard");
-      this->pcout << std::defaultfloat;
-      this->computing_timer.print_summary();
-      this->pcout << std::scientific;
-      this->computing_timer.reset();
     }
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
@@ -869,6 +862,16 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
     }
 }
 
+template <int dim>
+void
+CahnHilliard<dim>::output_per_iteration_timer()
+{
+  announce_string(this->pcout, "Cahn-Hilliard");
+  this->pcout << std::defaultfloat;
+  this->computing_timer.print_summary();
+  this->pcout << std::scientific;
+  this->computing_timer.reset();
+}
 
 template <int dim>
 void
@@ -971,40 +974,36 @@ CahnHilliard<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix);
+        "_CH");
 
   if (this->simulation_parameters.post_processing.calculate_phase_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing.phase_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     table_output_structs.emplace_back(
       this->barycenter_table,
       prefix +
-        this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.barycenter_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_phase_energy)
     table_output_structs.emplace_back(
       this->phase_energy_table,
       prefix +
-        this->simulation_parameters.post_processing.phase_energy_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.phase_energy_output_name);
 
   return table_output_structs;
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::write_checkpoint()
+CahnHilliard<dim>::write_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1023,12 +1022,14 @@ CahnHilliard<dim>::write_checkpoint()
   // Hilliard solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::read_checkpoint()
+CahnHilliard<dim>::read_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading Cahn Hilliard checkpoint" << std::endl;
@@ -1059,7 +1060,9 @@ CahnHilliard<dim>::read_checkpoint()
   // Cahn-Hilliard solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 }
 
 
@@ -1106,7 +1109,7 @@ CahnHilliard<dim>::setup_dofs()
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
+         this->simulation_parameters.cahn_hilliard_boundary_conditions.type)
       {
         ComponentMask mask(2, true);
         mask.set(1, false);
@@ -1114,23 +1117,22 @@ CahnHilliard<dim>::setup_dofs()
         // Dirichlet condition: imposed phase_order at i_bc
         // To impose the boundary condition only on the phase order, a component
         // mask is used at the end of the interpolate_boundary_values function
-        if (type == BoundaryConditions::BoundaryType::
-                      cahn_hilliard_dirichlet_phase_order)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
               id,
               CahnHilliardFunctionDefined<dim>(
-                &this->simulation_parameters.boundary_conditions_cahn_hilliard
+                &this->simulation_parameters.cahn_hilliard_boundary_conditions
                    .bcFunctions.at(id)
                    ->phi),
               nonzero_constraints,
               mask);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::periodic)
           {
             const auto &periodic_boundary =
-              this->simulation_parameters.boundary_conditions_cahn_hilliard
+              this->simulation_parameters.cahn_hilliard_boundary_conditions
                 .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,
@@ -1150,10 +1152,9 @@ CahnHilliard<dim>::setup_dofs()
                                             zero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
+         this->simulation_parameters.cahn_hilliard_boundary_conditions.type)
       {
-        if (type == BoundaryConditions::BoundaryType::
-                      cahn_hilliard_dirichlet_phase_order)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -1161,10 +1162,10 @@ CahnHilliard<dim>::setup_dofs()
               Functions::ZeroFunction<dim>(2),
               zero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::CahnHilliardBoundaryType::periodic)
           {
             const auto &periodic_boundary =
-              this->simulation_parameters.boundary_conditions_cahn_hilliard
+              this->simulation_parameters.cahn_hilliard_boundary_conditions
                 .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,
@@ -1212,7 +1213,7 @@ template <int dim>
 void
 CahnHilliard<dim>::update_boundary_conditions()
 {
-  if (!this->simulation_parameters.boundary_conditions_cahn_hilliard
+  if (!this->simulation_parameters.cahn_hilliard_boundary_conditions
          .time_dependent)
     return;
 
@@ -1222,7 +1223,7 @@ CahnHilliard<dim>::update_boundary_conditions()
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
+       this->simulation_parameters.cahn_hilliard_boundary_conditions.type)
     {
       ComponentMask mask(2, true);
       mask.set(1, false);
@@ -1230,10 +1231,9 @@ CahnHilliard<dim>::update_boundary_conditions()
       // Dirichlet condition: imposed phase_order at i_bc
       // To impose the boundary condition only on the phase order, a component
       // mask is used at the end of the interpolate_boundary_values function
-      if (type ==
-          BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order)
+      if (type == BoundaryConditions::CahnHilliardBoundaryType::dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_cahn_hilliard
+          this->simulation_parameters.cahn_hilliard_boundary_conditions
             .bcFunctions.at(id)
             ->phi.set_time(time);
 
@@ -1241,16 +1241,16 @@ CahnHilliard<dim>::update_boundary_conditions()
             *this->dof_handler,
             id,
             CahnHilliardFunctionDefined<dim>(
-              &this->simulation_parameters.boundary_conditions_cahn_hilliard
+              &this->simulation_parameters.cahn_hilliard_boundary_conditions
                  .bcFunctions.at(id)
                  ->phi),
             nonzero_constraints,
             mask);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CahnHilliardBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_cahn_hilliard
+            this->simulation_parameters.cahn_hilliard_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -12,7 +12,7 @@ set dimension = 3
 
 subsection simulation control
   set time step         = 5e-6
-  set time end          = 2
+  set time end          = 2.5
   set log frequency     = 1000
   set output frequency  = 1000
   set output path       = ./output/
@@ -109,7 +109,7 @@ end
 subsection mesh
   set type               = lethe
   set grid type          = cylinder_balanced
-  set grid arguments     = 6 : 0.10 : 0.25
+  set grid arguments     = 6 : 0.12 : 0.25
   set initial refinement = 2
 end
 
@@ -130,10 +130,10 @@ subsection solid objects
         set initial translation    = 0.05, 0, 0.035
       end
       subsection translational velocity
-        set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
+        set Function expression = if (t>2.5,-0.27*sin(0.8*3.1416*(t-2.5)),0) ; 0 ; 0
       end
       subsection angular velocity
-        set Function expression = if (t>2,31.42,0) ; 0 ; 0
+        set Function expression = if (t>2.5,31.42,0) ; 0 ; 0
       end
     end
   end

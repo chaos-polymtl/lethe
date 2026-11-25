@@ -19,6 +19,7 @@ PATH = os.getcwd()
 
 # User input
 CASE_PREFIX = 'wetsand_'
+TEMPLATE_FILE = 'granuheap_multicase.tpl'
 PRM_FILE = 'granuheap_multicase.prm'
 MESH_FILE_1 = 'support.msh'
 MESH_FILE_2 = 'cylinder.msh'
@@ -36,7 +37,7 @@ rolling_friction = np.linspace(rolling_friction_first, rolling_friction_last, nu
 # Create Jinja template
 templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
 templateEnv = jinja2.Environment(loader=templateLoader)
-template = templateEnv.get_template(PRM_FILE)
+template = templateEnv.get_template(TEMPLATE_FILE)
 
 # Generation of different cases
 for v in rolling_friction:
@@ -53,7 +54,7 @@ for v in rolling_friction:
         # Create the folder of the case and put the prm template in it
         case_path = f'{PATH}/{case_folder_name}'
         os.mkdir(case_path)
-        shutil.copy(f'{PATH}/{PRM_FILE}', f'{case_path}/{PRM_FILE}')
+        shutil.copy(f'{PATH}/{TEMPLATE_FILE}', f'{case_path}/{PRM_FILE}')
         
         # Copy the mesh file (in order to launch Lethe in seperate folders)
         shutil.copy(f'{PATH}/{MESH_FILE_1}', f'{case_path}/{MESH_FILE_1}')

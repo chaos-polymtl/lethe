@@ -55,8 +55,7 @@ public:
    * No filter is applied to the computed filtered phase indicator and the
    * unfiltered phase indicator is returned.
    */
-  ConservativeLevelSetNoFilter()
-  {}
+  ConservativeLevelSetNoFilter() = default;
 
   /**
    * @brief Computes the value of the filtered phase indicator.

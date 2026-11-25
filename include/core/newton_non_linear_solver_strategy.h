@@ -110,8 +110,13 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
       solver->solve_linear_system();
       double last_alpha_res = current_res;
 
-      unsigned int alpha_iter = 0;
-      for (double alpha = 1.0; alpha > 1e-1; alpha *= 0.5)
+      // The line search tries alpha = 1, 1/2, 1/4 and 1/8. An integer counter
+      // drives the loop, so the number of trials does not rely on a
+      // floating-point comparison.
+      constexpr unsigned int n_alpha_iterations = 4;
+      double                 alpha              = 1.0;
+      for (unsigned int alpha_iter = 0; alpha_iter < n_alpha_iterations;
+           ++alpha_iter)
         {
           auto &local_evaluation_point = solver->get_local_evaluation_point();
           auto &newton_update          = solver->get_newton_update();
@@ -143,6 +148,7 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
               local_evaluation_point.add(alpha, newton_update);
               solver->apply_constraints();
               evaluation_point = local_evaluation_point;
+              solver->assemble_system_rhs();
 
               if (this->params.verbosity != Parameters::Verbosity::quiet)
                 {
@@ -161,7 +167,7 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
               break;
             }
           last_alpha_res = current_res;
-          alpha_iter++;
+          alpha *= 0.5;
         }
 
       global_res       = solver->get_current_residual() / rescale_metric;

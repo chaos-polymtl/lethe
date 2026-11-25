@@ -54,7 +54,7 @@ subsection boundary conditions
   end
   subsection bc 1
     set id   = 3
-    set type = neumann traction
+    set type = neumann_traction
     subsection traction fn
       set Function expression = -2.0*pi*sin(pi*x)*sin(pi*x)*cos(2*pi*y); sin(pi*x)*sin(pi*y) - 4*pi*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y); 0.0
     end

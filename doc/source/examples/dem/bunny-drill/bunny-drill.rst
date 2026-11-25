@@ -43,7 +43,7 @@ The mesh is a cylinder generated using a custom Lethe grid generator based on de
   subsection mesh
     set type               = lethe
     set grid type          = cylinder_balanced
-    set grid arguments     = 6 : 0.10 : 0.25
+    set grid arguments     = 6 : 0.12 : 0.25
     set initial refinement = 2
   end
 
@@ -57,7 +57,7 @@ An insertion plane is defined just below the bunny drill. The insertion plane is
   subsection insertion info
     set insertion method                               = plane
     set inserted number of particles at each time step = 200
-    set insertion frequency                            = 4000
+    set insertion frequency                            = 8000
     set insertion plane point                          = 0.025, 0, 0
     set insertion plane normal vector                  = -1, 0, 0
     set insertion maximum offset                       = 0
@@ -69,7 +69,7 @@ An insertion plane is defined just below the bunny drill. The insertion plane is
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The total number of particles in this simulation is 8000. All particles have a diameter of 10 mm. The particles are relatively stiff, with a Young Modulus of :math:`E=10^7` to ensure that the overlap between the bunny drill and the particles does not become sufficiently large to allow particles to *jump through* the bunny.
+The total number of particles in this simulation is 10000. All particles have a diameter of 10 mm. The particles are relatively stiff, with a Young Modulus of :math:`E=10^7` to ensure that the overlap between the bunny drill and the particles does not become sufficiently large to allow particles to *jump through* the bunny.
 
 .. code-block:: text
 
@@ -79,7 +79,7 @@ The total number of particles in this simulation is 8000. All particles have a d
     subsection particle type 0
       set size distribution type            = uniform
       set diameter                          = 0.01
-      set number of particles               = 8000
+      set number of particles               = 10000
       set density particles                 = 2560
       set young modulus particles           = 1e7
       set poisson ratio particles           = 0.3
@@ -99,13 +99,13 @@ The total number of particles in this simulation is 8000. All particles have a d
 Simulation Control (Loading)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The end time of the loading simulation is 2 seconds after which all the particles have been inserted.
+The end time of the loading simulation is 2.5 seconds after which all the particles have been inserted.
 
 .. code-block:: text
 
   subsection simulation control
     set time step         = 5e-6
-    set time end          = 2
+    set time end          = 2.5
     set log frequency     = 1000
     set output frequency  = 1000
     set output path       = ./output/
@@ -115,13 +115,13 @@ The end time of the loading simulation is 2 seconds after which all the particle
 Simulation Control (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The end time end of the drilling simulation is 4.75 seconds after which the bunny has done one back-and-forth drilling motion.
+The end time end of the drilling simulation is 5.25 seconds after which the bunny has done one back-and-forth drilling motion.
 
 .. code-block:: text
 
   subsection simulation control
     set time step         = 5e-6
-    set time end          = 4.75
+    set time end          = 5.25
     set log frequency     = 1000
     set output frequency  = 1000
     set output path       = ./output/
@@ -150,10 +150,10 @@ The bunny is defined using the solid surfaces feature of Lethe. The surface mesh
           set initial translation    = 0.05, 0, 0.035
         end
         subsection translational velocity
-          set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
+          set Function expression = if (t>2.5,-0.27*sin(0.8*3.1416*(t-2.5)),0) ; 0 ; 0
         end
         subsection angular velocity
-          set Function expression = if (t>2,31.42,0) ; 0 ; 0
+          set Function expression = if (t>2.5,31.42,0) ; 0 ; 0
         end
       end
     end

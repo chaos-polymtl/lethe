@@ -56,7 +56,7 @@ Tracer<dim>::setup_assemblers()
       this->inner_face_assembler = std::make_shared<TracerAssemblerSIPG<dim>>();
       this->boundary_face_assembler =
         std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
-          simulation_parameters.boundary_conditions_tracer);
+          simulation_parameters.tracer_boundary_conditions);
 
       // The mortar feature cannot be used with DG elements yet
       if (simulation_parameters.mortar_parameters.enable)
@@ -814,6 +814,18 @@ Tracer<dim>::postprocess(bool first_iteration)
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
       error_table.add_value("error_tracer", tracer_error);
+      error_table.set_scientific("error_tracer", true);
+
+      if (Utilities::MPI::this_mpi_process(
+            triangulation->get_mpi_communicator()) == 0)
+        {
+          const std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_tracer.dat";
+          std::ofstream output(filename.c_str());
+          error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
@@ -855,16 +867,17 @@ Tracer<dim>::postprocess(bool first_iteration)
         }
       this->write_tracer_flow_rates(tracer_flow_rates);
     }
+}
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::iteration)
-    {
-      announce_string(this->pcout, "Tracer");
-      this->pcout << std::defaultfloat;
-      this->computing_timer.print_summary();
-      this->pcout << std::scientific;
-      this->computing_timer.reset();
-    }
+template <int dim>
+void
+Tracer<dim>::output_per_iteration_timer()
+{
+  announce_string(this->pcout, "Tracer");
+  this->pcout << std::defaultfloat;
+  this->computing_timer.print_summary();
+  this->pcout << std::scientific;
+  this->computing_timer.reset();
 }
 
 template <int dim>
@@ -1190,34 +1203,30 @@ Tracer<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_tracer" + suffix);
+        "_tracer");
 
   if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.tracer_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing.tracer_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_tracer_flow_rate)
     table_output_structs.emplace_back(
       this->tracer_flow_rate_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .tracer_flow_rate_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .tracer_flow_rate_output_name);
 
   return table_output_structs;
 }
 
 template <int dim>
 void
-Tracer<dim>::write_checkpoint()
+Tracer<dim>::write_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1236,12 +1245,14 @@ Tracer<dim>::write_checkpoint()
   // Tracer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-Tracer<dim>::read_checkpoint()
+Tracer<dim>::read_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading tracer checkpoint" << std::endl;
@@ -1272,7 +1283,9 @@ Tracer<dim>::read_checkpoint()
   // Tracer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 }
 
 
@@ -1371,7 +1384,7 @@ Tracer<dim>::update_boundary_conditions()
 {
   this->update_mortar_configuration();
 
-  if (!this->simulation_parameters.boundary_conditions_tracer.time_dependent)
+  if (!this->simulation_parameters.tracer_boundary_conditions.time_dependent)
     return;
 
   double time = this->simulation_control->get_current_time();
@@ -1382,24 +1395,24 @@ Tracer<dim>::update_boundary_conditions()
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_tracer.type)
+       this->simulation_parameters.tracer_boundary_conditions.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+      if (type == BoundaryConditions::TracerBoundaryType::dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_tracer.tracer.at(id)
+          this->simulation_parameters.tracer_boundary_conditions.tracer.at(id)
             ->set_time(time);
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
+            *this->simulation_parameters.tracer_boundary_conditions.tracer.at(
               id),
             nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::TracerBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_tracer
+            this->simulation_parameters.tracer_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -1407,7 +1420,7 @@ Tracer<dim>::update_boundary_conditions()
                                                  periodic_boundary.direction,
                                                  nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::none)
+      if (type == BoundaryConditions::TracerBoundaryType::none)
         {
           /* Do nothing */
         }
@@ -1427,9 +1440,9 @@ Tracer<dim>::define_zero_constraints()
   DoFTools::make_hanging_node_constraints(*this->dof_handler, zero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_tracer.type)
+       this->simulation_parameters.tracer_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+      if (type == BoundaryConditions::TracerBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -1437,10 +1450,10 @@ Tracer<dim>::define_zero_constraints()
             Functions::ZeroFunction<dim>(),
             zero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::TracerBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_tracer
+            this->simulation_parameters.tracer_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -1448,7 +1461,7 @@ Tracer<dim>::define_zero_constraints()
                                                  periodic_boundary.direction,
                                                  zero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::none)
+      if (type == BoundaryConditions::TracerBoundaryType::none)
         {
           /* Do nothing */
         }
@@ -1466,22 +1479,22 @@ Tracer<dim>::define_non_zero_constraints()
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_tracer.type)
+       this->simulation_parameters.tracer_boundary_conditions.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
+      if (type == BoundaryConditions::TracerBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
+            *this->simulation_parameters.tracer_boundary_conditions.tracer.at(
               id),
             nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::TracerBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_tracer
+            this->simulation_parameters.tracer_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -1489,7 +1502,7 @@ Tracer<dim>::define_non_zero_constraints()
                                                  periodic_boundary.direction,
                                                  nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::none)
+      if (type == BoundaryConditions::TracerBoundaryType::none)
         {
           /* Do nothing */
         }

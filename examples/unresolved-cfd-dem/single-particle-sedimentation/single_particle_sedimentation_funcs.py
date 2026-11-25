@@ -51,6 +51,42 @@ def dallavalle(dp, rhof, mu, urel):
     fd = beta * urel
     return fd
 
+def analytical_solution(dp, rhop, rhof, mu, g, dt, t_end, initial_position):
+    # Integrate the motion of the particle in time using the gravity, buoyancy
+    # and Dallavalle drag forces. Returns the time, velocity and position.
+    Vp = 4/3 * np.pi * (0.5 * dp)**3
+    Mp = rhop * Vp
+
+    analytical_time = np.arange(0, t_end, dt)
+    analytical_velocity = np.zeros_like(analytical_time)
+    analytical_position = np.zeros_like(analytical_time)
+    analytical_position[0] = initial_position
+
+    i = 1
+    current_t = dt
+    while current_t <= t_end:
+        # Calculate forces
+        Fg = fg(Mp, g)
+        Fb = fb(Vp, rhof, g)
+        Fd = dallavalle(dp, rhof, mu, analytical_velocity[i-1])
+
+        # Calculate acceleration
+        a = (Fb - Fd + Fg) / Mp
+
+        # Calculate velocity
+        analytical_velocity[i] = analytical_velocity[i-1] + a * dt
+
+        # Calculate position
+        analytical_position[i] = analytical_position[i-1] + analytical_velocity[i] * dt
+
+        # Calculate time
+        current_t += dt
+        analytical_time[i] = current_t
+
+        i += 1
+
+    return analytical_time, analytical_velocity, analytical_position
+
 def get_time_and_velocity_from_simulation(path_to_pvd):
     reader = pv.PVDReader(path_to_pvd)
 
@@ -73,7 +109,7 @@ def get_time_position_from_simulation(path_to_pvd):
     for i in range(len(reader.time_values)):
         reader.set_active_time_point(i)
         data = reader.read()
-        position[i] = data[0].points[:, 1]
+        position[i] = data[0].points[0, 1]
 
     return time, position
 

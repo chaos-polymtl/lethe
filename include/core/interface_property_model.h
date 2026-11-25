@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_interface_property_model_h
@@ -28,17 +28,17 @@ public:
    */
   InterfacePropertyModel()
   {
-    model_depends_on[shear_rate]                = false;
-    model_depends_on[temperature]               = false;
-    model_depends_on[temperature_p1]            = false;
-    model_depends_on[pressure]                  = false;
-    model_depends_on[phase_order_cahn_hilliard] = false;
+    model_depends_on[field::shear_rate]                = false;
+    model_depends_on[field::temperature]               = false;
+    model_depends_on[field::temperature_p1]            = false;
+    model_depends_on[field::pressure]                  = false;
+    model_depends_on[field::phase_order_cahn_hilliard] = false;
   }
 
   /**
    * @brief  Default destructor.
    */
-  virtual ~InterfacePropertyModel(){};
+  virtual ~InterfacePropertyModel() = default;
 
   /**
    * @brief Returns true if the InterfacePropertyModel depends on a field, false if not.

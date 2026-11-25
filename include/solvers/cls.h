@@ -35,7 +35,7 @@
 
 DeclException1(
   InvalidNumberOfFluid,
-  int,
+  unsigned int,
   << "The CLS physics is enabled, but the number of fluids is set to " << arg1
   << ". The CLS solver only supports 2 fluids.");
 
@@ -67,8 +67,8 @@ public:
   ConservativeLevelSet(
     MultiphysicsInterface<dim>      *multiphysics_interface,
     const SimulationParameters<dim> &p_simulation_parameters,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                      &p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control);
 
   /**
@@ -108,7 +108,7 @@ public:
    *
    * @param current_solution_fd current solution for the fluid dynamics
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid_0 or fluid_1) corresponding to
    * the phase of interest.
    */
   template <typename VectorType>
@@ -125,8 +125,8 @@ public:
    *
    * @param[in] current_solution_fd current solution for the fluid dynamics
    *
-   * @param[in] monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding
-   * to the phase of interest.
+   * @param[in] monitored_fluid Fluid indicator (fluid_0 or fluid_1)
+   * corresponding to the phase of interest.
    *
    * @return A tensor<1,dim> corresponding to the entry_string in the prm file.
    */
@@ -208,6 +208,11 @@ public:
   void
   postprocess(bool first_iteration) override;
 
+  /**
+   * @brief Output the per iteration wallclock times.
+   */
+  void
+  output_per_iteration_timer() override;
 
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
@@ -255,16 +260,20 @@ public:
 
   /**
    * @brief Prepares auxiliary physics to write checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  write_checkpoint() override;
+  write_checkpoint(const std::string &checkpoint_slot_label) override;
 
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  read_checkpoint() override;
+  read_checkpoint(const std::string &checkpoint_slot_label) override;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to
@@ -447,9 +456,9 @@ private:
       this->triangulation->get_boundary_ids();
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
-        AssertThrow(simulation_parameters.boundary_conditions_cls.type.find(
+        AssertThrow(simulation_parameters.cls_boundary_conditions.type.find(
                       boundary_id_in_tria) !=
-                      simulation_parameters.boundary_conditions_cls.type.end(),
+                      simulation_parameters.cls_boundary_conditions.type.end(),
                     CLSBoundaryConditionMissing(boundary_id_in_tria));
       }
   }
@@ -626,7 +635,7 @@ private:
    * test multiple sharpening threshold in the binary search algorithm
    * (adaptive sharpening).
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid_0 or fluid_1) corresponding to
    * the phase of interest.
    *
    * @param sharpening_threshold Interface sharpening threshold that represents the

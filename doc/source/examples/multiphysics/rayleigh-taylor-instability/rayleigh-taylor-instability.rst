@@ -239,13 +239,13 @@ For CLS, we specify the periodic boundary conditions on the sides and no-flux bo
 CLS
 ~~~
 
-In the ``CLS`` subsection, we select the ``geometric interface reinitialization`` in the ``interface reinitialization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
+In the ``CLS`` subsection, we select the ``geometric`` interface reinitialization in the ``interface reinitialization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
 
 .. code-block:: text
 
   subsection CLS
     subsection interface reinitialization method
-      set type      = geometric interface reinitialization
+      set type      = geometric
       set frequency = 20
       set verbosity = verbose
       subsection geometric interface reinitialization

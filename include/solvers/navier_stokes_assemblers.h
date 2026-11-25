@@ -4,12 +4,14 @@
 #ifndef lethe_navier_stokes_assemblers_h
 #define lethe_navier_stokes_assemblers_h
 
-#include <core/boundary_conditions.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_assemblers.h>
+
+#include <utility>
 
 /*
  * Exceptions used to capture incoherent setup of assemblers
@@ -146,7 +148,7 @@ class GLSNavierStokesAssemblerSRF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesAssemblerSRF(Parameters::VelocitySource velocity_sources)
-    : velocity_sources(velocity_sources)
+    : velocity_sources(std::move(velocity_sources))
   {}
 
   /**
@@ -211,7 +213,7 @@ public:
       {
         if (dim == 2)
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
@@ -224,7 +226,7 @@ public:
           }
         else
           {
-            for (unsigned int k = 0; k < dim; ++k)
+            for (int k = 0; k < dim; ++k)
               {
                 grad_shear_rate[d] +=
                   2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
@@ -492,7 +494,7 @@ class PressureBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   PressureBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &pressure_boundary_conditions_input)
     : simulation_control(simulation_control)
     , pressure_boundary_conditions(pressure_boundary_conditions_input)
@@ -517,7 +519,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const BoundaryConditions::NSBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &pressure_boundary_conditions;
 };
 
@@ -536,7 +538,7 @@ class NeumannTractionBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   NeumannTractionBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &neumann_traction_boundary_condition_input)
     : simulation_control(simulation_control)
     , neumann_traction_boundary_condition(
@@ -564,7 +566,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
-  const BoundaryConditions::NSBoundaryConditions<dim>
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
     &neumann_traction_boundary_condition;
 };
 
@@ -584,7 +586,7 @@ class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   WeakDirichletBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &boundary_conditions_input)
     : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
@@ -608,8 +610,9 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl>             simulation_control;
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+    &boundary_conditions;
 };
 
 
@@ -629,7 +632,7 @@ class PartialSlipDirichletBoundaryCondition
 public:
   PartialSlipDirichletBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &boundary_conditions_input)
     : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
@@ -653,8 +656,9 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl>             simulation_control;
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+    &boundary_conditions;
 };
 
 
@@ -674,7 +678,7 @@ class OutletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   OutletBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim>
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
       &boundary_conditions_input)
     : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
@@ -698,8 +702,9 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl>             simulation_control;
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+    &boundary_conditions;
 };
 
 
@@ -724,7 +729,9 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
+   * @brief assemble_matrix Adds the buoyancy force to the strong residual used
+   * by the stabilization terms of the Jacobian. The force does not depend on
+   * the velocity or the pressure, so nothing is added to the local matrix.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */

@@ -122,6 +122,14 @@ depth_vel_value_y = depth_vel_value_y / (len(time) - start)
 vel_value_x_free_surface = vel_value_x_free_surface / (len(time) - start)
 vel_value_y_free_surface = vel_value_y_free_surface / (len(time) - start)
 
+# Store the plotted profiles so that they can be compared between validation runs
+if (args.validate):
+    np.savetxt("solution-depth-velocity.dat",
+               np.column_stack((y_depth, depth_vel_value_x)), header="y u")
+    np.savetxt("solution-free-surface-velocity.dat",
+               np.column_stack((x_free_surface/R, vel_value_x_free_surface/np.max(vel_value_x_free_surface))),
+               header="x/R v_x/v_max")
+
 plt.plot(depth_vel_value_x, y_depth, label="Lethe")
 plt.plot(-depth_exp[:,0],
          depth_exp[:,1], "xk", label="RPT")

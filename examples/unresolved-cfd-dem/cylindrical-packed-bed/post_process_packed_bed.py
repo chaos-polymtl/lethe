@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
 import pandas as pd
+import argparse
 
 # Plot font and colors
 #---------------------
@@ -25,7 +26,11 @@ colors=['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
 #--------------------------------------------
 # Main
 #--------------------------------------------
-  
+
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the cylindrical packed bed')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
+
 # Particle properties
 dp=0.001
 n_p=10000
@@ -117,8 +122,11 @@ ax2 = ax1.twinx()
 ax2.plot(x_2,void_fraction,label="Void Fraction",color=colors[1])
 ax2.set_ylabel('Void fraction', color=colors[1])
 ax2.tick_params(axis='y', labelcolor=colors[1])  # Set y-axis tick color
-plt.savefig("pressure_drop_void_fraction.png",dpi=200)
-plt.show()
+if (not args.validate):
+    plt.savefig("pressure_drop_void_fraction.png",dpi=200)
+    plt.show()
+else:
+    plt.savefig("pressure_drop_void_fraction.pdf")
 
 
 # Get u component of the velocity from sampled data
@@ -141,6 +149,19 @@ ax2 = ax1.twinx()
 ax2.plot(x_2,void_fraction,label="Void Fraction",color=colors[1])
 ax2.set_ylabel('Void fraction', color=colors[1])
 ax2.tick_params(axis='y', labelcolor=colors[1])  # Set y-axis tick color
-plt.savefig("velocity_void_fraction.png",dpi=200)
-plt.show()
+if (not args.validate):
+    plt.savefig("velocity_void_fraction.png",dpi=200)
+    plt.show()
+else:
+    plt.savefig("velocity_void_fraction.pdf")
+
+    # Store the plotted profiles and the pressure drop so that they can be
+    # compared between validation runs
+    np.savetxt("solution-profiles.dat",
+               np.column_stack((x, p, void_fraction, u)),
+               header="x p void_fraction u")
+    deltaP_lethe = np.nanmax(p) - np.nanmin(p)
+    np.savetxt("solution-pressure-drop.dat",
+               np.array([[H_bed, eps_packed, deltaP_ergun, deltaP_lethe]]),
+               header="H_bed porosity deltaP_ergun deltaP_lethe")
 

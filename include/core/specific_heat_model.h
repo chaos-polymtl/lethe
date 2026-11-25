@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_specific_heat_model_h
@@ -7,6 +7,8 @@
 #include <core/parameters.h>
 #include <core/phase_change.h>
 #include <core/physical_property_model.h>
+
+#include <algorithm>
 
 using namespace dealii;
 
@@ -80,7 +82,7 @@ public:
                std::vector<double> &property_vector) override
   {
     (void)field_vectors;
-    std::fill(property_vector.begin(), property_vector.end(), specific_heat);
+    std::ranges::fill(property_vector, specific_heat);
   }
 
   /**
@@ -134,7 +136,7 @@ public:
   {
     (void)field_vectors;
     (void)id;
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   };
 
 private:

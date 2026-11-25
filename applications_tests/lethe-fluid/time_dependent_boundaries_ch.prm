@@ -119,7 +119,7 @@ subsection physical properties
   end
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
+    set type = fluid_fluid
     subsection fluid-fluid interaction
       set first fluid id              = 0
       set second fluid id             = 1

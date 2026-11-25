@@ -1,10 +1,12 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_density_model_h
 #define lethe_density_model_h
 
 #include <core/physical_property_model.h>
+
+#include <algorithm>
 
 /**
  * @brief Abstract class for calculating the density of materials.
@@ -112,7 +114,7 @@ public:
                std::vector<double> &property_vector) override
   {
     (void)field_vectors;
-    std::fill(property_vector.begin(), property_vector.end(), density);
+    std::ranges::fill(property_vector, density);
   }
 
   /**
@@ -166,7 +168,7 @@ public:
   {
     (void)field_vectors;
     (void)id;
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.0);
+    std::ranges::fill(jacobian_vector, 0.0);
   }
 
   /**
@@ -325,9 +327,9 @@ public:
   {
     (void)field_vectors;
     if (id == field::pressure)
-      std::fill(jacobian_vector.begin(), jacobian_vector.end(), psi);
+      std::ranges::fill(jacobian_vector, psi);
     else
-      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+      std::ranges::fill(jacobian_vector, 0);
   }
 
   /**

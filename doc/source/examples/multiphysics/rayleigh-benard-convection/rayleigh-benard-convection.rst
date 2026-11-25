@@ -54,7 +54,7 @@ where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitati
 In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers ( :math:`Ra=10^4` and :math:`Ra=10^6` ) with a Prandtl number of :math:`Pr=0.71` which correspond to air. According to the literature [#ouertatani]_ , we should see one big convective cell at steady-state for both :math:`Ra=10^4` and :math:`Ra=10^6`, but for the latter, there should also be two small vortices in opposite corners rotating in the reverse direction of the big vortex. For simplicity, the gravity magnitude is set to 10 pointing in the opposite direction of the y-axis for both simulations. Additionally, because the two dimensionless numbers above are the only thing that characterize the flow we may choose the remaining parameters as we want. Here we chose to fix :math:`\rho = 1`, :math:`H = 1`, :math:`c_\text{p} = 100` and :math:`\mu = 0.071`. Thus, the Rayleigh number is controlled only by the thermal expansion coefficient (:math:`\beta = 0.71` or :math:`\beta = 71`).
 
 .. note:: 
-    All four boundary conditions for the velocity are ``noslip``. The sides wall are set to ``convection-radiation-flux`` with a heat transfer coefficient of 0 to have isolated walls. The top and bottom walls are set to a ``temperature`` to force a value of 0 and 10, respectively. 
+    All four boundary conditions for the velocity are ``noslip``. The sides wall are set to ``convection_radiation`` with a heat transfer coefficient of 0 to have isolated walls. The top and bottom walls are set to a ``temperature`` to force a value of 0 and 10, respectively. 
 
 
 --------------
@@ -88,7 +88,7 @@ The time integration is handled by a 1st order backward differentiation scheme t
       set output name                    = rayleigh-benard_convection
       set output control                 = time
       set output time frequency          = 0.5
-      set output path                    = ./output/
+      set output path                    = ./output_10k/
     end
 
 Multiphysics
@@ -193,12 +193,19 @@ Below, we also present the velocity profiles at steady-state of our simulation c
 .. |fig2| image:: images/solution-rayleigh-xv.png
     :width: 47%
 
-The results can be postprocessed using the provided Python script (``rayleigh-benard-convection.py``). Here is an example of how to call the script:
+The results can be postprocessed using the provided Python script (``rayleigh-benard-convection.py``). Each output folder is given with ``-f`` and its Rayleigh number with ``-Ra``, in the same order. The simulations at :math:`Ra=10^4` and :math:`Ra=10^6` write their results in ``./output_10k/`` and ``./output_1M/`` respectively, so both are postprocessed with:
 
 .. code-block:: text
   :class: copy-button
 
   python3 rayleigh-benard-convection.py -f ./output_10k -f ./output_1M -Ra 10k -Ra 1M
+
+A single simulation can also be postprocessed on its own, for instance the one at :math:`Ra=10^4`:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 rayleigh-benard-convection.py -f ./output_10k -Ra 10k
 
 This script extracts the velocity in the :math:`x` and :math:`y` directions at the mid-width (:math:`x=0.5`) and mid-height (:math:`y=0.5`) respectively and create the above plots.
 

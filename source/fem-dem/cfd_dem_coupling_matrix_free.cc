@@ -201,7 +201,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::initialize_dem_parameters()
 
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
 
   particle_wall_contact_force_object =
     set_particle_wall_contact_force_model<dim, PropertiesIndex>(
@@ -379,11 +379,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::gather_tables()
     this->simulation_parameters.post_processing;
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
   if (post_processing.calculate_phase_volumes)
     table_output_structs.emplace_back(
       this->table_phase_volumes,
-      prefix + post_processing.phase_volumes_output_name + suffix);
+      prefix + post_processing.phase_volumes_output_name);
   return table_output_structs;
 }
 
@@ -395,11 +394,14 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
 
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
 
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
-  std::string prefix_particles = prefix + "_particles";
-  std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+  const std::string prefix           = this->get_checkpoint_prefix();
+  const std::string prefix_particles = prefix + "_particles";
+  const std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+
+  // Register the particles for serialization (all ranks)
+  this->particle_handler.prepare_for_serialization();
+
+  // This only needs to be done by rank 0.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       this->simulation_control->save(prefix);
@@ -412,16 +414,25 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
 
       if (this->simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
+
+      // Serialize the global particle counters
+      std::ostringstream            oss_particle_handler;
+      boost::archive::text_oarchive oa_particle_handler(
+        oss_particle_handler, boost::archive::no_header);
+      oa_particle_handler << this->particle_handler;
+
+      // Write additional particle information for deserialization
+      std::string   particle_filename = prefix + ".particles";
+      std::ofstream output(particle_filename.c_str());
+      output << oss_particle_handler.str() << std::endl;
+
+      // Prepare the insertion object for checkpointing
+      std::string   insertion_object_filename = prefix + ".insertion_object";
+      std::ofstream oss_insertion_obj(insertion_object_filename);
+      boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
+                                                     boost::archive::no_header);
+      insertion_object->serialize(oa_insertion_obj);
     }
-
-  std::ostringstream            oss;
-  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
-  oa << this->particle_handler;
-
-  // Write additional particle information for deserialization
-  std::string   particle_filename = prefix + ".particles";
-  std::ofstream output(particle_filename.c_str());
-  output << oss.str() << std::endl;
 
   std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&(*this->present_solution));
@@ -445,16 +456,6 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  // Prepare particle handler for serialization
-  this->particle_handler.prepare_for_serialization();
-
-  // Prepare the insertion object for checkpointing
-  std::string   insertion_object_filename = prefix + ".insertion_object";
-  std::ofstream oss_insertion_obj(insertion_object_filename);
-  boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
-                                                 boost::archive::no_header);
-  insertion_object->serialize(oa_insertion_obj);
-
   // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
   vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
@@ -466,30 +467,33 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::write_checkpoint()
         &this->particle_projector.void_fraction_previous_solution[i]);
     }
 
-  this->multiphysics->write_checkpoint();
+  this->multiphysics->write_checkpoint(this->get_checkpoint_slot_label());
 
   // Prepare for Serialization
   SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
   vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
 
   if (auto parallel_triangulation =
         dynamic_cast<parallel::distributed::Triangulation<dim> *>(
           &*this->triangulation))
     {
-      std::string triangulationName = prefix + ".triangulation";
       parallel_triangulation->save(prefix + ".triangulation");
     }
   // Serialize all post-processing tables that are currently used
   // Serialize the post-processing tables that are additional in this solver
   const std::vector<OutputStructTableHandler> &table_output_structs_add =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs_add, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs_add,
+                          this->get_checkpoint_slot_label(),
+                          this->mpi_communicator);
   // Serialize the default post-processing tables that are members of
   // NavierStokesBase
   const std::vector<OutputStructTableHandler> &table_output_structs =
     NavierStokesBase<dim, VectorType, IndexSet>::gather_tables();
-  serialize_tables_vector(table_output_structs, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          this->get_checkpoint_slot_label(),
+                          this->mpi_communicator);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -497,12 +501,10 @@ void
 CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  using VectorType = LinearAlgebra::distributed::Vector<double>;
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
-  std::string prefix_particles = prefix + "_particles";
-  std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
+  using VectorType         = LinearAlgebra::distributed::Vector<double>;
+  const std::string prefix = this->get_checkpoint_prefix();
+  const std::string prefix_particles = prefix + "_particles";
+  const std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
 
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
@@ -624,7 +626,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
 
   // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
-    1 + this->particle_projector.previous_void_fraction.size());
+    1 + this->particle_projector.previous_void_fraction->size());
 
   VectorType vf_distributed_system(
     this->particle_projector.locally_owned_dofs,
@@ -636,10 +638,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
   std::vector<VectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
-    this->particle_projector.previous_void_fraction.size());
+    this->particle_projector.previous_void_fraction->size());
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
@@ -650,7 +652,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
     }
 
   SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
 
   vf_system_trans_vectors.deserialize(vf_system);
 
@@ -662,12 +664,12 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
     this->particle_projector.void_fraction_locally_owned,
     this->particle_projector.void_fraction_solution);
 
-  this->particle_projector.void_fraction_locally_relevant =
+  *this->particle_projector.void_fraction_locally_relevant =
     this->particle_projector.void_fraction_locally_owned;
 #endif
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       this->particle_projector.void_fraction_previous_solution[i] =
@@ -678,7 +680,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
       convert_vector_dealii_to_trilinos(
         this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
-      this->particle_projector.previous_void_fraction[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         this->particle_projector.void_fraction_locally_owned;
 #endif
     }
@@ -710,7 +712,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
     {
       this->flow_control.read(prefix);
     }
-  this->multiphysics->read_checkpoint();
+  this->multiphysics->read_checkpoint(this->get_checkpoint_slot_label());
 
   // Deserialize particles have the triangulation has been read
   this->particle_handler.deserialize();
@@ -719,13 +721,17 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::read_checkpoint()
   // Deserialize the post-processing tables that are particular to this solver
   std::vector<OutputStructTableHandler> table_output_structs_add =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs_add, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs_add,
+                            this->get_checkpoint_slot_label(),
+                            this->mpi_communicator);
 
   // Deserialize the default post-processing tables that are members of
   // NavierStokesBase
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<dim, VectorType, IndexSet>::gather_tables();
-  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            this->get_checkpoint_slot_label(),
+                            this->mpi_communicator);
 
   // Force a resort of the particles and exchange the ghost particles
   // to ensure the cache to update the ghost particles is correctly
@@ -825,7 +831,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 
   // Prepare for Serialization
   SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
-    this->particle_projector.dof_handler);
+    *this->particle_projector.dof_handler);
   vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
     vf_set_transfer);
 
@@ -932,7 +938,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
 
   // Void Fraction Vectors
   std::vector<VectorType *> vf_system(
-    1 + this->particle_projector.previous_void_fraction.size());
+    1 + this->particle_projector.previous_void_fraction->size());
 
   VectorType vf_distributed_system(
     this->particle_projector.locally_owned_dofs,
@@ -944,10 +950,10 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
   std::vector<VectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
-    this->particle_projector.previous_void_fraction.size());
+    this->particle_projector.previous_void_fraction->size());
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
@@ -983,12 +989,12 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
     this->particle_projector.void_fraction_locally_owned,
     this->particle_projector.void_fraction_solution);
 
-  this->particle_projector.void_fraction_locally_relevant =
+  *this->particle_projector.void_fraction_locally_relevant =
     this->particle_projector.void_fraction_locally_owned;
 #endif
 
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.previous_void_fraction->size();
        ++i)
     {
       // Refresh the ghost values before storing, for the same reason as the
@@ -1005,7 +1011,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::load_balance()
       convert_vector_dealii_to_trilinos(
         this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
-      this->particle_projector.previous_void_fraction[i] =
+      this->particle_projector.previous_void_fraction->at(i) =
         this->particle_projector.void_fraction_locally_owned;
 #endif
     }
@@ -1155,12 +1161,12 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::report_particle_statistics()
     Utilities::MPI::this_mpi_process(this->mpi_communicator);
   // Update statistics on contact list
   double number_of_list_built_since_last_log =
-    double(contact_search_total_number) - contact_list.total;
+    static_cast<double>(contact_search_total_number) - contact_list.total;
   contact_list.max =
     std::max(number_of_list_built_since_last_log, contact_list.max);
   contact_list.min =
     std::min(number_of_list_built_since_last_log, contact_list.min);
-  contact_list.total   = double(contact_search_total_number);
+  contact_list.total   = static_cast<double>(contact_search_total_number);
   contact_list.average = contact_list.total /
                          (this->simulation_control->get_iteration_number()) *
                          this->simulation_control->get_log_frequency();
@@ -1273,8 +1279,8 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::postprocess_cfd_dem()
       double             total_volume_fluid, total_volume_particles;
       std::tie(total_volume_fluid, total_volume_particles) =
         calculate_fluid_and_particle_volumes(
-          this->particle_projector.dof_handler,
-          this->particle_projector.void_fraction_locally_relevant,
+          *this->particle_projector.dof_handler,
+          *this->particle_projector.void_fraction_locally_relevant,
           *this->cell_quadrature,
           *this->mapping);
       this->table_phase_volumes.add_value(
@@ -1332,7 +1338,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dynamic_flow_control()
         this->simulation_parameters.flow_control.flow_direction;
       double average_velocity = calculate_average_velocity(
         *this->dof_handler,
-        this->particle_projector.dof_handler,
+        *this->particle_projector.dof_handler,
         *this->present_solution,
         this->particle_projector.void_fraction_solution,
         flow_direction,
@@ -1615,7 +1621,7 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::dem_contact_build()
 
       // Identify the mobility status of particles (if ASC enabled)
       sparse_contacts_object.identify_mobility_status(
-        this->particle_projector.dof_handler,
+        *this->particle_projector.dof_handler,
         this->particle_handler,
         (*this->triangulation).n_active_cells(),
         this->mpi_communicator);
@@ -1699,6 +1705,16 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
                                               this->pcout,
                                               this->mpi_communicator);
 
+  if (this->cfd_dem_simulation_parameters.void_fraction->output_qcm)
+    {
+      this->particle_projector.write_qcm_quadrature_points(
+        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
+          .output_folder,
+        "qcm_quadrature_points",
+        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
+          .group_files);
+    }
+
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     this->update_multiphysics_time_average_solution();
@@ -1710,10 +1726,14 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
   // Initialize the DEM parameters and generate the ghost particles
   initialize_dem_parameters();
 
-  // Calculate first instance of void fraction once particles are set up
+  // Calculate first instance of void fraction and of the projected particle
+  // temperature once particles are set up
   if (!dem_action_manager->check_restart_simulation())
-    this->particle_projector.initialize_void_fraction(
-      this->simulation_control->get_current_time());
+    {
+      this->particle_projector.initialize_void_fraction(
+        this->simulation_control->get_current_time());
+      this->particle_projector.calculate_particle_temperature_projection();
+    }
 
   // Output the solution after initializing the void fraction
   if (!this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1748,6 +1768,11 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
       // the particle projector.
       this->particle_projector.calculate_void_fraction(
         this->simulation_control->get_current_time());
+
+      // Project the particle temperature onto the fluid mesh (thermal CFD-DEM
+      // simulations only), so that the other physics see the particle
+      // temperature of the current time step
+      this->particle_projector.calculate_particle_temperature_projection();
 
       if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {
@@ -1798,21 +1823,21 @@ CFDDEMMatrixFree<dim, PropertiesIndex>::solve()
             "Prepare MF operator for VANS");
 
           mf_operator->compute_void_fraction(
-            this->particle_projector.dof_handler,
+            *this->particle_projector.dof_handler,
             this->particle_projector.void_fraction_solution,
             this->time_derivative_void_fraction);
 
           mf_operator->compute_particle_fluid_interaction(
-            this->particle_projector.fluid_force_on_particles_two_way_coupling
-              .dof_handler,
+            *this->particle_projector.fluid_force_on_particles_two_way_coupling
+               .dof_handler,
             this->particle_projector.fluid_force_on_particles_two_way_coupling
               .particle_field_solution,
-            this->particle_projector.fluid_drag_on_particles.dof_handler,
+            *this->particle_projector.fluid_drag_on_particles.dof_handler,
             this->particle_projector.fluid_drag_on_particles
               .particle_field_solution,
-            this->particle_projector.particle_velocity.dof_handler,
+            *this->particle_projector.particle_velocity.dof_handler,
             this->particle_projector.particle_velocity.particle_field_solution,
-            this->particle_projector.momentum_transfer_coefficient.dof_handler,
+            *this->particle_projector.momentum_transfer_coefficient.dof_handler,
             this->particle_projector.momentum_transfer_coefficient
               .particle_field_solution);
 

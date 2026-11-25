@@ -1,0 +1,15 @@
+
+DEAL::Number of particle-point pairs: 1
+DEAL::Number of particle-line pairs: 1
+DEAL::Particle 0 after the contact evaluation
+DEAL::  location: -0.0200000 -0.0200000 -0.0200000
+DEAL::  accumulated displacement: -0.00962221 -0.00962221 -0.00962221
+DEAL::Particle 1 after the contact evaluation
+DEAL::  location: -0.0300000 -0.0200000 0.250000
+DEAL::  accumulated displacement: -0.0126666 -0.00844441 0.00000
+DEAL::Number of contacts: 2
+DEAL::Particle 0 location after the displacement: -0.0296222 -0.0296222 -0.0296222
+DEAL::Particle 1 location after the displacement: -0.0426666 -0.0284444 0.250000
+DEAL::Distance between particle 0 and the boundary vertex: 0.0513072
+DEAL::Distance between particle 1 and the boundary line: 0.0512789
+DEAL::Number of contacts after the displacement: 0

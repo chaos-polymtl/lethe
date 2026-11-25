@@ -4,6 +4,8 @@
 #ifndef lethe_void_fraction_h
 #define lethe_void_fraction_h
 
+#include <core/dem_properties.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/parameters_cfd_dem.h>
 #include <core/vector.h>
 
@@ -32,7 +34,15 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <utility>
+
 using namespace dealii;
+
+DeclExceptionMsg(
+  NotSupportedMeshAdaptationMethod,
+  "Mesh adaptation is only supported with the steady time-stepping method "
+  "in the VANS and CFD-DEM solvers at the moment because the void fraction "
+  "field is not yet updated during mesh adaptation.");
 
 /**                                                                                         \
  * @brief Calculate the area of intersection between a circular (2D) particle and a circle. \
@@ -166,7 +176,7 @@ public:
                    const bool                                   simplex,
                    const bool neumann_boundaries,
                    const bool conservative_projection)
-    : dof_handler(*triangulation)
+    : dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
     , neumann_boundaries(neumann_boundaries)
     , conservative_projection(conservative_projection)
     , matrix_requires_assembly(true)
@@ -183,10 +193,11 @@ public:
       }
   }
 
-  /// DoFHandler that manages the void fraction
-  DoFHandler<dim> dof_handler;
+  /// DoFHandler that manages the particle field. It is stored as a shared
+  /// pointer so that it can be provided to the multiphysics interface.
+  std::shared_ptr<DoFHandler<dim>> dof_handler;
 
-  /// deal.II vector for the particle velocity
+  /// deal.II vector for the particle field solution.
   LinearAlgebra::distributed::Vector<double> particle_field_solution;
 
   /// Finite element for the particle field
@@ -288,13 +299,14 @@ public:
     const bool                       simplex,
     const ConditionalOStream        &pcout)
     : PhysicsLinearSubequationsSolver(pcout)
-    , dof_handler(*triangulation)
+    , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
     , triangulation(triangulation)
-    , void_fraction_parameters(input_parameters)
+    , void_fraction_parameters(std::move(input_parameters))
     , linear_solver_parameters(linear_solver_parameters)
     , particle_handler(particle_handler)
     , particle_have_been_projected(false)
     , particle_velocity(triangulation, fe_degree, simplex, true, false)
+    , particle_temperature(triangulation, fe_degree, simplex, true, false)
     , fluid_force_on_particles_two_way_coupling(triangulation,
                                                 fe_degree,
                                                 simplex,
@@ -337,7 +349,7 @@ public:
                 this->void_fraction_parameters->n_quadrature_points);
             else
               throw(std::runtime_error(
-                "For void fraction using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
+                "For void fraction using Gauss-Lobatto ('gauss_lobatto') quadrature rule, the minimum number of quadrature points is 3"));
           }
         else
           {
@@ -347,6 +359,17 @@ public:
                 "An invalid quadrature rule was provided to the ParticleProject class."));
           }
       }
+
+    // Initialize the void fraction previous solution vector
+    previous_void_fraction = std::make_shared<std::vector<GlobalVectorType>>();
+
+    // Initialize the void fraction current solution vector
+    void_fraction_locally_relevant = std::make_shared<GlobalVectorType>();
+
+    // Initialize the particle temperature vector provided to the multiphysics
+    // interface
+    particle_temperature_locally_relevant =
+      std::make_shared<GlobalVectorType>();
 
     AssertThrow(
       !void_fraction_parameters->project_particle_velocity ||
@@ -360,6 +383,12 @@ public:
          void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm),
       ExcMessage(
         "The projection of the particle velocity currently requires that the QCM method be used for the calculation of the void fraction."));
+
+    AssertThrow(
+      !DEM::has_thermal_properties<PropertiesIndex> ||
+        void_fraction_parameters->l2_smoothing_length > 0,
+      ExcMessage(
+        "The particle temperature is always projected in thermal CFD-DEM simulations (solver type = dem_mp), which requires that the l2 smoothing length be > 0. Otherwise, the Poisson equation used in the Neumann boundary is invalid."));
   }
 
   /**
@@ -400,7 +429,8 @@ public:
    */
   void
   setup_constraints(
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions);
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+      &boundary_conditions);
 
   /**
    * @brief Calculate the void fraction.
@@ -411,6 +441,14 @@ public:
    */
   void
   calculate_void_fraction(const double time);
+
+  /**
+   * @brief Project the particle temperature onto the fluid mesh with the QCM,
+   * then copy it into particle_temperature_locally_relevant, the vector
+   * provided to the multiphysics interface.
+   */
+  void
+  calculate_particle_temperature_projection();
 
   /**
    * @brief Calculate all the necessary information for the particle-fluid coupling.
@@ -445,13 +483,14 @@ public:
   void
   percolate_void_fraction()
   {
-    for (unsigned int i = previous_void_fraction.size() - 1; i > 0; --i)
+    for (unsigned int i = previous_void_fraction->size() - 1; i > 0; --i)
       {
-        previous_void_fraction[i] = previous_void_fraction[i - 1];
+        (*this->previous_void_fraction)[i] =
+          (*this->previous_void_fraction)[i - 1];
         void_fraction_previous_solution[i] =
           void_fraction_previous_solution[i - 1];
       }
-    previous_void_fraction[0]          = void_fraction_locally_relevant;
+    (*this->previous_void_fraction)[0] = *this->void_fraction_locally_relevant;
     void_fraction_previous_solution[0] = void_fraction_solution;
   }
 
@@ -465,8 +504,8 @@ public:
   initialize_void_fraction(const double time)
   {
     calculate_void_fraction(time);
-    for (auto &previous_solution : this->previous_void_fraction)
-      previous_solution = void_fraction_locally_relevant;
+    for (auto &previous_solution : *this->previous_void_fraction)
+      previous_solution = *this->void_fraction_locally_relevant;
 
     for (auto &previous_solution : this->void_fraction_previous_solution)
       previous_solution = void_fraction_solution;
@@ -508,8 +547,22 @@ public:
     fluid_drag_on_particles.particle_field_solution.update_ghost_values();
   }
 
-  /// DoFHandler that manages the void fraction
-  DoFHandler<dim> dof_handler;
+  /**
+   * @brief Write the location of the QCM quadrature points and the radius of
+   * the filter centered at each of them for visualization.
+   *
+   * @param[in] folder Output folder.
+   * @param[in] prefix Prefix for the output files.
+   * @param[in] group_files Number of files the output is grouped into.
+   */
+  void
+  write_qcm_quadrature_points(const std::string &folder,
+                              const std::string &prefix,
+                              const unsigned int group_files);
+
+  /// DoFHandler that manages the void fraction, it is a shared pointer because
+  /// it is used by the multiphysics interface
+  std::shared_ptr<DoFHandler<dim>> dof_handler;
 
   /// Mapping for the void fraction
   std::shared_ptr<Mapping<dim>> mapping;
@@ -518,11 +571,13 @@ public:
   std::shared_ptr<Quadrature<dim>> quadrature;
 
   /// The solutions are made public instead of using getters
-  /// Solution of the void fraction at previous time steps
-  std::vector<GlobalVectorType> previous_void_fraction;
+  /// Solution of the void fraction at previous time steps, it is a shared
+  /// pointer because it is used by the multiphysics interface
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_void_fraction;
 
-  /// Fully distributed (including locally relevant) solution
-  GlobalVectorType void_fraction_locally_relevant;
+  /// Fully distributed (including locally relevant) solution, it is a shared
+  /// pointer because it is used by the multiphysics interface
+  std::shared_ptr<GlobalVectorType> void_fraction_locally_relevant;
 
   /// Locally owned solution of the void fraction
   GlobalVectorType void_fraction_locally_owned;
@@ -871,6 +926,21 @@ public:
   /// entire domain of this field will not yield the sum of the particle
   /// velocity over all the particles.
   ParticleFieldQCM<dim, 3, PropertiesIndex::v_x> particle_velocity;
+
+  /// Projector used to save the particle temperature field onto the mesh
+  /// This field is not volumetric, meaning that the integral over the
+  /// entire domain of this field will not yield the sum of the particle
+  /// temperature over all the particles. The particle temperature is only
+  /// projected if the particle properties have thermal properties (for dem_mp
+  /// simulations). Otherwise, its index is set to -1 and the field is not
+  /// projected.
+  ParticleFieldQCM<dim, 1, DEM::temperature_property_index<PropertiesIndex>>
+    particle_temperature;
+
+  /// Copy of the projected particle temperature, including the locally
+  /// relevant ghost values, in the vector type of the multiphysics interface.
+  /// It is a shared pointer because it is used by the multiphysics interface.
+  std::shared_ptr<GlobalVectorType> particle_temperature_locally_relevant;
 
   /// Projector used to save the forces used in the two-way coupling scheme,
   /// without drag. This field is volumetric. The integral of this field over

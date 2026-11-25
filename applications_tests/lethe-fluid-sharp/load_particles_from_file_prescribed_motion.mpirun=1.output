@@ -1,0 +1,41 @@
+Running on 1 MPI rank(s)...
+Loading particles from a file
+Particles found: 2
+   Number of active cells:       160
+   Number of degrees of freedom: 561
+   Volume of triangulation:      1.600000e+02
+Initial refinement around IB particles - Step : 1 of 1
+   Number of active cells:       244
+   Number of degrees of freedom: 861
+   Volume of triangulation:      1.600000e+02
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.0025   Time step: 0.0025   CFL: 0       
+*******************************************************************************
+particle 0 position 3.002500e+00 1.275000e+01
+particle 0 velocity 1.000000e+00 0.000000e+00
+particle 1 position 6.999993e+00 8.749547e+00
+particle 1 velocity -2.970850e-03 -1.811252e-01
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time     T_z    omega_z  theta_z     f_x       v_x      p_x       f_y       v_y       p_y      f_xv      f_yv      f_xp      f_yp    
+          0 0.0025 -0.006025 2.000000 0.005000 -0.595925  1.000000 3.002500 -0.009208  0.000000 12.750000 -0.006594 -0.000037 -0.589331 -0.009170 
+          1 0.0025 -0.000028 0.000000 0.000000 -0.002364 -0.002971 6.999993  0.132932 -0.181125  8.749547 -0.000006  0.000936 -0.002358  0.131996 
+
+*********************************************************************************
+Transient iteration: 2        Time: 0.005    Time step: 0.0025   CFL: 0.00942982
+*********************************************************************************
+   Number of active cells:       196
+   Number of degrees of freedom: 717
+   Volume of triangulation:      1.600000e+02
+particle 0 position 3.005000e+00 1.275000e+01
+particle 0 velocity 1.000000e+00 0.000000e+00
+particle 1 position 6.999983e+00 8.748718e+00
+particle 1 velocity -3.915282e-03 -3.316885e-01
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time     T_z     omega_z   theta_z     f_x       v_x      p_x       f_y       v_y       p_y      f_xv      f_yv      f_xp      f_yp    
+          0 0.0050 -0.005949  2.000000  0.010000 -0.218506  1.000000 3.005000 -0.000202  0.000000 12.750000 -0.006328 -0.000043 -0.212178 -0.000159 
+          1 0.0050 -0.000054 0.000000 0.000000 -0.001074 -0.003915 6.999983  0.162877 -0.331689  8.748718 -0.000010  0.001692 -0.001063  0.161185 

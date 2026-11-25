@@ -291,7 +291,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm) const;
@@ -299,7 +299,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -307,16 +307,16 @@ namespace Parameters
       /**
        * @brief Declare default parameter entries for a single particle type.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
-      declareDefaultEntry(ParameterHandler &prm);
+      declare_default_entry(ParameterHandler &prm);
 
       /**
        * @brief Parse the physical properties for a given particle type.
        *
        * @param[in] particle_type Index of the particle type to parse.
-       * @param[in, out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_particle_properties(const unsigned int     &particle_type,
@@ -509,10 +509,28 @@ namespace Parameters
       /// using the volume insertion.
       std::shared_ptr<Function<dim>> insertion_acceptance_fct;
 
+      /// Fraction of the normal overlap of a particle-particle contact by
+      /// which each of the two particles is shifted at each pseudo-time step
+      /// of the packed insertion method.
+      double packed_particle_particle_overlap_factor = 0.501;
+
+      /// Fraction of the normal overlap of a contact with a wall, a solid
+      /// surface, a boundary point or a boundary line by which the particle is
+      /// shifted at each pseudo-time step of the packed insertion method. It
+      /// is at least 1, so that the other particles cannot push a particle
+      /// through a wall or a solid surface.
+      double packed_particle_wall_overlap_factor = 1.02;
+
+      /// Distance added to the shift of a particle in contact at each
+      /// pseudo-time step of the packed insertion method, as a fraction of
+      /// the particle diameter. The mean diameter of the two particles is used
+      /// for particle-particle contacts.
+      double packed_clearance_ratio = 0.01;
+
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -520,7 +538,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -666,7 +684,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -674,7 +692,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -707,7 +725,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -715,7 +733,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -752,7 +770,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm) const;
@@ -760,7 +778,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -768,15 +786,15 @@ namespace Parameters
       /**
        * @brief Declare default parameter entries for a single floating wall.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
-      declareDefaultEntry(ParameterHandler &prm);
+      declare_default_entry(ParameterHandler &prm);
 
       /**
        * @brief Parse parameters for a single floating wall.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_floating_wall(const ParameterHandler &prm);
@@ -859,7 +877,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm) const;
@@ -867,7 +885,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -876,15 +894,19 @@ namespace Parameters
        * @brief Declare default parameter entries for a single boundary
        * condition.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
+       *
+       * @param[in] default_boundary_id Default value of the boundary id. This
+       * corresponds to the number of the boundary condition subsection.
        */
       static void
-      declareDefaultEntry(ParameterHandler &prm);
+      declare_default_entry(ParameterHandler        &prm,
+                            const types::boundary_id default_boundary_id);
 
       /**
        * @brief Parse boundary condition parameters for a single boundary.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_boundary_conditions(ParameterHandler &prm);
@@ -899,7 +921,7 @@ namespace Parameters
      * @brief Parameters for grid (mesh) motion in DEM simulations.
      *
      * This class defines the type and parameters of the grid motion, which
-     * can be translational, rotational, or none.
+     * can be translational, rotational or none.
      *
      * @tparam dim Number of spatial dimensions.
      */
@@ -934,7 +956,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -942,7 +964,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -979,7 +1001,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -987,7 +1009,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -1020,7 +1042,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       void
       declare_parameters(ParameterHandler &prm);
@@ -1028,7 +1050,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -1076,7 +1098,7 @@ namespace Parameters
       /**
        * @brief Declare the parameters in the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in,out] prm The parameter handler object.
        */
       static void
       declare_parameters(ParameterHandler &prm);
@@ -1084,7 +1106,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler object.
        */
       void
       parse_parameters(ParameterHandler &prm);

@@ -1,0 +1,19 @@
+
+DEAL:0::  Dimension 2
+DEAL:0::  Particle temperature registered under VANS
+DEAL:0::  Integral of the particle temperature (expected 310) : 310.000
+DEAL:0::  Interface shares the registered vector              : yes
+DEAL:0::  Dimension 3
+DEAL:0::  Particle temperature registered under VANS
+DEAL:0::  Integral of the particle temperature (expected 310) : 310.000
+DEAL:0::  Interface shares the registered vector              : yes
+
+DEAL:1::  Dimension 2
+DEAL:1::  Particle temperature registered under VANS
+DEAL:1::  Integral of the particle temperature (expected 310) : 310.000
+DEAL:1::  Interface shares the registered vector              : yes
+DEAL:1::  Dimension 3
+DEAL:1::  Particle temperature registered under VANS
+DEAL:1::  Integral of the particle temperature (expected 310) : 310.000
+DEAL:1::  Interface shares the registered vector              : yes
+

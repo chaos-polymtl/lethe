@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2023, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/utilities.h>
+
 #include <solvers/analytical_solutions.h>
 
 namespace AnalyticalSolutions
@@ -15,12 +17,13 @@ namespace AnalyticalSolutions
       Patterns::Tools::Convert<bool>::to_string(enable),
       Patterns::Bool(),
       "Enable the calculation of the analytical solution and L2 error");
-    prm.declare_entry(
+    declare_enum_entry(
+      prm,
       "verbosity",
-      Parameters::to_string(verbosity),
-      Patterns::Selection("quiet|verbose"),
-      "State whether from the post-processing values should be printed "
-      "Choices are <quiet|verbose>.");
+      verbosity,
+      "State whether from the post-processing values should be printed.",
+      Parameters::deprecated_verbosity_names(),
+      Parameters::quiet_or_verbose());
 
     prm.declare_entry(
       "filename",
@@ -43,6 +46,11 @@ namespace AnalyticalSolutions
     {
       prm.enter_subsection("tracer");
       tracer.declare_parameters(prm);
+      prm.leave_subsection();
+    }
+    {
+      prm.enter_subsection("QMOM");
+      Parameters::QMOMFunctions<dim>::declare_parameters(prm);
       prm.leave_subsection();
     }
     {
@@ -71,13 +79,12 @@ namespace AnalyticalSolutions
   AnalyticalSolution<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("analytical solution");
-    enable               = prm.get_bool("enable");
-    filename             = prm.get("filename");
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    if (op == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
+    enable    = prm.get_bool("enable");
+    filename  = prm.get("filename");
+    verbosity = string_to_enum<Parameters::Verbosity>(
+      prm.get("verbosity"),
+      Parameters::deprecated_verbosity_names(),
+      "verbosity");
 
     {
       prm.enter_subsection("uvwp");
@@ -94,6 +101,11 @@ namespace AnalyticalSolutions
     {
       prm.enter_subsection("tracer");
       tracer.parse_parameters(prm);
+      prm.leave_subsection();
+    }
+    {
+      prm.enter_subsection("QMOM");
+      qmom.parse_parameters(prm);
       prm.leave_subsection();
     }
 

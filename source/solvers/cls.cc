@@ -24,7 +24,8 @@ template <int dim>
 ConservativeLevelSet<dim>::ConservativeLevelSet(
   MultiphysicsInterface<dim>      *multiphysics_interface,
   const SimulationParameters<dim> &p_simulation_parameters,
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
+  const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                    &p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control)
   : AuxiliaryPhysics<dim, GlobalVectorType>(
       p_simulation_parameters.physics_solving_strategy.at(PhysicsID::CLS))
@@ -98,7 +99,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
             simulation_parameters.fem_parameters.CLS_degree);
         }
       // Mapping has to be at least Q1, but DGQ0 is allowed
-      mapping = std::make_shared<MappingQ<dim>>(std::max(fe->degree, uint(1)));
+      mapping = std::make_shared<MappingQ<dim>>(std::max(fe->degree, 1U));
       cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
     }
@@ -1046,7 +1047,7 @@ ConservativeLevelSet<dim>::calculate_volume_and_mass(
             {
               switch (monitored_fluid)
                 {
-                  case Parameters::FluidIndicator::fluid0:
+                  case Parameters::FluidIndicator::fluid_0:
                     {
                       this->volume_monitored +=
                         fe_values_cls.JxW(q) * (1 - phase_values[q]);
@@ -1055,7 +1056,7 @@ ConservativeLevelSet<dim>::calculate_volume_and_mass(
                                               density_0[q];
                       break;
                     }
-                  case Parameters::FluidIndicator::fluid1:
+                  case Parameters::FluidIndicator::fluid_1:
                     {
                       this->volume_monitored +=
                         fe_values_cls.JxW(q) * phase_values[q];
@@ -1156,14 +1157,14 @@ ConservativeLevelSet<dim>::calculate_momentum(
             {
               switch (monitored_fluid)
                 {
-                  case Parameters::FluidIndicator::fluid0:
+                  case Parameters::FluidIndicator::fluid_0:
                     {
                       total_momentum += fe_values_cls.JxW(q) *
                                         (1 - phase_values[q]) *
                                         velocity_values[q] * density_0[q];
                       break;
                     }
-                  case Parameters::FluidIndicator::fluid1:
+                  case Parameters::FluidIndicator::fluid_1:
                     {
                       total_momentum += fe_values_cls.JxW(q) * phase_values[q] *
                                         velocity_values[q] * density_1[q];
@@ -1403,6 +1404,17 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
             "time", this->simulation_control->get_current_time());
         }
       this->error_table.add_value("error_phase", phase_error);
+      this->error_table.set_scientific("error_phase", true);
+
+      if (this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_cls.dat";
+          std::ofstream output(filename.c_str());
+          this->error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
@@ -1416,7 +1428,8 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
       TimerOutput::Scope                            t(this->computing_timer,
                            "Calculate mass conservation");
       const std::vector<Parameters::FluidIndicator> fluid_indicators = {
-        Parameters::FluidIndicator::fluid0, Parameters::FluidIndicator::fluid1};
+        Parameters::FluidIndicator::fluid_0,
+        Parameters::FluidIndicator::fluid_1};
 
       const unsigned int n_fluids =
         this->simulation_parameters.physical_properties_manager
@@ -1489,12 +1502,12 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
             {
               std::string fluid_id("");
 
-              if (fluid_indicators[i] == Parameters::FluidIndicator::fluid1)
+              if (fluid_indicators[i] == Parameters::FluidIndicator::fluid_1)
                 {
                   fluid_id = "fluid_1";
                 }
               else if (fluid_indicators[i] ==
-                       Parameters::FluidIndicator::fluid0)
+                       Parameters::FluidIndicator::fluid_0)
                 {
                   fluid_id = "fluid_0";
                 }
@@ -1976,18 +1989,18 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
           this->simulation_parameters.physical_properties_manager
             .field_is_required(field::temperature)));
     }
-
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::iteration)
-    {
-      announce_string(this->pcout, "CLS");
-      this->pcout << std::defaultfloat;
-      this->computing_timer.print_summary();
-      this->pcout << std::scientific;
-      this->computing_timer.reset();
-    }
 }
 
+template <int dim>
+void
+ConservativeLevelSet<dim>::output_per_iteration_timer()
+{
+  announce_string(this->pcout, "CLS");
+  this->pcout << std::defaultfloat;
+  this->computing_timer.print_summary();
+  this->pcout << std::scientific;
+  this->computing_timer.reset();
+}
 
 template <int dim>
 void
@@ -2542,28 +2555,24 @@ ConservativeLevelSet<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CLS" + suffix);
+        "_CLS");
 
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     table_output_structs.emplace_back(
       this->table_monitoring_cls,
-      prefix +
-        this->simulation_parameters.post_processing
-          .mass_conservation_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .mass_conservation_output_name);
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     table_output_structs.emplace_back(
       this->table_barycenter,
       prefix +
-        this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.barycenter_output_name);
 
   if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
         .ids_and_isocontours_per_variable.contains(Variable::phase))
@@ -2584,7 +2593,7 @@ ConservativeLevelSet<dim>::gather_tables()
 
           table_output_structs.emplace_back(
             this->phase_indicator_isocontour_bounding_values_tables[i],
-            prefix + isocontour_output_name + suffix);
+            prefix + isocontour_output_name);
         }
     }
 
@@ -2593,7 +2602,8 @@ ConservativeLevelSet<dim>::gather_tables()
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::write_checkpoint()
+ConservativeLevelSet<dim>::write_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2613,12 +2623,15 @@ ConservativeLevelSet<dim>::write_checkpoint()
   // solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::read_checkpoint()
+ConservativeLevelSet<dim>::read_checkpoint(
+  const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2655,7 +2668,9 @@ ConservativeLevelSet<dim>::read_checkpoint()
   // solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
         .reinitialization_method.sharpening.type ==
@@ -2814,16 +2829,16 @@ template <int dim>
 void
 ConservativeLevelSet<dim>::update_boundary_conditions()
 {
-  if (!this->simulation_parameters.boundary_conditions_cls.time_dependent)
+  if (!this->simulation_parameters.cls_boundary_conditions.time_dependent)
     return;
 
   double time = this->simulation_control->get_current_time();
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+      if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_cls.phase_indicator
+          this->simulation_parameters.cls_boundary_conditions.phase_indicator
             .at(id)
             ->set_time(time);
         }
@@ -2845,9 +2860,9 @@ ConservativeLevelSet<dim>::define_zero_constraints()
                                           this->zero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+      if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -2855,10 +2870,10 @@ ConservativeLevelSet<dim>::define_zero_constraints()
             Functions::ZeroFunction<dim>(),
             this->zero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CLSBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_cls
+            this->simulation_parameters.cls_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -2884,21 +2899,21 @@ ConservativeLevelSet<dim>::define_non_zero_constraints()
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
-         this->simulation_parameters.boundary_conditions_cls.type)
+         this->simulation_parameters.cls_boundary_conditions.type)
       {
-        if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+        if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
               id,
-              *this->simulation_parameters.boundary_conditions_cls
+              *this->simulation_parameters.cls_boundary_conditions
                  .phase_indicator.at(id),
               nonzero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::CLSBoundaryType::periodic)
           {
             const auto &periodic_boundary =
-              this->simulation_parameters.boundary_conditions_cls
+              this->simulation_parameters.cls_boundary_conditions
                 .periodic_boundaries.at(id);
             DoFTools::make_periodicity_constraints(
               *this->dof_handler,

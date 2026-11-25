@@ -90,41 +90,7 @@ public:
     const FESystem<dim>                      &fe,
     const Quadrature<dim>                    &quadrature,
     const Mapping<dim>                       &mapping,
-    const Quadrature<dim - 1>                &face_quadrature)
-    : simulation_control(simulation_control)
-    , properties_manager(properties_manager)
-    , fe_values(mapping,
-                fe,
-                quadrature,
-                update_values | update_quadrature_points | update_JxW_values |
-                  update_gradients | update_hessians)
-    , fe_face_values(mapping,
-                     fe,
-                     face_quadrature,
-                     update_values | update_quadrature_points |
-                       update_JxW_values | update_gradients | update_hessians |
-                       update_normal_vectors)
-    , sdirk_table(
-        time_stepping_is_sdirk(simulation_control->get_assembly_method()) ?
-          ::sdirk_table(simulation_control->get_assembly_method()) :
-          SDIRKTable())
-  {
-    allocate();
-
-    // By default, the assembly of variables belonging to auxiliary physics is
-    // disabled.
-    gather_cls                                = false;
-    gather_projected_phase_indicator_gradient = false;
-    gather_curvature                          = false;
-    gather_void_fraction                      = false;
-    gather_particles_information              = false;
-    gather_temperature                        = false;
-    gather_cahn_hilliard                      = false;
-    gather_ale                                = false;
-    gather_mortar                             = false;
-    gather_particle_field_project             = false;
-    gather_hessian = properties_manager.is_non_newtonian();
-  }
+    const Quadrature<dim - 1>                &face_quadrature);
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
@@ -135,85 +101,7 @@ public:
    *
    * @param sd The scratch data to be copied
    */
-  NavierStokesScratchData(const NavierStokesScratchData<dim> &sd)
-    : simulation_control(sd.simulation_control)
-    , properties_manager(sd.properties_manager)
-    , fe_values(sd.fe_values.get_mapping(),
-                sd.fe_values.get_fe(),
-                sd.fe_values.get_quadrature(),
-                update_values | update_quadrature_points | update_JxW_values |
-                  update_gradients | update_hessians)
-    , fe_face_values(sd.fe_face_values.get_mapping(),
-                     sd.fe_face_values.get_fe(),
-                     sd.fe_face_values.get_quadrature(),
-                     update_values | update_quadrature_points |
-                       update_JxW_values | update_gradients | update_hessians |
-                       update_normal_vectors)
-    , sdirk_table(sd.sdirk_table)
-  {
-    allocate();
-
-    // By default, the assembly of variables belonging to auxiliary physics is
-    // disabled.
-    gather_cls                                = false;
-    gather_projected_phase_indicator_gradient = false;
-    gather_curvature                          = false;
-    gather_void_fraction                      = false;
-    gather_particles_information              = false;
-    gather_temperature                        = false;
-    gather_cahn_hilliard                      = false;
-    gather_ale                                = false;
-    gather_mortar                             = false;
-    gather_particle_field_project             = false;
-    gather_hessian = properties_manager.is_non_newtonian();
-
-    if (sd.gather_cls)
-      enable_cls(sd.fe_values_cls->get_fe(),
-                 sd.fe_values_cls->get_quadrature(),
-                 sd.fe_values_cls->get_mapping(),
-                 sd.filter);
-    if (sd.gather_projected_phase_indicator_gradient)
-      enable_projected_phase_indicator_gradient(
-        sd.fe_values_projected_phase_indicator_gradient->get_fe(),
-        sd.fe_values_projected_phase_indicator_gradient->get_quadrature(),
-        sd.fe_values_projected_phase_indicator_gradient->get_mapping());
-    if (sd.gather_curvature)
-      enable_curvature(sd.fe_values_curvature->get_fe(),
-                       sd.fe_values_curvature->get_quadrature(),
-                       sd.fe_values_curvature->get_mapping());
-
-    if (sd.gather_void_fraction)
-      enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
-                           sd.fe_values_void_fraction->get_quadrature(),
-                           sd.fe_values_void_fraction->get_mapping());
-    if (sd.gather_particles_information)
-      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell,
-                                         sd.interpolated_void_fraction);
-    if (sd.gather_temperature)
-      enable_heat_transfer(sd.fe_values_temperature->get_fe(),
-                           sd.fe_values_temperature->get_quadrature(),
-                           sd.fe_values_temperature->get_mapping());
-    if (sd.gather_cahn_hilliard)
-      enable_cahn_hilliard(sd.fe_values_cahn_hilliard->get_fe(),
-                           sd.fe_values_cahn_hilliard->get_quadrature(),
-                           sd.fe_values_cahn_hilliard->get_mapping(),
-                           sd.cahn_hilliard_filter);
-    if (sd.gather_ale)
-      enable_ale();
-    if (sd.gather_mortar)
-      enable_mortar();
-
-    if (sd.gather_particle_field_project)
-      enable_particle_field_projection(
-        sd.fe_values.get_quadrature(),
-        sd.fe_values.get_mapping(),
-        sd.fe_values_particle_drag->get_fe(),
-        sd.fe_values_particle_two_way_coupling_force->get_fe(),
-        sd.fe_values_particle_velocity->get_fe(),
-        sd.fe_values_particle_momentum_transfer_coefficient->get_fe());
-
-    gather_hessian = sd.gather_hessian;
-  }
+  NavierStokesScratchData(const NavierStokesScratchData<dim> &sd);
 
   /**
    * @brief Allocates the memory for the scratch
@@ -249,264 +137,11 @@ public:
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
-         const std::vector<VectorType> &previous_solutions,
-         const VectorType              &sum_over_previous_stages,
-         std::shared_ptr<Function<dim>> forcing_function,
-         Tensor<1, dim>                 beta_force,
-         const double                   pressure_scaling_factor)
-  {
-    this->fe_values.reinit(cell);
-
-    quadrature_points = this->fe_values.get_quadrature_points();
-    auto &fe          = this->fe_values.get_fe();
-
-    forcing_function->vector_value_list(quadrature_points, this->rhs_force);
-
-    // Establish the force vector
-    for (unsigned int q = 0; q < n_q_points; ++q)
-      {
-        for (int d = 0; d < dim; ++d)
-          {
-            const unsigned int component_i =
-              fe.system_to_component_index(d).first;
-            this->force[q][d] = this->rhs_force[q](component_i);
-          }
-
-        const unsigned int component_mass =
-          fe.system_to_component_index(dim).first;
-        this->mass_source[q] = this->rhs_force[q](component_mass);
-
-        // Correct force to include the dynamic forcing term for flow
-        // control
-        force[q] = force[q] + beta_force;
-      }
-
-    for (const unsigned int k : fe_values.dof_indices())
-      {
-        components[k] = fe.system_to_component_index(k).first;
-      }
-
-    // Compute cell diameter
-    double cell_measure =
-      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
-    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
-
-    // For the SDIRK methods, \sum_{j=1}^{i-1} a_{ij} k_j is needed for the
-    // assembler
-    if (this->simulation_control->is_sdirk())
-      {
-        this->fe_values[velocities].get_function_values(
-          sum_over_previous_stages, this->sdirk_stage_sum);
-      }
-
-    // Gather velocity (values, gradient and laplacian)
-    this->fe_values[velocities].get_function_values(current_solution,
-                                                    this->velocity_values);
-    this->fe_values[velocities].get_function_gradients(
-      current_solution, this->velocity_gradients);
-    this->fe_values[velocities].get_function_laplacians(
-      current_solution, this->velocity_laplacians);
-    if (gather_hessian)
-      this->fe_values[velocities].get_function_hessians(
-        current_solution, this->velocity_hessians);
-
-    // Gather convective velocity (same as velocity_values unless ALE is
-    // enabled. The ALE correction is made within the correponding reinit
-    // function)
-    this->advective_velocity = this->velocity_values;
-
-    for (unsigned int q = 0; q < this->n_q_points; ++q)
-      {
-        this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
-        // In the VANS momentum equations, the viscous stress tensor includes
-        // the gradient of the divergence of the velocity, ∇(∇·u) = ∂i(∂juj). We
-        // therefore compute this quantity here when assembling VANS-specific
-        // contributions (gated by gather_void_fraction).
-        if (gather_void_fraction)
-          {
-            // Compute term ∂j(∂iuj) = ∂i(∂juj) for use in the strong residual
-            // of the VANS momentum equations.
-            this->velocity_gradient_divergence[q] = 0;
-            for (int d1 = 0; d1 < dim; ++d1)
-              {
-                for (int d2 = 0; d2 < dim; ++d2)
-                  {
-                    this->velocity_gradient_divergence[q][d1] +=
-                      (this->velocity_hessians[q][d2][d1][d2]);
-                  }
-              }
-          }
-      }
-
-    // Gather pressure (values, gradient)
-    fe_values[pressure].get_function_values(current_solution,
-                                            this->pressure_values);
-    fe_values[pressure].get_function_gradients(current_solution,
-                                               this->pressure_gradients);
-    this->pressure_scaling_factor = pressure_scaling_factor;
-
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values[velocities].get_function_values(
-          previous_solutions[p], previous_velocity_values[p]);
-      }
-
-    // Only gather the pressure when a pressure history is necessary
-    // (compressible Navier-Stokes)
-    if (!this->properties_manager.density_is_constant())
-      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-        {
-          this->fe_values[pressure].get_function_values(
-            previous_solutions[p], previous_pressure_values[p]);
-        }
-
-    for (unsigned int q = 0; q < n_q_points; ++q)
-      {
-        this->JxW[q] = this->fe_values.JxW(q);
-        for (unsigned int k = 0; k < n_dofs; ++k)
-          {
-            // Velocity
-            this->phi_u[q][k] = this->fe_values[velocities].value(k, q);
-            this->div_phi_u[q][k] =
-              this->fe_values[velocities].divergence(k, q);
-            this->grad_phi_u[q][k] = this->fe_values[velocities].gradient(k, q);
-            this->hess_phi_u[q][k] = this->fe_values[velocities].hessian(k, q);
-            for (int d = 0; d < dim; ++d)
-              this->laplacian_phi_u[q][k][d] = trace(this->hess_phi_u[q][k][d]);
-
-            // In the VANS momentum equations, the viscous stress tensor
-            // includes the gradient of the divergence of the velocity, ∇(∇·u) =
-            // ∂i(∂juj). This results in a term ∂i(∂jδuj), which we compute here
-            // when assembling VANS-specific contributions (gated by
-            // gather_void_fraction).
-            if (gather_void_fraction)
-              {
-                this->gradient_divergence_phi_u[q][k] = 0;
-                // Compute term ∂j(∂iδuj) = ∂i(∂jδuj) to be used in the strong
-                // Jacobian of the VANS momentum equations
-
-                for (int d1 = 0; d1 < dim; ++d1)
-                  {
-                    for (int d2 = 0; d2 < dim; ++d2)
-                      {
-                        this->gradient_divergence_phi_u[q][k][d1] +=
-                          (this->hess_phi_u[q][k][d2][d1][d2]);
-                      }
-                  }
-              }
-            // Pressure
-            this->phi_p[q][k]      = this->fe_values[pressure].value(k, q);
-            this->grad_phi_p[q][k] = this->fe_values[pressure].gradient(k, q);
-          }
-      }
-
-    is_boundary_cell = cell->at_boundary();
-    if (is_boundary_cell)
-      {
-        n_faces          = cell->n_faces();
-        is_boundary_face = std::vector<bool>(n_faces, false);
-        n_faces_q_points = fe_face_values.get_quadrature().size();
-        boundary_face_id = std::vector<unsigned int>(n_faces);
-
-        face_JxW.reinit(n_faces, n_faces_q_points);
-
-        // Velocity and pressure values
-        // First vector is face number, second quadrature point
-        this->face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-
-        this->face_velocity_divergences = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
-
-        this->face_velocity_gradients =
-          std::vector<std::vector<Tensor<2, dim>>>(
-            n_faces, std::vector<Tensor<2, dim>>(n_faces_q_points));
-
-        this->face_velocity_laplacians =
-          std::vector<std::vector<Tensor<1, dim>>>(
-            n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-
-        this->face_pressure_values = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
-
-        this->face_pressure_gradients =
-          std::vector<std::vector<Tensor<1, dim>>>(
-            n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-
-        this->face_normal.reinit(n_faces, n_faces_q_points);
-
-        this->face_quadrature_points = std::vector<std::vector<Point<dim>>>(
-          n_faces, std::vector<Point<dim>>(n_faces_q_points));
-
-        this->face_div_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
-
-        this->face_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
-        this->face_hess_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
-
-        this->face_laplacian_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
-
-        this->face_grad_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
-        this->face_phi_p.reinit(n_faces, n_faces_q_points, n_dofs);
-        this->face_grad_phi_p.reinit(n_faces, n_faces_q_points, n_dofs);
-
-        for (const auto face : cell->face_indices())
-          {
-            is_boundary_face[face] = cell->face(face)->at_boundary();
-            if (is_boundary_face[face])
-              {
-                fe_face_values.reinit(cell, face);
-                n_dofs = fe_face_values.get_fe().n_dofs_per_cell();
-                boundary_face_id[face] = cell->face(face)->boundary_id();
-                // Shape functions
-                // First vector is face number, second quadrature point, third
-                // DOF
-
-                // Gather velocity (values, gradient and laplacian)
-                this->fe_face_values[velocities].get_function_values(
-                  current_solution, this->face_velocity_values[face]);
-                this->fe_face_values[velocities].get_function_gradients(
-                  current_solution, this->face_velocity_gradients[face]);
-                this->fe_face_values[velocities].get_function_laplacians(
-                  current_solution, this->face_velocity_laplacians[face]);
-
-                // Gather pressure (values, gradient)
-                this->fe_face_values[pressure].get_function_values(
-                  current_solution, this->face_pressure_values[face]);
-                this->fe_face_values[pressure].get_function_gradients(
-                  current_solution, this->face_pressure_gradients[face]);
-
-                for (unsigned int q = 0; q < n_faces_q_points; ++q)
-                  {
-                    this->face_JxW[face][q] = this->fe_face_values.JxW(q);
-                    this->face_normal[face][q] =
-                      this->fe_face_values.normal_vector(q);
-                    this->face_quadrature_points[face][q] =
-                      this->fe_face_values.quadrature_point(q);
-                    for (const unsigned int k : fe_face_values.dof_indices())
-                      {
-                        // Velocity
-                        this->face_phi_u[face][q][k] =
-                          this->fe_face_values[velocities].value(k, q);
-                        this->face_div_phi_u[face][q][k] =
-                          this->fe_face_values[velocities].divergence(k, q);
-                        this->face_grad_phi_u[face][q][k] =
-                          this->fe_face_values[velocities].gradient(k, q);
-                        this->face_hess_phi_u[face][q][k] =
-                          this->fe_face_values[velocities].hessian(k, q);
-                        for (int d = 0; d < dim; ++d)
-                          this->face_laplacian_phi_u[face][q][k][d] =
-                            trace(this->face_hess_phi_u[face][q][k][d]);
-                        // Pressure
-                        this->face_phi_p[face][q][k] =
-                          this->fe_face_values[pressure].value(k, q);
-                        this->face_grad_phi_p[face][q][k] =
-                          this->fe_face_values[pressure].gradient(k, q);
-                      }
-                  }
-              }
-          }
-      }
-  }
+         const std::vector<VectorType>        &previous_solutions,
+         const VectorType                     &sum_over_previous_stages,
+         const std::shared_ptr<Function<dim>> &forcing_function,
+         const Tensor<1, dim>                 &beta_force,
+         const double                          pressure_scaling_factor);
 
   /**
    * @brief enable_cls Enables the collection of the CLS data by the scratch
@@ -574,66 +209,20 @@ public:
   reinit_cls(const typename DoFHandler<dim>::active_cell_iterator &cell,
              const VectorType              &current_solution,
              const VectorType              &current_filtered_solution,
-             const std::vector<VectorType> &previous_solutions)
-  {
-    Assert(
-      gather_cls,
-      ExcMessage(
-        "You are trying to reinit the CLS model in a cell, but you did not enable CLS for the scratch data (gather_cls=false)."));
-
-    this->fe_values_cls->reinit(cell);
-    // Gather phase indicator (values, gradient)
-    this->fe_values_cls->get_function_values(current_solution,
-                                             this->phase_values);
-    this->fe_values_cls->get_function_values(current_filtered_solution,
-                                             this->filtered_phase_values);
-    this->fe_values_cls->get_function_gradients(
-      current_filtered_solution, this->filtered_phase_gradient_values);
-    this->fe_values_cls->get_function_gradients(current_solution,
-                                                this->phase_gradient_values);
-
-    // Gather previous phase indicator values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_cls->get_function_values(previous_solutions[p],
-                                                 previous_phase_values[p]);
-      }
-  }
+             const std::vector<VectorType> &previous_solutions);
 
   template <typename VectorType>
   void
   reinit_projected_phase_indicator_gradient(
     const typename DoFHandler<dim>::active_cell_iterator
                      &projected_phase_indicator_gradient_cell,
-    const VectorType &current_projected_phase_indicator_gradient_solution)
-  {
-    this->fe_values_projected_phase_indicator_gradient->reinit(
-      projected_phase_indicator_gradient_cell);
-
-    FEValuesExtractors::Vector pig(0);
-    // Gather phase indicator gradient
-    (*fe_values_projected_phase_indicator_gradient)[pig].get_function_values(
-      current_projected_phase_indicator_gradient_solution,
-      this->projected_phase_indicator_gradient_values);
-  }
+    const VectorType &current_projected_phase_indicator_gradient_solution);
 
   template <typename VectorType>
   void
   reinit_curvature(
     const typename DoFHandler<dim>::active_cell_iterator &curvature_cell,
-    const VectorType &current_curvature_solution)
-  {
-    Assert(
-      gather_curvature,
-      ExcMessage(
-        "You are trying to reinit the curvature in a cell, but you did not enable curvature for the scratch data (gather_curvature=false)."));
-
-    this->fe_values_curvature->reinit(curvature_cell);
-
-    // Gather phase indicator gradient
-    this->fe_values_curvature->get_function_values(current_curvature_solution,
-                                                   this->curvature_values);
-  }
+    const VectorType &current_curvature_solution);
 
   /**
    * @brief enable_void_fraction Enables the collection of the void fraction
@@ -697,28 +286,7 @@ public:
   reinit_void_fraction(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType                                     &current_solution,
-    const std::vector<VectorType>                        &previous_solutions)
-  {
-    Assert(
-      gather_void_fraction,
-      ExcMessage(
-        "You are trying to reinit the void fraction in a cell, but you did not enable void fraction for the scratch data (gather_void_fraction=false)."));
-
-    this->fe_values_void_fraction->reinit(cell);
-
-    // Gather void fraction (values, gradient)
-    this->fe_values_void_fraction->get_function_values(
-      current_solution, this->void_fraction_values);
-    this->fe_values_void_fraction->get_function_gradients(
-      current_solution, this->void_fraction_gradient_values);
-
-    // Gather previous void fraction fraction values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_void_fraction->get_function_values(
-          previous_solutions[p], previous_void_fraction_values[p]);
-      }
-  }
+    const std::vector<VectorType>                        &previous_solutions);
 
   /**
    * @brief enable_particle_fluid_interactions Enables the calculation of the fluid information at the particle location for the scratch.
@@ -808,56 +376,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const VectorType               &present_velocity_pressure_solution,
     const VectorType               &previous_velocity_pressure_solution,
-    const Parameters::DragCoupling &drag_coupling)
-  {
-    FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
-                                            q_particles_location,
-                                            update_gradients | update_values |
-                                              update_hessians);
-
-    // Reallocate memory for the fields to be interpolated at the particle
-    // location This has to be done for every cell because deal.II expects the
-    // size of the vector to be strictly equal to the number of points in the
-    // quadrature
-    fluid_velocity_at_particle_location.resize(number_of_particles);
-    fluid_velocity_laplacian_at_particle_location.resize(number_of_particles);
-    fluid_velocity_curls_at_particle_location_2d.resize(number_of_particles);
-    fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
-    fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
-
-    // Take velocity_pressure_solution according to the type of coupling used.
-    const auto &velocity_pressure_solution =
-      drag_coupling == Parameters::DragCoupling::fully_implicit ?
-        present_velocity_pressure_solution :
-        previous_velocity_pressure_solution;
-
-    fe_values_local_particles.reinit(velocity_cell);
-
-    // Calculate all fluid properties at the particle location
-    fe_values_local_particles[velocities].get_function_values(
-      velocity_pressure_solution, fluid_velocity_at_particle_location);
-
-    fe_values_local_particles[velocities].get_function_laplacians(
-      velocity_pressure_solution,
-      fluid_velocity_laplacian_at_particle_location);
-
-    if constexpr (dim == 2)
-      {
-        fe_values_local_particles[velocities].get_function_curls(
-          velocity_pressure_solution,
-          fluid_velocity_curls_at_particle_location_2d);
-      }
-    else if constexpr (dim == 3)
-      {
-        fe_values_local_particles[velocities].get_function_curls(
-          velocity_pressure_solution,
-          fluid_velocity_curls_at_particle_location_3d);
-      }
-
-    fe_values_local_particles[pressure].get_function_gradients(
-      velocity_pressure_solution,
-      fluid_pressure_gradients_at_particle_location);
-  }
+    const Parameters::DragCoupling &drag_coupling);
 
   /**
    * @brief Interpolates the void fraction at the locations of the particles.
@@ -877,33 +396,7 @@ public:
   calculate_void_fraction_at_particle_location(
     const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
-    const VectorType &void_fraction_solution)
-  {
-    Assert(
-      gather_void_fraction,
-      ExcMessage(
-        "gather_void_fraction has been set to false, yet you are trying to gather the void fraction at the location of the particles. The scratch data is currently unaware of the finite element interpolation for the void fraction and the simulation will abort."));
-
-    Assert(
-      cell_void_fraction.size() == q_particles_location.size(),
-      ExcMessage(
-        "The vector for the void fraction at the particle location does not have the same size as the quadrature used to evaluate it."));
-
-    Vector<double> local_void_fraction_dof_values(
-      void_fraction_cell->get_fe().n_dofs_per_cell());
-    void_fraction_cell->get_dof_values(void_fraction_solution,
-                                       local_void_fraction_dof_values);
-
-    point_evaluator_void_fraction->reinit(
-      void_fraction_cell, make_array_view(q_particles_location.get_points()));
-    point_evaluator_void_fraction->evaluate(
-      make_array_view(local_void_fraction_dof_values), EvaluationFlags::values);
-
-    for (unsigned int i_particle = 0; i_particle < q_particles_location.size();
-         ++i_particle)
-      cell_void_fraction[i_particle] =
-        point_evaluator_void_fraction->get_value(i_particle);
-  }
+    const VectorType &void_fraction_solution);
 
   /**
    * @brief Calculates the properties of the fluid at the locations of the particles.
@@ -915,56 +408,7 @@ public:
    */
 
   void
-  calculate_fluid_properties_at_particle_location()
-  {
-    AssertThrow(
-      properties_manager.density_is_constant(),
-      ExcMessage(
-        "The lethe-fluid-particles solver only supports constant densities"));
-    AssertThrow(
-      !properties_manager.get_rheology()
-          ->is_non_newtonian_rheological_model() &&
-        !properties_manager.get_rheology()
-           ->is_non_newtonian_rheological_model(),
-      ExcMessage(
-        "The lethe-fluid-particles solver only supports constant rheology model"));
-
-    if (gather_cls)
-      {
-        for (unsigned int i_particle = 0; i_particle < number_of_particles;
-             ++i_particle)
-          {
-            density_at_particle_location[i_particle] = calculate_point_property(
-              filtered_phase_values_at_particle_location[i_particle],
-              this->density_ref_0,
-              this->density_ref_1);
-            double dynamic_viscosity_at_particle_location =
-              calculate_point_property(
-                filtered_phase_values_at_particle_location[i_particle],
-                this->kinematic_viscosity_scale_0 * this->density_ref_0,
-                this->kinematic_viscosity_scale_1 * this->density_ref_1);
-
-            kinematic_viscosity_at_particle_location[i_particle] =
-              dynamic_viscosity_at_particle_location /
-              density_at_particle_location[i_particle];
-          }
-
-        // Properties have been calculated, return
-        return;
-      }
-
-    // Regular case without CLS
-    for (unsigned int i_particle = 0; i_particle < number_of_particles;
-         ++i_particle)
-      {
-        // Gather the kinematic viscosity and density at the particle
-        // location assuming a constant kinematic viscosity and density in a
-        // single fluid
-        kinematic_viscosity_at_particle_location[i_particle] =
-          kinematic_viscosity_scale;
-        density_at_particle_location[i_particle] = density_scale;
-      }
-  }
+  calculate_fluid_properties_at_particle_location();
 
   /**
    * @brief Calculates the velocity of the fluid relative to that of the particle and
@@ -976,37 +420,7 @@ public:
 
   template <typename PropertiesIndex>
   void
-  calculate_force_parameters_at_particle_location()
-  {
-    // Tolerance for the calculation of the particle Reynolds number.
-    // TODO -> Revisit if that is not a too high value.
-    const double Re_particle_tolerance       = 1e-3;
-    unsigned int i_particle                  = 0;
-    average_fluid_particle_relative_velocity = 0;
-
-    for (auto &particle : pic)
-      {
-        auto particle_properties = particle.get_properties();
-
-        fluid_particle_relative_velocity_at_particle_location[i_particle] =
-          fluid_velocity_at_particle_location[i_particle] -
-          particle_velocity[i_particle];
-        average_fluid_particle_relative_velocity +=
-          fluid_particle_relative_velocity_at_particle_location[i_particle];
-
-        Re_particle[i_particle] =
-          Re_particle_tolerance +
-          cell_void_fraction[i_particle] *
-            fluid_particle_relative_velocity_at_particle_location[i_particle]
-              .norm() *
-            particle_properties[PropertiesIndex::dp] /
-            (kinematic_viscosity_at_particle_location[i_particle] + DBL_MIN);
-        i_particle++;
-      }
-
-    average_fluid_particle_relative_velocity =
-      average_fluid_particle_relative_velocity / i_particle;
-  }
+  calculate_force_parameters_at_particle_location();
 
   /**
    * @brief Interpolates the filtered CLS solution at the location of the particles.
@@ -1027,31 +441,7 @@ public:
   calculate_cls_at_particle_location(
     const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
-    const VectorType &current_filtered_solution)
-  {
-    Assert(
-      gather_cls,
-      ExcMessage(
-        "gather_cls has been set to false, yet you are trying to gather the CLS at the location of the particles. The scratch data is currently unaware of the finite element interpolation for CLS and the simulation will abort."));
-
-    filtered_phase_values_at_particle_location.resize(number_of_particles);
-
-    Vector<double> local_filtered_phase_dof_values(
-      phase_cell->get_fe().n_dofs_per_cell());
-    phase_cell->get_dof_values(current_filtered_solution,
-                               local_filtered_phase_dof_values);
-
-    point_evaluator_cls->reinit(
-      phase_cell, make_array_view(q_particles_location.get_points()));
-    point_evaluator_cls->evaluate(make_array_view(
-                                    local_filtered_phase_dof_values),
-                                  EvaluationFlags::values);
-
-    for (unsigned int i_particle = 0; i_particle < number_of_particles;
-         ++i_particle)
-      filtered_phase_values_at_particle_location[i_particle] =
-        point_evaluator_cls->get_value(i_particle);
-  }
+    const VectorType &current_filtered_solution);
 
   /**
    * @brief Calculates the variables needed to compute the particle fluid interactions
@@ -1091,43 +481,7 @@ public:
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
-    const Parameters::DragCoupling        &drag_coupling)
-  {
-    Assert(
-      gather_particles_information,
-      ExcMessage(
-        "You are trying to reinit the fluid information at the particle location within a cell,"
-        " but you did not enable the gathering of the information at the particle location for the scratch data (gather_particles_information=false)."));
-
-    pic = particle_handler.particles_in_cell(velocity_cell);
-
-    extract_particle_properties<PropertiesIndex>();
-    reinit_particle_fluid_forces<PropertiesIndex>();
-
-    calculate_cell_void_fraction(total_particle_volume);
-
-    if (number_of_particles == 0)
-      return;
-
-    Quadrature<dim> q_particles_location =
-      gather_particles_reference_location();
-
-    calculate_fluid_fields_at_particle_location(
-      q_particles_location,
-      velocity_cell,
-      present_velocity_pressure_solution,
-      previous_velocity_pressure_solution,
-      drag_coupling);
-
-    if (this->interpolated_void_fraction)
-      {
-        calculate_void_fraction_at_particle_location(q_particles_location,
-                                                     void_fraction_cell,
-                                                     void_fraction_solution);
-      }
-    calculate_fluid_properties_at_particle_location();
-    calculate_force_parameters_at_particle_location<PropertiesIndex>();
-  }
+    const Parameters::DragCoupling        &drag_coupling);
 
   /**
    * @brief Calculates the variables needed to compute the particle fluid interactions
@@ -1174,38 +528,7 @@ public:
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::DragCoupling        &drag_coupling,
-    const VectorType                      &current_filtered_CLS_solution)
-  {
-    pic = particle_handler.particles_in_cell(velocity_cell);
-
-    extract_particle_properties<PropertiesIndex>();
-    reinit_particle_fluid_forces<PropertiesIndex>();
-    calculate_cell_void_fraction(total_particle_volume);
-
-    if (number_of_particles == 0)
-      return;
-
-    Quadrature<dim> q_particles_location =
-      gather_particles_reference_location();
-    calculate_fluid_fields_at_particle_location(
-      q_particles_location,
-      velocity_cell,
-      present_velocity_pressure_solution,
-      previous_velocity_pressure_solution,
-      drag_coupling);
-
-    if (this->interpolated_void_fraction)
-      {
-        calculate_void_fraction_at_particle_location(q_particles_location,
-                                                     void_fraction_cell,
-                                                     void_fraction_solution);
-      }
-    calculate_cls_at_particle_location(q_particles_location,
-                                       phase_cell,
-                                       current_filtered_CLS_solution);
-    calculate_fluid_properties_at_particle_location();
-    calculate_force_parameters_at_particle_location<PropertiesIndex>();
-  }
+    const VectorType                      &current_filtered_CLS_solution);
 
   /**
    * @brief enable_heat_transfer Enables the collection of the heat transfer
@@ -1243,44 +566,7 @@ public:
   reinit_heat_transfer(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType                                     &current_solution,
-    const std::vector<VectorType>                        &previous_solutions)
-  {
-    this->fe_values_temperature->reinit(cell);
-
-    // Gather temperature
-    this->fe_values_temperature->get_function_values(current_solution,
-                                                     this->temperature_values);
-
-    // Gather temperature gradient
-    this->fe_values_temperature->get_function_gradients(
-      current_solution, this->temperature_gradients);
-
-    // Extrapolate temperature and temperature gradient to t+dt using the BDF
-    // if the simulation is transient
-    const auto method = this->simulation_control->get_assembly_method();
-    if (time_stepping_is_bdf(method))
-      {
-        // Gather previous temperature and temperature gradient values
-        for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-          {
-            fe_values_temperature->get_function_values(
-              previous_solutions[p], this->previous_temperature_values[p]);
-            fe_values_temperature->get_function_gradients(
-              previous_solutions[p], this->previous_temperature_gradients[p]);
-          }
-        // Extrapolate temperature and temperature gradient
-        std::vector<double> time_vector =
-          this->simulation_control->get_simulation_times();
-        bdf_extrapolate(time_vector,
-                        previous_temperature_values,
-                        number_of_previous_solutions(method),
-                        temperature_values);
-        bdf_extrapolate(time_vector,
-                        previous_temperature_gradients,
-                        number_of_previous_solutions(method),
-                        temperature_gradients);
-      }
-  }
+    const std::vector<VectorType>                        &previous_solutions);
 
   /**
    * @brief enable_cahn_hilliard Enables the collection of the CahnHilliard data
@@ -1329,28 +615,7 @@ public:
   reinit_cahn_hilliard(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType                                     &current_solution,
-    const VectorType &current_filtered_solution)
-  {
-    this->fe_values_cahn_hilliard->reinit(cell);
-    this->phase_order.component        = 0;
-    this->chemical_potential.component = 1;
-
-    // Gather phase indicator (values, gradients)
-    this->fe_values_cahn_hilliard->operator[](phase_order)
-      .get_function_values(current_solution,
-                           this->phase_order_cahn_hilliard_values);
-    this->fe_values_cahn_hilliard->operator[](chemical_potential)
-      .get_function_values(current_solution,
-                           this->chemical_potential_cahn_hilliard_values);
-    this->fe_values_cahn_hilliard->operator[](phase_order)
-      .get_function_gradients(current_solution,
-                              this->phase_order_cahn_hilliard_gradients);
-
-    // Gather filtered CLS solution (values, gradients)
-    this->fe_values_cahn_hilliard->operator[](phase_order)
-      .get_function_values(current_filtered_solution,
-                           this->filtered_phase_order_cahn_hilliard_values);
-  }
+    const VectorType &current_filtered_solution);
 
   /**
    * @brief enable_ale Enables the calculation of the ALE velocity
@@ -1444,40 +709,7 @@ public:
     const VectorType               &particle_fluid_force_two_way_coupling,
     const VectorType               &particle_velocity,
     const VectorType               &particle_momentum_transfer_coefficient,
-    const Parameters::DragCoupling &drag_coupling)
-  {
-    constexpr FEValuesExtractors::Vector vector_index(0);
-
-    this->fe_values_particle_two_way_coupling_force->reinit(
-      particle_two_way_coupling_force_cell);
-    (*this->fe_values_particle_two_way_coupling_force)[vector_index]
-      .get_function_values(particle_fluid_force_two_way_coupling,
-                           this->particle_two_way_coupling_force_values);
-
-    // particle_drag_values will remain zero in the implicit and semi-implicit
-    // coupling, since the momentum transfer coefficient is used instead, while
-    // particle_momentum_transfer_coefficient_values and
-    // particle_velocity_values will remain zero in the fully explicit coupling
-    if (drag_coupling == Parameters::DragCoupling::fully_explicit)
-      {
-        this->fe_values_particle_drag->reinit(particle_drag_cell);
-        (*this->fe_values_particle_drag)[vector_index].get_function_values(
-          particle_fluid_drag, this->particle_drag_values);
-      }
-    else
-      {
-        this->fe_values_particle_velocity->reinit(particle_velocity_cell);
-        (*this->fe_values_particle_velocity)[vector_index].get_function_values(
-          particle_velocity, this->particle_velocity_values);
-
-        this->fe_values_particle_momentum_transfer_coefficient->reinit(
-          particle_momentum_transfer_coefficient_cell);
-        (*this->fe_values_particle_momentum_transfer_coefficient)
-          .get_function_values(
-            particle_momentum_transfer_coefficient,
-            this->particle_momentum_transfer_coefficient_values);
-      }
-  }
+    const Parameters::DragCoupling &drag_coupling);
 
   // For auxiliary physics solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;

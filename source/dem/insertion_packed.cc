@@ -5,7 +5,11 @@
 
 #include <dem/insertion_packed.h>
 
+#include <deal.II/base/tensor.h>
+
 #include <deal.II/grid/grid_tools.h>
+
+#include <algorithm>
 
 using namespace DEM;
 
@@ -144,8 +148,6 @@ InsertionPacked<dim, PropertiesIndex>::insert(
                                        insertion_points_on_proc,
                                        particle_properties);
 
-
-
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points_on_proc,
                                                global_bounding_boxes,
@@ -181,57 +183,67 @@ InsertionPacked<dim, PropertiesIndex>::insert(
 
 template <int dim, typename PropertiesIndex>
 void
-InsertionPacked<dim, PropertiesIndex>::update_previous_position(
-  Particles::ParticleHandler<dim> &particle_handler)
+InsertionPacked<dim, PropertiesIndex>::
+  limit_particle_particle_shift_displacement(
+    const Particles::ParticleHandler<dim>        &particle_handler,
+    ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
 {
-  for (auto &particle : particle_handler)
+  for (const auto &particle : particle_handler)
     {
-      auto particle_properties = particle.get_properties();
+      Tensor<1, 3> &particle_particle_displacement =
+        contact_outcome.force[particle.get_local_index()];
 
-      const Point<dim> particle_previous_position = particle.get_location();
-
-      particle_properties[PropertiesIndex::v_x] = particle_previous_position[0];
-      particle_properties[PropertiesIndex::v_y] = particle_previous_position[1];
-      if constexpr (dim == 3)
-        particle_properties[PropertiesIndex::v_z] =
-          particle_previous_position[2];
+      // A displacement no larger than the radius cannot carry the center of a
+      // particle through a wall or a triangle that pushes it back
+      const double particle_radius =
+        0.5 * particle.get_properties()[PropertiesIndex::dp];
+      const double displacement_norm = particle_particle_displacement.norm();
+      if (displacement_norm > particle_radius)
+        particle_particle_displacement *= particle_radius / displacement_norm;
     }
 }
 
 template <int dim, typename PropertiesIndex>
 void
-InsertionPacked<dim, PropertiesIndex>::clamp_displacement(
-  Particles::ParticleHandler<dim> &particle_handler,
-  const double                     max_disp,
-  std::vector<double>             &displacements)
+InsertionPacked<dim, PropertiesIndex>::apply_shift_displacement(
+  Particles::ParticleHandler<dim>              &particle_handler,
+  const double                                  max_displacement,
+  ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome,
+  std::vector<double>                          &displacements)
 {
   for (auto &particle : particle_handler)
     {
-      auto particle_properties = particle.get_properties();
+      const types::particle_index particle_id = particle.get_local_index();
 
-      Point<dim> previous_position;
-      previous_position[0] = particle_properties[PropertiesIndex::v_x];
-      previous_position[1] = particle_properties[PropertiesIndex::v_y];
-      if constexpr (dim == 3)
-        previous_position[2] = particle_properties[PropertiesIndex::v_z];
+      // The shift contact models accumulate the displacement of the particle
+      // in the force container.
+      const Tensor<1, 3> &accumulated_displacement =
+        contact_outcome.force[particle_id];
 
-      const Tensor<1, dim> displacement_tensor =
-        particle.get_location() - previous_position;
+      Tensor<1, dim> particle_displacement;
+      if constexpr (dim == 2)
+        particle_displacement = tensor_nd_to_2d(accumulated_displacement);
+      else if constexpr (dim == 3)
+        particle_displacement = accumulated_displacement;
 
-      const double disp_norm = displacement_tensor.norm();
-      if (disp_norm > max_disp)
-        {
-          const unsigned int particle_id = particle.get_local_index();
-          particle.set_location(previous_position +
-                                (max_disp / disp_norm) * displacement_tensor);
-          displacements[particle_id] += max_disp;
-        }
-      else
-        {
-          const unsigned int particle_id = particle.get_local_index();
-          displacements[particle_id] += disp_norm;
-        }
+
+      // Particles without contact are not displaced
+      const double displacement_norm = particle_displacement.norm();
+      if (displacement_norm == 0.)
+        continue;
+
+      // Limit the displacement to prevent particles from crossing each other.
+      // Shortening the displacement along its direction cannot carry a
+      // particle through a wall or a solid surface.
+      if (displacement_norm > max_displacement)
+        particle_displacement *= max_displacement / displacement_norm;
+
+      particle.set_location(particle.get_location() + particle_displacement);
+      displacements[particle_id] += particle_displacement.norm();
     }
+
+  // Reset the accumulated displacements for the next pseudo-time step
+  std::ranges::fill(contact_outcome.force, Tensor<1, 3>());
 }
 
 

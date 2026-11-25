@@ -347,7 +347,7 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
             }
         }
     if (!found)
-      return std::size_t(0);
+      return static_cast<std::size_t>(0);
     inlet_axis_z  = f0_center[2];
     axis_z_locked = true;
 

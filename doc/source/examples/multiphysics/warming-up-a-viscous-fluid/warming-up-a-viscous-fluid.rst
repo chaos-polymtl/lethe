@@ -20,7 +20,10 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``examples/multiphysics/warming-up-viscous-fluid.prm``
+All files mentioned below are located in the example's folder (``examples/multiphysics/warming-up-viscous-fluid``).
+
+- Parameter file: ``warming-up-viscous-fluid.prm``
+- Postprocessing Python script: ``warming-up-viscous-fluid-postprocessing.py``
 
 
 ------------------------
@@ -225,6 +228,15 @@ The simulation is launched in the same folder as the ``.prm`` file, using the ``
   :class: copy-button
 
   lethe-fluid warming-up-viscous-fluid.prm
+
+Once the simulation is complete, the evolution of the temperature and of the error with respect to the analytical solution can be plotted by launching the following command from the folder of the example:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 warming-up-viscous-fluid-postprocessing.py
+
+This script uses ``lethe_pyvista_tools``. Click `here <../../../tools/postprocessing/postprocessing_pyvista.html>`_ for details.
 
 
 --------------

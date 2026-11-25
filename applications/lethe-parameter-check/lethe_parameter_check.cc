@@ -43,6 +43,7 @@ main(int argc, char *argv[])
               SimulationParameters<2> NSparam;
               NSparam.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
+              NSparam.parse(prm);
             }
           if (dim == 3)
             {
@@ -50,6 +51,7 @@ main(int argc, char *argv[])
               SimulationParameters<3> NSparam;
               NSparam.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
+              NSparam.parse(prm);
             }
         }
       else if (solver_family == "lethe-particles")
@@ -66,6 +68,7 @@ main(int argc, char *argv[])
               DEMSolverParameters<2> parameters;
               parameters.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
+              parameters.parse(prm);
             }
           if (dim == 3)
             {
@@ -73,6 +76,7 @@ main(int argc, char *argv[])
               DEMSolverParameters<3> parameters;
               parameters.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
+              parameters.parse(prm);
             }
         }
       else if (solver_family == "lethe-fluid-particles")
@@ -85,6 +89,7 @@ main(int argc, char *argv[])
               CFDDEMSimulationParameters<2> param;
               param.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
+              param.parse(prm);
             }
 
           else if (dim == 3)
@@ -93,6 +98,7 @@ main(int argc, char *argv[])
               CFDDEMSimulationParameters<3> param;
               param.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
+              param.parse(prm);
             }
         }
       else

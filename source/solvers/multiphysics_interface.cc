@@ -4,8 +4,11 @@
 #include "solvers/time_harmonic_maxwell.h"
 #include <solvers/cahn_hilliard.h>
 #include <solvers/cls.h>
+#include <solvers/continuum_solid_dynamics.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/qmom.h>
+#include <solvers/qmom_field_function.h>
 #include <solvers/tracer.h>
 
 #include <deal.II/base/exceptions.h>
@@ -98,8 +101,9 @@ DeclException1(
 
 template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
-  const SimulationParameters<dim>                             &nsparam,
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
+  const SimulationParameters<dim> &nsparam,
+  const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                    &p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control,
   ConditionalOStream                &p_pcout,
   const FluidDynamicsFormulation     p_fluid_dynamics_formulation)
@@ -190,7 +194,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     {
       // The volume-averaged form of the time-harmonic Maxwell equations is the
       // same as the standard form, but uses the volume-averaged material
-      // properties (to be implemented in the future).
+      // properties.
       verbosity[PhysicsID::electromagnetics] =
         (nsparam.linear_solver.at(PhysicsID::electromagnetics).verbosity !=
          Parameters::Verbosity::quiet) ?
@@ -203,6 +207,48 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
                                                    nsparam,
                                                    p_triangulation,
                                                    p_simulation_control);
+    }
+
+
+  if (multiphysics_parameters.continuum_solid_dynamics)
+    {
+      // The solid phase exists in the volume-averaged formulation
+      AssertThrow(fluid_dynamics_formulation == FluidDynamicsFormulation::VANS,
+                  ContinuumSolidDynamicsWithoutVANSError());
+      verbosity[PhysicsID::continuum_solid_dynamics] =
+        (nsparam.physics_solving_strategy
+             .at(PhysicsID::continuum_solid_dynamics)
+             .verbosity != Parameters::Verbosity::quiet ||
+         nsparam.linear_solver.at(PhysicsID::continuum_solid_dynamics)
+             .verbosity != Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+      active_physics.push_back(PhysicsID::continuum_solid_dynamics);
+      physics[PhysicsID::continuum_solid_dynamics] =
+        std::make_shared<ContinuumSolidDynamics<dim>>(this,
+                                                      nsparam,
+                                                      p_triangulation,
+                                                      p_simulation_control);
+    }
+
+  if (multiphysics_parameters.qmom)
+    {
+      // The moments of the particle size distributions are computed by
+      // QMOMKit
+#ifndef LETHE_WITH_QMOMKIT
+      AssertThrow(false, QMOMWithoutQMOMKitError());
+#endif
+      AssertThrow(fluid_dynamics_formulation ==
+                    FluidDynamicsFormulation::standard,
+                  PhysicsVANSFormNotImplementedError("QMOM"));
+      verbosity[PhysicsID::qmom] =
+        (nsparam.linear_solver.at(PhysicsID::qmom).verbosity !=
+         Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+      active_physics.push_back(PhysicsID::qmom);
+      physics[PhysicsID::qmom] = std::make_shared<QMOM<dim>>(
+        this, nsparam, p_triangulation, p_simulation_control);
     }
 }
 
@@ -373,6 +419,29 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
     !(microwave_heating_enabled == true &&
       (electromagnetics_enabled == false || heat_transfer_enabled == false)),
     MicrowaveHeatingWithoutElectromagneticsError(microwave_heating_enabled));
+}
+
+template <int dim>
+bool
+MultiphysicsInterface<dim>::is_field_available(const PhysicsID physics_id) const
+{
+  // Check if the physics_id is in active_physics
+  if (std::ranges::find(active_physics, physics_id) != active_physics.end())
+    return true;
+
+  // Special case for the fields projected by the particle projector of the
+  // VANS solvers. They are not active physics, but are available as fields in
+  // the multiphysics interface when the fluid dynamics formulation is VANS and
+  // the VANS solver enabled them with enable_projected_particle_fields().
+  if (this->fluid_dynamics_formulation == FluidDynamicsFormulation::VANS)
+    {
+      if (physics_id == PhysicsID::void_fraction)
+        return particle_void_fraction_field_enabled;
+      if (physics_id == PhysicsID::particle_temperature)
+        return particle_temperature_field_enabled;
+    }
+
+  return false;
 }
 
 template void

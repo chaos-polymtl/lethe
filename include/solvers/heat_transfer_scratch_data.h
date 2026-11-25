@@ -62,38 +62,13 @@ public:
    * @param face_quadrature_formula The face quadrature formula
    *
    */
-  HeatTransferScratchData(const PhysicalPropertiesManager properties_manager,
-                          const FiniteElement<dim>       &fe_ht,
-                          const Quadrature<dim>          &quadrature,
-                          const Mapping<dim>             &mapping,
-                          const FiniteElement<dim>       &fe_fd,
-                          const Quadrature<dim - 1>      &face_quadrature,
-                          const double                    delta_T_ref)
-    : properties_manager(properties_manager)
-    , fe_values_T(mapping,
-                  fe_ht,
-                  quadrature,
-                  update_values | update_quadrature_points | update_JxW_values |
-                    update_gradients | update_hessians)
-    , global_delta_T_ref(delta_T_ref)
-    , velocities(0)
-    , pressure(dim)
-    , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
-    , fe_face_values_ht(mapping,
-                        fe_ht,
-                        face_quadrature,
-                        update_values | update_quadrature_points |
-                          update_JxW_values)
-  {
-    // Check if value is positive.
-    AssertThrow(delta_T_ref > 0,
-                ExcMessage("Reference temperature is invalid (< 0)."));
-
-    gather_cls                   = false;
-    gather_time_harmonic_maxwell = false;
-
-    allocate();
-  }
+  HeatTransferScratchData(const PhysicalPropertiesManager &properties_manager,
+                          const FiniteElement<dim>        &fe_ht,
+                          const Quadrature<dim>           &quadrature,
+                          const Mapping<dim>              &mapping,
+                          const FiniteElement<dim>        &fe_fd,
+                          const Quadrature<dim - 1>       &face_quadrature,
+                          const double                     delta_T_ref);
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
@@ -104,45 +79,7 @@ public:
    *
    * @param sd The scratch data
    */
-  HeatTransferScratchData(const HeatTransferScratchData<dim> &sd)
-    : properties_manager(sd.properties_manager)
-    , fe_values_T(sd.fe_values_T.get_mapping(),
-                  sd.fe_values_T.get_fe(),
-                  sd.fe_values_T.get_quadrature(),
-                  update_values | update_quadrature_points | update_JxW_values |
-                    update_gradients | update_hessians)
-    , global_delta_T_ref(sd.global_delta_T_ref)
-    , velocities(0)
-    , pressure(dim)
-    , fe_values_fd(sd.fe_values_fd.get_mapping(),
-                   sd.fe_values_fd.get_fe(),
-                   sd.fe_values_fd.get_quadrature(),
-                   update_values | update_gradients)
-    , fe_face_values_ht(sd.fe_face_values_ht.get_mapping(),
-                        sd.fe_face_values_ht.get_fe(),
-                        sd.fe_face_values_ht.get_quadrature(),
-                        update_values | update_quadrature_points |
-                          update_JxW_values)
-  {
-    // Check if value is positive.
-    AssertThrow(sd.global_delta_T_ref > 0,
-                ExcMessage("Reference temperature is invalid (< 0)."));
-
-    gather_cls                   = sd.gather_cls;
-    gather_time_harmonic_maxwell = sd.gather_time_harmonic_maxwell;
-    allocate();
-    if (gather_cls)
-      enable_cls(sd.fe_values_cls->get_fe(),
-                 sd.fe_values_cls->get_quadrature(),
-                 sd.fe_values_cls->get_mapping(),
-                 sd.filter);
-
-    if (gather_time_harmonic_maxwell)
-      enable_time_harmonic_maxwell(
-        sd.fe_values_time_harmonic_maxwell->get_fe(),
-        sd.fe_values_time_harmonic_maxwell->get_quadrature(),
-        sd.fe_values_time_harmonic_maxwell->get_mapping());
-  }
+  HeatTransferScratchData(const HeatTransferScratchData<dim> &sd);
 
   /** @brief Allocates the memory for the scratch
    *
@@ -177,96 +114,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<GlobalVectorType> &previous_solutions,
-         Function<dim>                       *source_function)
-  {
-    material_id = cell->material_id();
-    this->fe_values_T.reinit(cell);
-
-    quadrature_points = this->fe_values_T.get_quadrature_points();
-    auto &fe_T        = this->fe_values_T.get_fe();
-
-    source_function->value_list(quadrature_points, source);
-
-    // Compute cell diameter
-    double cell_measure =
-      compute_cell_measure_with_JxW(this->fe_values_T.get_JxW_values());
-    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe_T.degree);
-
-    // Gather temperature (values, gradient and laplacian)
-    this->fe_values_T.get_function_values(current_solution,
-                                          this->present_temperature_values);
-    this->fe_values_T.get_function_gradients(current_solution,
-                                             this->temperature_gradients);
-    this->fe_values_T.get_function_laplacians(
-      current_solution, this->present_temperature_laplacians);
-
-    // Gather previous temperature values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_T.get_function_values(previous_solutions[p],
-                                              previous_temperature_values[p]);
-
-        this->fe_values_T.get_function_gradients(
-          previous_solutions[p], previous_temperature_gradients[p]);
-      }
-
-    for (unsigned int q = 0; q < n_q_points; ++q)
-      {
-        this->JxW[q] = this->fe_values_T.JxW(q);
-
-        for (unsigned int k = 0; k < n_dofs; ++k)
-          {
-            // Shape function
-            this->phi_T[q][k]           = this->fe_values_T.shape_value(k, q);
-            this->grad_phi_T[q][k]      = this->fe_values_T.shape_grad(k, q);
-            this->hess_phi_T[q][k]      = this->fe_values_T.shape_hessian(k, q);
-            this->laplacian_phi_T[q][k] = trace(this->hess_phi_T[q][k]);
-          }
-      }
-
-    // Arrays related to faces must be re-initialized for each cell, since they
-    // might depend on reference cell
-    // Only carry out this initialization if the cell is a boundary cell,
-    // otherwise these are wasted calculations
-    this->is_boundary_cell = cell->at_boundary();
-    if (cell->at_boundary())
-      {
-        n_faces          = cell->n_faces();
-        is_boundary_face = std::vector<bool>(n_faces, false);
-        n_faces_q_points = fe_face_values_ht.get_quadrature().size();
-        boundary_face_id = std::vector<unsigned int>(n_faces);
-
-        face_JxW.reinit(TableIndices<2>(n_faces, n_faces_q_points));
-
-        this->phi_face_T.reinit(
-          TableIndices<3>(n_faces, n_faces_q_points, n_dofs));
-
-        this->temperature_face_value = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
-
-        for (const auto face : cell->face_indices())
-          {
-            this->is_boundary_face[face] = cell->face(face)->at_boundary();
-            if (this->is_boundary_face[face])
-              {
-                fe_face_values_ht.reinit(cell, face);
-                boundary_face_id[face] = cell->face(face)->boundary_id();
-                this->fe_face_values_ht.get_function_values(
-                  current_solution, this->temperature_face_value[face]);
-
-                for (unsigned int q = 0; q < n_faces_q_points; ++q)
-                  {
-                    face_JxW[face][q] = fe_face_values_ht.JxW(q);
-                    for (const unsigned int k : fe_face_values_ht.dof_indices())
-                      {
-                        this->phi_face_T[face][q][k] =
-                          this->fe_face_values_ht.shape_value(k, q);
-                      }
-                  }
-              }
-          }
-      }
-  }
+         Function<dim>                       *source_function);
 
   /**
    * @brief Reinitialize cell's velocity and pressure values with values
@@ -292,36 +140,7 @@ public:
   reinit_fluid_dynamics(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType                                     &current_solution,
-    const Parameters::ALE<dim>                           &ale)
-  {
-    this->fe_values_fd.reinit(cell);
-
-    this->fe_values_fd[velocities].get_function_values(current_solution,
-                                                       velocity_values);
-    if (!this->properties_manager.density_is_constant())
-      this->fe_values_fd[pressure].get_function_values(current_solution,
-                                                       pressure_values);
-
-    if (!ale.enabled())
-      return;
-
-    // ALE enabled, so extract the ALE velocity and subtract it from the
-    // velocity obtained from the fluid dynamics
-    Tensor<1, dim>                                  velocity_ale;
-    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
-      ale.velocity;
-    Vector<double> velocity_ale_vector(dim);
-
-    for (unsigned int q = 0; q < n_q_points; ++q)
-      {
-        velocity_ale_function->vector_value(quadrature_points[q],
-                                            velocity_ale_vector);
-        for (int d = 0; d < dim; ++d)
-          velocity_ale[d] = velocity_ale_vector[d];
-
-        velocity_values[q] -= velocity_ale;
-      }
-  }
+    const Parameters::ALE<dim>                           &ale);
 
   /** @brief Reinitialize the velocity gradient, calculated by the Fluid Dynamics
    *
@@ -393,18 +212,7 @@ public:
   void
   reinit_cls(const typename DoFHandler<dim>::active_cell_iterator &cell,
              const VectorType &current_solution,
-             const VectorType &current_filtered_solution)
-  {
-    this->fe_values_cls->reinit(cell);
-    // Gather phase indicator (values, gradient)
-    this->fe_values_cls->get_function_values(current_filtered_solution,
-                                             this->filtered_phase_values);
-    this->fe_values_cls->get_function_gradients(
-      current_filtered_solution, this->filtered_phase_gradient_values);
-
-    this->fe_values_cls->get_function_gradients(current_solution,
-                                                this->phase_gradient_values);
-  }
+             const VectorType &current_filtered_solution);
 
   /**
    * @brief enable_time_harmonic_maxwell Enables the collection of the
@@ -441,18 +249,7 @@ public:
   void
   reinit_time_harmonic_maxwell(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType                                     &current_solution)
-  {
-    this->fe_values_time_harmonic_maxwell->reinit(cell);
-    (*this->fe_values_time_harmonic_maxwell)[this->extractor_E_real]
-      .get_function_values(current_solution, this->electric_field_real_values);
-    (*this->fe_values_time_harmonic_maxwell)[this->extractor_E_imag]
-      .get_function_values(current_solution, this->electric_field_imag_values);
-    (*this->fe_values_time_harmonic_maxwell)[this->extractor_H_real]
-      .get_function_values(current_solution, this->magnetic_field_real_values);
-    (*this->fe_values_time_harmonic_maxwell)[this->extractor_H_imag]
-      .get_function_values(current_solution, this->magnetic_field_imag_values);
-  }
+    const VectorType                                     &current_solution);
 
   /** @brief Calculates the physical properties. This method calculates the
    * physical properties that may be required by the heat transfer problem.

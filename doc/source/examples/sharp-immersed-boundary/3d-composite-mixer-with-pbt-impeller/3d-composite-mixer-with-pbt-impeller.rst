@@ -52,10 +52,10 @@ The ``impeller.composite`` file contains these instructions.
     shapes
     0;        cylinder;                   0.025:0.375;              0:0:0.125 ; 0:0:0
     1;        cylinder;                0.05:0.0416666;          0:0:-0.208333 ; 0:0:0
-    2; hyper rectangle; 0.083333333:0.00625:0.0416666; 0.08333333:0:-0.208333 ; 0.7853981:0:0
-    3; hyper rectangle; 0.00625:0.083333333:0.0416666;  0:0.08333333:-0.208333; 0:0.7853981:0
-    4; hyper rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
-    5; hyper rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
+    2; hyper_rectangle; 0.083333333:0.00625:0.0416666; 0.08333333:0:-0.208333 ; 0.7853981:0:0
+    3; hyper_rectangle; 0.00625:0.083333333:0.0416666;  0:0.08333333:-0.208333; 0:0.7853981:0
+    4; hyper_rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
+    5; hyper_rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
     operations
     6; union     ; 0:1
     7; union     ; 6:2
@@ -67,7 +67,7 @@ Line-by-line:
 
 * ``shapes``: introduces the shapes section.
 * ``0; cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0``: defines a cylinder, with ID equal to 0. Its radius is 0.025 and its half-length 0.375. Its z position is 0.125 and its orientation is default (aligned with Z axis).
-* ``2; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0``: defines a hyper rectangle, with ID equal to 1. Its has half-lengths of 0.083, 0.00625, and 0.0417 in X, Y, and Z directions, respectively, in its own referential. Its center is at 0.083, 0, and -0.208 in the global referential and it is rotated by 0.787 radians around the X axis.
+* ``2; hyper_rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0``: defines a hyper rectangle, with ID equal to 1. Its has half-lengths of 0.083, 0.00625, and 0.0417 in X, Y, and Z directions, respectively, in its own referential. Its center is at 0.083, 0, and -0.208 in the global referential and it is rotated by 0.787 radians around the X axis.
 * The other shapes are defined in a similar fashion and are assigned IDs 1, 3, 4, and 5.
 * ``operations``: introduces the operations section.
 * ``6; union; 0:1``: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.
@@ -128,10 +128,10 @@ The section defining each parameter for the particles has certain requirements:
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function weak`` type of boundary is used.
+Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function_weak`` type of boundary is used.
 Two aspects need special consideration:
 
-1. ``function weak`` is a variation of ``function``. It is used to weakly impose a Dirichlet boundary condition, and it is necessary when using ``lethe-fluid-sharp``.
+1. ``function_weak`` is a variation of ``function``. It is used to weakly impose a Dirichlet boundary condition, and it is necessary when using ``lethe-fluid-sharp``.
 2. ``beta`` has to be defined. It is a Nitsche penalization parameter that enforces more strongly the boundary condition when it increases (see :doc:`../../../parameters/cfd/nitsche`).
 
 .. code-block:: text
@@ -148,7 +148,7 @@ Two aspects need special consideration:
     end
     subsection bc 2
       set id   = 2
-      set type = function weak
+      set type = function_weak
       set beta = 1
       subsection u
         set Function expression = 0

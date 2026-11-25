@@ -27,6 +27,12 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     # Electromagnetics
     set electromagnetics                = false
     set microwave heating               = false
+
+    #Euler-Euler model for solid phase
+    set continuum solid dynamics        = false
+
+    # Quadrature method of moments (requires QMOMKit)
+    set qmom                            = false
   end
 
 
@@ -70,6 +76,8 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   See :doc:`time_harmonic_maxwell` for advanced time-harmonic Maxwell parameters, :doc:`boundary_conditions_multiphysics` for the definition of the electromagnetic boundary conditions and :doc:`physical_properties` for the definition of the physical properties of the medium.
 
+  With the unresolved CFD-DEM solvers (``lethe-fluid-vans`` and ``lethe-fluid-particles``), the electromagnetic properties of the fluid region can account for the particles through an effective medium model. See :ref:`Physical properties - Unresolved dispersed phase <unresolved dispersed phase>`.
+
   When ``set heat transfer = true``, in addition to the electromagnetic solver, the optional parameter ``microwave heating`` can be used to enable the calculation of the heat source due to the electromagnetic fields. If ``set microwave heating = true``, the following heat source is calculated and added to the right-hand side of the heat transfer equation:
 
   .. math::
@@ -81,3 +89,16 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 .. seealso::
 
   The electromagnetic solver can be used on its own, an example is available in :doc:`../../examples/multiphysics/waveguide/waveguide`.
+
+
+* ``continuum solid dynamics``: enables the solid phase of the Euler-Euler model, in which the particles are treated as an interpenetrating continuum described by a solid velocity and a solid volume fraction. It can only be enabled with a volume-averaged Navier-Stokes (VANS) solver.
+
+.. warning::
+
+  The solid phase is under development. Its fields are allocated, written to the output files and checkpointed, but its equations are not solved yet.
+
+* ``qmom``: enables the quadrature method of moments (QMOM) auxiliary physics, which transports user-defined scalars, together with the moments of the particle size distribution. The numbers of user-defined scalars and moments are set in the ``QMOM`` subsection. The moments of particle size distributions, the reconstruction of the quadrature and the evolution of the moments in phase space are computed by the `QMOMKit <https://github.com/polycfd/QMOMKit>`_ library, so Lethe must be compiled with ``-DLETHE_WITH_QMOMKIT=ON`` (see :doc:`../../installation/regular_installation`). Its parameters are described in :doc:`qmom`.
+
+.. warning::
+
+  The QMOM physics is under development. Only the transport of the moments in physical space, with their source terms, is implemented: the scalars and the evolution of the moments in phase space are not available yet (see :doc:`qmom`).

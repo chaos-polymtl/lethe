@@ -75,7 +75,7 @@ In multiphysic DEM (``solver type = dem_mp`` in the :doc:`model_parameters` subs
 
 * For each boundary condition, we have to define a separate subsection. In the sample parameter list above, the ``number of boundary conditions`` is equal to 3. Hence, we need to define three subsections (``subsection boundary condition 0``, ``subsection boundary condition 1`` and ``subsection boundary condition 2```).
 
-* The ``boundary id`` parameter specifies the boundary ID for which the boundary condition should be applied. Periodic boundaries are an exception.
+* The ``boundary id`` parameter specifies the boundary ID for which the boundary condition should be applied. Periodic boundaries are an exception. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
 
 * The ``type`` parameter specifies the type of the boundary condition. Acceptable types are: ``fixed_wall``, ``outlet``, ``rotational``, ``translational`` and ``periodic``. The default boundary condition type is ``fixed_wall``.
 

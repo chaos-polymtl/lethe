@@ -1,0 +1,8 @@
+
+DEAL:0::Number of cells: 120
+DEAL:0::Number of particles inserted: 4096
+--------------
+Void Fraction
+--------------
+DEAL:0::Integral of the projected temperature: 305.004
+DEAL:0::L2 distance to 300 + 10 x: 0.576

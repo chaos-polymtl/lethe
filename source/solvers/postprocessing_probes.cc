@@ -303,7 +303,6 @@ PostprocessingProbes<dim>::gather_tables()
   std::vector<OutputStructTableHandler> table_output_structs;
 
   std::string prefix = output_folder;
-  std::string suffix = ".checkpoint";
 
   for (unsigned int i = 0; i < probe_tables.size(); ++i)
     {
@@ -311,8 +310,7 @@ PostprocessingProbes<dim>::gather_tables()
         "probe_" + Utilities::int_to_string(i, 2) + "_" +
         probing_points_parameters.probing_points_output_names[i];
 
-      table_output_structs.emplace_back(probe_tables[i],
-                                        prefix + filename + suffix);
+      table_output_structs.emplace_back(probe_tables[i], prefix + filename);
     }
 
   return table_output_structs;

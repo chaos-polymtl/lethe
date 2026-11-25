@@ -37,12 +37,12 @@ CLSLinearSubequationsSolver<dim>::setup_dofs()
 
   // Add periodic boundary conditions for the linear subequation
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CLSBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions_cls
+            this->simulation_parameters.cls_boundary_conditions
               .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
@@ -122,7 +122,7 @@ CLSLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
   const double rescale_metric =
     simulation_parameters.linear_solver.at(PhysicsID::CLS)
         .rescale_residual_by_volume ?
-      GridTools::volume(*this->triangulation, *this->mapping) :
+      std::sqrt(GridTools::volume(*this->triangulation, *this->mapping)) :
       1.0;
   const double linear_solver_tolerance =
     this->simulation_parameters.linear_solver.at(PhysicsID::CLS)

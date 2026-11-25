@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // TODO : Refactor so the class itself is not a pointer, but contains a pointer
@@ -6,6 +6,8 @@
 
 #ifndef lethe_source_terms_h
 #define lethe_source_terms_h
+
+#include <core/parameters_multiphysics.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
@@ -41,8 +43,19 @@ namespace SourceTerms
         std::make_shared<Functions::ParsedFunction<dim>>(2);
     }
 
+    /**
+     * @brief Declares parameters for the source terms.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     virtual void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parses parameters for the source terms.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     virtual void
     parse_parameters(ParameterHandler &prm);
 
@@ -60,6 +73,9 @@ namespace SourceTerms
 
     /// Cahn-Hilliard source
     std::shared_ptr<Functions::ParsedFunction<dim>> cahn_hilliard_source;
+
+    /// QMOM source: scalars and particle size distribution of the moments
+    Parameters::QMOMFunctions<dim> qmom_source;
   };
 
   template <int dim>
@@ -88,6 +104,10 @@ namespace SourceTerms
     cahn_hilliard_source->declare_parameters(prm, 2);
     prm.leave_subsection();
 
+    prm.enter_subsection("QMOM");
+    Parameters::QMOMFunctions<dim>::declare_parameters(prm);
+    prm.leave_subsection();
+
     prm.leave_subsection();
   }
 
@@ -112,6 +132,10 @@ namespace SourceTerms
 
     prm.enter_subsection("cahn hilliard");
     cahn_hilliard_source->parse_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("QMOM");
+    qmom_source.parse_parameters(prm);
     prm.leave_subsection();
 
     prm.leave_subsection();

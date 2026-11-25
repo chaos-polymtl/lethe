@@ -87,7 +87,7 @@ test()
       << std::endl;
     for (const auto &subequation_id : active_subequations)
       {
-        deallog << int(subequation_id) << std::endl;
+        deallog << static_cast<int>(subequation_id) << std::endl;
       }
   }
 
@@ -110,7 +110,7 @@ test()
     else
       for (const auto &subequation_id : active_subequations)
         {
-          deallog << int(subequation_id) << std::endl;
+          deallog << static_cast<int>(subequation_id) << std::endl;
         }
   }
 
@@ -130,7 +130,7 @@ test()
       << std::endl;
     for (const auto &subequation_id : active_subequations)
       {
-        deallog << int(subequation_id) << std::endl;
+        deallog << static_cast<int>(subequation_id) << std::endl;
       }
   }
 }

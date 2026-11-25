@@ -117,8 +117,7 @@ class ParticlesForceChains
 public:
   ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters);
 
-  virtual ~ParticlesForceChains()
-  {}
+  virtual ~ParticlesForceChains() = default;
 
 public:
   /**
@@ -259,7 +258,6 @@ private:
                                        particle_two_location);
 
             this->calculate_contact(
-              particle_one,
               contact_info,
               tangential_relative_velocity,
               normal_relative_velocity_value,

@@ -1,0 +1,17 @@
+
+DEAL::Particle 0 after the contact evaluation
+DEAL::  location: 0.00000 0.00200000 0.00000
+DEAL::  accumulated displacement: 0.00000 0.000551000 0.00000
+DEAL::Particle 1 after the contact evaluation
+DEAL::  location: 0.00000 -0.00200000 0.00000
+DEAL::  accumulated displacement: -0.000551000 -0.000551000 0.00000
+DEAL::Particle 2 after the contact evaluation
+DEAL::  location: 0.00400000 -0.00200000 0.00000
+DEAL::  accumulated displacement: 0.000551000 0.00000 0.00000
+DEAL::Particle 0 location after the displacement: 0.00000 0.00255100 0.00000
+DEAL::Particle 1 location after the displacement: -0.000551000 -0.00255100 0.00000
+DEAL::Particle 2 location after the displacement: 0.00455100 -0.00200000 0.00000
+DEAL::Distance between particles 0 and 1: 0.00513167
+DEAL::Distance between particles 0 and 2: 0.00643609
+DEAL::Distance between particles 1 and 2: 0.00513167
+DEAL::Number of contacts after the displacement: 0

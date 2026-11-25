@@ -40,8 +40,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // Pressure scaling factor
-  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+  // The pressure scaling factor is not applied, since SimulationParameters
+  // rejects any factor other than 1 when the density is not constant.
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -101,14 +101,12 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &phi_u_j           = scratch_data.phi_u[q][j];
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
-
-          const auto &grad_phi_p_j =
-            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j      = scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (density * velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-             grad_phi_p_j - dynamic_viscosity * laplacian_phi_u_j +
-             mass_source * phi_u_j);
+            (density * velocity_gradient * phi_u_j +
+             density * grad_phi_u_j * velocity + grad_phi_p_j -
+             dynamic_viscosity * laplacian_phi_u_j + mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
@@ -134,12 +132,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
             {
               const int component_j = scratch_data.components[j];
 
-              const auto &phi_u_j = scratch_data.phi_u[q][j];
-
-              const auto &phi_p_j =
-                pressure_scaling_factor * scratch_data.phi_p[q][j];
-              const auto &grad_phi_p_j =
-                pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
+              const auto &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto &phi_p_j      = scratch_data.phi_p[q][j];
+              const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -161,7 +156,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
                     phi_p_i * density * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  local_matrix_ij +=
+                    tau / density * (strong_jac * grad_phi_p_i);
                 }
 
               // momentum equation

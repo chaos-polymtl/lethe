@@ -71,6 +71,16 @@ density.
   conductive losses :math:`\sigma_r` into a single complex coefficient via the
   relation :math:`\varepsilon_{r,\text{eff}} = \varepsilon_r + i \sigma_r`.
 
+.. note::
+
+  In unresolved CFD-DEM simulations (``lethe-fluid-vans`` and
+  ``lethe-fluid-particles``), :math:`\varepsilon_{r,\text{eff}}` and
+  :math:`\mu_r` in the fluid region should be the effective properties of the
+  fluid-particle mixture, computed from the void fraction with an effective
+  medium model. See the :ref:`unresolved dispersed phase <unresolved dispersed phase>`
+  and the :ref:`effective medium models <effective medium models>` in the
+  physical properties.
+
 .. tip::
 
   If the user wants to use different units than the MKS system because, for
@@ -93,7 +103,7 @@ box below.
 
     set electromagnetic frequency    = 1 # Hz
     
-    set electromagnetic scaling type = <none|electric field|magnetic field|power>
+    set electromagnetic scaling type = <none|electric_field|magnetic_field|power>
 
     set electric field amplitude     = 1
     set magnetic field amplitude     = 1
@@ -143,14 +153,15 @@ box below.
 
   * ``none`` (default): the solution is left in dimensionless form and output
     as such.
-  * ``electric field``: rescaled so the electric field matches
-    ``electric field amplitude``, and the magnetic field matches
-    :math:`H_0 = E_0 / Z_0`.
-  * ``magnetic field``: rescaled so the magnetic field matches
-    ``magnetic field amplitude``, and the electric field matches
-    :math:`E_0 = Z_0 H_0`.
-  * ``power``: rescaled so the power delivered through the waveguide inlet
-    matches the ``waveguide power`` given in watts by the user for that inlet.
+  * ``electric_field``: the dimensionless electric field is multiplied by the
+    ``electric field amplitude`` :math:`E_0`, and the dimensionless magnetic
+    field by :math:`H_0 = E_0 / Z_0`.
+  * ``magnetic_field``: the dimensionless magnetic field is multiplied by the
+    ``magnetic field amplitude`` :math:`H_0`, and the dimensionless electric
+    field by :math:`E_0 = Z_0 H_0`.
+  * ``power``: rescaled so the power carried by the incident mode through the
+    waveguide inlet matches the ``waveguide power`` given in watts by the user
+    for that inlet.
     The scaling is done internally by isolating the electric field amplitude
     using the Poynting vector and the waveguide mode properties, and then
     rescaling the magnetic field accordingly, via the relation:
@@ -181,10 +192,10 @@ box below.
     other physics, since the other physics expect dimensional fields.
 
 * ``electric field amplitude``: the reference amplitude :math:`E_0` used as the
-  target amplitude when ``electromagnetic scaling type = electric field``.
+  target amplitude when ``electromagnetic scaling type = electric_field``.
 
 * ``magnetic field amplitude``: the reference amplitude :math:`H_0 = E_0 / Z_0` used as
-  the target amplitude when ``electromagnetic scaling type = magnetic field``.
+  the target amplitude when ``electromagnetic scaling type = magnetic_field``.
 
 * ``number of waveguide inlets``: number of ``waveguide inlet`` subsections to
   apply on the geometry boundary. See also the
@@ -234,13 +245,21 @@ excited at the inlet.
   .. math::
     \begin{align}
         \mathbf{E}_{TM} & = \begin{bmatrix} i \frac{k_{x_3} k_{x_1}}{k_c^2} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2) \\  i \frac{k_{x_3} k_{x_2}}{k_c^2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2) \\ \sin(k_{x_1} x_1) \sin(k_{x_2} x_2) \end{bmatrix} e^{i k_{x_3} x_3}, \\
-        \mathbf{H}_{TM} & = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\-k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
+        \mathbf{H}_{TM} & = i\frac{\omega \varepsilon_{r,eff}}{k_c^2} \begin{bmatrix} -k_{x_2} \sin(k_{x_1} x_1) \cos(k_{x_2} x_2)    \\k_{x_1} \cos(k_{x_1} x_1) \sin(k_{x_2} x_2)\\ 0 \end{bmatrix} e^{i k_{x_3} x_3}.
     \end{align}
 
   In the above equations, :math:`k_{x_1}` and :math:`k_{x_2}` are the
   wavenumbers in the two transverse directions, and :math:`k_{x_3}` is the
-  wavenumber in the propagation direction. The cutoff wavenumber :math:`k_c` is
-  defined as :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
+  wavenumber in the propagation direction :math:`x_3`, which points into the
+  domain. The cutoff wavenumber :math:`k_c` is defined as
+  :math:`k_c^2 = k_{x_1}^2 + k_{x_2}^2`.
+
+  The incident mode is given by the above equations, i.e. the standard
+  solution of a rectangular waveguide, whose longitudinal field
+  (:math:`H_{x_3}` for the TE mode and :math:`E_{x_3}` for the TM mode) has a
+  unit amplitude, whatever the ``electromagnetic scaling type``. The scaling
+  only multiplies the solution once the linear system is solved, as described
+  in the ``electromagnetic scaling type`` parameter.
 
 * ``mode order m``, ``mode order n``: mode orders in the two transverse
   directions. They are used to compute the wavenumbers :math:`k_{x_1}` and
@@ -293,6 +312,13 @@ electromagnetic fields are recomputed during the time evolution of a coupled
   * ``time``: recompute every ``coupling time`` units of physical time.
   * ``threshold``: recompute whenever the electromagnetic properties of the
     medium change by more than ``coupling threshold``.
+
+  .. attention::
+
+    The ``threshold`` strategy only tracks the changes of the temperature. It
+    is therefore not supported when the electromagnetic properties depend on
+    the void fraction (e.g., with the ``bruggeman`` effective medium model),
+    and the simulation stops with an error in that case.
 
 * ``coupling iteration``: number of time iterations between two
   electromagnetic solves when ``type = iteration``.

@@ -10,7 +10,10 @@ Postprocessing code for cylindrical fin
 import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
+import pandas as pd
 import argparse
+import glob
+import os
 
 #Plot font and colors
 font = {'weight' : 'normal',
@@ -71,5 +74,29 @@ plt.plot(x_analytical/L,T_analytical,color="black",label="Analytical solution")
 plt.xlabel("x/L")
 plt.ylabel("T")
 plt.legend()
-plt.savefig("temperature_fin.png",dpi=200)
-plt.show()
+if (not args.validate):
+    plt.savefig("temperature_fin.png",dpi=200)
+    plt.show()
+else:
+    plt.savefig("temperature_fin.pdf")
+
+    # Store the temperature profile and the analytical one at the same
+    # positions so that they can be compared between validation runs
+    T_analytical_x = T_inf + (T_b-T_inf) * np.cosh(m*(L-x))/np.cosh(m*L)
+    np.savetxt("solution-temperature.dat",
+               np.column_stack((x/L, T, T_analytical_x)),
+               header="x/L T T_analytical")
+
+    # Store the heat flux on every boundary, which Lethe writes next to the
+    # VTU file, with the analytical heat flux
+    heat_flux_files = glob.glob(os.path.join(os.path.dirname(vtu_file), "heat_flux*.dat"))
+    if (len(heat_flux_files) == 0):
+        print("No heat flux file was found next to the VTU file")
+    else:
+        heat_flux = pd.read_csv(heat_flux_files[0], sep=r"\s+")
+        flux_columns = [c for c in heat_flux.columns if c.startswith("total_flux_bc_")]
+        np.savetxt("solution-heat-flux.dat",
+                   np.array([[int(c.replace("total_flux_bc_", "")),
+                              heat_flux[c].iloc[-1], analytical_flux]
+                             for c in flux_columns]),
+                   header="boundary_id total_flux analytical_flux")

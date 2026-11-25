@@ -1,8 +1,9 @@
 
-DEAL::Method: 0 -> Stages: 1
-DEAL::Method: 1 -> Stages: 1
-DEAL::Method: 2 -> Stages: 1
-DEAL::Method: 3 -> Stages: 1
-DEAL::Method: 4 -> Stages: 1
-DEAL::Method: 5 -> Stages: 2
-DEAL::Method: 6 -> Stages: 3
+DEAL::Method: steady -> Stages: 1
+DEAL::Method: steady_bdf -> Stages: 1
+DEAL::Method: bdf1 -> Stages: 1
+DEAL::Method: bdf2 -> Stages: 1
+DEAL::Method: bdf3 -> Stages: 1
+DEAL::Method: sdirk22 -> Stages: 2
+DEAL::Method: sdirk33 -> Stages: 3
+DEAL::Method: sdirk45 -> Stages: 5

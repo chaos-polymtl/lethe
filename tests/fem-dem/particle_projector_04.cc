@@ -150,7 +150,7 @@ test_void_fraction_qcm_gaussian(const unsigned int fe_degree,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-  BoundaryConditions::NSBoundaryConditions<3> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<3> boundary_conditions;
 
   ParticleProjector<3, DEM::CFDDEMProperties::PropertiesIndex>
     particle_projector(&domain_triangulation,
@@ -195,7 +195,7 @@ test_void_fraction_qcm_gaussian(const unsigned int fe_degree,
   std::vector<double> void_fraction_values(
     fe_values_void_fraction.n_quadrature_points);
   for (const auto &cell :
-       particle_projector.dof_handler.active_cell_iterators())
+       particle_projector.dof_handler->active_cell_iterators())
     {
       fe_values_void_fraction.reinit((cell));
       fe_values_void_fraction.get_function_values(

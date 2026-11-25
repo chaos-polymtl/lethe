@@ -11,7 +11,8 @@ template <int dim>
 void
 CLSSubequationsInterface<dim>::initialize_subequations(
   const SimulationParameters<dim> &p_simulation_parameters,
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
+  const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                           &p_triangulation,
   const std::shared_ptr<SimulationControl> &p_simulation_control)
 {
   // Reset all subequations

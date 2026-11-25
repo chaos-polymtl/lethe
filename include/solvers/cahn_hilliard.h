@@ -45,6 +45,8 @@
 
 #include <deal.II/numerics/solution_transfer.h>
 
+#include <utility>
+
 DeclException1(
   CahnHilliardBoundaryConditionMissing,
   types::boundary_id,
@@ -57,11 +59,12 @@ template <int dim>
 class CahnHilliard : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
-  CahnHilliard(MultiphysicsInterface<dim>      *multiphysics_interface,
-               const SimulationParameters<dim> &p_simulation_parameters,
-               std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                  p_triangulation,
-               std::shared_ptr<SimulationControl> p_simulation_control)
+  CahnHilliard(
+    MultiphysicsInterface<dim>      *multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                      &p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.physics_solving_strategy.at(
           PhysicsID::cahn_hilliard))
@@ -72,7 +75,7 @@ public:
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , simulation_control(p_simulation_control)
+    , simulation_control(std::move(p_simulation_control))
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())
@@ -195,6 +198,12 @@ public:
   postprocess(bool first_iteration) override;
 
   /**
+   * @brief Output the per iteration wallclock times.
+   */
+  void
+  output_per_iteration_timer() override;
+
+  /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
    * mesh refinement/coarsening
    */
@@ -240,15 +249,19 @@ public:
 
   /**
    * @brief Prepares Cahn-Hilliard to write checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  write_checkpoint() override;
+  write_checkpoint(const std::string &checkpoint_slot_label) override;
 
   /**
    * @brief Allows Cahn-Hilliard physics to set-up solution vector from checkpoint file;
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  read_checkpoint() override;
+  read_checkpoint(const std::string &checkpoint_slot_label) override;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to
@@ -384,9 +397,9 @@ private:
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
         AssertThrow(
-          simulation_parameters.boundary_conditions_cahn_hilliard.type.find(
+          simulation_parameters.cahn_hilliard_boundary_conditions.type.find(
             boundary_id_in_tria) !=
-            simulation_parameters.boundary_conditions_cahn_hilliard.type.end(),
+            simulation_parameters.cahn_hilliard_boundary_conditions.type.end(),
           CahnHilliardBoundaryConditionMissing(boundary_id_in_tria));
       }
   }

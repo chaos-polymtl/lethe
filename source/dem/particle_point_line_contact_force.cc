@@ -36,7 +36,7 @@ ParticlePointLineForce<dim, PropertiesIndex>::
       auto contact_information = &pairs_in_contact_iterator->second;
 
       // Defining particle and properties of particle as local parameters
-      auto     particle            = contact_information->particle;
+      auto    &particle            = contact_information->particle;
       auto     particle_properties = particle->get_properties();
       Point<3> particle_location_3d;
 
@@ -249,6 +249,102 @@ ParticlePointLineForce<dim, PropertiesIndex>::
           particle_force += total_force;
         }
     }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+ParticlePointLineForce<dim, PropertiesIndex>::
+  calculate_particle_point_shift_displacement(
+    const typename DEM::dem_data_structures<dim>::particle_point_in_contact
+      &particle_point_pairs_in_contact,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+    std::vector<Tensor<1, 3>>                        &displacement)
+{
+  for (const auto &pair_in_contact : particle_point_pairs_in_contact)
+    {
+      const auto &contact_information = pair_in_contact.second;
+      const auto &particle            = contact_information.particle;
+
+      Point<3> particle_location_3d;
+
+      if constexpr (dim == 3)
+        particle_location_3d = particle->get_location();
+
+      if constexpr (dim == 2)
+        particle_location_3d = point_nd_to_3d(particle->get_location());
+
+      add_shift_displacement(particle,
+                             particle_location_3d,
+                             contact_information.point,
+                             insertion_info,
+                             displacement);
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+ParticlePointLineForce<dim, PropertiesIndex>::
+  calculate_particle_line_shift_displacement(
+    const typename DEM::dem_data_structures<dim>::particle_line_in_contact
+      &particle_line_pairs_in_contact,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+    std::vector<Tensor<1, 3>>                        &displacement)
+{
+  for (const auto &pair_in_contact : particle_line_pairs_in_contact)
+    {
+      const auto &contact_information = pair_in_contact.second;
+      const auto &particle            = contact_information.particle;
+
+      Point<3> particle_location_3d;
+
+      if constexpr (dim == 3)
+        particle_location_3d = particle->get_location();
+
+      if constexpr (dim == 2)
+        particle_location_3d = point_nd_to_3d(particle->get_location());
+
+      // The point of the line which is the closest to the particle center is
+      // the projection of the particle center on the line
+      const Point<3> projection =
+        find_projection_point(particle_location_3d,
+                              contact_information.point_one,
+                              contact_information.point_two);
+
+      add_shift_displacement(particle,
+                             particle_location_3d,
+                             projection,
+                             insertion_info,
+                             displacement);
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+ParticlePointLineForce<dim, PropertiesIndex>::add_shift_displacement(
+  const Particles::ParticleIterator<dim>           &particle,
+  const Point<3>                                   &particle_location,
+  const Point<3>                                   &contact_point,
+  const Parameters::Lagrangian::InsertionInfo<dim> &insertion_info,
+  std::vector<Tensor<1, 3>>                        &displacement)
+{
+  const double particle_diameter =
+    particle->get_properties()[PropertiesIndex::dp];
+  const double distance       = contact_point.distance(particle_location);
+  const double normal_overlap = 0.5 * particle_diameter - distance;
+
+  if (normal_overlap <= 0.)
+    return;
+
+  ++n_contacts;
+
+  // Normal unit vector pointing from the boundary to the particle center
+  const Tensor<1, 3> normal_vector =
+    (particle_location - contact_point) / distance;
+
+  displacement[particle->get_local_index()] +=
+    (insertion_info.packed_particle_wall_overlap_factor * normal_overlap +
+     insertion_info.packed_clearance_ratio * particle_diameter) *
+    normal_vector;
 }
 
 template <int dim, typename PropertiesIndex>

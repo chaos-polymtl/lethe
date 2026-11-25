@@ -41,13 +41,15 @@ from lethe_pyvista_tools import *
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d-heated-packed-bed example')
 parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 
 # Simulation folder
 folder=args.folder
 
-# Starting vtu id (heating starts)
-start = 139 # 7s
+# End time of the loading and flipping stages (heating starts at the end of flipping)
+t_load_end = 6.0
+t_flip_end = 7.0
 
 # Height (z) of the heating wall
 h_top = 0.2
@@ -64,9 +66,17 @@ ignore_data = ['type', 'omega','specific_heat']
 particle = lethe_pyvista_tools(folder, prm_file, pvd_name, ignore_data=ignore_data)
 time = np.array(particle.time_list)
 
-# Get kinetic knergy at the end of the first two stages 
+# Vtu ids at the end of the loading and flipping stages, found from the output
+# times so that they do not depend on the output frequency
+i_load_end = np.argmin(np.abs(time - t_load_end))
+i_flip_end = np.argmin(np.abs(time - t_flip_end))
+
+# Starting vtu id (heating starts)
+start = i_flip_end
+
+# Get kinetic knergy at the end of the first two stages
 K = []
-for i in [118,138]:
+for i in [i_load_end, i_flip_end]:
     df_load = particle.get_df(i)
     vx = df_load['velocity'][:, 0]
     vy = df_load['velocity'][:, 1]
@@ -81,8 +91,8 @@ total_volume = 0.105 * 0.1 * h_top
 porosity = 1 - (particle_number * particle_volume) / total_volume
 print('\n')
 print('=' * 80)
-print(f"At t = {time[118]} s, kinetic energy: {K[0]} J")
-print(f"At t = {time[138]} s, kinetic energy: {K[1]} J")
+print(f"At t = {time[i_load_end]} s, kinetic energy: {K[0]} J")
+print(f"At t = {time[i_flip_end]} s, kinetic energy: {K[1]} J")
 print(f"Total porosity: {porosity:.4f} %")
 print('=' * 80)
 print('\n')
@@ -136,22 +146,29 @@ for i_h, h in enumerate(heights):
     plt.fill_between(t1, T1, T2_interp, color=colors[i_h], alpha=0.2, linewidth=0.7)
 
     # Plot
-    line1, = plt.plot(time[start:],temperature[:, i_h], color=colors[i_h],label= f"Lethe")
-    line2, = plt.plot(reference_data_sim['t'],reference_data_sim['T'], '--', color=colors[i_h], label= f"Beaulieu simulation")
-    line3, = plt.plot(reference_data_exp['t'],reference_data_exp['T'], '.', color=colors[i_h], label= f"Beaulieu experiment")
+    plt.plot(time[start:],temperature[:, i_h], color=colors[i_h])
+    plt.plot(reference_data_sim['t'],reference_data_sim['T'], '--', color=colors[i_h])
+    plt.plot(reference_data_exp['t'],reference_data_exp['T'], '.', color=colors[i_h])
 
-# Add color legend
+# Add line style legend (in black) and color legend
+style_lethe = mlines.Line2D([], [], color='k', label="Lethe")
+style_sim   = mlines.Line2D([], [], color='k', linestyle='--', label="Beaulieu simulation")
+style_exp   = mlines.Line2D([], [], color='k', marker='.', linestyle='None', label="Beaulieu experiment")
 color_one   = mlines.Line2D([], [], color=colors[0], marker='s', linestyle='None', label=f"$h_1 = {heights[0]:.3f}$ m")
 color_two   = mlines.Line2D([], [], color=colors[1], marker='s', linestyle='None', label=f"$h_2 = {heights[1]:.3f}$ m")
 color_three = mlines.Line2D([], [], color=colors[2], marker='s', linestyle='None', label=f"$h_3 = {heights[2]:.3f}$ m")
-legend = plt.legend(handles=[line1, line2, line3, color_one, color_two, color_three],loc='upper left',fontsize=18)
-legend.legend_handles[0].set_color('k')
-legend.legend_handles[1].set_color('k')
-legend.legend_handles[2].set_color('k')
+plt.legend(handles=[style_lethe, style_sim, style_exp, color_one, color_two, color_three],loc='upper left',fontsize=18)
 
 plt.grid()
 plt.ylim(19,34)
 plt.xlabel('Time (s) after packing')
 plt.ylabel('Temperature (°C)')
-plt.savefig('mean-temperatures')
-plt.show()
+if (not args.validate):
+    plt.savefig('mean-temperatures')
+    plt.show()
+else:
+    # Store the plotted mean temperatures so that they can be compared between validation runs
+    np.savetxt("solution-mean-temperatures.dat",
+               np.column_stack((time[start:], temperature)),
+               header=f"t T(h={heights[0]:.3f}) T(h={heights[1]:.3f}) T(h={heights[2]:.3f})")
+    plt.savefig('mean-temperatures.pdf')

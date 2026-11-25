@@ -1,0 +1,27 @@
+
+DEAL::Checkpoint written at step 12
+DEAL::Step number: 13
+DEAL:: Beta uninterrupted: 0.465341
+DEAL:: Beta restarted:     0.465341
+DEAL::Step number: 14
+DEAL:: Beta uninterrupted: 0.346034
+DEAL:: Beta restarted:     0.346034
+DEAL::Step number: 15
+DEAL:: Beta uninterrupted: 0.444511
+DEAL:: Beta restarted:     0.444511
+DEAL::Step number: 16
+DEAL:: Beta uninterrupted: 0.363268
+DEAL:: Beta restarted:     0.363268
+DEAL::Step number: 17
+DEAL:: Beta uninterrupted: 0.430306
+DEAL:: Beta restarted:     0.430306
+DEAL::Step number: 18
+DEAL:: Beta uninterrupted: 0.374993
+DEAL:: Beta restarted:     0.374993
+DEAL::Step number: 19
+DEAL:: Beta uninterrupted: 0.420633
+DEAL:: Beta restarted:     0.420633
+DEAL::Step number: 20
+DEAL:: Beta uninterrupted: 0.382975
+DEAL:: Beta restarted:     0.382975
+DEAL::Restart matches the uninterrupted run: true

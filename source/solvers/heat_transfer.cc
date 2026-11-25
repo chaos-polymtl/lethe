@@ -1070,6 +1070,18 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
       error_table.add_value("error_temperature", temperature_error);
+      error_table.set_scientific("error_temperature", true);
+
+      if (Utilities::MPI::this_mpi_process(
+            this->triangulation->get_mpi_communicator()) == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.analytical_solution->get_filename() +
+            "_heat_transfer.dat";
+          std::ofstream output(filename.c_str());
+          error_table.write_text(output);
+        }
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
@@ -1107,12 +1119,12 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
               domain_name = "fluid";
               break;
             }
-          case Parameters::FluidIndicator::fluid0:
+          case Parameters::FluidIndicator::fluid_0:
             {
               domain_name = "fluid_0";
               break;
             }
-          case Parameters::FluidIndicator::fluid1:
+          case Parameters::FluidIndicator::fluid_1:
             {
               domain_name = "fluid_1";
               break;
@@ -1247,16 +1259,17 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                                            *present_solution,
                                            Variable::temperature,
                                            this->pcout);
+}
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::iteration)
-    {
-      announce_string(this->pcout, "Heat Transfer");
-      this->pcout << std::defaultfloat;
-      this->computing_timer.print_summary();
-      this->pcout << std::scientific;
-      this->computing_timer.reset();
-    }
+template <int dim>
+void
+HeatTransfer<dim>::output_per_iteration_timer()
+{
+  announce_string(this->pcout, "Heat Transfer");
+  this->pcout << std::defaultfloat;
+  this->computing_timer.print_summary();
+  this->pcout << std::scientific;
+  this->computing_timer.reset();
 }
 
 template <int dim>
@@ -1356,46 +1369,39 @@ HeatTransfer<dim>::gather_tables()
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_HT" + suffix);
+        "_HT");
 
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
     table_output_structs.emplace_back(
       this->heat_flux_table,
       prefix +
-        this->simulation_parameters.post_processing.heat_flux_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.heat_flux_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_temperature_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
       prefix +
-        this->simulation_parameters.post_processing.temperature_output_name +
-        suffix);
+        this->simulation_parameters.post_processing.temperature_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_algebraic_melt_volume)
     table_output_structs.emplace_back(
       this->melt_volume_alge_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .algebraic_melt_volume_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .algebraic_melt_volume_output_name);
 
   if (this->simulation_parameters.post_processing
         .calculate_geometric_melt_volume)
     table_output_structs.emplace_back(
       this->melt_volume_geo_table,
-      prefix +
-        this->simulation_parameters.post_processing
-          .geometric_melt_volume_output_name +
-        suffix);
+      prefix + this->simulation_parameters.post_processing
+                 .geometric_melt_volume_output_name);
 
   if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
         .ids_and_isocontours_per_variable.contains(Variable::temperature))
@@ -1416,7 +1422,7 @@ HeatTransfer<dim>::gather_tables()
 
           table_output_structs.emplace_back(
             this->temperature_isocontour_bounding_values_tables[i],
-            prefix + isocontour_output_name + suffix);
+            prefix + isocontour_output_name);
         }
     }
 
@@ -1425,7 +1431,7 @@ HeatTransfer<dim>::gather_tables()
 
 template <int dim>
 void
-HeatTransfer<dim>::write_checkpoint()
+HeatTransfer<dim>::write_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -1441,7 +1447,8 @@ HeatTransfer<dim>::write_checkpoint()
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+    this->simulation_parameters.restart_parameters.filename +
+    checkpoint_slot_label;
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
@@ -1459,12 +1466,14 @@ HeatTransfer<dim>::write_checkpoint()
   // Transfer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          checkpoint_slot_label,
+                          mpi_communicator);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::read_checkpoint()
+HeatTransfer<dim>::read_checkpoint(const std::string &checkpoint_slot_label)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading heat transfer checkpoint" << std::endl;
@@ -1488,7 +1497,8 @@ HeatTransfer<dim>::read_checkpoint()
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+    this->simulation_parameters.restart_parameters.filename +
+    checkpoint_slot_label;
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
@@ -1529,7 +1539,9 @@ HeatTransfer<dim>::read_checkpoint()
   // Heat Transfer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            checkpoint_slot_label,
+                            mpi_communicator);
 }
 
 
@@ -1578,7 +1590,7 @@ HeatTransfer<dim>::setup_dofs()
          this->simulation_parameters.boundary_conditions_ht.type)
       {
         // Dirichlet condition : imposed temperature at i_bc
-        if (type == BoundaryConditions::BoundaryType::temperature)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -1587,7 +1599,7 @@ HeatTransfer<dim>::setup_dofs()
                  .dirichlet_value.at(id),
               nonzero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::periodic)
           {
             const auto &periodic_boundary =
               this->simulation_parameters.boundary_conditions_ht
@@ -1624,7 +1636,7 @@ HeatTransfer<dim>::setup_dofs()
     for (auto const &[id, type] :
          this->simulation_parameters.boundary_conditions_ht.type)
       {
-        if (type == BoundaryConditions::BoundaryType::temperature)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
               *this->dof_handler,
@@ -1632,7 +1644,7 @@ HeatTransfer<dim>::setup_dofs()
               Functions::ZeroFunction<dim>(),
               zero_constraints);
           }
-        if (type == BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::HeatTransferBoundaryType::periodic)
           {
             const auto &periodic_boundary =
               this->simulation_parameters.boundary_conditions_ht
@@ -1713,7 +1725,7 @@ HeatTransfer<dim>::update_boundary_conditions()
        this->simulation_parameters.boundary_conditions_ht.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (type == BoundaryConditions::BoundaryType::temperature)
+      if (type == BoundaryConditions::HeatTransferBoundaryType::temperature)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -1722,7 +1734,7 @@ HeatTransfer<dim>::update_boundary_conditions()
                .at(id),
             nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::HeatTransferBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions_ht
@@ -1941,7 +1953,7 @@ void
 HeatTransfer<dim>::postprocess_temperature_statistics(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const bool                       time_average)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
@@ -2147,7 +2159,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
 template <int dim>
 void
-HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
+HeatTransfer<dim>::write_temperature_statistics(const std::string &domain_name)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -2175,9 +2187,9 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
 
   AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
                                    .monitored_fluid_with_phase_change ==
-                                 Parameters::FluidIndicator::fluid1),
+                                 Parameters::FluidIndicator::fluid_1),
               ExcMessage(
-                "For single-fluid flows only 'fluid 0' can be monitored."));
+                "For single-fluid flows only 'fluid_0' can be monitored."));
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -2256,7 +2268,7 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
                   // Case of fluid 0 being a phase change
                   if (this->simulation_parameters.post_processing
                         .monitored_fluid_with_phase_change ==
-                      Parameters::FluidIndicator::fluid0)
+                      Parameters::FluidIndicator::fluid_0)
                     {
                       liquid_volume_integral +=
                         (1. - filtered_phase_values[q]) *
@@ -2270,7 +2282,7 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
                   // Case of fluid 1 being a phase change
                   if (this->simulation_parameters.post_processing
                         .monitored_fluid_with_phase_change ==
-                      Parameters::FluidIndicator::fluid1)
+                      Parameters::FluidIndicator::fluid_1)
                     {
                       liquid_volume_integral +=
                         (filtered_phase_values[q]) *
@@ -2349,9 +2361,9 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
 
   AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
                                    .monitored_fluid_with_phase_change ==
-                                 Parameters::FluidIndicator::fluid1),
+                                 Parameters::FluidIndicator::fluid_1),
               ExcMessage(
-                "For single-fluid flows only 'fluid 0' can be monitored."));
+                "For single-fluid flows only 'fluid_0' can be monitored."));
 
   // Initializes variables for the melt volume and surface
   double melt_volume;
@@ -2397,7 +2409,7 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
       phase_indicator_vector_owned_copy->add(-phase_indicator_interface_value);
       if (this->simulation_parameters.post_processing
             .monitored_fluid_with_phase_change ==
-          Parameters::FluidIndicator::fluid1)
+          Parameters::FluidIndicator::fluid_1)
         phase_indicator_vector_owned_copy->operator*=(-1);
 
       // Get the intersection region between the monitored fluid and the
@@ -2773,7 +2785,7 @@ void
 HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const VectorType                &current_solution_fd)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
@@ -2954,33 +2966,33 @@ template void
 HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalVectorType          &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalVectorType          &current_solution_fd);
 
 template void
 HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalBlockVectorType     &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
   const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name,
+  const std::string               &domain_name,
   const GlobalBlockVectorType     &current_solution_fd);
 
 template <int dim>
 void
-HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
+HeatTransfer<dim>::write_heat_flux(const std::string &domain_name)
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -3015,7 +3027,7 @@ HeatTransfer<dim>::set_phase_coefficient(
           point_is_in_postprocessed_fluid = true;
           break;
         }
-      case Parameters::FluidIndicator::fluid0:
+      case Parameters::FluidIndicator::fluid_0:
         {
           if (gather_cls)
             {
@@ -3025,14 +3037,14 @@ HeatTransfer<dim>::set_phase_coefficient(
             }
           else
             {
-              // In the case of monophase simulations, "fluid0" is
+              // In the case of monophase simulations, "fluid_0" is
               // equivalent to "both" (all domain) calculation
               phase_coefficient               = 1.;
               point_is_in_postprocessed_fluid = true;
             }
           break;
         }
-      case Parameters::FluidIndicator::fluid1:
+      case Parameters::FluidIndicator::fluid_1:
         {
           if (gather_cls)
             {
@@ -3047,7 +3059,7 @@ HeatTransfer<dim>::set_phase_coefficient(
               throw std::logic_error(
                 "Inconsistency in .prm!\n when CLS = false"
                 "\n use (default value): set postprocessed fluid = both"
-                "\n or: set postprocessed fluid = fluid 0");
+                "\n or: set postprocessed fluid = fluid_0");
             }
           break;
         }

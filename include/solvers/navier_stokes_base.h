@@ -4,6 +4,7 @@
 #ifndef lethe_navier_stokes_base_h
 #define lethe_navier_stokes_base_h
 
+#include <core/checkpoint_control.h>
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/multiphysics.h>
@@ -44,6 +45,8 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/affine_constraints.h>
+
+#include <string>
 
 using namespace dealii;
 
@@ -131,8 +134,7 @@ protected:
                    const FluidDynamicsFormulation fluid_dynamics_formulation =
                      FluidDynamicsFormulation::standard);
 
-  virtual ~NavierStokesBase()
-  {}
+  virtual ~NavierStokesBase() = default;
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
@@ -527,7 +529,7 @@ protected:
    * @brief Read the solution from a checkpoint file and set it as the current solution.
    */
   virtual void
-  set_solution_from_checkpoint(std::string checkpoint_file_prefix);
+  set_solution_from_checkpoint(const std::string &checkpoint_file_prefix);
 
   /**
    * @brief Set the nodal values of velocity and pressure
@@ -595,11 +597,23 @@ protected:
   update_boundary_conditions();
 
   /**
+   * @brief Set the time of the forcing function and of the time-dependent
+   * boundary conditions to the current time of the simulation control, and
+   * re-impose the non-zero constraints on the present solution.
+   *
+   * This is called at the beginning of every time step and, for multi-stage
+   * (SDIRK) methods, at every stage so that the forcing and the boundary
+   * conditions are evaluated at the stage time \f$t_n + c_i \Delta t\f$.
+   */
+  virtual void
+  update_forcing_and_boundary_conditions();
+
+  /**
    * @brief Check if a specifique boundary condition exist
    * @param bc, the boundary type that we want to check if it exists
    */
   bool
-  check_existance_of_bc(BoundaryConditions::BoundaryType bc);
+  check_existance_of_bc(BoundaryConditions::FluidDynamicsBoundaryType bc);
 
   /**
    * @brief Turn regions of the mesh where the @p material_id>0 into a solid
@@ -795,6 +809,21 @@ protected:
   write_checkpoint();
 
   /**
+   * @brief Return the prefix of the checkpoint files: the output path, the
+   * restart file name and the label of the checkpoint slot.
+   */
+  std::string
+  get_checkpoint_prefix() const;
+
+  /**
+   * @brief Return the label of the checkpoint slot, "_" followed by the
+   * checkpoint id, which is appended to the restart file name in the prefix
+   * and to the name of the table checkpoints.
+   */
+  std::string
+  get_checkpoint_slot_label() const;
+
+  /**
    * @brief Gather and return vector of output structs that are particular to some applications.
    *
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.
@@ -895,6 +924,9 @@ protected:
 
   // Dynamic flow control
   FlowControl<dim> flow_control;
+
+  // Id of the checkpoint, which alternates between the checkpoint slots
+  CheckpointControl checkpoint_controller;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;

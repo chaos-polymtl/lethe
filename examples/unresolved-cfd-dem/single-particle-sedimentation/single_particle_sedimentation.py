@@ -14,6 +14,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument("--particle_pvd", type=str, required=True)
 parser.add_argument("--fluid_pvd", type=str, required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args = parser.parse_args()
 
 import matplotlib.pyplot as plt
@@ -24,13 +25,19 @@ sys.path.append("./")
 from single_particle_sedimentation_funcs import *
 define_plot_style()
 
+# Show the current figure, or save it as a PDF in validation mode
+def show_or_save(figure_name):
+    if (args.validate):
+        plt.savefig(figure_name + ".pdf")
+        plt.close()
+    else:
+        plt.show()
+
 # Parameters for the analytical solution
 convert_m_to_cm = 100
 # Data:
 dp = 0.002663
-Vp = 4/3 * np.pi * (0.5 * dp)**3
 rhop = 1029.
-Mp = rhop * Vp
 
 # Constants:
 nu = 0.0000008379
@@ -42,36 +49,10 @@ g = -9.81
 dt = 0.05
 t_end = 2
 initial_position = 0.08
-initial_urel = 0.
 
 # Calculate the analytical solution
-analytical_time = np.arange(0, t_end, dt)
-analytical_velocity = np.zeros_like(analytical_time)
-analytical_position = np.zeros_like(analytical_time)
-analytical_position[0] = initial_position
-
-i = 1
-current_t = dt
-while current_t <= t_end:
-    # Calculate forces
-    Fg = fg(Mp, g)
-    Fb = fb(Vp, rhof, g)
-    Fd = dallavalle(dp, rhof, mu, analytical_velocity[i-1])
-
-    # Calculate acceleration
-    a = (Fb - Fd + Fg) / Mp
-
-    # Calculate velocity
-    analytical_velocity[i] = analytical_velocity[i-1] + a * dt
-
-    # Calculate position
-    analytical_position[i] = analytical_position[i-1] + analytical_velocity[i] * dt
-
-    # Calculate time
-    current_t += dt
-    analytical_time[i] = current_t
-
-    i += 1
+analytical_time, analytical_velocity, analytical_position = analytical_solution(
+    dp, rhop, rhof, mu, g, dt, t_end, initial_position)
 
 # Get simulated and analytical particle position
 time, position = get_time_position_from_simulation(args.particle_pvd)
@@ -82,7 +63,7 @@ plt.plot(analytical_time, analytical_position*convert_m_to_cm, label="Analytical
 plt.xlabel("Time [s]")
 plt.ylabel("Particle position [cm]")
 plt.legend()
-plt.show()
+show_or_save("particle-position")
 
 # Get simulated and analytical particle velocity
 time, velocity = get_time_and_velocity_from_simulation(args.particle_pvd)
@@ -96,7 +77,15 @@ plt.plot(analytical_time, -analytical_velocity*convert_m_to_cm, label="Analytica
 plt.xlabel("Time [s]")
 plt.ylabel("Particle velocity [cm/s]")
 plt.legend()
-plt.show()
+show_or_save("particle-velocity")
+
+# Store the simulated trajectory and its error so that they can be compared
+# between validation runs
+if (args.validate):
+    np.savetxt("solution-particle.dat",
+               np.column_stack((time, position, velocity)),
+               header="t y v_y")
+    np.savetxt("solution-rmse.dat", np.array([rmse]), header="rmse_velocity")
 
 # Define points to find sampled void fraction
 time_points_to_sample_voidfraction = [1, len(time)//2, -1]
@@ -111,5 +100,5 @@ for i in time_points_to_sample_voidfraction:
 plt.xlabel("Position in y [cm]")
 plt.ylabel("Center void fraction")
 plt.legend(title="Time")
-plt.show()
+show_or_save("center-void-fraction")
 

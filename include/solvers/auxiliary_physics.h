@@ -74,8 +74,7 @@ public:
    * @brief AuxiliaryPhysics - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  virtual ~AuxiliaryPhysics()
-  {}
+  virtual ~AuxiliaryPhysics() = default;
 
   /**
    * @brief Gather and return vector of output structs that are particular to some applications.
@@ -132,6 +131,11 @@ public:
   virtual void
   postprocess(bool first_iteration) = 0;
 
+  /**
+   * @brief Output the per iteration wallclock times.
+   */
+  virtual void
+  output_per_iteration_timer() = 0;
 
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
@@ -148,15 +152,19 @@ public:
 
   /**
    * @brief Prepares auxiliary physics to write checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  write_checkpoint() = 0;
+  write_checkpoint(const std::string &checkpoint_slot_label) = 0;
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  read_checkpoint() = 0;
+  read_checkpoint(const std::string &checkpoint_slot_label) = 0;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to

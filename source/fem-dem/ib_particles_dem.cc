@@ -5,17 +5,24 @@
 
 #include <fem-dem/ib_particles_dem.h>
 
+#include <deal.II/base/mpi.h>
+
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/utility.hpp>
+
 #include <algorithm>
+#include <map>
+#include <utility>
 
 template <int dim>
 void
 IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
   const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-    fw_parameters,
+    &fw_parameters,
   const std::shared_ptr<Parameters::Lagrangian::BCDEM>
                                      &boundary_conditions_parameters_input,
   const MPI_Comm                     &mpi_communicator_input,
@@ -129,7 +136,10 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_contact_candidates()
 {
-  particles_contact_candidates.resize(dem_particles.size());
+  // The candidates of the last search are discarded so that pairs of particles
+  // which moved apart are not kept forever.
+  particles_contact_candidates.assign(dem_particles.size(),
+                                      std::set<unsigned int>());
 
   double radius_factor = parameters->contact_search_radius_factor;
 
@@ -230,9 +240,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 }
 
               // Calculation of normal overlap
-              double                  normal_overlap;
-              Point<dim>              contact_point;
-              Tensor<1, dim>          normal;
               std::vector<Point<dim>> contact_points_candidate;
 
               auto iterator =
@@ -251,44 +258,29 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                       (particle_one.radius /
                        (particle_one.radius + particle_two.radius)));
                 }
-              // The normal vector goes from particle one to particle two.
-              if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                  typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
+              // The normal vector goes from particle one to particle two. The
+              // routine of the sphere is used whenever one of the particles is
+              // a sphere. When only particle two is a sphere, the normal it
+              // returns goes from particle two to particle one, so it is
+              // flipped.
+              const bool only_particle_two_is_a_sphere =
+                typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
+                typeid(*particle_two.shape) == typeid(Sphere<dim>);
+              const auto contact_state =
+                only_particle_two_is_a_sphere ?
+                  particle_two.shape->distance_to_shape(
+                    *particle_one.shape, contact_points_candidate) :
+                  particle_one.shape->distance_to_shape(
                     *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
-              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
-                    *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
-              else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                {
-                  auto contact_state = particle_two.shape->distance_to_shape(
-                    *particle_one.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = -std::get<Tensor<1, dim>>(
-                    contact_state); // Flip the normal since it returns the
-                                            // normal using the second particle;
-                }
-              else
-                {
-                  auto contact_state = particle_one.shape->distance_to_shape(
-                    *particle_two.shape, contact_points_candidate);
-                  normal_overlap = -std::get<double>(contact_state);
-                  contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = std::get<Tensor<1, dim>>(contact_state);
-                }
+
+              // The overlap is the opposite of the distance between the shapes.
+              const double normal_overlap = -std::get<double>(contact_state);
+              const Point<dim> contact_point =
+                std::get<Point<dim>>(contact_state);
+              const Tensor<1, dim> normal =
+                only_particle_two_is_a_sphere ?
+                  -std::get<Tensor<1, dim>>(contact_state) :
+                  std::get<Tensor<1, dim>>(contact_state);
               previous_wall_contact_point[particle_one.particle_id]
                                          [particle_two.particle_id] =
                                            contact_point;
@@ -458,25 +450,26 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                     scalar_product(-radial_vector, particle_one.velocity) +
                     scalar_product(radial_vector, particle_two.velocity);
                   f_lub =
-                    3 / 2 * PI * mu *
+                    3. / 2. * PI * mu *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
                        (particle_one.radius * 2 + particle_two.radius * 2)) *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
                        (particle_one.radius * 2 + particle_two.radius * 2)) /
                       gap * radial_velocity * radial_vector /
                       radial_vector.norm() -
-                    3 / 2 * PI * mu *
+                    3. / 2. * PI * mu *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
                        (particle_one.radius * 2 + particle_two.radius * 2)) *
                       (particle_one.radius * 2 * particle_two.radius * 2 /
                        (particle_one.radius * 2 + particle_two.radius * 2)) /
                       h_max * radial_velocity * radial_vector /
                       radial_vector.norm();
-                  ;
-                }
 
-              lubrication_force[particle_one.particle_id] = f_lub;
-              lubrication_force[particle_two.particle_id] = -f_lub;
+                  // A particle can be close to several others: the force of
+                  // each pair is added to the force of both particles.
+                  lubrication_force[particle_one.particle_id] += f_lub;
+                  lubrication_force[particle_two.particle_id] -= f_lub;
+                }
             }
         }
     }
@@ -490,13 +483,13 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
   const Quadrature<dim - 1>    &face_quadrature_formula,
   const Mapping<dim>           &mapping)
 {
-  const FESystem<dim, dim>                          fe = dof_handler.get_fe();
-  std::vector<std::map<types::boundary_id, double>> best_contact_candidate(
-    particles.size());
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
-      // Clear the last boundary cell candidates.
-      boundary_cells[p_i].clear();
+      // For each boundary id, the boundary point closest to the particle,
+      // stored with the level set of the particle at this point.
+      std::map<types::boundary_id, std::pair<double, BoundaryCellsInfo>>
+        closest_boundary_points;
 
       // Find the new cells that are at a boundary and in proximity of the
       // particle.
@@ -508,6 +501,12 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
       // Loop over the cells at the boundary.
       for (unsigned int i = 0; i < cells_at_boundary.size(); ++i)
         {
+          // Each boundary cell is processed by the process that owns it, so
+          // that the closest point does not depend on the partition of the
+          // mesh.
+          if (!cells_at_boundary[i]->is_locally_owned())
+            continue;
+
           unsigned int      n_face_q_points = face_quadrature_formula.size();
           FEFaceValues<dim> fe_face_values(mapping,
                                            fe,
@@ -517,7 +516,7 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                                              update_normal_vectors);
           // Loop over the faces of the cell at the boundary.
           for (int face_id = 0;
-               face_id < int(GeometryInfo<dim>::faces_per_cell);
+               face_id < static_cast<int>(GeometryInfo<dim>::faces_per_cell);
                ++face_id)
             {
               // Find the face at the boundary
@@ -541,46 +540,45 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                       if (is_boundary_excluded(
                             boundary_information.boundary_index))
                         continue;
-                      auto iterator = best_contact_candidate[p_i].find(
-                        boundary_information.boundary_index);
 
-                      double level_set = particles[p_i].get_levelset(
+                      const double level_set = particles[p_i].get_levelset(
                         boundary_information.point_on_boundary);
-                      if (iterator != best_contact_candidate[p_i].end())
-                        {
-                          if (level_set <
-                              best_contact_candidate[p_i][boundary_information
-                                                            .boundary_index])
-                            {
-                              boundary_cells[p_i][boundary_information
-                                                    .boundary_index] =
-                                boundary_information;
-                              best_contact_candidate[p_i][boundary_information
-                                                            .boundary_index] =
-                                level_set;
-                            }
-                        }
-                      else
-                        boundary_cells[p_i]
-                                      [boundary_information.boundary_index] =
-                                        boundary_information;
-                      best_contact_candidate[p_i][boundary_information
-                                                    .boundary_index] =
-                        level_set;
+
+                      // Keep the point if it is the first one found on this
+                      // boundary or if it is closer than the best one so far.
+                      const auto [iterator, inserted] =
+                        closest_boundary_points.try_emplace(
+                          boundary_information.boundary_index,
+                          level_set,
+                          boundary_information);
+                      if (!inserted && level_set < iterator->second.first)
+                        iterator->second = {level_set, boundary_information};
                     }
                 }
             }
         }
 
-      // Regroup the information of all the processor
-      auto global_boundary_cell =
-        Utilities::MPI::all_gather(this->mpi_communicator, boundary_cells[p_i]);
-      boundary_cells[p_i].clear();
-      for (unsigned int i = 0; i < global_boundary_cell.size(); ++i)
+      // Regroup the closest points found by all the processes and keep, for
+      // each boundary id, the closest one. If two processes find points at the
+      // same distance, the point of the process of lowest rank is kept.
+      const auto all_closest_boundary_points =
+        Utilities::MPI::all_gather(this->mpi_communicator,
+                                   closest_boundary_points);
+      closest_boundary_points.clear();
+      for (const auto &process_closest_points : all_closest_boundary_points)
         {
-          boundary_cells[p_i].insert(global_boundary_cell[i].begin(),
-                                     global_boundary_cell[i].end());
+          for (const auto &[boundary_id, candidate] : process_closest_points)
+            {
+              const auto [iterator, inserted] =
+                closest_boundary_points.try_emplace(boundary_id, candidate);
+              if (!inserted && candidate.first < iterator->second.first)
+                iterator->second = candidate;
+            }
         }
+
+      boundary_cells[p_i].clear();
+      for (const auto &[boundary_id, candidate] : closest_boundary_points)
+        boundary_cells[p_i][boundary_id] = candidate.second;
     }
 }
 template <int dim>
@@ -770,7 +768,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               auto contact_state =
                 particle.shape->distance_to_shape(*contact_plane,
                                                   contact_point_candidate);
-              double   normal_overlap = -2 * std::get<double>(contact_state);
+              double   normal_overlap = -std::get<double>(contact_state);
               Point<3> contact_point =
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
               // The shape distance routine returns the wall-to-particle
@@ -1026,14 +1024,17 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                   radial_velocity =
                     scalar_product(-radial_vector,
                                    particle.velocity - wall_velocity_at_point);
-                  f_lub = 3 / 2 * PI * mu * (particle.radius) *
+                  f_lub = 3. / 2. * PI * mu * (particle.radius) *
                             (particle.radius) / gap * radial_velocity *
                             radial_vector / radial_vector.norm() -
-                          3 / 2 * PI * mu * (particle.radius) *
+                          3. / 2. * PI * mu * (particle.radius) *
                             (particle.radius) / h_max * radial_velocity *
                             radial_vector / radial_vector.norm();
+
+                  // A particle can be close to several walls: the force of
+                  // each wall is added.
+                  lubrication_force[particle.particle_id] += f_lub;
                 }
-              lubrication_force[particle.particle_id] = f_lub;
             }
         }
     }
@@ -1095,10 +1096,10 @@ IBParticlesDEM<dim>::calculate_force_model(
 
   effective_shear_modulus =
     (particle_one_properties.object_youngs_modulus *
-     particle_one_properties.object_youngs_modulus) /
+     particle_two_properties.object_youngs_modulus) /
     (2.0 * ((particle_two_properties.object_youngs_modulus *
              (2.0 - particle_one_properties.object_poisson_ratio) *
-             (1.0 + particle_two_properties.object_poisson_ratio)) +
+             (1.0 + particle_one_properties.object_poisson_ratio)) +
             (particle_one_properties.object_youngs_modulus *
              (2.0 - particle_two_properties.object_poisson_ratio) *
              (1.0 + particle_two_properties.object_poisson_ratio))) +
@@ -1260,8 +1261,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
   // Local time for the dem step.
   double t = 0;
-  // The gravitational acceleration.
-  Tensor<1, 3> g;
+  // The gravitational acceleration at the position of each particle.
+  std::vector<Tensor<1, 3>> g(dem_particles.size());
   this->parameters->f_gravity->set_time(cfd_time + dt);
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
@@ -1282,10 +1283,12 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       dem_particles[p_i].contact_impulsion       = 0;
       dem_particles[p_i].omega_contact_impulsion = 0;
       // Initialized the gravity at the particle position.
-      g[0] = this->parameters->f_gravity->value(dem_particles[p_i].position, 0);
-      g[1] = this->parameters->f_gravity->value(dem_particles[p_i].position, 1);
+      g[p_i][0] =
+        this->parameters->f_gravity->value(dem_particles[p_i].position, 0);
+      g[p_i][1] =
+        this->parameters->f_gravity->value(dem_particles[p_i].position, 1);
       if (dim == 3)
-        g[2] =
+        g[p_i][2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
       dem_particles[p_i].set_position(dem_particles[p_i].position);
       dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
@@ -1346,28 +1349,31 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           std::ranges::fill(lubrication_wall_force, 0);
           std::ranges::fill(lubrication_wall_torque, 0);
 
-          // define local time of the rk step
-          double local_dt = dt_dem * 0.5;
-          if (step == 3)
-            {
-              local_dt = local_dt * 2;
-            }
+          // Time step used by the contact models to increment the tangential
+          // displacement at this stage.
+          const double contact_dt = (step == 3) ? dt_dem : 0.5 * dt_dem;
+
+          // Time, from the start of the sub-step, of the next stage of the RK4
+          // scheme: the second and third stages are evaluated at the middle of
+          // the sub-step and the fourth one at its end.
+          const double next_stage_dt = (step < 2) ? 0.5 * dt_dem : dt_dem;
+
           // Calculate particle-particle and particle-wall contact force
 
-          calculate_pp_contact_force(local_dt, contact_force, contact_torque);
-          calculate_pw_contact_force(local_dt,
+          calculate_pp_contact_force(contact_dt, contact_force, contact_torque);
+          calculate_pw_contact_force(contact_dt,
                                      contact_wall_force,
                                      contact_wall_torque);
 
           if (parameters->enable_lubrication_force)
             {
-              calculate_pp_lubrication_force(local_dt,
+              calculate_pp_lubrication_force(contact_dt,
                                              h_max,
                                              h_min,
                                              mu,
                                              lubrication_force,
                                              lubrication_torque);
-              calculate_pw_lubrication_force(local_dt,
+              calculate_pw_lubrication_force(contact_dt,
                                              h_max,
                                              h_min,
                                              mu,
@@ -1388,8 +1394,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                         dem_particles[p_i].rotation_matrix;
                     }
 
-                  gravity = g * (dem_particles[p_i].mass -
-                                 dem_particles[p_i].volume * rho);
+                  gravity = g[p_i] * (dem_particles[p_i].mass -
+                                      dem_particles[p_i].volume * rho);
 
                   // We consider only the force at t+dt so the scheme is
                   // consistent to a BDFn scheme on the fluid side. If there is
@@ -1419,13 +1425,13 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     lubrication_force[p_i] + lubrication_wall_force[p_i];
 
                   dem_particles[p_i].velocity =
-                    last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
+                    last_velocity[p_i] + k_velocity[p_i][step] * next_stage_dt;
 
                   for (int d = 0; d < dim; ++d)
                     {
                       dem_particles[p_i].position[d] =
                         last_position[p_i][d] +
-                        k_position[p_i][step][d] * local_dt;
+                        k_position[p_i][step][d] * next_stage_dt;
                     }
                   dem_particles[p_i].set_position(dem_particles[p_i].position);
 
@@ -1473,18 +1479,22 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
                   k_omega_contact_impulsion[p_i][step] =
                     contact_torque[p_i] + contact_wall_torque[p_i];
+                  // The derivative of the orientation at this stage is the
+                  // angular velocity of this stage. It must be stored before
+                  // the angular velocity is advanced to the next stage.
+                  k_orientation[p_i][step] = dem_particles[p_i].omega;
+
                   // Integrate the relevant state Variable for the next RK step.
                   dem_particles[p_i].omega =
-                    last_omega[p_i] + k_omega[p_i][step] * local_dt;
-                  k_orientation[p_i][step] = dem_particles[p_i].omega;
+                    last_omega[p_i] + k_omega[p_i][step] * next_stage_dt;
                   Tensor<2, 3> new_rotation_matrix;
-                  if (dem_particles[p_i].omega.norm() > 0)
+                  if (k_orientation[p_i][step].norm() > 0)
                     {
                       new_rotation_matrix =
                         Physics::Transformations::Rotations::rotation_matrix_3d(
-                          dem_particles[p_i].omega /
-                            dem_particles[p_i].omega.norm(),
-                          dem_particles[p_i].omega.norm() * local_dt) *
+                          k_orientation[p_i][step] /
+                            k_orientation[p_i][step].norm(),
+                          k_orientation[p_i][step].norm() * next_stage_dt) *
                         last_orientation_matrix[p_i];
                       dem_particles[p_i].orientation =
                         dem_particles[p_i].shape->rotation_matrix_to_xyz_angles(
@@ -1500,13 +1510,13 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   if (parameters->load_particles_from_file == false)
                     {
                       dem_particles[p_i].f_position->set_time(cfd_time + t +
-                                                              local_dt);
+                                                              next_stage_dt);
                       dem_particles[p_i].f_velocity->set_time(cfd_time + t +
-                                                              local_dt);
+                                                              next_stage_dt);
                       dem_particles[p_i].f_omega->set_time(cfd_time + t +
-                                                           local_dt);
+                                                           next_stage_dt);
                       dem_particles[p_i].f_orientation->set_time(cfd_time + t +
-                                                                 local_dt);
+                                                                 next_stage_dt);
 
                       dem_particles[p_i].position[0] =
                         dem_particles[p_i].f_position->value(
@@ -1550,22 +1560,20 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     }
                   else
                     {
-                      dem_particles[p_i].position[0] +=
-                        dem_particles[p_i].velocity[0] * dt;
-                      dem_particles[p_i].position[1] +=
-                        dem_particles[p_i].velocity[1] * dt;
-                      dem_particles[p_i].orientation[0] =
-                        dem_particles[p_i].omega[0] * dt;
-                      dem_particles[p_i].orientation[1] =
-                        dem_particles[p_i].omega[1] * dt;
-                      dem_particles[p_i].orientation[2] =
-                        dem_particles[p_i].omega[2] * dt;
-
-                      if (dim == 3)
+                      // The velocity and angular velocity of a particle loaded
+                      // from a file are constant. Its state at the next stage
+                      // is computed from its state at the start of the CFD
+                      // time step.
+                      const double elapsed_time = t + next_stage_dt;
+                      for (int d = 0; d < dim; ++d)
                         {
-                          dem_particles[p_i].position[2] +=
-                            dem_particles[p_i].velocity[2] * dt;
+                          dem_particles[p_i].position[d] =
+                            dem_particles[p_i].previous_positions[0][d] +
+                            dem_particles[p_i].velocity[d] * elapsed_time;
                         }
+                      dem_particles[p_i].orientation =
+                        dem_particles[p_i].previous_orientation[0] +
+                        dem_particles[p_i].omega * elapsed_time;
                     }
                   dem_particles[p_i].set_position(dem_particles[p_i].position);
                   dem_particles[p_i].set_orientation(

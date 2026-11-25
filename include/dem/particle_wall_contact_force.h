@@ -19,6 +19,7 @@
 
 #include <boost/math/special_functions.hpp>
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <vector>
@@ -115,8 +116,7 @@ class ParticleWallContactForce
 public:
   ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters);
 
-  virtual ~ParticleWallContactForce()
-  {}
+  virtual ~ParticleWallContactForce() = default;
 
   /**
    * @brief Calculate the contact outcomes for particle-wall contacts
@@ -453,7 +453,13 @@ protected:
 
     if constexpr (contact_model == ParticleWallContactForceModel::shift)
       {
-        shift_particle_using_normal_overlap(normal_overlap, contact_info);
+        // The shift model returns a displacement instead of a force. It goes
+        // through the normal force so that it is accumulated on the particle
+        // like a force.
+        calculate_shift_displacement(normal_overlap,
+                                     contact_info,
+                                     particle_properties,
+                                     normal_force);
       }
   }
 
@@ -476,11 +482,9 @@ protected:
         // This way, force_calculation_threshold_distance can be set
         // to const variable, which should make the code faster.
         const double max_effective_hamaker_constant =
-          *(std::max_element(this->effective_hamaker_constant.begin(),
-                             this->effective_hamaker_constant.end()));
+          *(std::ranges::max_element(this->effective_hamaker_constant));
         const double min_effective_surface_energy =
-          *(std::min_element(this->effective_surface_energy.begin(),
-                             this->effective_surface_energy.end()));
+          *(std::ranges::min_element(this->effective_surface_energy));
 
         // Return the critical delta_0. We put a minus sign in front of since a
         // positive overlap means that there is contact.
@@ -1084,17 +1088,27 @@ private:
   }
 
   /**
-   * @brief Shift particles that are in contact using their normal overlap. This
-   * contact model is used for the packed insertion method.
+   * @brief Calculate the displacement that separates a particle from a wall or
+   * a solid surface it overlaps. This "contact force" model is used by the
+   * packed insertion method. The displacement is along the contact normal. Its
+   * norm is the normal overlap multiplied by the packed particle-wall overlap
+   * factor, plus the particle diameter multiplied by the packed clearance
+   * ratio.
    *
    * @param[in] normal_overlap Contact normal overlap.
-   * @param[in,out] contact_info A container that contains the required
+   * @param[in] contact_info A container that contains the required
    * information for calculation of the contact force for a particle-wall pair.
+   * @param[in] particle_properties Properties of the particle.
+   * @param[out] normal_displacement Displacement along the contact normal,
+   * pointing from the particle to the wall like the contact forces. The
+   * particle is displaced by its opposite.
    */
   inline void
-  shift_particle_using_normal_overlap(
-    const double                     normal_overlap,
-    particle_wall_contact_info<dim> &contact_info)
+  calculate_shift_displacement(
+    const double                           normal_overlap,
+    const particle_wall_contact_info<dim> &contact_info,
+    const ArrayView<const double>         &particle_properties,
+    Tensor<1, 3>                          &normal_displacement)
   {
     if (normal_overlap > 0.)
       {
@@ -1104,31 +1118,14 @@ private:
         // convention (i -> j), the forces are thus calculated on the wall
         const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
 
-        auto particle = contact_info.particle;
-
-        Point<dim> particle_position = particle->get_location();
-        Point<dim> particle_new_position;
-
-        if constexpr (dim == 2)
-          {
-            particle_new_position =
-              particle_position -
-              (1.02 * normal_overlap +
-               0.01 * particle->get_properties()[PropertiesIndex::dp]) *
-                tensor_nd_to_2d(normal_vector);
-          }
-        if constexpr (dim == 3)
-          {
-            particle_new_position =
-              particle_position -
-              (1.02 * normal_overlap +
-               0.01 * particle->get_properties()[PropertiesIndex::dp]) *
-                normal_vector;
-          }
-        particle->set_location(particle_new_position);
+        normal_displacement =
+          (packed_particle_wall_overlap_factor * normal_overlap +
+           packed_clearance_ratio * particle_properties[PropertiesIndex::dp]) *
+          normal_vector;
       }
+    else
+      normal_displacement.clear();
   }
-
 
   /**
    * @brief Set every container needed to carry the particle-wall force
@@ -1223,6 +1220,8 @@ private:
   double              wall_thermal_conductivity;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
+  const double        packed_particle_wall_overlap_factor;
+  const double        packed_clearance_ratio;
 
   std::map<types::boundary_id, double> boundary_rotational_speed_map;
   std::map<types::boundary_id, Tensor<1, 3>>
@@ -1264,17 +1263,17 @@ private:
    * or vertex shared by adjacent triangles), so more than one candidate can
    * be stored for the same particle.
    */
-  typedef std::vector<particle_triangle_contact_candidate>
-    particle_triangle_contact_description;
+  using particle_triangle_contact_description =
+    std::vector<particle_triangle_contact_candidate>;
 
   /**
    * @brief Contact record for one solid object, mapping the local index of
    * every particle with at least one contact candidate against this solid's
    * triangles to its particle_triangle_contact_description.
    */
-  typedef ankerl::unordered_dense::map<types::particle_index,
-                                       particle_triangle_contact_description>
-    particle_triangle_contact_record;
+  using particle_triangle_contact_record =
+    ankerl::unordered_dense::map<types::particle_index,
+                                 particle_triangle_contact_description>;
 
   /**
    * @brief Every solid-object is associated with a contact record. This

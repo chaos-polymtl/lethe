@@ -26,10 +26,11 @@ Features
 Files Used in This Example
 ----------------------------
 
-Both files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-taylor-couette-nitsche``).
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-taylor-couette-nitsche``).
 
 - Parameter file with uniform mesh refinement: ``uniform-taylor-couette-nitsche.prm``
 - Parameter file with adaptive mesh refinement: ``adaptive-taylor-couette-nitsche.prm``
+- Postprocessing Python script: ``postprocess_taylor_couette_nitsche.py``
 
 
 
@@ -372,6 +373,13 @@ Correspondingly, the torque on the inner cylinder:
 
 
 We see that even for a small number of cells (~18k), the error on the torque is less than 0.5%.
+
+The torques on both cylinders and the L2 error of the velocity can be plotted against the number of cells, along with the analytical torque, by launching the following command in the folder of the simulation:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 postprocess_taylor_couette_nitsche.py
 
 
 ----------------------------

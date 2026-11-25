@@ -15,6 +15,7 @@ add_library(lethe-solvers
   cls_phase_gradient_projection.cc
   cls_scratch_data.cc
   cls_subequations_interface.cc
+  continuum_solid_dynamics.cc
   flow_control.cc
   fluid_dynamics_block.cc
   fluid_dynamics_matrix_based.cc
@@ -38,12 +39,17 @@ add_library(lethe-solvers
   postprocessing_probes.cc
   postprocessing_scalar.cc
   postprocessing_velocities.cc
+  qmom.cc
+  qmom_field_function.cc
+  qmom_scratch_data.cc
   signed_distance_transformation.cc
   simulation_parameters.cc
   solid_constraints.cc
   source_terms.cc
   stabilization.cc
   time_harmonic_maxwell.cc
+  time_harmonic_maxwell_assemblers.cc
+  time_harmonic_maxwell_scratch_data.cc
   tracer.cc
   tracer_assemblers.cc
   tracer_drift_velocity.cc
@@ -65,6 +71,7 @@ add_library(lethe-solvers
   ../../include/solvers/cls_scratch_data.h
   ../../include/solvers/cls_subequations.h
   ../../include/solvers/cls_subequations_interface.h
+  ../../include/solvers/continuum_solid_dynamics.h
   ../../include/solvers/copy_data.h
   ../../include/solvers/flow_control.h
   ../../include/solvers/fluid_dynamics_block.h
@@ -93,12 +100,17 @@ add_library(lethe-solvers
   ../../include/solvers/postprocessing_scalar.h
   ../../include/solvers/postprocessing_velocities.h
   ../../include/solvers/postprocessors.h
+  ../../include/solvers/qmom.h
+  ../../include/solvers/qmom_field_function.h
+  ../../include/solvers/qmom_scratch_data.h
   ../../include/solvers/signed_distance_transformation.h
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/solid_constraints.h
   ../../include/solvers/source_terms.h
   ../../include/solvers/stabilization.h
   ../../include/solvers/time_harmonic_maxwell.h
+  ../../include/solvers/time_harmonic_maxwell_assemblers.h
+  ../../include/solvers/time_harmonic_maxwell_scratch_data.h
   ../../include/solvers/tracer.h
   ../../include/solvers/tracer_assemblers.h
   ../../include/solvers/tracer_drift_velocity.h
@@ -107,3 +119,10 @@ add_library(lethe-solvers
 
 deal_ii_setup_target(lethe-solvers)
 target_link_libraries(lethe-solvers lethe-core)
+
+if(LETHE_WITH_QMOMKIT)
+  # Without a keyword, like in deal_ii_setup_target, so that the include
+  # directories and the library of QMOMKit propagate to the targets that link
+  # with lethe-solvers.
+  target_link_libraries(lethe-solvers qmomkit::qmomkit)
+endif()

@@ -8,6 +8,8 @@
 
 #include <deal.II/fe/fe_simplex_p.h>
 
+#include <utility>
+
 /**
  * @brief CLS curvature L2 projection solver.
  *
@@ -53,7 +55,7 @@ public:
                                         // interface reinitialization is enabled
                                         // and set to verbose
         p_pcout,
-        p_triangulation,
+        std::move(p_triangulation),
         p_subequations_interface)
   {
     if (this->simulation_parameters.mesh.simplex)

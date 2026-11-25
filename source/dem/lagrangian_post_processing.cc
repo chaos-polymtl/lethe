@@ -180,9 +180,7 @@ write_post_processing_results(
   const MPI_Comm                                  &mpi_communicator,
   AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object)
 {
-  const std::string folder = dem_parameters.simulation_control.output_folder;
-  const std::string particles_solution_name =
-    dem_parameters.simulation_control.output_name;
+  const std::string  folder = dem_parameters.simulation_control.output_folder;
   const unsigned int group_files =
     dem_parameters.simulation_control.group_files;
 

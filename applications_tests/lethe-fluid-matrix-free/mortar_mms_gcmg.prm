@@ -59,7 +59,7 @@ subsection mortar
     set Function expression = 0.47
   end
   set cell weight = 2000
-  set verbosity   = extra verbose
+  set verbosity   = extra_verbose
 end
 
 #---------------------------------------------------

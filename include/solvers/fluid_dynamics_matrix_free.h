@@ -13,6 +13,7 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
 
 #include <deal.II/multigrid/mg_coarse.h>
 #include <deal.II/multigrid/mg_constrained_dofs.h>
@@ -118,11 +119,11 @@ public:
   void
   reinit(const std::shared_ptr<Mapping<dim>>      &mapping,
          const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
-         const std::shared_ptr<Function<dim>>      forcing_function,
+         const std::shared_ptr<Function<dim>>     &forcing_function,
          const std::shared_ptr<SimulationControl> &simulation_control,
          const std::shared_ptr<PhysicalPropertiesManager>
-                                             &physical_properties_manager,
-         const std::shared_ptr<FESystem<dim>> fe);
+                                              &physical_properties_manager,
+         const std::shared_ptr<FESystem<dim>> &fe);
 
   /**
    * @brief Creates the operator for a given level.
@@ -177,17 +178,19 @@ protected:
    * @brief Set up AMG object needed for coarse-grid solver or
    * preconditioning.
    *
+   * @param[in] min_level_matrix Assembled matrix of the coarsest level.
    */
   void
-  setup_AMG();
+  setup_AMG(const TrilinosWrappers::SparseMatrix &min_level_matrix);
 
   /**
    * @brief Set up ILU object needed for coarse-grid solver or
    * preconditioning.
    *
+   * @param[in] min_level_matrix Assembled matrix of the coarsest level.
    */
   void
-  setup_ILU();
+  setup_ILU(const TrilinosWrappers::SparseMatrix &min_level_matrix);
 
   /// Min level of the multigrid hierarchy
   unsigned int minlevel;
@@ -384,6 +387,11 @@ public:
   /**
    * @brief Transfer the current temperature solution to the different multigrid levels and compute the thermal buoyancy term in each of the multigrid operators.
    *
+   * The temperature DoF handlers of the levels and the transfer between them
+   * only depend on the mesh. They are built at the first call and reused by the
+   * following calls, since a new preconditioner object is created whenever the
+   * mesh changes.
+   *
    * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
    * @param[in] temperature_present_solution Present solution of the temperature
    * as given by the multiphysics interface.
@@ -482,6 +490,16 @@ protected:
    */
   virtual void
   update_multi_stage_solution(double time_step) override;
+
+  /**
+   * @brief Set the time of the forcing function and of the time-dependent
+   * boundary conditions to the current time and re-impose the non-zero
+   * constraints. The forcing term is precomputed by the matrix-free operator,
+   * so it is also recomputed here for a time-dependent forcing function to be
+   * accounted for.
+   */
+  void
+  update_forcing_and_boundary_conditions() override;
 
   /**
    * restarted from a checkpoint, the initial solution setting is bypassed

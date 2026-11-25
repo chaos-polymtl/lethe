@@ -34,6 +34,7 @@
 #include <deal.II/numerics/solution_transfer.h>
 
 #include <map>
+#include <utility>
 
 /*
  * Implementation of tracer as an auxiliary physics.
@@ -55,8 +56,8 @@ class Tracer : public AuxiliaryPhysics<dim, GlobalVectorType>
 public:
   Tracer(MultiphysicsInterface<dim>      *multiphysics_interface,
          const SimulationParameters<dim> &p_simulation_parameters,
-         std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                            p_triangulation,
+         const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                           &p_triangulation,
          std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.physics_solving_strategy.at(PhysicsID::tracer))
@@ -67,7 +68,7 @@ public:
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , simulation_control(p_simulation_control)
+    , simulation_control(std::move(p_simulation_control))
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())
@@ -100,7 +101,8 @@ public:
         // The mapping must be a minimum of degree 1. This is necessary in the
         // DG method since DG_Q(0) elements are adequate but a mapping of degree
         // 0 does not make sense.
-        mapping = std::make_shared<MappingQ<dim>>(std::max(int(fe->degree), 1));
+        mapping = std::make_shared<MappingQ<dim>>(
+          std::max(static_cast<int>(fe->degree), 1));
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
@@ -166,6 +168,11 @@ public:
   void
   postprocess(bool first_iteration) override;
 
+  /**
+   * @brief Output the per iteration wallclock times.
+   */
+  void
+  output_per_iteration_timer() override;
 
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
@@ -213,15 +220,19 @@ public:
 
   /**
    * @brief Prepares Tracer physics to write checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  write_checkpoint() override;
+  write_checkpoint(const std::string &checkpoint_slot_label) override;
 
   /**
    * @brief Allows tracer physics to set up solution vector from checkpoint file;
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   void
-  read_checkpoint() override;
+  read_checkpoint(const std::string &checkpoint_slot_label) override;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to
@@ -376,9 +387,9 @@ private:
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
         AssertThrow(
-          simulation_parameters.boundary_conditions_tracer.type.find(
+          simulation_parameters.tracer_boundary_conditions.type.find(
             boundary_id_in_tria) !=
-            simulation_parameters.boundary_conditions_tracer.type.end(),
+            simulation_parameters.tracer_boundary_conditions.type.end(),
           TracerBoundaryConditionMissing(boundary_id_in_tria));
       }
   }

@@ -50,9 +50,9 @@ namespace Parameters
 
     /**
      * @brief
-     * Declares the fundamental dimensions of the parameter file
+     * Declare the fundamental dimensions of the parameter file
      *
-     * @param prm The parameter handler being used
+     * @param[in,out] prm The parameter handler object
      */
     static void
     declare_parameters(ParameterHandler &prm);
@@ -61,7 +61,7 @@ namespace Parameters
      * @brief
      * Parses the fundamental dimensions from the parameter file
      *
-     * @param prm The parameter handler being used
+     * @param[in] prm The parameter handler object
      */
     void
     parse_parameters(ParameterHandler &prm);

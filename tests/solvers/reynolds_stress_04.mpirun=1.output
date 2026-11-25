@@ -1,0 +1,227 @@
+
+DEAL::3D Q1-Q1, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q2-Q2, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q3-Q3, no renumbering, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q3-Q3, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q2-Q1, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q4-Q4, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q4-Q2, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::2D Q3-Q3, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q1 with bubbles-Q1, Cuthill-McKee, global vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q3-Q3, Cuthill-McKee, deal.II vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q4-Q4, Cuthill-McKee, deal.II vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::2D Q3-Q3, Cuthill-McKee, deal.II vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q1-Q1, component-wise, block vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q3-Q3, component-wise, block vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q4-Q4, component-wise, block vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::3D Q2-Q1, component-wise, block vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <w>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  <w'w'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  <v'w'>              max relative error: 0.00000
+DEAL::  <w'u'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::
+DEAL::2D Q3-Q3, component-wise, block vector
+DEAL::  <u>                 max relative error: 0.00000
+DEAL::  <v>                 max relative error: 0.00000
+DEAL::  <p>                 max relative error: 0.00000
+DEAL::  <u'u'>              max relative error: 0.00000
+DEAL::  <v'v'>              max relative error: 0.00000
+DEAL::  k                   max relative error: 0.00000
+DEAL::  <u'v'>              max relative error: 0.00000
+DEAL::  unused shear slots  max relative error: 0.00000
+DEAL::

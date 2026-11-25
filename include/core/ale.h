@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ale_h
@@ -36,7 +36,7 @@ namespace Parameters
     /**
      * @brief Declare the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
+     * @param[in,out] prm The ParameterHandler object.
      */
     virtual void
     declare_parameters(ParameterHandler &prm);
@@ -44,7 +44,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
+     * @param[in] prm The ParameterHandler object.
      */
     virtual void
     parse_parameters(ParameterHandler &prm);

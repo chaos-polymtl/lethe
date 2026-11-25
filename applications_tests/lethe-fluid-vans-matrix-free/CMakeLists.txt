@@ -92,6 +92,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
   set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag_semi-implicit.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid-vans-matrix-free/case1_vans_A_gcmg.debug PROPERTIES TIMEOUT 1200)
+  set_tests_properties(lethe-fluid-vans-matrix-free/case3_vans_A_Q2_dt2_gcmg.debug PROPERTIES TIMEOUT 1000)
   set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag_implicit_gcmg.mpirun=2.debug PROPERTIES TIMEOUT 1200)
 
 endif()

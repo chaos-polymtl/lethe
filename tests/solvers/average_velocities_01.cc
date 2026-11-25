@@ -8,6 +8,7 @@
 // Deal.II includes
 #include <deal.II/base/index_set.h>
 
+#include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -53,13 +54,7 @@ test()
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs(8);
-  IndexSet locally_relevant_dofs(8);
-
-  locally_owned_dofs.add_range(0, 8);
-  locally_relevant_dofs.add_range(0, 8);
-
-  // Make triangulation and dummy dof_handler to construct average velocities
+  // Make triangulation and dof_handler to construct average velocities
   parallel::distributed::Triangulation<dim> tria(
     mpi_communicator,
     typename Triangulation<dim>::MeshSmoothing(
@@ -67,6 +62,14 @@ test()
       Triangulation<dim>::smoothing_on_coarsening));
   GridGenerator::hyper_cube(tria, -1, 1);
   DoFHandler<dim> dof_handler(tria);
+
+  // With a Q1 element on a single cell, the degrees of freedom of the first
+  // two vertices are (u, v, w, p) = (0, 1, 2, 3) and (4, 5, 6, 7).
+  dof_handler.distribute_dofs(FESystem<dim>(FE_Q<dim>(1), dim + 1));
+
+  const IndexSet &locally_owned_dofs = dof_handler.locally_owned_dofs();
+  const IndexSet  locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   AverageVelocities<dim, GlobalVectorType, IndexSet> average(dof_handler);
 
@@ -88,7 +91,6 @@ test()
   // Initialize averaged vectors
   average.initialize_vectors(locally_owned_dofs,
                              locally_relevant_dofs,
-                             4,
                              mpi_communicator);
 
   // Time loop

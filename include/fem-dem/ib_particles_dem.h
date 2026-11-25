@@ -84,7 +84,7 @@ public:
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
              const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-               floating_walls_parameters,
+               &floating_walls_parameters,
              const std::shared_ptr<Parameters::Lagrangian::BCDEM>
                                                 &boundary_conditions_parameters,
              const MPI_Comm                     &mpi_communicator_input,
@@ -266,16 +266,6 @@ public:
     return pp_contact_map;
   }
 
-  /**
-   * @brief Return the particle-wall contact map built for the IB DEM
-   * coupling.
-   */
-  const std::map<unsigned int, std::map<unsigned int, ContactInfo>> &
-  get_particle_wall_contact_map() const
-  {
-    return pw_contact_map;
-  }
-
 private:
   /**
    * @brief Check whether a boundary should be ignored for Sharp-IB particle
@@ -318,7 +308,7 @@ private:
     void
     serialize(Archive &ar, const unsigned int /*version*/)
     {
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           ar &normal_vector;
           ar &point_on_boundary;

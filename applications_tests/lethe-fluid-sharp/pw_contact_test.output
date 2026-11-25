@@ -60,24 +60,24 @@ Transient iteration: 4        Time: 0.01     Time step: 0.0025   CFL: 0.06531
    Number of active cells:       1369
    Number of degrees of freedom: 7976
    Volume of triangulation:      1.6000e+03
-particle 0 position 4.9999e+00 7.6362e-01 4.9999e+00
-particle 0 velocity 3.7726e-02 6.1193e+00 3.7740e-02
+particle 0 position 4.9999e+00 7.6333e-01 4.9999e+00
+particle 0 velocity 3.7236e-02 5.9737e+00 3.7250e-02
 +------------------------------------------+
 |  Force summary particles                 |
 +------------------------------------------+
 particle_ID  time    T_x   omega_x theta_x  T_y   omega_y theta_y  T_z   omega_z theta_z  f_x    v_x    p_x     f_y    v_y    p_y    f_z    v_z    p_z    f_xv    f_yv    f_zv    f_xp   f_yp    f_zp  
-          0 0.0100 -0.0017 0.0000 0.0000 0.0000 0.0000 0.0000 0.0017  0.0000  0.0000 0.0376 0.0377 4.9999 -3.5524 6.1193 0.7636 0.0376 0.0377 4.9999 -0.0014 -0.1396 -0.0014 0.0389 -3.4128 0.0389 
+          0 0.0100 -0.0017 0.0000 0.0000 0.0000 0.0000 0.0000 0.0017  0.0000  0.0000 0.0372 0.0372 4.9999 -3.5119 5.9737 0.7633 0.0372 0.0373 4.9999 -0.0013 -0.1366 -0.0013 0.0385 -3.3753 0.0385 
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.0125   Time step: 0.0025   CFL: 0.04932 
+Transient iteration: 5        Time: 0.0125   Time step: 0.0025   CFL: 0.04815 
 *******************************************************************************
    Number of active cells:       1334
    Number of degrees of freedom: 7616
    Volume of triangulation:      1.6000e+03
-particle 0 position 5.0000e+00 7.7578e-01 5.0000e+00
-particle 0 velocity 2.5966e-02 4.8646e+00 2.5978e-02
+particle 0 position 5.0000e+00 7.7516e-01 5.0000e+00
+particle 0 velocity 2.5673e-02 4.7334e+00 2.5685e-02
 +------------------------------------------+
 |  Force summary particles                 |
 +------------------------------------------+
 particle_ID  time    T_x   omega_x theta_x  T_y   omega_y theta_y  T_z   omega_z theta_z   f_x    v_x    p_x     f_y    v_y    p_y     f_z    v_z    p_z    f_xv    f_yv    f_zv    f_xp    f_yp    f_zp   
-          0 0.0125 -0.0013 0.0000 0.0000 0.0000 0.0000 0.0000 0.0013  0.0000  0.0000 -0.0093 0.0260 5.0000 -0.8033 4.8646 0.7758 -0.0093 0.0260 5.0000 -0.0009 -0.1085 -0.0009 -0.0084 -0.6948 -0.0084 
+          0 0.0125 -0.0013 0.0000 0.0000 0.0000 0.0000 0.0000 0.0013  0.0000  0.0000 -0.0091 0.0257 5.0000 -0.7921 4.7334 0.7752 -0.0091 0.0257 5.0000 -0.0009 -0.1059 -0.0009 -0.0082 -0.6862 -0.0082 

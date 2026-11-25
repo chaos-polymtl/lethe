@@ -70,7 +70,7 @@ We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the 
 .. code-block:: text
   :class: copy-button
 
-  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON  -DDEAL_II_WITH_METIS=ON -DDEAL_II_WITH_MAGIC_ENUM=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_COMPONENT_EXAMPLES=OFF  -DCMAKE_CXX_FLAGS="-march=native" -DDEAL_II_WITH_HDF5=OFF -G Ninja
+  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON  -DDEAL_II_WITH_METIS=ON -DDEAL_II_WITH_MAGIC_ENUM=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_COMPONENT_EXAMPLES=OFF  -DCMAKE_CXX_FLAGS="-march=native" -DDEAL_II_WITH_HDF5=OFF -DDEAL_II_WITH_VTK=OFF -G Ninja
 
 .. tip::
 
@@ -139,7 +139,12 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
   #SBATCH --mail-user=$your.email.address@email.provider
 
   source $HOME/.dealii
+
+  # When using Narval, Trillium, Rorqual or Fir
   mpirun lethe_application_name_wanted parameter_file_name.prm
+
+  # When using Nibi
+  mpirun --mca fs_ufs_lock_algorithm 1 lethe_application_name_wanted parameter_file_name.prm #does not work for >1 nodes
 
 
 .. tip::

@@ -10,10 +10,15 @@ Postprocessing code for the concentric heat exchanger to extract the temperature
 import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
+import argparse
 
 #--------------------------------------------
 # Main
 #--------------------------------------------
+
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the concentric heat exchanger')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 # Load VTU file
 vtu_file="./output/out.00001.00000.vtu"
@@ -56,5 +61,12 @@ plt.xlabel("z [mm]")
 plt.ylabel("Temperature [$^\circ$C]")
 plt.legend()
 
-plt.savefig("temperature_along_line.png",dpi=200)
-plt.show()
+if (not args.validate):
+    plt.savefig("temperature_along_line.png",dpi=200)
+    plt.show()
+else:
+    # Store the plotted profiles so that they can be compared between validation runs
+    np.savetxt("solution-temperature-along-line.dat",
+               np.column_stack((z_c, T_c, T_m, T_p)),
+               header="z T(r=0) T(r=0.5) T(r=1)")
+    plt.savefig("temperature_along_line.pdf")

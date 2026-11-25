@@ -1,0 +1,90 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#ifndef lethe_cls_boundary_conditions_h
+#define lethe_cls_boundary_conditions_h
+
+#include <core/boundary_conditions.h>
+#include <core/utilities.h>
+
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
+
+#include <map>
+#include <memory>
+#include <vector>
+
+using namespace dealii;
+
+namespace BoundaryConditions
+{
+  /// Boundary condition types of the CLS. periodic_neighbor is not a user
+  /// choice: it is assigned to the boundary matching a periodic boundary.
+  enum class CLSBoundaryType
+  {
+    none,
+    dirichlet,
+    periodic,
+    periodic_neighbor
+  };
+
+  /// Boundary condition types of the CLS which can be selected in the
+  /// parameter file
+  inline const std::vector<CLSBoundaryType> cls_boundary_types = {
+    CLSBoundaryType::none,
+    CLSBoundaryType::dirichlet,
+    CLSBoundaryType::periodic};
+
+  /**
+   * @brief This class manages the boundary conditions for CLS solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently.
+   */
+  template <int dim>
+  class CLSBoundaryConditions : public BoundaryConditions<CLSBoundaryType>
+  {
+  public:
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      phase_indicator;
+
+    /**
+     * @brief Declare the default parameters for one CLS boundary condition.
+     *
+     * @param[in, out] prm The parameter handler object.
+     * @param[in] default_boundary_id The default mesh boundary id.
+     */
+    void
+    declare_default_entry(ParameterHandler  &prm,
+                          types::boundary_id default_boundary_id);
+
+    /**
+     * @brief Declare the CLS boundary condition parameters.
+     *
+     * @param[in, out] prm The parameter handler object.
+     * @param[in] number_of_boundary_conditions The number of boundary
+     * conditions to declare.
+     */
+    void
+    declare_parameters(ParameterHandler &prm,
+                       unsigned int      number_of_boundary_conditions);
+
+    /**
+     * @brief Parse the information for one CLS boundary condition.
+     *
+     * @param[in] prm The parameter handler object.
+     */
+    void
+    parse_boundary(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the CLS boundary condition parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+} // namespace BoundaryConditions
+
+#endif

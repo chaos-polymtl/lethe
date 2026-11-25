@@ -1,0 +1,11 @@
+
+DEAL::Dimension 2
+DEAL::Sphere-sphere contact force is the Hertz force of the full overlap: true
+DEAL::Sphere-sphere contact forces are opposite: true
+DEAL::Sphere-box contact force is the Hertz force of the full overlap: true
+DEAL::Sphere-box contact force does not depend on the order of the particles: true
+DEAL::Dimension 3
+DEAL::Sphere-sphere contact force is the Hertz force of the full overlap: true
+DEAL::Sphere-sphere contact forces are opposite: true
+DEAL::Sphere-box contact force is the Hertz force of the full overlap: true
+DEAL::Sphere-box contact force does not depend on the order of the particles: true

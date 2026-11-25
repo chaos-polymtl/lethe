@@ -16,6 +16,7 @@ PATH = os.getcwd()
 
 # User input
 CASE_PREFIX = 'mms_2d_steady_'
+TEMPLATE_FILE = 'mms_2d_steady.tpl'
 PRM_FILE = 'mms_2d_steady.prm'
 n_poly_deg = 3
 
@@ -27,7 +28,7 @@ poly_deg = np.linspace(poly_deg_min, poly_deg_max, n_poly_deg)
 # Create Jinja template
 templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
 templateEnv = jinja2.Environment(loader=templateLoader)
-template = templateEnv.get_template(PRM_FILE)
+template = templateEnv.get_template(TEMPLATE_FILE)
 
 # Generation of different cases
 
@@ -44,7 +45,7 @@ for poly_deg_u in poly_deg:
         # Create the folder of the case and put the prm template in it
         case_path = f'{PATH}/{case_folder_name}'
         os.mkdir(case_path)
-        shutil.copy(f'{PATH}/{PRM_FILE}', f'{case_path}/{PRM_FILE}')
+        shutil.copy(f'{PATH}/{TEMPLATE_FILE}', f'{case_path}/{PRM_FILE}')
 
         # Write a unique prm file with the prm template being updated
         with open(f'{case_path}/{PRM_FILE}', 'w') as f:

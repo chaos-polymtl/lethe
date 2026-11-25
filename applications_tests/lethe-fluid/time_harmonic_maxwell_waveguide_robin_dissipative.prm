@@ -11,7 +11,15 @@
 # regime (kL >> 1), but still show a noticable decay of the wave amplitude.
 # This test does not exactly fall back to the right convergence order because
 # the mesh resolution is not high enough. However, it can not be increase or
-# the test in DEBUG will timeout.
+# the test in DEBUG will timeout. Note that the corner points of the waveguide
+# inlet define a left-handed basis with the propagation direction (the first
+# transverse direction is along y and the second along x). The waveguide port
+# boundary condition should recover the right orientation, so this
+# functionality is tested here for a TE mode (it is tested for a TM mode in the
+# time_harmonic_maxwell_waveguide_robin test). The summary of the
+# electromagnetic powers is also printed to test their calculation: incident,
+# outgoing and cross powers on the Robin boundaries, net power through the PEC
+# boundaries, power absorbed in the dissipative medium and power imbalance.
 
 # Listing of Parameters
 #----------------------
@@ -104,14 +112,14 @@ subsection time harmonic maxwell
     set port boundary id = 4
 
     set corner 0 = 1,1,1
-    set corner 1 = 1.25,1,1
-    set corner 2 = 1, 1.5, 1
+    set corner 1 = 1, 1.5, 1
+    set corner 2 = 1.25,1,1
     set corner 3 = 1.25, 1.5, 1
 
     subsection waveguide mode
       set mode type    = TE
-      set mode order m = 1
-      set mode order n = 2
+      set mode order m = 2
+      set mode order n = 1
     end
   end
 end
@@ -140,11 +148,11 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 4
-    set type = waveguide port
+    set type = waveguide_port
   end
   subsection bc 2
     set id   = 5
-    set type = impedance boundary
+    set type = impedance_boundary
     subsection excitation x real part
       set Function expression = 0
     end
@@ -182,6 +190,15 @@ subsection analytical solution
   subsection electromagnetics
     set Function expression = cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.014987*cos(6.767844*(z-1)) + 0.750154*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.014987*cos(6.767844*(z-1)) - 0.750154*sin(6.767844*(z-1)));    0.;    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.750154*cos(6.767844*(z-1)) + 0.014987*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.750154*cos(6.767844*(z-1)) - 0.014987*sin(6.767844*(z-1)));    0.;    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * cos(6.767844*(z-1));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * sin(6.767844*(z-1))
   end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                       = verbose
+  set calculate electromagnetic power = true
 end
 
 #---------------------------------------------------

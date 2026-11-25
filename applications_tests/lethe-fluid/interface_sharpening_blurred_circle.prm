@@ -31,7 +31,7 @@ end
 
 subsection CLS
   subsection interface reinitialization method
-    set type      = projection-based interface sharpening
+    set type      = projection_based_sharpening
     set frequency = 2
     subsection projection-based interface sharpening
       set threshold           = 0.5

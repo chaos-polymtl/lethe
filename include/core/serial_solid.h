@@ -43,7 +43,19 @@ public:
     unsigned int                                                  id);
 
   /**
-   * @brief Maps the solid object in the background triangulation
+   * @brief Map the cells of the solid object to the locally owned cells of the
+   * background triangulation.
+   *
+   * A solid cell is mapped to a background cell if the distance between the
+   * center of the background cell and the solid cell is smaller than the
+   * diameter of the background cell. An R-tree of the locally owned
+   * background cells selects the background cells for which this distance is
+   * computed.
+   *
+   * @param[in] background_tr Background triangulation.
+   *
+   * @return The (background cell, solid cell) pairs, ordered by background
+   * cell, then by solid cell.
    */
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
@@ -186,11 +198,10 @@ public:
     return id;
   }
 
-  typedef std::unordered_map<
+  using triangulation_cell_neighbors_map = std::unordered_map<
     typename Triangulation<dim, spacedim>::active_cell_iterator,
     std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
-    cut_cell_hash<spacedim>>
-    triangulation_cell_neighbors_map;
+    cut_cell_hash<spacedim>>;
 
   /**
    * @brief Returns the neighboring cells maps of the solid object triangulation.

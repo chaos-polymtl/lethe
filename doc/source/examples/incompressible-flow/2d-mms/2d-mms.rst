@@ -22,7 +22,7 @@ Files Used in This Example
 All files are located in the example's folder (``examples/incompressible-flow/2d-mms``). The files used for the quadrilateral mesh can be found in the ``mms_quad`` folder, while those for the triangular mesh are
 grouped in the ``mms_simplex`` folder.
 
-- Base case parameter file in each folder: ``mms_quad/mms_2d_steady.prm`` and ``mms_simplex/mms_2d_steady.prm``
+- Parameter file template for case generation in each folder: ``mms_quad/mms_2d_steady.tpl`` and ``mms_simplex/mms_2d_steady.tpl``
 - Python script to compute the source terms for the analytical solution used in this example: ``mms_source_term.py``
 - Files to generate the parameter files at the different conditions: ``mms_quad/generate_cases.py`` and ``mms_simplex/generate_cases.py``
 - Files to run the different simulations: ``mms_quad/launch_cases.py`` and ``mms_simplex/launch_cases.py`` or ``mms_quad/launch_cases.sh`` and ``mms_simplex/launch_cases.sh`` 

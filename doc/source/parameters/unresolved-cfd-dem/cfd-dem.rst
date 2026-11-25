@@ -11,7 +11,7 @@ This subsection includes parameters related to multiphase flow simulations using
     set interpolated void fraction    = true
     set vans model                    = modelA
     set drag force                    = true
-    set drag coupling                 = semi-implicit # semi-implicit | implicit | explicit
+    set drag coupling                 = semi_implicit # semi_implicit | fully_implicit | fully_explicit
     set drag model                    = difelice
     set saffman lift force            = false
     set magnus lift force             = false
@@ -21,7 +21,7 @@ This subsection includes parameters related to multiphase flow simulations using
     set shear force                   = true
     set pressure force                = true
     set project particle forces       = false
-    set dem iteration control         = number of iterations # number of iterations | fraction of rayleigh time
+    set dem iteration control         = fixed_number_of_iterations # fixed_number_of_iterations | fixed_fraction_of_rayleigh_time_step
     set coupling frequency            = 100
     set fraction rayleigh time        = 0.1
     set implicit stabilization        = true
@@ -69,9 +69,9 @@ This subsection includes parameters related to multiphase flow simulations using
     Since the viscous torque model is not complete without the vortical component, ``rotational viscous torque`` should be used with caution.
 
 * The ``drag coupling`` parameter controls the time level at which the fluid velocity is evaluated when computing the drag and hydrodynamic forces.  
-    - ``drag coupling = semi-implicit``:  the drag force on the particles is computed using the velocity of both the particles and the fluid at time :math:`t` . When transferring momentum to the fluid, the previous fluid velocity is used to evaluate the momentum transfer coefficient, while the current fluid velocity is used to calculate relative velocity between the particle and the fluid. This provides extensive stability, but for larger time step may lead to a slight violation of Newton's third law since the drag applied on the fluid is not strictly equal to the drag applied to the particles. the drag force is computed but is partially implicit on the fluid to ensure stable coupling. The default value is to use a ``drag coupling = semi-implicit``.
-    - ``drag coupling = implicit``: the drag force (including the drag coefficient) is evaluated implicitly using the fluid velocity at time :math:`t + \Delta t`.
-    - ``drag coupling = explicit``: the drag force is computed explicitly using the fluid velocity at time :math:`t`.
+    - ``drag coupling = semi_implicit``:  the drag force on the particles is computed using the velocity of both the particles and the fluid at time :math:`t` . When transferring momentum to the fluid, the previous fluid velocity is used to evaluate the momentum transfer coefficient, while the current fluid velocity is used to calculate relative velocity between the particle and the fluid. This provides extensive stability, but for larger time step may lead to a slight violation of Newton's third law since the drag applied on the fluid is not strictly equal to the drag applied to the particles. the drag force is computed but is partially implicit on the fluid to ensure stable coupling. The default value is to use a ``drag coupling = semi_implicit``.
+    - ``drag coupling = fully_implicit``: the drag force (including the drag coefficient) is evaluated implicitly using the fluid velocity at time :math:`t + \Delta t`.
+    - ``drag coupling = fully_explicit``: the drag force is computed explicitly using the fluid velocity at time :math:`t`.
 
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
@@ -83,12 +83,12 @@ This subsection includes parameters related to multiphase flow simulations using
 * The ``project particle forces`` option enables the inclusion of particle–fluid interaction forces directly in the VANS equations by projecting these forces from the particles onto the fluid using the ``qcm`` filter. Thus, it is only compatible with the ``qcm`` method, which can be selected in the void fraction subsection :doc:`void-fraction`. By default, this option is set to ``false``. In that case, the particle-fluid forces incorporated in the VANS equations are calculated in each cell as the average of the fluid forces acting on the particles within that cell.
 * The ``particle statistics`` parameter, when enabled, outputs statistics about the particles' velocity, kinetic energy, and the amount of contact detection.
 * The ``dem iteration control`` determines the strategy to carry out the DEM time-steps. Two modes are supported:
-    - ``dem iteration control = number of iterations``: A fixed number of DEM iterations, equal to ``coupling frequency`` (:math:`f_{\text{coupling}}`), is carried out per 1 CFD iteration. If the CFD time step is not constant, the DEM time step will changed dynamically:
+    - ``dem iteration control = fixed_number_of_iterations``: A fixed number of DEM iterations, equal to ``coupling frequency`` (:math:`f_{\text{coupling}}`), is carried out per 1 CFD iteration. If the CFD time step is not constant, the DEM time step will changed dynamically:
     
     .. math::
         \Delta t_{\text{DEM}} = \frac{\Delta t_{\text{CFD}}}{f_{\text{coupling}}}
     
-    - ``dem iteration control = fraction of rayleigh time``: The DEM time step is fixed to a given fraction of the Rayleigh time ( equal to ``fraction rayleigh time``) and remains constant throughout the simulation. 
+    - ``dem iteration control = fixed_fraction_of_rayleigh_time_step``: The DEM time step is fixed to a given fraction of the Rayleigh time ( equal to ``fraction rayleigh time``) and remains constant throughout the simulation. 
 
 * The ``implicit stabilization`` parameter determines whether or not we calculate the :math:`\tau` for the SUPG/PSPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
 * The ``grad-div length scale`` parameter determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`.

@@ -43,6 +43,12 @@ template <int dim>
 void
 FluidDynamicsBlock<dim>::setup_assemblers()
 {
+  // The block solver does not assemble the SDIRK time integration.
+  AssertThrow(
+    !time_stepping_is_sdirk(this->simulation_control->get_assembly_method()),
+    ExcMessage("SDIRK time-stepping methods are not supported by the block "
+               "fluid dynamics solver. Use a BDF method instead."));
+
   this->assemblers.clear();
 
   // Thermal buoyancy force
@@ -659,9 +665,10 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::pressure ||
-          type == BoundaryConditions::BoundaryType::function_weak ||
-          type == BoundaryConditions::BoundaryType::partial_slip)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+          type ==
+            BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
         {
           Assert(
             false,
@@ -760,11 +767,9 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
                     "stresses are currently unavailable for mesh "
                     "adaptation."));
 
-      this->average_velocities->initialize_vectors(
-        this->locally_owned_dofs,
-        this->locally_relevant_dofs,
-        this->fe->n_dofs_per_vertex(),
-        this->mpi_communicator);
+      this->average_velocities->initialize_vectors(this->locally_owned_dofs,
+                                                   this->locally_relevant_dofs,
+                                                   this->mpi_communicator);
     }
 
 
@@ -810,6 +815,10 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
       this->pcout << "************************" << std::endl;
       this->pcout << "---> Simulation Restart " << std::endl;
       this->pcout << "************************" << std::endl;
+      this->checkpoint_controller.read(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
       this->read_checkpoint();
     }
   else if (initial_condition_type ==

@@ -31,10 +31,24 @@
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <algorithm>
 #include <map>
 #include <memory>
+#include <utility>
 
 using namespace dealii;
+
+DeclException1(
+  PhysicsIDNotAvailable,
+  int,
+  << " The physics with ID " << arg1
+  << " required by the multiphysics interface during the simulation is not available. Please check the input file to ensure that the physics is enabled or that the VANS formulation is used if the simulation requires the projected particle fields to be available. The projected particle temperature field is only available in thermal CFD-DEM simulations (solver type = dem_mp). ");
+
+DeclExceptionMsg(
+  QMOMSolutionNotAvailable,
+  "The QMOM physics does not provide its solution through the multiphysics "
+  "interface, since it stores one solution vector per component (scalars and "
+  "moments).");
 
 template <int dim>
 class MultiphysicsInterface
@@ -58,8 +72,8 @@ public:
    */
   MultiphysicsInterface(
     const SimulationParameters<dim> &nsparam,
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       p_triangulation,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                      &p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
     ConditionalOStream                &p_pcout,
     const FluidDynamicsFormulation     p_fluid_dynamics_formulation =
@@ -84,6 +98,34 @@ public:
   get_fluid_dynamics_formulation() const
   {
     return fluid_dynamics_formulation;
+  }
+
+  /**
+   * @brief Make a field projected by the particle projector of the VANS
+   * solvers available in the interface. The VANS solvers call it in their
+   * constructor: always for the void fraction, and for the particle
+   * temperature in thermal CFD-DEM simulations (solver type = dem_mp).
+   *
+   * @param[in] physics_id The ID of the projected field to enable.
+   */
+  void
+  enable_projected_particle_fields(PhysicsID physics_id)
+  {
+    if (physics_id == PhysicsID::void_fraction)
+      {
+        particle_void_fraction_field_enabled = true;
+      }
+    else if (physics_id == PhysicsID::particle_temperature)
+      {
+        particle_temperature_field_enabled = true;
+      }
+    else
+      {
+        AssertThrow(
+          false,
+          ExcMessage(
+            "The physics ID provided is not associated with an existing projected particle field."));
+      }
   }
 
   /**
@@ -113,6 +155,10 @@ public:
     else if (physics_id == PhysicsID::electromagnetics)
       {
         announce_string(pcout, "Electromagnetics");
+      }
+    else if (physics_id == PhysicsID::continuum_solid_dynamics)
+      {
+        announce_string(pcout, "Continuum Solid Dynamics");
       }
     else
       {
@@ -192,9 +238,8 @@ public:
     if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 
-    AssertThrow(std::find(active_physics.begin(),
-                          active_physics.end(),
-                          physics_id) != active_physics.end(),
+    AssertThrow(std::ranges::find(active_physics, physics_id) !=
+                  active_physics.end(),
                 ExcInternalError());
 
     physics[physics_id]->time_stepping_method = time_stepping_method;
@@ -216,9 +261,8 @@ public:
     if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 
-    AssertThrow(std::find(active_physics.begin(),
-                          active_physics.end(),
-                          physics_id) != active_physics.end(),
+    AssertThrow(std::ranges::find(active_physics, physics_id) !=
+                  active_physics.end(),
                 ExcInternalError());
 
     block_physics[physics_id]->time_stepping_method = time_stepping_method;
@@ -376,6 +420,22 @@ public:
     this->probe_postprocessor.write_probing_points_tables();
   }
 
+  /**
+   * @brief Output the per iteration wallclock times.
+   */
+  void
+  output_per_iteration_timer()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->output_per_iteration_timer();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->output_per_iteration_timer();
+      }
+  }
+
 
   /**
    * @brief Prepare the auxiliary physics for mesh adaptation
@@ -455,9 +515,8 @@ public:
   void
   solve_linear_system(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
 
     physics[physics_id]->solve_linear_system();
@@ -479,7 +538,7 @@ public:
 
 
   /**
-   * @brief Request a DOF handler for a given physics ID
+   * @brief Request a DOF handler for a given physics ID.
    *
    * @param physics_id The physics of the DOF handler being requested
    *
@@ -488,10 +547,10 @@ public:
   const DoFHandler<dim> &
   get_dof_handler(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    // PhysicsID::void_fraction is not an auxiliary physics and is only accepted
+    // when the fluid dynamics formulation is VANS.
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
 
     return *physics_dof_handler[physics_id];
   }
@@ -506,10 +565,10 @@ public:
   const Mapping<dim> &
   get_mapping(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    // PhysicsID::void_fraction is not an auxiliary physics and is only accepted
+    // when the fluid dynamics formulation is VANS.
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
 
     return *physics_mapping[physics_id];
   }
@@ -524,10 +583,11 @@ public:
   const GlobalVectorType &
   get_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(physics_id != PhysicsID::qmom, QMOMSolutionNotAvailable());
+    // PhysicsID::void_fraction is not an auxiliary physics and is only accepted
+    // when the fluid dynamics formulation is VANS.
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
     return *physics_solutions[physics_id];
   }
 
@@ -544,9 +604,8 @@ public:
   const GlobalVectorType &
   get_filtered_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *physics_filtered_solutions[physics_id];
   }
@@ -560,9 +619,8 @@ public:
   const GlobalBlockVectorType &
   get_block_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *block_physics_solutions[physics_id];
   }
@@ -576,9 +634,8 @@ public:
   const GlobalVectorType &
   get_time_average_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *physics_time_average_solutions[physics_id];
   }
@@ -592,9 +649,8 @@ public:
   const GlobalBlockVectorType &
   get_block_time_average_solution(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *block_physics_time_average_solutions[physics_id];
   }
@@ -664,17 +720,18 @@ public:
 
   /**
    * @brief Request the reference to the vector of previous solutions of a given
-   * physics
+   * physics.
    *
    * @param[in] physics_id The physics ID of the solution being requested
    */
   const std::vector<GlobalVectorType> &
   get_previous_solutions(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
+    AssertThrow(physics_id != PhysicsID::qmom, QMOMSolutionNotAvailable());
+    // PhysicsID::void_fraction is not an auxiliary physics and is only accepted
+    // when the fluid dynamics formulation is VANS.
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
     return *physics_previous_solutions[physics_id];
   }
 
@@ -688,9 +745,8 @@ public:
   const std::vector<GlobalBlockVectorType> &
   get_block_previous_solutions(const PhysicsID physics_id)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
     return *block_physics_previous_solutions[physics_id];
   }
@@ -708,11 +764,9 @@ public:
   set_dof_handler(const PhysicsID                  physics_id,
                   std::shared_ptr<DoFHandler<dim>> dof_handler)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    physics_dof_handler[physics_id] = dof_handler;
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
+    physics_dof_handler[physics_id] = std::move(dof_handler);
   }
 
   /**
@@ -727,11 +781,9 @@ public:
   void
   set_mapping(const PhysicsID physics_id, std::shared_ptr<Mapping<dim>> mapping)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    physics_mapping[physics_id] = mapping;
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
+    physics_mapping[physics_id] = std::move(mapping);
   }
 
 
@@ -746,7 +798,7 @@ public:
   set_solid(std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>>
               solids_input)
   {
-    solids = solids_input;
+    solids = std::move(solids_input);
   }
 
   /**
@@ -762,11 +814,9 @@ public:
   set_solution(const PhysicsID                   physics_id,
                std::shared_ptr<GlobalVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    physics_solutions[physics_id] = solution_vector;
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
+    physics_solutions[physics_id] = std::move(solution_vector);
   }
 
   /**
@@ -786,11 +836,11 @@ public:
     const PhysicsID                   physics_id,
     std::shared_ptr<GlobalVectorType> filtered_solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
-    physics_filtered_solutions[physics_id] = filtered_solution_vector;
+    physics_filtered_solutions[physics_id] =
+      std::move(filtered_solution_vector);
   }
 
 
@@ -807,11 +857,10 @@ public:
   set_time_average_solution(const PhysicsID                   physics_id,
                             std::shared_ptr<GlobalVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
-    physics_time_average_solutions[physics_id] = solution_vector;
+    physics_time_average_solutions[physics_id] = std::move(solution_vector);
   }
 
   /**
@@ -826,11 +875,10 @@ public:
   set_block_solution(const PhysicsID                        physics_id,
                      std::shared_ptr<GlobalBlockVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
-    block_physics_solutions[physics_id] = solution_vector;
+    block_physics_solutions[physics_id] = std::move(solution_vector);
   }
 
   /**
@@ -848,11 +896,11 @@ public:
     const PhysicsID                        physics_id,
     std::shared_ptr<GlobalBlockVectorType> solution_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
-    block_physics_time_average_solutions[physics_id] = solution_vector;
+    block_physics_time_average_solutions[physics_id] =
+      std::move(solution_vector);
   }
 
   /**
@@ -868,11 +916,10 @@ public:
     const PhysicsID                                physics_id,
     std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    physics_previous_solutions[physics_id] = previous_solutions_vector;
+    AssertThrow(is_field_available(physics_id),
+                PhysicsIDNotAvailable(physics_id));
+    physics_previous_solutions[physics_id] =
+      std::move(previous_solutions_vector);
   }
 
   /**
@@ -890,11 +937,11 @@ public:
     std::shared_ptr<std::vector<GlobalBlockVectorType>>
       previous_solutions_vector)
   {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
+    AssertThrow((std::ranges::find(active_physics, physics_id) !=
+                 active_physics.end()),
                 ExcInternalError());
-    block_physics_previous_solutions[physics_id] = previous_solutions_vector;
+    block_physics_previous_solutions[physics_id] =
+      std::move(previous_solutions_vector);
   }
 
   /**
@@ -924,37 +971,40 @@ public:
 
   /**
    * @brief Prepares auxiliary physics to write simulation checkpoint
+   *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  write_checkpoint()
+  write_checkpoint(const std::string &checkpoint_slot_label)
   {
     for (auto &iphys : physics)
       {
-        iphys.second->write_checkpoint();
+        iphys.second->write_checkpoint(checkpoint_slot_label);
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->write_checkpoint();
+        iphys.second->write_checkpoint(checkpoint_slot_label);
       }
-    this->probe_postprocessor.write_checkpoint();
+    this->probe_postprocessor.write_checkpoint(checkpoint_slot_label);
   };
 
   /**
    * @brief Read solution from checkpoint from auxiliary physics
    *
+   * @param[in] checkpoint_slot_label Label of the checkpoint slot.
    */
   virtual void
-  read_checkpoint()
+  read_checkpoint(const std::string &checkpoint_slot_label)
   {
     for (auto &iphys : physics)
       {
-        iphys.second->read_checkpoint();
+        iphys.second->read_checkpoint(checkpoint_slot_label);
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->read_checkpoint();
+        iphys.second->read_checkpoint(checkpoint_slot_label);
       }
-    this->probe_postprocessor.read_checkpoint();
+    this->probe_postprocessor.read_checkpoint(checkpoint_slot_label);
   };
 
   /**
@@ -1014,6 +1064,13 @@ private:
   ConditionalOStream                         pcout;
   const FluidDynamicsFormulation             fluid_dynamics_formulation;
 
+  // Always true if the VANS solver is used
+  bool particle_void_fraction_field_enabled = false;
+
+  // True if the VANS solver projects the particle temperature and provides it
+  // to the interface
+  bool particle_temperature_field_enabled = false;
+
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;
 
@@ -1024,7 +1081,8 @@ private:
                                             {heat_transfer, false},
                                             {tracer, false},
                                             {cahn_hilliard, true},
-                                            {electromagnetics, true}};
+                                            {electromagnetics, true},
+                                            {continuum_solid_dynamics, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.
@@ -1124,6 +1182,15 @@ private:
   void
   inspect_multiphysics_models_dependencies(
     const SimulationParameters<dim> &nsparam);
+
+  /**
+   * @brief Return true if the fields of @p physics_id are registered in the interface: either the physics is active, or it is a field projected under the VANS formulation and enabled with enable_projected_particle_fields().
+   *
+   * @param[in] physics_id The ID of the physics to check.
+   * @return true if the fields of @p physics_id are registered in the interface, false otherwise.
+   */
+  bool
+  is_field_available(const PhysicsID physics_id) const;
 
   /// Probe postprocessing object
   PostprocessingProbes<dim> probe_postprocessor;

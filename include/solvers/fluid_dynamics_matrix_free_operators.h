@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_matrix_free_operators_h
 
 #include <core/bdf.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
@@ -54,12 +55,14 @@ struct TimeSteppingData
  * @tparam Number Abstract type for number across the class (i.e., double).
  * @param function Function to evaluate.
  * @param p_vectorized Batch of points to evaluate function at.
+ * @param component Component of the function to evaluate.
  * @return VectorizedArray<Number> Batch of evaluated values.
  */
 template <int dim, typename Number>
 VectorizedArray<Number>
 evaluate_function(const Function<dim>                       &function,
-                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized,
+                  const unsigned int                         component = 0)
 {
   VectorizedArray<Number> result;
   for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
@@ -67,7 +70,7 @@ evaluate_function(const Function<dim>                       &function,
       Point<dim> p;
       for (int d = 0; d < dim; ++d)
         p[d] = p_vectorized[d][v];
-      result[v] = function.value(p);
+      result[v] = function.value(p, component);
     }
   return result;
 }
@@ -122,7 +125,7 @@ evaluate_function(const Function<dim>                       &function,
       Point<dim> p;
       for (int d = 0; d < dim; ++d)
         p[d] = p_vectorized[d][v];
-      for (unsigned int d = 0; d < components; ++d)
+      for (int d = 0; d < components; ++d)
         result[d][v] = function.value(p, d);
     }
   return result;
@@ -137,12 +140,15 @@ evaluate_function(const Function<dim>                       &function,
  */
 inline bool
 boundary_condition_requires_face_assembly(
-  BoundaryConditions::BoundaryType boundary_type)
+  BoundaryConditions::FluidDynamicsBoundaryType boundary_type)
 {
-  if (boundary_type == BoundaryConditions::BoundaryType::function_weak ||
-      boundary_type == BoundaryConditions::BoundaryType::outlet ||
-      boundary_type == BoundaryConditions::BoundaryType::pressure ||
-      boundary_type == BoundaryConditions::BoundaryType::neumann_traction)
+  if (boundary_type ==
+        BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+      boundary_type == BoundaryConditions::FluidDynamicsBoundaryType::outlet ||
+      boundary_type ==
+        BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+      boundary_type ==
+        BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
     return true;
   else
     return false;
@@ -198,17 +204,18 @@ public:
 
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                  &mapping,
-    const DoFHandler<dim>               &dof_handler,
-    const AffineConstraints<number>     &constraints,
-    const Quadrature<dim>               &quadrature,
-    const std::shared_ptr<Function<dim>> forcing_function,
+    const Mapping<dim>                   &mapping,
+    const DoFHandler<dim>                &dof_handler,
+    const AffineConstraints<number>      &constraints,
+    const Quadrature<dim>                &quadrature,
+    const std::shared_ptr<Function<dim>> &forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
     const StabilizationType                   stabilization,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+    const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+               &boundary_conditions,
     const bool &enable_hessians_jacobian,
     const bool &enable_hessians_residual,
     const bool &enable_mortar);
@@ -239,21 +246,21 @@ public:
    * @param[in] enable_mortar Flag to turn mortar parameters on or off.
    */
   void
-  reinit(
-    const Mapping<dim>                  &mapping,
-    const DoFHandler<dim>               &dof_handler,
-    const AffineConstraints<number>     &constraints,
-    const Quadrature<dim>               &quadrature,
-    const std::shared_ptr<Function<dim>> forcing_function,
-    const std::shared_ptr<PhysicalPropertiesManager>
-                                             &physical_properties_manager,
-    const StabilizationType                   stabilization,
-    const unsigned int                        mg_level,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-    const bool &enable_hessians_jacobian,
-    const bool &enable_hessians_residual,
-    const bool &enable_mortar);
+  reinit(const Mapping<dim>                   &mapping,
+         const DoFHandler<dim>                &dof_handler,
+         const AffineConstraints<number>      &constraints,
+         const Quadrature<dim>                &quadrature,
+         const std::shared_ptr<Function<dim>> &forcing_function,
+         const std::shared_ptr<PhysicalPropertiesManager>
+                                                  &physical_properties_manager,
+         const StabilizationType                   stabilization,
+         const unsigned int                        mg_level,
+         const std::shared_ptr<SimulationControl> &simulation_control,
+         const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+                    &boundary_conditions,
+         const bool &enable_hessians_jacobian,
+         const bool &enable_hessians_residual,
+         const bool &enable_mortar);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -272,9 +279,13 @@ public:
   compute_solid_cell_mask();
 
   /**
-   * @brief Precompute forcing term.
+   * @brief Precompute forcing term at the quadrature points. This is called
+   * when the operator is initialized and must be called again whenever the
+   * time of the forcing function changes, since the forcing function is
+   * otherwise only evaluated at the time at which the operator was
+   * initialized.
    */
-  void
+  virtual void
   compute_forcing_term();
 
 
@@ -403,7 +414,7 @@ public:
    *
    * @return Aligned vector with the size of all elements.
    */
-  const AlignedVector<VectorizedArray<number>>
+  const AlignedVector<VectorizedArray<number>> &
   get_element_size() const;
 
   /**
@@ -456,11 +467,11 @@ public:
    * @param[in] rotor_angular_velocity  Angular velocity of the rotor domain.
    */
   void
-  evaluate_velocity_ale(
-    const Mapping<dim>                             &mapping,
-    const Point<dim>                                center_of_rotation,
-    const unsigned int                              rotation_axis_direction,
-    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity);
+  evaluate_velocity_ale(const Mapping<dim> &mapping,
+                        const Point<dim>    center_of_rotation,
+                        const unsigned int  rotation_axis_direction,
+                        const std::shared_ptr<Functions::ParsedFunction<dim>>
+                          &rotor_angular_velocity);
 
   /**
    * @brief Store the values of the source term calculated if dynamic control
@@ -598,6 +609,16 @@ protected:
   TimeSteppingData
   initialize_time_stepping_data() const;
 
+  /**
+   * @brief Gather the time-stepping data and the kinematic viscosity used by
+   * the cell and face kernels into kernel_time_stepping_data and
+   * kernel_kinematic_viscosity. These values do not change during one
+   * application of the operator, so they are gathered once at the start of
+   * every function that applies the operator instead of once per cell batch.
+   */
+  void
+  update_kernel_data() const;
+
 
 private:
   /**
@@ -663,6 +684,28 @@ protected:
   bool has_solids = false;
 
   /**
+   * @brief Time-stepping data used by the cell kernels, gathered by
+   * update_kernel_data() at the start of each operator application.
+   *
+   */
+  mutable TimeSteppingData kernel_time_stepping_data;
+
+  /**
+   * @brief Kinematic viscosity used by the cell and face kernels, gathered by
+   * update_kernel_data() at the start of each operator application.
+   *
+   */
+  mutable double kernel_kinematic_viscosity = 0.0;
+
+  /**
+   * @brief Flag set by the derived operators that read the full hessian of the
+   * linearization point (nonlinear_previous_hessian), such as the VANS
+   * operator. When false, this table is neither allocated nor filled.
+   *
+   */
+  bool store_previous_hessian = false;
+
+  /**
    * @brief Finite element degree for the operator.
    *
    */
@@ -707,7 +750,7 @@ protected:
    * initialization of the boundary conditions.
    *
    */
-  BoundaryConditions::NSBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<dim> boundary_conditions;
 
   /**
    * @brief Flag to turn hessian terms from jacobian on or off.

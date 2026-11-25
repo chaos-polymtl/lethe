@@ -1797,9 +1797,23 @@ template class LaplaceAssembly<3>;
 template <int dim>
 void
 ThermalBuoyancyAssembly<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
-{}
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // The buoyancy force does not depend on the velocity or the pressure, so it
+  // has no contribution to the Jacobian. However, it must still be added to the
+  // strong residual since the SUPG term of the Jacobian depends on it.
+  const unsigned int n_q_points = scratch_data.n_q_points;
+
+  auto &strong_residual = copy_data.strong_residual;
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      strong_residual[q] +=
+        scratch_data.force[q] * scratch_data.thermal_expansion[q] *
+        (scratch_data.temperature_values[q] - reference_temperature);
+    }
+}
 
 
 
@@ -2131,7 +2145,7 @@ PressureBoundaryCondition<dim>::assemble_matrix(
           // Check if the face is part of the boundary that as a
           // pressure BC.
           if (this->pressure_boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::pressure)
+              BoundaryConditions::FluidDynamicsBoundaryType::pressure)
             {
               // Assemble the matrix of the BC
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
@@ -2203,14 +2217,14 @@ PressureBoundaryCondition<dim>::assemble_rhs(
         {
           types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
 
-          NavierStokesPressureFunctionDefined<dim> function_p(
+          FluidDynamicsPressureFunctionDefined<dim> function_p(
             &pressure_boundary_conditions.navier_stokes_functions
                .at(boundary_id)
                ->p);
           // Check if the face is part of the boundary that as a
           // pressure BC.
           if (this->pressure_boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::pressure)
+              BoundaryConditions::FluidDynamicsBoundaryType::pressure)
             {
               // Assemble the rhs of the BC
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
@@ -2285,7 +2299,7 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
           // Check if the face is part of the boundary that as a
           // Neumann traction BC.
           if (this->neumann_traction_boundary_condition.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::neumann_traction)
+              BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
             {
               // Assemble the rhs of the BC
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
@@ -2363,7 +2377,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
           // Check if the face is part of the boundary that as a
           // pressure BC.
           if (this->boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::function_weak)
+              BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
             {
               const double beta = boundary_conditions.beta.at(boundary_id);
 
@@ -2452,11 +2466,11 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
           // Check if the face is part of the boundary that has a
           // weakly imposed Dirichlet BC.
           if (this->boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::function_weak)
+              BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
             {
               const double beta = boundary_conditions.beta.at(boundary_id);
 
-              NavierStokesFunctionDefined<dim> function_v(
+              FluidDynamicsVelocityFunctionDefined<dim> function_v(
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->u,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->v,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)
@@ -2546,7 +2560,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
           // Check if the face is part of the boundary that as a
           // pressure BC.
           if (this->boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::partial_slip)
+              BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
             {
               const double beta = boundary_conditions.beta.at(boundary_id);
               const double boundary_layer_thickness =
@@ -2666,14 +2680,14 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
           // Check if the face is part of the boundary that has a
           // weakly imposed Dirichlet BC.
           if (this->boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::partial_slip)
+              BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
             {
               const double beta = boundary_conditions.beta.at(boundary_id);
               const double boundary_layer_thickness =
                 boundary_conditions.boundary_layer_thickness.at(boundary_id);
               const double beta_tangent =
                 kinematic_viscosity / boundary_layer_thickness;
-              NavierStokesFunctionDefined<dim> function_v(
+              FluidDynamicsVelocityFunctionDefined<dim> function_v(
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->u,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)->v,
                 &boundary_conditions.navier_stokes_functions.at(boundary_id)
@@ -2772,7 +2786,7 @@ OutletBoundaryCondition<dim>::assemble_matrix(
           // Check if the face is part of the boundary that as a
           // pressure BC.
           if (this->boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::outlet)
+              BoundaryConditions::FluidDynamicsBoundaryType::outlet)
             {
               const double beta = boundary_conditions.beta.at(boundary_id);
 
@@ -2841,7 +2855,7 @@ OutletBoundaryCondition<dim>::assemble_rhs(
           // Check if the face is part of the boundary that has a
           // weakly imposed Dirichlet BC.
           if (this->boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::outlet)
+              BoundaryConditions::FluidDynamicsBoundaryType::outlet)
             {
               const double beta = boundary_conditions.beta.at(boundary_id);
 

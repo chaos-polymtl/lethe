@@ -2,9 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
+#include <core/pvd_handler.h>
+#include <core/solutions_output.h>
 #include <core/vector.h>
 
 #include <fem-dem/particle_projector.h>
+#include <fem-dem/quadrature_points_data_out.h>
 #include <fem-dem/vans_assemblers.h>
 
 #include <deal.II/base/timer.h>
@@ -32,19 +35,19 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 {
   // Get a constant copy of the communicator since it is used extensively to
   // establish the void fraction vectors
-  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
 
-  dof_handler.distribute_dofs(*fe);
+  dof_handler->distribute_dofs(*fe);
   if (multigrid_level_dofs_required)
-    dof_handler.distribute_mg_dofs();
-  locally_owned_dofs = dof_handler.locally_owned_dofs();
+    dof_handler->distribute_mg_dofs();
+  locally_owned_dofs = dof_handler->locally_owned_dofs();
 
-  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
   // deal.II vector that will also hold the solution
-  this->particle_field_solution.reinit(dof_handler.locally_owned_dofs(),
+  this->particle_field_solution.reinit(dof_handler->locally_owned_dofs(),
                                        DoFTools::extract_locally_active_dofs(
-                                         dof_handler),
+                                         *dof_handler),
                                        mpi_communicator);
 
   // Force the vector to zero after the reinit.
@@ -52,7 +55,7 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   particle_field_constraints.clear();
   particle_field_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler,
+  DoFTools::make_hanging_node_constraints(*dof_handler,
                                           particle_field_constraints);
 
   particle_field_constraints.close();
@@ -74,7 +77,7 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(
-    dof_handler, coupling_table, dsp, particle_field_constraints, false);
+    *dof_handler, coupling_table, dsp, particle_field_constraints, false);
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,
@@ -103,30 +106,30 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
 
   // Get a constant copy of the communicator since it is used extensively to
   // establish the void fraction vectors
-  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
 
-  dof_handler.distribute_dofs(*fe);
+  dof_handler->distribute_dofs(*fe);
   if (multigrid_level_dofs_required)
-    dof_handler.distribute_mg_dofs();
-  locally_owned_dofs = dof_handler.locally_owned_dofs();
+    dof_handler->distribute_mg_dofs();
+  locally_owned_dofs = dof_handler->locally_owned_dofs();
 
-  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
   void_fraction_constraints.clear();
   void_fraction_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler,
+  DoFTools::make_hanging_node_constraints(*dof_handler,
                                           void_fraction_constraints);
 
   void_fraction_constraints.close();
 
-  void_fraction_locally_relevant.reinit(locally_owned_dofs,
-                                        locally_relevant_dofs,
-                                        mpi_communicator);
+  this->void_fraction_locally_relevant->reinit(locally_owned_dofs,
+                                               locally_relevant_dofs,
+                                               mpi_communicator);
 
-  this->previous_void_fraction.resize(maximum_number_of_previous_solutions());
+  this->previous_void_fraction->resize(maximum_number_of_previous_solutions());
 
   // Initialize vector of previous solutions for the void fraction
-  for (auto &solution : this->previous_void_fraction)
+  for (auto &solution : *this->previous_void_fraction)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
@@ -138,8 +141,8 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
 
   // deal.II vector that will also hold the solution
   this->void_fraction_solution.reinit(
-    dof_handler.locally_owned_dofs(),
-    DoFTools::extract_locally_active_dofs(dof_handler),
+    dof_handler->locally_owned_dofs(),
+    DoFTools::extract_locally_active_dofs(*dof_handler),
     this->triangulation->get_mpi_communicator());
 
   this->void_fraction_previous_solution.resize(
@@ -147,13 +150,13 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
   // Initialize vector of previous solutions for the void fraction
   for (auto &solution : this->void_fraction_previous_solution)
     {
-      solution.reinit(dof_handler.locally_owned_dofs(),
-                      DoFTools::extract_locally_active_dofs(dof_handler),
+      solution.reinit(dof_handler->locally_owned_dofs(),
+                      DoFTools::extract_locally_active_dofs(*dof_handler),
                       this->triangulation->get_mpi_communicator());
     }
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(dof_handler,
+  DoFTools::make_sparsity_pattern(*dof_handler,
                                   dsp,
                                   void_fraction_constraints,
                                   false);
@@ -176,7 +179,7 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
 
 
   // Vertices to cell mapping
-  LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+  LetheGridTools::vertices_cell_mapping(*this->dof_handler, vertices_to_cell);
 
   // TODO BB both these fields are always set-up even if they are not used. This
   // is ok since this will just take a little bit of extra memory. If this
@@ -186,32 +189,48 @@ ParticleProjector<dim, PropertiesIndex>::setup_dofs()
   fluid_drag_on_particles.setup_dofs();
   particle_velocity.setup_dofs();
   momentum_transfer_coefficient.setup_dofs();
+
+  // Only allocate the particle temperature field in thermal CFD-DEM
+  // simulations (solver type = dem_mp)
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      particle_temperature.setup_dofs();
+
+      // The particle temperature is provided to the multiphysics interface,
+      // so we need to ensure the solution vector is reinitialized with the
+      // correct locally relevant dofs.
+      particle_temperature_locally_relevant->reinit(
+        particle_temperature.locally_owned_dofs,
+        particle_temperature.locally_relevant_dofs,
+        mpi_communicator);
+    }
 }
 
 
 template <int dim, typename PropertiesIndex>
 void
 ParticleProjector<dim, PropertiesIndex>::setup_constraints(
-  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions)
+  const BoundaryConditions::FluidDynamicsBoundaryConditions<dim>
+    &boundary_conditions)
 {
   has_periodic_boundaries = false;
   // Define constraints for periodic boundary conditions
   void_fraction_constraints.clear();
-  void_fraction_constraints.reinit(dof_handler.locally_owned_dofs(),
+  void_fraction_constraints.reinit(dof_handler->locally_owned_dofs(),
                                    locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler,
+  DoFTools::make_hanging_node_constraints(*dof_handler,
                                           void_fraction_constraints);
 
 
   for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             boundary_conditions.periodic_boundaries.at(id);
           cfd_periodic_directions[id] = periodic_boundary.direction;
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             periodic_boundary.neighbor_id,
             periodic_boundary.direction,
@@ -233,14 +252,15 @@ ParticleProjector<dim, PropertiesIndex>::setup_constraints(
 
   AssertThrow(
     has_periodic_boundaries == false ||
-      void_fraction_parameters->project_particle_velocity == false,
+      (void_fraction_parameters->project_particle_velocity == false &&
+       !DEM::has_thermal_properties<PropertiesIndex>),
     ExcMessage(
-      "The projection of particle velocity is currently not supported for periodic boundary conditions"));
+      "The projection of the particle velocity, and the projection of the particle temperature done in thermal CFD-DEM simulations (solver type = dem_mp), are currently not supported for periodic boundary conditions"));
 
 
   // Reinit system matrix
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(dof_handler,
+  DoFTools::make_sparsity_pattern(*dof_handler,
                                   dsp,
                                   void_fraction_constraints,
                                   false);
@@ -259,7 +279,7 @@ ParticleProjector<dim, PropertiesIndex>::setup_constraints(
 
   if (has_periodic_boundaries)
     LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
-      this->dof_handler, this->vertices_to_periodic_cell);
+      *this->dof_handler, this->vertices_to_periodic_cell);
 }
 
 
@@ -303,6 +323,39 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction(
     }
 }
 
+template <int dim, typename PropertiesIndex>
+void
+ParticleProjector<dim,
+                  PropertiesIndex>::calculate_particle_temperature_projection()
+{
+  // Only the particles of thermal CFD-DEM simulations (solver type = dem_mp)
+  // carry a temperature
+  if constexpr (DEM::has_thermal_properties<PropertiesIndex>)
+    {
+      calculate_field_projection(particle_temperature);
+
+// Transfer the particle temperature solution to the multiphysics interface
+// vector. This is needed since the multiphysics interface uses a different
+// vector type than the one used in the particle projector depending on the
+// build configuration.
+#ifndef LETHE_USE_LDV
+      GlobalVectorType temporary_solution_vector(
+        particle_temperature.locally_owned_dofs,
+        particle_temperature.dof_handler->get_mpi_communicator());
+
+      convert_vector_dealii_to_trilinos(
+        temporary_solution_vector,
+        particle_temperature.particle_field_solution);
+
+      *particle_temperature_locally_relevant = temporary_solution_vector;
+#else
+      particle_temperature_locally_relevant->copy_locally_owned_data_from(
+        particle_temperature.particle_field_solution);
+      particle_temperature_locally_relevant->update_ghost_values();
+#endif
+    }
+}
+
 
 template <int dim, typename PropertiesIndex>
 void
@@ -317,20 +370,20 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_function(
   // This may lead to some issues on coarses meshes if a high-order
   // interpolation (>FE_Q(1)) is used.
   VectorTools::interpolate(*mapping,
-                           dof_handler,
+                           *this->dof_handler,
                            void_fraction_parameters->void_fraction,
                            void_fraction_locally_owned);
 
   // Propagate ghost values
-  void_fraction_locally_relevant = void_fraction_locally_owned;
+  *this->void_fraction_locally_relevant = void_fraction_locally_owned;
 
 #ifndef LETHE_USE_LDV
   // Perform copy between two vector types to ensure there is a deal.II vector
   convert_vector_trilinos_to_dealii(this->void_fraction_solution,
-                                    void_fraction_locally_relevant);
+                                    *this->void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution = void_fraction_locally_relevant;
+  void_fraction_solution = *this->void_fraction_locally_relevant;
 #endif
 }
 
@@ -356,7 +409,7 @@ ParticleProjector<dim, PropertiesIndex>::
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -513,7 +566,7 @@ ParticleProjector<dim, PropertiesIndex>::
   // correctly pre-calculated and stored. Now we assemble the system using
   // the satellite point method to calculate the void fraction adequately.
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -745,7 +798,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
   system_matrix_void_fraction = 0;
 
   // Clear all contributions of particles from the previous time step
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -762,7 +815,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
 
   // Determine the new volumetric contributions of the particles necessary
   // for void fraction calculation
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -912,7 +965,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_void_fraction_qcm_impl()
 
   // After the particles' contributions have been determined, calculate and
   // normalize the void fraction
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1214,7 +1267,7 @@ ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
   if (field_qcm.matrix_requires_assembly)
     field_qcm.system_matrix = 0;
 
-  for (const auto &cell : field_qcm.dof_handler.active_cell_iterators())
+  for (const auto &cell : field_qcm.dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1564,6 +1617,13 @@ ParticleProjector<dim, PropertiesIndex>::calculate_field_projection_impl(
                field_qcm.system_rhs,
                *field_qcm.ilu_preconditioner);
 
+  // Distribute the constraints to the solution vector. This is necessary
+  // because of the hanging nodes that can be present in the mesh and would not
+  // have a correct value only from  distributing the values of the local
+  // solution to the global solution vector.
+  field_qcm.particle_field_constraints.distribute(
+    field_qcm.particle_field_solution);
+
   // Now that the solution has been solved for, update the ghost values.
   field_qcm.particle_field_solution.update_ghost_values();
 
@@ -1735,14 +1795,15 @@ ParticleProjector<dim, PropertiesIndex>::
           // void fraction and the velocity. This is what we will require to
           // calculate the particle-fluid forces.
           typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
-            &(this->dof_handler.get_triangulation()),
+            &(this->dof_handler->get_triangulation()),
             cell->level(),
             cell->index(),
-            &this->dof_handler);
+            &(*this->dof_handler));
 
-          scratch_data.reinit_void_fraction(void_fraction_cell,
-                                            void_fraction_locally_relevant,
-                                            previous_void_fraction);
+          scratch_data.reinit_void_fraction(
+            void_fraction_cell,
+            *this->void_fraction_locally_relevant,
+            *this->previous_void_fraction);
 
 
           // Physics properties must be calculated before the particle-fluid
@@ -1777,7 +1838,7 @@ ParticleProjector<dim, PropertiesIndex>::
                   void_fraction_cell,
                   present_velocity_pressure_solution,
                   previous_velocity_pressure_solution[0],
-                  void_fraction_locally_relevant,
+                  *this->void_fraction_locally_relevant,
                   *particle_handler,
                   cfd_dem_parameters.drag_coupling);
             }
@@ -1805,7 +1866,6 @@ ParticleProjector<dim, PropertiesIndex>::
   calculate_field_projection(particle_velocity);
   calculate_field_projection(momentum_transfer_coefficient);
 }
-
 
 template void
 ParticleProjector<2, DEM::CFDDEMProperties::PropertiesIndex>::
@@ -1927,7 +1987,7 @@ ParticleProjector<dim,
   const double non_rescaled_linear_solver_tolerance =
     linear_solver_tolerance * rescale_metric;
 
-  const IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
+  const IndexSet locally_owned_dofs = dof_handler->locally_owned_dofs();
 
   GlobalVectorType completely_distributed_solution(
     locally_owned_dofs, this->triangulation->get_mpi_communicator());
@@ -1971,19 +2031,48 @@ ParticleProjector<dim,
     }
 
   void_fraction_constraints.distribute(completely_distributed_solution);
-  void_fraction_locally_relevant = completely_distributed_solution;
+  *this->void_fraction_locally_relevant = completely_distributed_solution;
 
 #ifndef LETHE_USE_LDV
   // Perform copy between two vector types to ensure there is a deal.II vector
   convert_vector_trilinos_to_dealii(this->void_fraction_solution,
-                                    void_fraction_locally_relevant);
+                                    *this->void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution = void_fraction_locally_relevant;
+  void_fraction_solution = *this->void_fraction_locally_relevant;
   void_fraction_solution.update_ghost_values();
 #endif
 }
 
+template <int dim, typename PropertiesIndex>
+void
+ParticleProjector<dim, PropertiesIndex>::write_qcm_quadrature_points(
+  const std::string &folder,
+  const std::string &prefix,
+  const unsigned int group_files)
+{
+  QuadraturePointsDataOut<dim> qp_out;
+
+  const double qcm_smoothing_length =
+    void_fraction_parameters->qcm_smoothing_length;
+  qp_out.build_patches(
+    *dof_handler, *mapping, *quadrature, [&](const auto &cell) {
+      // Same filter length as in the QCM void fraction calculation
+      return (qcm_smoothing_length > 1e-16) ?
+               0.5 * qcm_smoothing_length :
+               calculate_filter_length_from_cell_measure(cell->measure());
+    });
+
+  PVDHandler pvd_handler;
+  write_vtu_and_pvd(pvd_handler,
+                    qp_out,
+                    folder,
+                    prefix,
+                    /*time*/ 0.,
+                    /*iter*/ 0,
+                    group_files,
+                    triangulation->get_mpi_communicator());
+}
 // Pre-compile the 2D and 3D ParticleProjector solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging

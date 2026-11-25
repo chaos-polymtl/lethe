@@ -5,12 +5,18 @@
 #define lethe_simulation_parameters_h
 
 #include <core/ale.h>
-#include <core/boundary_conditions.h>
+#include <core/cahn_hilliard_boundary_conditions.h>
+#include <core/cls_boundary_conditions.h>
 #include <core/dimensionality.h>
+#include <core/fluid_dynamics_boundary_conditions.h>
+#include <core/heat_transfer_boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
+#include <core/qmom_boundary_conditions.h>
 #include <core/solid_objects_parameters.h>
+#include <core/time_harmonic_maxwell_boundary_conditions.h>
+#include <core/tracer_boundary_conditions.h>
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/cls_subequations.h>
@@ -18,6 +24,8 @@
 #include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
 #include <solvers/tracer_drift_velocity.h>
+
+#include <cmath>
 
 template <int dim>
 class SimulationParameters
@@ -33,22 +41,24 @@ public:
   Parameters::MeshAdaptation mesh_adaptation;
   Parameters::Mesh<dim>      mesh;
   Parameters::Dimensionality dimensionality;
-  std::shared_ptr<Parameters::MeshBoxRefinement<dim>> mesh_box_refinement;
-  std::shared_ptr<Parameters::Nitsche<dim>>           nitsche;
-  Parameters::SimulationControl                       simulation_control;
-  Parameters::Timer                                   timer;
-  Parameters::FEM                                     fem_parameters;
-  Parameters::Forces                                  forces_parameters;
-  std::shared_ptr<Parameters::Laser<dim>>             laser_parameters;
-  Parameters::PostProcessing<dim>                     post_processing;
-  Parameters::Restart                                 restart_parameters;
-  Parameters::Manifolds                               manifolds_parameters;
-  BoundaryConditions::NSBoundaryConditions<dim>       boundary_conditions;
-  BoundaryConditions::HTBoundaryConditions<dim>       boundary_conditions_ht;
-  BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
-  BoundaryConditions::CLSBoundaryConditions<dim>    boundary_conditions_cls;
+  std::shared_ptr<Parameters::MeshBoxRefinement<dim>>      mesh_box_refinement;
+  std::shared_ptr<Parameters::Nitsche<dim>>                nitsche;
+  Parameters::SimulationControl                            simulation_control;
+  Parameters::Timer                                        timer;
+  Parameters::FEM                                          fem_parameters;
+  Parameters::Forces                                       forces_parameters;
+  std::shared_ptr<Parameters::Laser<dim>>                  laser_parameters;
+  Parameters::PostProcessing<dim>                          post_processing;
+  Parameters::Restart                                      restart_parameters;
+  Parameters::Manifolds                                    manifolds_parameters;
+  BoundaryConditions::FluidDynamicsBoundaryConditions<dim> boundary_conditions;
+  BoundaryConditions::HeatTransferBoundaryConditions<dim>
+                                                    boundary_conditions_ht;
+  BoundaryConditions::TracerBoundaryConditions<dim> tracer_boundary_conditions;
+  BoundaryConditions::QMOMBoundaryConditions<dim>   qmom_boundary_conditions;
+  BoundaryConditions::CLSBoundaryConditions<dim>    cls_boundary_conditions;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-    boundary_conditions_cahn_hilliard;
+    cahn_hilliard_boundary_conditions;
   BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
     boundary_conditions_time_harmonic_electromagnetics;
   Parameters::InitialConditions<dim>           *initial_condition;
@@ -100,11 +110,13 @@ public:
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_ht.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_tracer.declare_parameters(
+    tracer_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_cls.declare_parameters(
+    qmom_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_cahn_hilliard.declare_parameters(
+    cls_boundary_conditions.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    cahn_hilliard_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_time_harmonic_electromagnetics.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
@@ -121,12 +133,12 @@ public:
     mesh_box_refinement =
       std::make_shared<Parameters::MeshBoxRefinement<dim>>();
     mesh_box_refinement->declare_parameters(prm);
-    for (auto physics_name : nonlinear_physics_names)
+    for (const auto &physics_name : nonlinear_physics_names)
       {
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
         Parameters::NonLinearSolver::declare_parameters(prm, physics_name);
       }
-    for (auto physics_name : linear_physics_names)
+    for (const auto &physics_name : linear_physics_names)
       {
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
       }
@@ -138,7 +150,7 @@ public:
       }
 
     post_processing.declare_parameters(prm);
-    Parameters::DynamicFlowControl ::declare_parameters(prm);
+    Parameters::DynamicFlowControl::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
@@ -171,14 +183,14 @@ public:
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
 
-    for (auto physics_name : nonlinear_physics_names)
+    for (const auto &physics_name : nonlinear_physics_names)
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
         physics_solving_strategy[physics_id].parse_parameters(prm,
                                                               physics_name);
       }
-    for (auto physics_name : linear_physics_names)
+    for (const auto &physics_name : linear_physics_names)
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
@@ -208,9 +220,10 @@ public:
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
-    boundary_conditions_tracer.parse_parameters(prm);
-    boundary_conditions_cls.parse_parameters(prm);
-    boundary_conditions_cahn_hilliard.parse_parameters(prm);
+    tracer_boundary_conditions.parse_parameters(prm);
+    qmom_boundary_conditions.parse_parameters(prm);
+    cls_boundary_conditions.parse_parameters(prm);
+    cahn_hilliard_boundary_conditions.parse_parameters(prm);
     boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
@@ -237,12 +250,12 @@ public:
       }
 
     if (not(multiphysics.CLS) && post_processing.postprocessed_fluid ==
-                                   Parameters::FluidIndicator::fluid1)
+                                   Parameters::FluidIndicator::fluid_1)
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n when CLS = false"
           "\n use (default value): set postprocessed fluid = both"
-          "\n or: set postprocessed fluid = fluid 0");
+          "\n or: set postprocessed fluid = fluid_0");
       }
 
     if (physical_properties.number_of_fluids == 2 &&
@@ -297,7 +310,7 @@ public:
                   "Use:\n\n"
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
-                  "    set type = fluid-fluid\n" +
+                  "    set type = fluid_fluid\n" +
                   constant_surface_tension_model + "  end\n");
               }
             else if (multiphysics.CLS &&
@@ -332,7 +345,7 @@ public:
                       "subsection physical properties\n "
                       "Use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       constant_surface_tension_model + "  end\n");
                   }
               }
@@ -349,13 +362,13 @@ public:
                   "effect. In subsection physical properties, use:\n\n"
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
-                  "    set type = fluid-fluid\n" +
+                  "    set type = fluid_fluid\n" +
                   linear_surface_tension_model +
                   "\n"
                   "or: \n\n"
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
-                  "    set type = fluid-fluid\n" +
+                  "    set type = fluid_fluid\n" +
                   phase_change_surface_tension_model + "  end\n");
               }
             else
@@ -370,13 +383,13 @@ public:
                       "physical properties. This is necessary to account for Marangoni\n "
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       linear_surface_tension_model +
                       "\n"
                       "or:\n\n"
                       "  set number of material interactions = 1\n"
                       "  subsection material interaction 0\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       phase_change_surface_tension_model + "  end\n");
                   }
                 if (is_constant_surface_tension_model(
@@ -389,13 +402,13 @@ public:
                       "physical properties. This is necessary to account for Marangoni \n "
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       linear_surface_tension_model +
                       "\n"
                       "or:\n\n"
                       "  set number of material interactions = 1\n"
                       "  subsection material interaction 0\n"
-                      "    set type = fluid-fluid\n" +
+                      "    set type = fluid_fluid\n" +
                       phase_change_surface_tension_model + "  end\n");
                   }
               }
@@ -418,7 +431,7 @@ public:
           "subsection physical properties\n "
           "Use:\n\n"
           "  subsection material interaction $material_interaction_id\n"
-          "    set type = fluid-fluid\n"
+          "    set type = fluid_fluid\n"
           "    subsection fluid-fluid interaction\n"
           "      set first fluid id                     = 0\n"
           "      set second fluid id                    = 1\n"
@@ -492,6 +505,24 @@ public:
           }
       }
 
+    // The isothermal compressible assemblers, which are used whenever the
+    // density is not constant, do not apply the pressure scaling factor to the
+    // pressure columns of the Jacobian. The pressure degrees of freedom of the
+    // Newton correction would nevertheless be rescaled after the linear solve,
+    // so the factor is rejected rather than ignored.
+    if (!physical_properties_manager.density_is_constant())
+      {
+        constexpr double pressure_scaling_tolerance = 1e-8;
+        AssertThrow(
+          std::abs(stabilization.pressure_scaling_factor - 1.) <
+            pressure_scaling_tolerance,
+          ExcMessage(
+            "Inconsistency in .prm!\n "
+            "The 'pressure scaling factor' parameter of the 'stabilization'\n "
+            "subsection is not supported with a non-constant density model\n "
+            "(isothermal_ideal_gas). Set it to 1."));
+      }
+
     if (simulation_control.adapt_with_capillary_time_step_ratio)
       AssertThrow(
         (multiphysics.cls_parameters.surface_tension_force.enable &&
@@ -502,11 +533,11 @@ public:
 
     AssertThrow(
       velocity_sources.fluid_with_phase_change ==
-          Parameters::FluidIndicator::fluid0 ||
+          Parameters::FluidIndicator::fluid_0 ||
         multiphysics.CLS,
       ExcMessage(
         "Inconsistency in .prm!\n"
-        "The 'cls' multiphysics is disabled and the 'fluid with phase change' parameter (subsection velocity source) has not been to 'fluid 0'."));
+        "The 'cls' multiphysics is disabled and the 'fluid with phase change' parameter (subsection velocity source) has not been to 'fluid_0'."));
 
     // For isocontour bounding boxes
     if (post_processing.isocontour_bounding_boxes
@@ -581,13 +612,15 @@ public:
 private:
   Parameters::PhysicalProperties physical_properties;
   // names for the physics supported by Lethe
-  std::vector<std::string> nonlinear_physics_names = {"fluid dynamics",
-                                                      "heat transfer",
-                                                      "tracer",
-                                                      "CLS",
-                                                      "cahn hilliard",
-                                                      "void fraction"};
-  std::vector<std::string> linear_physics_names    = {"electromagnetics"};
+  std::vector<std::string> nonlinear_physics_names = {
+    "fluid dynamics",
+    "heat transfer",
+    "tracer",
+    "CLS",
+    "cahn hilliard",
+    "void fraction",
+    "continuum solid dynamics"};
+  std::vector<std::string> linear_physics_names = {"electromagnetics", "qmom"};
   // Names of subequations within CLS that inherits from PhysicsSolver
   std::vector<std::string> cls_subequations_names = {
     "CLS PDE-based interface reinitialization"};

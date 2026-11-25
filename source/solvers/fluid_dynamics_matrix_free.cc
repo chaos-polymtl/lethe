@@ -787,10 +787,10 @@ void
 MFNavierStokesPreconditionGMGBase<dim>::reinit(
   const std::shared_ptr<Mapping<dim>>              &mapping,
   const std::shared_ptr<Quadrature<dim>>           &cell_quadrature,
-  const std::shared_ptr<Function<dim>>              forcing_function,
+  const std::shared_ptr<Function<dim>>             &forcing_function,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const std::shared_ptr<FESystem<dim>>              fe)
+  const std::shared_ptr<FESystem<dim>>             &fe)
 {
   AssertThrow(*cell_quadrature ==
                 QGauss<dim>(this->dof_handler.get_fe().degree + 1),
@@ -1027,7 +1027,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       for (auto const &[id, type] :
            this->simulation_parameters.boundary_conditions.type)
         {
-          if (type == BoundaryConditions::BoundaryType::slip)
+          if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
             {
               std::set<types::boundary_id> no_normal_flux_boundaries;
               no_normal_flux_boundaries.insert(id);
@@ -1061,45 +1061,54 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     levels[level].first, temp_constraints);
                 }
             }
-          else if (type == BoundaryConditions::BoundaryType::periodic)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::periodic)
             {
               /*already taken into account when mg_constrained_dofs is
                * initialized*/
             }
-          else if (type == BoundaryConditions::BoundaryType::periodic_neighbor)
+          else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                             periodic_neighbor)
             {
               /*already taken into account when mg_constrained_dofs is
                * initialized*/
             }
-          else if (type == BoundaryConditions::BoundaryType::pressure)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::pressure)
             {
               /*The pressure boundary condition is implemented in the
                * operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::function_weak)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
             {
               /*The function weak boundary condition is implemented in the
                * operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::neumann_traction)
+          else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                             neumann_traction)
             {
               /*The Neumann traction boundary condition is implemented in the
                * operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::partial_slip)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
             {
               AssertThrow(
                 false,
                 ExcMessage(
                   "Partial slip boundary conditions are not supported by the matrix free application."));
             }
-          else if (type == BoundaryConditions::BoundaryType::outlet)
+          else if (type ==
+                   BoundaryConditions::FluidDynamicsBoundaryType::outlet)
             {
               /*The directional do-nothing boundary condition is implemented in
                * the operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::noslip ||
-                   type == BoundaryConditions::BoundaryType::function)
+          else if (type ==
+                     BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
+                   type ==
+                     BoundaryConditions::FluidDynamicsBoundaryType::function)
             {
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
 
@@ -1253,7 +1262,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            true,
+            // The residual is never evaluated on the multigrid levels
+            false,
             this->simulation_parameters.mortar_parameters.enable);
 
           this->ls_mg_operators[level].initialize(*(this->mg_operators)[level]);
@@ -1482,7 +1492,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             {
               this->dof_handlers[l].distribute_dofs(
                 FESystem<dim>(FE_Q<dim>(levels[l].second), dim + 1));
-              DoFRenumbering::Cuthill_McKee(this->dof_handlers[l]);
+
+              // The Cuthill-McKee renumbering only benefits the matrix-based
+              // coarse-grid solvers and preconditioners. It is expensive on
+              // fine levels and is therefore only applied to the coarsest
+              // level. The finest level keeps the numbering of distribute_dofs,
+              // like the DoF handler of the solver, since the transfer to the
+              // finest level assumes that both numberings are identical.
+              if (l == this->minlevel && this->minlevel != this->maxlevel)
+                DoFRenumbering::Cuthill_McKee(this->dof_handlers[l]);
             }
         }
 
@@ -1592,7 +1610,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           for (auto const &[id, type] :
                this->simulation_parameters.boundary_conditions.type)
             {
-              if (type == BoundaryConditions::BoundaryType::slip)
+              if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
                 {
                   std::set<types::boundary_id> no_normal_flux_boundaries;
                   no_normal_flux_boundaries.insert(id);
@@ -1605,7 +1623,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     *level_mapping,
                     this->use_manifold_for_normal);
                 }
-              else if (type == BoundaryConditions::BoundaryType::periodic)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::periodic)
                 {
                   const auto &periodic_boundary =
                     this->simulation_parameters.boundary_conditions
@@ -1617,41 +1636,46 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     periodic_boundary.direction,
                     level_constraint);
                 }
-              else if (type ==
-                       BoundaryConditions::BoundaryType::periodic_neighbor)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 periodic_neighbor)
                 {
                   /*already taken into account in the previous else if*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::pressure)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::pressure)
                 {
                   /*The pressure boundary condition is implemented in
                    * the operators*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::function_weak)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 function_weak)
                 {
                   /*The function weak boundary condition is implemented in
                    * the operators*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::partial_slip)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 partial_slip)
                 {
                   AssertThrow(
                     false,
                     ExcMessage(
                       "Partial slip boundary conditions are not supported by the matrix free application."));
                 }
-              else if (type == BoundaryConditions::BoundaryType::outlet)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::outlet)
                 {
                   /*The directional do-nothing boundary condition is implemented
                    * in the operators*/
                 }
-              else if (type ==
-                       BoundaryConditions::BoundaryType::neumann_traction)
+              else if (type == BoundaryConditions::FluidDynamicsBoundaryType::
+                                 neumann_traction)
                 {
                   /*The Neumann traction boundary condition is implemented in
                    * the operators*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::noslip ||
-                       type == BoundaryConditions::BoundaryType::function)
+              else if (
+                type == BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
+                type == BoundaryConditions::FluidDynamicsBoundaryType::function)
                 {
                   VectorTools::interpolate_boundary_values(
                     *level_mapping,
@@ -1661,7 +1685,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     level_constraint,
                     fe->component_mask(velocities));
                 }
-              else if (type == BoundaryConditions::BoundaryType::none)
+              else if (type ==
+                       BoundaryConditions::FluidDynamicsBoundaryType::none)
                 {
                   /*Default boundary condition*/
                 }
@@ -1774,7 +1799,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            true,
+            // The residual is never evaluated on the multigrid levels
+            false,
             enable_mortar_on_level);
 
           this->mg_setup_timer.leave_subsection("Set up operators");
@@ -1871,7 +1897,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
 
   const bool use_chebyshev =
     smoother_preconditioner_type ==
-    Parameters::LinearSolver::MultigridSmootherPreconditionerType::Chebyshev;
+    Parameters::LinearSolver::MultigridSmootherPreconditionerType::chebyshev;
 
   // Build the per-level inner preconditioner. The inverse diagonal is used both
   // for the InverseDiagonal relaxation smoother and as the inner preconditioner
@@ -1880,7 +1906,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
     {
       if (smoother_preconditioner_type ==
             Parameters::LinearSolver::MultigridSmootherPreconditionerType::
-              InverseDiagonal ||
+              inverse_diagonal ||
           use_chebyshev)
         {
           MGVectorType diagonal_vector;
@@ -1890,7 +1916,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
         }
       else if (smoother_preconditioner_type ==
                Parameters::LinearSolver::MultigridSmootherPreconditionerType::
-                 AdditiveSchwarzMethod)
+                 additive_schwarz_method)
         {
           if (mg_smoother_preconditioners[level] == nullptr)
             mg_smoother_preconditioners[level] =
@@ -2070,12 +2096,18 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
         std::make_shared<SolverGMRES<TrilinosVectorType>>(
           *this->coarse_grid_solver_control, solver_parameters);
 
+      // The matrix of the coarse level is assembled once and shared by the
+      // GMRES solver and its preconditioner, since get_system_matrix()
+      // reassembles it at every call.
+      const TrilinosWrappers::SparseMatrix &coarse_matrix =
+        this->mg_operators[this->minlevel]->get_system_matrix();
+
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_gmres_preconditioner ==
           Parameters::LinearSolver::PreconditionerType::amg)
         {
-          setup_AMG();
+          setup_AMG(coarse_matrix);
 
           this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
             MGVectorType,
@@ -2083,7 +2115,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
             TrilinosWrappers::SparseMatrix,
             PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
-            this->mg_operators[this->minlevel]->get_system_matrix(),
+            coarse_matrix,
             *this->coarse_grid_precondition);
         }
       else if (this->simulation_parameters.linear_solver
@@ -2091,7 +2123,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
                  .mg_gmres_preconditioner ==
                Parameters::LinearSolver::PreconditionerType::ilu)
         {
-          setup_ILU();
+          setup_ILU(coarse_matrix);
 
           this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
             MGVectorType,
@@ -2099,7 +2131,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
             TrilinosWrappers::SparseMatrix,
             PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
-            this->mg_operators[this->minlevel]->get_system_matrix(),
+            coarse_matrix,
             *this->coarse_grid_precondition);
         }
     }
@@ -2108,7 +2140,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
              .mg_coarse_grid_solver ==
            Parameters::LinearSolver::CoarseGridSolverType::amg)
     {
-      setup_AMG();
+      setup_AMG(this->mg_operators[this->minlevel]->get_system_matrix());
 
       this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
@@ -2118,7 +2150,7 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
              .mg_coarse_grid_solver ==
            Parameters::LinearSolver::CoarseGridSolverType::ilu)
     {
-      setup_ILU();
+      setup_ILU(this->mg_operators[this->minlevel]->get_system_matrix());
 
       this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
@@ -2452,13 +2484,10 @@ MFNavierStokesPreconditionGMGBase<dim>::get_mg_smoother_preconditioners() const
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
+MFNavierStokesPreconditionGMGBase<dim>::setup_AMG(
+  const TrilinosWrappers::SparseMatrix &min_level_matrix)
 {
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-
-  // Extract matrix of the minlevel to avoid building it twice
-  const TrilinosWrappers::SparseMatrix &min_level_matrix =
-    this->mg_operators[this->minlevel]->get_system_matrix();
 
   if (!this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .mg_amg_use_default_parameters)
@@ -2561,7 +2590,8 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
 
 template <int dim>
 void
-MFNavierStokesPreconditionGMGBase<dim>::setup_ILU()
+MFNavierStokesPreconditionGMGBase<dim>::setup_ILU(
+  const TrilinosWrappers::SparseMatrix &min_level_matrix)
 {
   int current_preconditioner_fill_level =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -2577,9 +2607,7 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_ILU()
 
   auto precondition_ilu = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  precondition_ilu->initialize(
-    this->mg_operators[this->minlevel]->get_system_matrix(),
-    preconditionerOptions);
+  precondition_ilu->initialize(min_level_matrix, preconditionerOptions);
 
   coarse_grid_precondition =
     std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
@@ -2728,38 +2756,44 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
       const unsigned int min_level = this->minlevel;
       const unsigned int max_level = this->maxlevel;
 
-      this->temperature_dof_handlers.resize(min_level, max_level);
-
-      for (unsigned int l = min_level; l <= max_level; l++)
+      // The level DoF handlers and the transfer only depend on the mesh, they
+      // are built once for this preconditioner object.
+      if (!this->mg_transfer_gc_temperature)
         {
-          this->temperature_dof_handlers[l].reinit(
-            this->dof_handlers[l].get_triangulation());
-          this->temperature_dof_handlers[l].distribute_dofs(
-            temperature_dof_handler.get_fe());
-          DoFRenumbering::Cuthill_McKee(this->temperature_dof_handlers[l]);
+          this->temperature_dof_handlers.resize(min_level, max_level);
+
+          for (unsigned int l = min_level; l <= max_level; l++)
+            {
+              this->temperature_dof_handlers[l].reinit(
+                this->dof_handlers[l].get_triangulation());
+              this->temperature_dof_handlers[l].distribute_dofs(
+                temperature_dof_handler.get_fe());
+              DoFRenumbering::Cuthill_McKee(this->temperature_dof_handlers[l]);
+            }
+
+          this->transfers_temperature.resize(min_level, max_level);
+
+          for (unsigned int l = min_level; l < max_level; l++)
+            {
+              this->transfers_temperature[l + 1].reinit(
+                this->temperature_dof_handlers[l + 1],
+                this->temperature_dof_handlers[l],
+                {},
+                {});
+            }
+
+          this->mg_transfer_gc_temperature =
+            std::make_shared<GCTransferType>(this->transfers_temperature);
+
+          this->mg_transfer_gc_temperature->build(
+            temperature_dof_handler, [&](const auto l, auto &vec) {
+              vec.reinit(
+                this->temperature_dof_handlers[l].locally_owned_dofs(),
+                DoFTools::extract_locally_active_dofs(
+                  this->temperature_dof_handlers[l]),
+                this->temperature_dof_handlers[l].get_mpi_communicator());
+            });
         }
-
-      this->transfers_temperature.resize(min_level, max_level);
-
-      for (unsigned int l = min_level; l < max_level; l++)
-        {
-          this->transfers_temperature[l + 1].reinit(
-            this->temperature_dof_handlers[l + 1],
-            this->temperature_dof_handlers[l],
-            {},
-            {});
-        }
-
-      this->mg_transfer_gc_temperature =
-        std::make_shared<GCTransferType>(this->transfers_temperature);
-
-      this->mg_transfer_gc_temperature->build(
-        temperature_dof_handler, [&](const auto l, auto &vec) {
-          vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
-                     DoFTools::extract_locally_active_dofs(
-                       this->temperature_dof_handlers[l]),
-                     this->temperature_dof_handlers[l].get_mpi_communicator());
-        });
 
       MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
                                                           this->maxlevel);
@@ -2924,6 +2958,19 @@ FluidDynamicsMatrixFree<dim>::update_multi_stage_solution(double time_step)
 
 template <int dim>
 void
+FluidDynamicsMatrixFree<dim>::update_forcing_and_boundary_conditions()
+{
+  NavierStokesBase<dim, VectorType, IndexSet>::
+    update_forcing_and_boundary_conditions();
+
+  // The forcing term is precomputed by the operator, it must be recomputed for
+  // a time-dependent forcing function to be accounted for.
+  if (this->forcing_function)
+    this->system_operator->compute_forcing_term();
+}
+
+template <int dim>
+void
 FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
@@ -2967,11 +3014,9 @@ FluidDynamicsMatrixFree<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      if (this->forcing_function)
-        this->forcing_function->set_time(
-          this->simulation_control->get_current_time());
-
-      this->update_boundary_conditions();
+      // We allow the physics to update their forcing and boundary conditions
+      // according to their own parameters
+      this->update_forcing_and_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
       this->simulation_control->print_progression(this->pcout);
@@ -3039,9 +3084,14 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // Clear matrix free operator
   this->system_operator->clear();
 
-  // Fill the dof handler and initialize vectors
+  // Fill the dof handler and initialize vectors. The Cuthill-McKee
+  // renumbering is expensive and does not benefit the matrix-free operators, it
+  // is skipped with the global coarsening multigrid, whose finest level uses
+  // the numbering of distribute_dofs as well.
   this->dof_handler->distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner != Parameters::LinearSolver::PreconditionerType::gcmg)
+    DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -3083,7 +3133,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::partial_slip)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
         {
           AssertThrow(
             false,
@@ -3145,11 +3195,9 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      this->average_velocities->initialize_vectors(
-        this->locally_owned_dofs,
-        this->locally_relevant_dofs,
-        this->fe->n_dofs_per_vertex(),
-        this->mpi_communicator);
+      this->average_velocities->initialize_vectors(this->locally_owned_dofs,
+                                                   this->locally_relevant_dofs,
+                                                   this->mpi_communicator);
 
       // Intialize Trilinos vectors used to pass average velocities to
       // multiphysics interface
@@ -3289,6 +3337,10 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       this->pcout << "************************" << std::endl;
       this->pcout << "---> Simulation Restart " << std::endl;
       this->pcout << "************************" << std::endl;
+      this->checkpoint_controller.read(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
       this->read_checkpoint();
     }
   else if (initial_condition_type ==
@@ -3874,8 +3926,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
     }
   const double non_rescaled_linear_solver_tolerance =
     linear_solver_tolerance * rescale_metric;
-  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
-                                                   this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
@@ -4009,8 +4059,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_BiCGStab(
     }
   const double non_rescaled_linear_solver_tolerance =
     linear_solver_tolerance * rescale_metric;
-  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
-                                                   this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)

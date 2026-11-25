@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_copy_data_h
 #define lethe_copy_data_h
 
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/lapack_full_matrix.h>
 #include <deal.II/lac/vector.h>
 
 #include <vector>
@@ -94,9 +95,9 @@ public:
     local_rhs    = 0;
 
     strong_residual = 0;
-    for (unsigned int i = 0; i < strong_jacobian.size(); ++i)
+    for (auto &jacobian : strong_jacobian)
       {
-        strong_jacobian[i] = 0;
+        jacobian = 0;
       }
   }
 
@@ -146,6 +147,57 @@ public:
   };
 
   std::vector<CopyDataFace> face_data;
+};
+
+/**
+ * @brief Local contributions of one cell to the transport matrix, shared by
+ * all the QMOM components, and to the right-hand side of every component. The
+ * contributions of the interior faces to the matrix are stored separately,
+ * since they couple the degrees of freedom of two cells.
+ */
+class QMOMCopyData
+{
+public:
+  /**
+   * @brief Allocate the cell contributions.
+   *
+   * @param[in] n_dofs Number of degrees of freedom of a cell.
+   * @param[in] n_components Number of QMOM components (scalars and moments).
+   */
+  QMOMCopyData(const unsigned int n_dofs, const unsigned int n_components)
+    : local_matrix(n_dofs, n_dofs)
+    , local_rhs(n_components, Vector<double>(n_dofs))
+    , local_dof_indices(n_dofs)
+  {}
+
+  /// Contributions of the cell and of its boundary faces to the matrix
+  FullMatrix<double> local_matrix;
+
+  /// Contributions of the cell and of its boundary faces to the right-hand
+  /// side of every component: local_rhs[component]
+  std::vector<Vector<double>> local_rhs;
+
+  /// Global indices of the degrees of freedom of the cell
+  std::vector<types::global_dof_index> local_dof_indices;
+
+  /// Whether the cell is locally owned, i.e. whether local_matrix and
+  /// local_rhs are valid
+  bool cell_is_local = false;
+
+  /// Contributions of an interior face to the degrees of freedom of the two
+  /// cells that share it
+  struct FaceData
+  {
+    /// Face contributions to the matrix, ordered as the interface degrees of
+    /// freedom
+    FullMatrix<double> face_matrix;
+
+    /// Global indices of the interface degrees of freedom
+    std::vector<types::global_dof_index> joint_dof_indices;
+  };
+
+  /// Contributions of the interior faces assembled with the cell
+  std::vector<FaceData> face_data;
 };
 
 /**
@@ -212,6 +264,143 @@ public:
   // if it should indeed copy or not.
   bool cell_is_local;
   bool cell_is_cut;
+};
+
+
+/**
+ * @brief Class responsible for storing the local system of an ultraweak Discontinuous
+ * Petrov-Galerkin (DPG) discretization. The assemblers fill the uncondensed
+ * local system: the Gram matrix of the test space \f$G\f$, the matrices of the
+ * bilinear form in the cell interior \f$B\f$ and on the skeleton \f$\hat{B}\f$,
+ * and the load vector \f$l\f$. The solver then condenses this system on the
+ * skeleton unknowns using the operators \f$M_1 = B^\dagger G^{-1} B\f$,
+ * \f$M_2 = B^\dagger G^{-1} \hat{B}\f$, \f$M_3 = \hat{B}^\dagger G^{-1}
+ *\hat{B}\f$, and the vectors \f$M_4 l = B^\dagger G^{-1} l\f$ and \f$M_5 l =
+ *\hat{B}^\dagger G^{-1} l\f$, and stores either the condensed skeleton system
+ *(assembly) or the reconstructed interior solution (interior reconstruction).
+ **/
+class DPGCopyData
+{
+public:
+  /**
+   * @brief Constructor. Allocates the memory of all the local matrices and
+   * vectors from the number of degrees of freedom per cell of each finite
+   * element space.
+   *
+   * @param[in] n_dofs_test Number of degrees of freedom per cell of the test
+   * space.
+   *
+   * @param[in] n_dofs_trial_interior Number of degrees of freedom per cell of
+   * the interior trial space.
+   *
+   * @param[in] n_dofs_trial_skeleton Number of degrees of freedom per cell of
+   * the skeleton trial space.
+   */
+  DPGCopyData(const unsigned int n_dofs_test,
+              const unsigned int n_dofs_trial_interior,
+              const unsigned int n_dofs_trial_skeleton)
+    : G_matrix(n_dofs_test, n_dofs_test)
+    , B_matrix(n_dofs_test, n_dofs_trial_interior)
+    , B_hat_matrix(n_dofs_test, n_dofs_trial_skeleton)
+    , l_vector(n_dofs_test)
+    , G_inverse_B(n_dofs_test, n_dofs_trial_interior)
+    , G_inverse_B_hat(n_dofs_test, n_dofs_trial_skeleton)
+    , M1_matrix(n_dofs_trial_interior, n_dofs_trial_interior)
+    , M2_matrix(n_dofs_trial_interior, n_dofs_trial_skeleton)
+    , M3_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
+    , M4_l(n_dofs_trial_interior)
+    , M5_l(n_dofs_trial_skeleton)
+    , M1_inverse_M2(n_dofs_trial_interior, n_dofs_trial_skeleton)
+    , tmp_matrix_M2M1M2(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
+    , local_matrix(n_dofs_trial_skeleton, n_dofs_trial_skeleton)
+    , local_rhs(n_dofs_trial_skeleton)
+    , local_dof_indices(n_dofs_trial_skeleton)
+    , local_skeleton_solution(n_dofs_trial_skeleton)
+    , local_interior_rhs(n_dofs_trial_interior)
+    , local_interior_solution(n_dofs_trial_interior)
+    , tmp_vector_reconstruction(n_dofs_test)
+    , local_residual(n_dofs_test)
+    , local_dof_indices_trial_interior(n_dofs_trial_interior)
+    , local_residual_norm_squared(0.)
+    , active_cell_index(0)
+    , cell_is_local(false){};
+
+  /**
+   * @brief Resets the uncondensed local system to zero. The \f$M_1\f$ matrix
+   * is also reset since LAPACKFullMatrix keeps track of its factorization
+   * status and forbids writing into it or factorizing it again once it has
+   * been factorized.
+   */
+  void
+  reset()
+  {
+    G_matrix     = 0;
+    B_matrix     = 0;
+    B_hat_matrix = 0;
+    l_vector     = 0;
+    M1_matrix    = 0;
+  }
+
+  // Local Gram matrix
+  LAPACKFullMatrix<double> G_matrix;
+  // Local interior bilinear form matrix
+  LAPACKFullMatrix<double> B_matrix;
+  // Local skeleton bilinear form matrix
+  LAPACKFullMatrix<double> B_hat_matrix;
+  // Local load vector
+  Vector<double> l_vector;
+
+  // Solution of G X = B with the Cholesky factorization of G
+  LAPACKFullMatrix<double> G_inverse_B;
+  // Solution of G X = B_hat with the Cholesky factorization of G
+  LAPACKFullMatrix<double> G_inverse_B_hat;
+
+  // Static condensation matrix 1 \f$M_1 = B^\dagger G^{-1} B\f$
+  LAPACKFullMatrix<double> M1_matrix;
+  // Static condensation matrix 2 \f$M_2 = B^\dagger G^{-1} \hat{B}\f$
+  LAPACKFullMatrix<double> M2_matrix;
+  // Static condensation matrix 3 \f$M_3 = \hat{B}^\dagger G^{-1} \hat{B}\f$
+  LAPACKFullMatrix<double> M3_matrix;
+  // Static condensation vector \f$M_4 l = B^\dagger G^{-1} l\f$
+  Vector<double> M4_l;
+  // Static condensation vector \f$M_5 l = \hat{B}^\dagger G^{-1} l\f$
+  Vector<double> M5_l;
+  // Solution of M_1 X = M_2 with the Cholesky factorization of M_1
+  LAPACKFullMatrix<double> M1_inverse_M2;
+  // Temporary matrix product M_2^\dagger M_1^{-1} M_2
+  LAPACKFullMatrix<double> tmp_matrix_M2M1M2;
+
+  // Cell condensed skeleton system
+  FullMatrix<double> local_matrix;
+  // Cell condensed skeleton right-hand side
+  Vector<double> local_rhs;
+  // Cell dof indices of the skeleton trial space
+  std::vector<types::global_dof_index> local_dof_indices;
+
+  // Cell skeleton solution
+  Vector<double> local_skeleton_solution;
+  // Cell interior right-hand side
+  Vector<double> local_interior_rhs;
+  // Cell interior solution
+  Vector<double> local_interior_solution;
+  // Temporary vector of the test space used for the products B_hat *
+  // x_skeleton and B * x_interior of the interior reconstruction
+  Vector<double> tmp_vector_reconstruction;
+  // Cell error representation function (Riesz representation of the residual)
+  Vector<double> local_residual;
+  // Cell dof indices of the interior trial space
+  std::vector<types::global_dof_index> local_dof_indices_trial_interior;
+  // Squared norm of the DPG residual, which is the DPG error indicator of the
+  // cell
+  double local_residual_norm_squared;
+  // Index of the active cell being assembled
+  unsigned int active_cell_index;
+
+  // Boolean used to indicate if the cell being assembled is local or not
+  // This information is used to indicate to the copy_local_to_global function
+  // if it should indeed copy or not. It replaces the call to the function
+  // cell->is_locally_owned().
+  bool cell_is_local;
 };
 
 

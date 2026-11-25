@@ -21,9 +21,10 @@ Features
 Files Used In This Example
 --------------------------
 
-The file mentioned below is located in the example's folder (``examples/multiphysics/waveguide``).
+All files mentioned below are located in the example's folder (``examples/multiphysics/waveguide``).
 
 - Base case parameter file (:math:`\mathrm{f=2.45 GHz}` and :math:`\mathrm{TE}_{10}`): ``waveguide.prm``
+- Postprocessing Python script: ``waveguide-postprocessing.py``
 
 
 
@@ -152,8 +153,8 @@ Boundary Conditions
 
 There are three types of boundary conditions in this problem, this explains why the surfaces of the waveguide are sorted in three groups. First, there is the inlet :math:`\Gamma_1`, then the outlet :math:`\Gamma_2` and finally the metal walls :math:`\Gamma_3`.
 
-- Inlet :math:`\Gamma_1`: ``waveguide port`` boundary condition at the inlet of the waveguide to excite the :math:`\mathrm{TE}_{mn}` mode at :math:`z` = 0
-- Outlet :math:`\Gamma_2`: ``impedance boundary`` condition tuned to the waveguide impedance to minimize the reflections (the waveguide is theoretically infinite). The dimensionless admittance in such conditions is:
+- Inlet :math:`\Gamma_1`: ``waveguide_port`` boundary condition at the inlet of the waveguide to excite the :math:`\mathrm{TE}_{mn}` mode at :math:`z` = 0
+- Outlet :math:`\Gamma_2`: ``impedance_boundary`` condition tuned to the waveguide impedance to minimize the reflections (the waveguide is theoretically infinite). The dimensionless admittance in such conditions is:
 
   .. math::
 
@@ -185,11 +186,11 @@ These boundary conditions are specified within the ``boundary conditions time ha
         end
         subsection bc 1
             set id   = 4
-            set type = waveguide port
+            set type = waveguide_port
         end
         subsection bc 2
             set id   = 5
-            set type = impedance boundary
+            set type = impedance_boundary
             subsection excitation x real part
                 set Function expression = 0
             end
@@ -377,5 +378,13 @@ Here is the error of the default setting simulation in function of the element s
     :alt: final graph
     :align: center
 
-As expected, the error is :math:`\mathcal{O}(h^{p+1})` in the :math:`\|L^2\|` norm for the interior trial space, which verifies the implementation of the solver. 
+As expected, the error is :math:`\mathcal{O}(h^{p+1})` in the :math:`\|L^2\|` norm for the interior trial space, which verifies the implementation of the solver.
+
+At the end of the simulation, Lethe prints the table of the :math:`L^2` errors on the real and imaginary parts of the electric and magnetic fields, with their convergence rates. The script ``waveguide-postprocessing.py`` reads this table from the output of the simulation and plots the errors with the expected order of convergence. To use it, write the output of the simulation in a file, then launch the script with the degree of the trial space:
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 10 lethe-fluid waveguide.prm | tee log
+  python3 waveguide-postprocessing.py --log log --degree 1
 

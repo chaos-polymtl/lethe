@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_mesh_controller_h
@@ -21,8 +21,7 @@ public:
     , previous_number_of_elements(0)
     , previous_mesh_control_error(0.0)
   {}
-  virtual ~MeshController()
-  {}
+  virtual ~MeshController() = default;
   /**
    * @brief Returns the coarsening factor.
    */

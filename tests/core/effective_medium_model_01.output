@@ -1,0 +1,115 @@
+
+DEAL::Test 1: Bruggeman model against reference values
+DEAL::Lossless fluid and conductive dispersed phase, void fraction 0.450000
+DEAL::Permittivity
+DEAL::  computed : 3.09513 + 0.148174 i
+DEAL::  expected : 3.09513 + 0.148174 i
+DEAL::Permeability
+DEAL::  computed : 1.50097 + 0.226882 i
+DEAL::  expected : 1.50097 + 0.226882 i
+DEAL::Phases of the time_harmonic_maxwell_waveguide_bruggeman application test, void fraction 0.600000
+DEAL::Permittivity
+DEAL::  computed : 1.00000 + 0.0800000 i
+DEAL::  expected : 1.00000 + 0.0800000 i
+DEAL::Permeability
+DEAL::  computed : 1.00000 + 0.0200000 i
+DEAL::  expected : 1.00000 + 0.0200000 i
+DEAL::Lossless fluid, limit of the fluid, void fraction 1.00000
+DEAL::Permittivity
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Permeability
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Lossless fluid, limit of the dispersed phase, void fraction 0.00000
+DEAL::Permittivity
+DEAL::  computed : 4.00000 + 0.700000 i
+DEAL::  expected : 4.00000 + 0.700000 i
+DEAL::Permeability
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Lossless fluid, clamping of the void fraction above 1, void fraction 1.20000
+DEAL::Permittivity
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Permeability
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Lossless fluid, clamping of the void fraction below 0, void fraction -0.200000
+DEAL::Permittivity
+DEAL::  computed : 4.00000 + 0.700000 i
+DEAL::  expected : 4.00000 + 0.700000 i
+DEAL::Permeability
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Lossless dispersed phase, limit of the dispersed phase, void fraction 0.00000
+DEAL::Permittivity
+DEAL::  computed : 3.00000 + 0.00000 i
+DEAL::  expected : 3.00000 + 0.00000 i
+DEAL::Permeability
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Lossless dispersed phase, limit of the fluid, void fraction 1.00000
+DEAL::Permittivity
+DEAL::  computed : 1.00000 + 0.300000 i
+DEAL::  expected : 1.00000 + 0.300000 i
+DEAL::Permeability
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::Temperature-dependent phases, temperature 80, void fraction 0.450000
+DEAL::Permittivity
+DEAL::  computed : 3.31542 + 0.309870 i
+DEAL::  expected : 3.31542 + 0.309870 i
+DEAL::Permeability
+DEAL::  computed : 1.35289 + 0.217786 i
+DEAL::  expected : 1.35289 + 0.217786 i
+DEAL::
+DEAL::Test 2: vector evaluation of the Bruggeman model
+DEAL::Permittivity, void fraction 0.00000
+DEAL::  computed : 6.00000 + 0.400000 i
+DEAL::  expected : 6.00000 + 0.400000 i
+DEAL::Permittivity, void fraction 0.300000
+DEAL::  computed : 4.00035 + 0.227351 i
+DEAL::  expected : 4.00035 + 0.227351 i
+DEAL::Permittivity, void fraction 0.450000
+DEAL::  computed : 3.09513 + 0.148174 i
+DEAL::  expected : 3.09513 + 0.148174 i
+DEAL::Permittivity, void fraction 0.800000
+DEAL::  computed : 1.50067 + 0.0228331 i
+DEAL::  expected : 1.50067 + 0.0228331 i
+DEAL::Permittivity, void fraction 1.00000
+DEAL::  computed : 1.00000 + 0.00000 i
+DEAL::  expected : 1.00000 + 0.00000 i
+DEAL::
+DEAL::Test 3: none model
+DEAL::Permittivity, void fraction 0.300000
+DEAL::  computed : 2.00000 + 0.150000 i
+DEAL::  expected : 2.00000 + 0.150000 i
+DEAL::Permeability, void fraction 0.300000
+DEAL::  computed : 1.50000 + 0.200000 i
+DEAL::  expected : 1.50000 + 0.200000 i
+DEAL::
+DEAL::Test 4: field dependencies of the models
+DEAL::Bruggeman permittivity (real part) depends on the void fraction
+DEAL::  computed : true
+DEAL::  expected : true
+DEAL::Bruggeman permittivity (real part) depends on the temperature
+DEAL::  computed : true
+DEAL::  expected : true
+DEAL::Bruggeman permittivity (imaginary part) depends on the temperature
+DEAL::  computed : true
+DEAL::  expected : true
+DEAL::Bruggeman permeability (real part) depends on the void fraction
+DEAL::  computed : true
+DEAL::  expected : true
+DEAL::Bruggeman permeability (real part) depends on the temperature
+DEAL::  computed : false
+DEAL::  expected : false
+DEAL::None permittivity (real part) depends on the void fraction
+DEAL::  computed : false
+DEAL::  expected : false
+DEAL::None permittivity (real part) depends on the temperature
+DEAL::  computed : false
+DEAL::  expected : false
+DEAL::
+DEAL::OK

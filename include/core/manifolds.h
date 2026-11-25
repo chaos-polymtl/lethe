@@ -61,12 +61,30 @@ namespace Parameters
     void
     parse_boundary(const ParameterHandler &prm);
 
+    /**
+     * @brief Declare the default parameters for one manifold subsection.
+     *
+     * @param[in,out] prm Parameter handler object.
+     * @param[in] i_bc Index of the manifold subsection.
+     */
     static void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
 
+    /**
+     * @brief Declare the manifold parameters.
+     *
+     * @param[in,out] prm Parameter handler object.
+     * @param[in] subsection_max_size Maximum number of manifold subsections to
+     * declare.
+     */
     void
     declare_parameters(ParameterHandler &prm, unsigned int subsection_max_size);
 
+    /**
+     * @brief Parse the manifold parameters.
+     *
+     * @param[in] prm Parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };

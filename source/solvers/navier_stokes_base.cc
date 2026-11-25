@@ -6,6 +6,7 @@
 #include <core/lethe_grid_tools.h>
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
+#include <core/sdirk_stage_data.h>
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -41,6 +42,8 @@
 
 #include <sys/stat.h>
 
+#include <string>
+
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -60,6 +63,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                     TimerOutput::wall_times)
   , simulation_parameters(p_nsparam)
   , flow_control(simulation_parameters.flow_control)
+  , checkpoint_controller(simulation_parameters.restart_parameters)
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_degree)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_degree)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_degree + 1)
@@ -182,6 +186,13 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   if (this->simulation_parameters.mortar_parameters.enable)
     this->use_manifold_for_normal = false;
 
+  // The rotor position of the mortar method is only updated once per time
+  // step, whereas the stages of an SDIRK method require it at the stage times.
+  AssertThrow(!(this->simulation_parameters.mortar_parameters.enable &&
+                this->simulation_control->is_sdirk()),
+              ExcMessage("SDIRK time-stepping methods are not supported with "
+                         "the mortar method. Use a BDF method instead."));
+
   if (this->simulation_control->is_sdirk())
     {
       // Pre-allocate memory for the previous k_j solutions using the number of
@@ -260,7 +271,7 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 template <int dim, typename VectorType, typename DofsType>
 bool
 NavierStokesBase<dim, VectorType, DofsType>::check_existance_of_bc(
-  BoundaryConditions::BoundaryType bc)
+  BoundaryConditions::FluidDynamicsBoundaryType bc)
 {
   bool bc_exist = false;
   // Loop over the boundary to check if they need assembler on their face.
@@ -577,14 +588,16 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
                                        *this->get_mapping());
       this->simulation_control->set_CFL(CFL);
     }
-  if (this->simulation_parameters.restart_parameters.checkpoint &&
-      simulation_control->get_iteration_number() != 0 &&
-      (simulation_control->get_iteration_number() %
-           this->simulation_parameters.restart_parameters.frequency ==
-         0 ||
-       simulation_control->is_at_end()))
+  if (simulation_control->get_iteration_number() != 0 &&
+      this->checkpoint_controller.is_checkpoint_time_step(
+        simulation_control->get_iteration_number(),
+        simulation_control->is_at_end()))
     {
       this->write_checkpoint();
+      this->checkpoint_controller.write(
+        this->simulation_parameters.simulation_control.output_folder +
+          this->simulation_parameters.restart_parameters.filename,
+        this->mpi_communicator);
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -595,6 +608,8 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->computing_timer.print_summary();
       this->pcout << std::scientific;
       this->computing_timer.reset();
+
+      multiphysics->output_per_iteration_timer();
     }
 }
 
@@ -649,28 +664,27 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  // The locally_relevant_dofs are used for the assembly,
-  // while the non-locally_relevant_dofs are used for the calculations on the
-  // vectors (addition, multiplication, etc.).
-  const auto         method = this->simulation_control->get_assembly_method();
-  const auto         time_step = this->simulation_control->get_time_step();
-  const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
+  // Solve and percolate the auxiliary physics that should be treated
+  // BEFORE the fluid dynamics
+  multiphysics->solve(false, simulation_parameters.simulation_control.method);
+  multiphysics->percolate_time_vectors(false);
 
-  // For a multi-stages method, at each time iteration, we reset the value of
-  // sum_bi_ki
-  if (n_stages > 1)
-    this->sdirk_vectors.local_sum_bi_ki = 0;
-
-  for (unsigned int stage = 0; stage < n_stages; ++stage)
+  if (simulation_parameters.multiphysics.fluid_dynamics)
     {
-      if (simulation_parameters.multiphysics.fluid_dynamics)
-        {
-          // Solve and percolate the auxiliary physics that should be treated
-          // BEFORE the fluid dynamics
-          multiphysics->solve(false,
-                              simulation_parameters.simulation_control.method);
-          multiphysics->percolate_time_vectors(false);
+      const auto method    = this->simulation_control->get_assembly_method();
+      const auto time_step = this->simulation_control->get_time_step();
+      const unsigned int n_stages =
+        SimulationControl::get_number_of_stages(method);
 
+      // For a multi-stage method, the Butcher tableau provides the time of
+      // each stage, and the sum of b_i * k_i is reset at each time step.
+      const SDIRKTable table =
+        (n_stages > 1) ? sdirk_table(method) : SDIRKTable();
+      if (n_stages > 1)
+        this->sdirk_vectors.local_sum_bi_ki = 0;
+
+      for (unsigned int stage = 0; stage < n_stages; ++stage)
+        {
           if (simulation_parameters.physics_solving_strategy
                   .at(PhysicsID::fluid_dynamics)
                   .verbosity != Parameters::Verbosity::quiet ||
@@ -680,6 +694,11 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 
           if (n_stages > 1)
             {
+              // The forcing and the boundary conditions of a stage are
+              // evaluated at the time of the stage t_n + c_i * dt.
+              this->simulation_control->set_stage_time(table.c[stage]);
+              this->update_forcing_and_boundary_conditions();
+
               // For SDIRK, some variables need to be updated before solving the
               // non-linear system.
               multi_stage_preresolution(stage, method);
@@ -693,52 +712,53 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
               // non-linear system.
               multi_stage_postresolution(stage, method, time_step);
             }
-
-
-          // If the physics need to be solved after the physics, the matrix free
-          // solver requires to update the value here. This is due to the
-          // different type of vectors.
-          if (this->multiphysics->get_active_physics().size() > 1)
-            {
-              this->update_solutions_for_multiphysics();
-            }
-
-          // Solve and percolate the auxiliary physics that should be treated
-          // AFTER the fluid dynamics
-          multiphysics->solve(true,
-                              simulation_parameters.simulation_control.method);
-          // Dear future Bruno, percolating auxiliary physics before fluid
-          // dynamics is necessary because of the checkpointing mechanism. You
-          // spent an evening debugging this, trust me.
-          multiphysics->percolate_time_vectors(true);
         }
-      else
+
+      if (n_stages > 1)
         {
-          // Fluid dynamics is not to be solved, but rather specified. Update
-          // condition and move on.
+          // For SDIRK, the solution is not directly computed with the
+          // non-linear solver. Once we looped over all the stages, we restore
+          // the time to t_{n+1}, update the present_solution vector and
+          // re-impose the forcing and boundary conditions at t_{n+1}.
+          this->simulation_control->end_stages();
+          update_multi_stage_solution(time_step);
+          this->update_forcing_and_boundary_conditions();
+        }
 
-          // Solve and percolate the auxiliary physics that should be treated
-          // BEFORE the fluid dynamics
-          multiphysics->solve(false,
-                              simulation_parameters.simulation_control.method);
-          multiphysics->percolate_time_vectors(false);
-
-          this->set_specified_fluid_dynamics_solution();
-
-          // Solve and percolate the auxiliary physics that should be treated
-          // AFTER the fluid dynamics
-          multiphysics->solve(true,
-                              simulation_parameters.simulation_control.method);
-          multiphysics->percolate_time_vectors(true);
+      // If the physics need to be solved after the physics, the matrix free
+      // solver requires to update the value here. This is due to the
+      // different type of vectors.
+      if (this->multiphysics->get_active_physics().size() > 1)
+        {
+          this->update_solutions_for_multiphysics();
         }
     }
-  if (n_stages > 1)
+  else
     {
-      // For SDIRK, the solution is not directly computed with the non-linear
-      // solver. Once we looped over all the stages, we can finally update the
-      // present_solution vector.
-      update_multi_stage_solution(time_step);
+      // Fluid dynamics is not to be solved, but rather specified. Update
+      // condition and move on.
+      this->set_specified_fluid_dynamics_solution();
     }
+
+  // Solve and percolate the auxiliary physics that should be treated
+  // AFTER the fluid dynamics
+  multiphysics->solve(true, simulation_parameters.simulation_control.method);
+  // Dear future Bruno, percolating auxiliary physics before fluid
+  // dynamics is necessary because of the checkpointing mechanism. You
+  // spent an evening debugging this, trust me.
+  multiphysics->percolate_time_vectors(true);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  update_forcing_and_boundary_conditions()
+{
+  if (this->forcing_function)
+    this->forcing_function->set_time(
+      this->simulation_control->get_current_time());
+
+  this->update_boundary_conditions();
 }
 
 
@@ -1826,7 +1846,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::noslip)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::noslip)
         {
           VectorTools::interpolate_boundary_values(
             *this->get_mapping(),
@@ -1836,7 +1856,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             nonzero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (type == BoundaryConditions::BoundaryType::slip)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
@@ -1848,7 +1868,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             *this->get_mapping(),
             this->use_manifold_for_normal);
         }
-      else if (type == BoundaryConditions::BoundaryType::function)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::function)
         {
           this->simulation_parameters.boundary_conditions
             .navier_stokes_functions.at(id)
@@ -1863,7 +1883,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             *this->get_mapping(),
             *this->dof_handler,
             id,
-            NavierStokesFunctionDefined<dim>(
+            FluidDynamicsVelocityFunctionDefined<dim>(
               &this->simulation_parameters.boundary_conditions
                  .navier_stokes_functions.at(id)
                  ->u,
@@ -1876,7 +1896,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             nonzero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (type == BoundaryConditions::BoundaryType::periodic)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions.periodic_boundaries
@@ -1938,8 +1958,8 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::noslip ||
-          type == BoundaryConditions::BoundaryType::function)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::noslip ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::function)
         {
           VectorTools::interpolate_boundary_values(
             *this->get_mapping(),
@@ -1949,7 +1969,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
             this->zero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (type == BoundaryConditions::BoundaryType::slip)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::slip)
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
@@ -1961,7 +1981,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
             *this->get_mapping(),
             this->use_manifold_for_normal);
         }
-      else if (type == BoundaryConditions::BoundaryType::periodic)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::periodic)
         {
           const auto &periodic_boundary =
             this->simulation_parameters.boundary_conditions.periodic_boundaries
@@ -1972,32 +1992,35 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
                                                  periodic_boundary.direction,
                                                  this->zero_constraints);
         }
-      else if (type == BoundaryConditions::BoundaryType::pressure)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::pressure)
         {
           /*The pressure boundary condition is implemented in the matrix-based
            * assemblers*/
         }
-      else if (type == BoundaryConditions::BoundaryType::function_weak)
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::function_weak)
         {
           /*The function weak boundary condition is implemented in the
            * matrix-based assemblers and the matrix-free operators*/
         }
-      else if (type == BoundaryConditions::BoundaryType::partial_slip)
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::partial_slip)
         {
           /*The partial slip boundary condition is implemented in the
            * matrix-based assemblers*/
         }
-      else if (type == BoundaryConditions::BoundaryType::outlet)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::outlet)
         {
           /*The directional do-nothing boundary condition is implemented
            * in the matrix-based assemblers and the matrix-free operators*/
         }
-      else if (type == BoundaryConditions::BoundaryType::neumann_traction)
+      else if (type ==
+               BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
         {
           /*The Neumann traction boundary condition is implemented
            * in the  matrix-based assemblers and the matrix-free operators*/
         }
-      else if (type == BoundaryConditions::BoundaryType::none)
+      else if (type == BoundaryConditions::FluidDynamicsBoundaryType::none)
         {
           /*Default boundary condition*/
         }
@@ -2143,11 +2166,13 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
        this->simulation_parameters.boundary_conditions.type)
     {
       // Only set the time if it actually makes sense to set the time.
-      if (type == BoundaryConditions::BoundaryType::function ||
-          type == BoundaryConditions::BoundaryType::function_weak ||
-          type == BoundaryConditions::BoundaryType::pressure ||
-          type == BoundaryConditions::BoundaryType::partial_slip ||
-          type == BoundaryConditions::BoundaryType::neumann_traction)
+      if (type == BoundaryConditions::FluidDynamicsBoundaryType::function ||
+          type ==
+            BoundaryConditions::FluidDynamicsBoundaryType::function_weak ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::pressure ||
+          type == BoundaryConditions::FluidDynamicsBoundaryType::partial_slip ||
+          type ==
+            BoundaryConditions::FluidDynamicsBoundaryType::neumann_traction)
         {
           this->simulation_parameters.boundary_conditions
             .navier_stokes_functions.at(id)
@@ -2178,17 +2203,14 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  std::string        prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  const std::string  prefix = this->get_checkpoint_prefix();
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
   if (this->simulation_control->get_output_boundaries())
     {
-      std::string prefix_boundary =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename + ".boundary";
+      const std::string prefix_boundary =
+        this->get_checkpoint_prefix() + ".boundary";
 
       this->pvdhandler_boundary.read(prefix_boundary);
     }
@@ -2200,18 +2222,20 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       this->flow_control.read(prefix);
     }
 
-  multiphysics->read_checkpoint();
+  multiphysics->read_checkpoint(this->get_checkpoint_slot_label());
 
   // Deserialize all post-processing tables that are currently used
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
+  deserialize_tables_vector(table_output_structs,
+                            this->get_checkpoint_slot_label(),
+                            this->mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
-  std::string checkpoint_file_prefix)
+  const std::string &checkpoint_file_prefix)
 {
   const std::string filename = checkpoint_file_prefix + ".triangulation";
   check_file_exists(filename,
@@ -2242,7 +2266,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   // build purely locally-owned temporaries and copy the result into the
   // ghosted solution vectors below. For deal.II's parallel distributed vector
   // SolutionTransfer expects the targets to have their ghosts set up, so in
-  // that case we keep the ghosted construction.
+  // that case we keep the ghosted construction. In both cases, the ghost values
+  // of the solution vectors are updated after the copy.
   std::vector<VectorType *> x_system(1 + previous_solutions->size());
 
   auto make_distributed = [this]() {
@@ -2281,6 +2306,13 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
     {
       (*previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  // The deserialized vectors have no ghost values, so the copies above zero the
+  // ghost entries of deal.II vectors. Update them, since the solution is read
+  // before the first solve (e.g. by the dynamic flow control).
+  this->present_solution->update_ghost_values();
+  for (auto &previous_solution : *previous_solutions)
+    previous_solution.update_ghost_values();
 
   this->restore_average_velocities_after_checkpoint();
 }
@@ -2976,38 +3008,35 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
     this->simulation_parameters.post_processing;
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
 
   if (post_processing.calculate_enstrophy)
     table_output_structs.emplace_back(this->enstrophy_table,
                                       prefix +
-                                        post_processing.enstrophy_output_name +
-                                        suffix);
+                                        post_processing.enstrophy_output_name);
   if (post_processing.calculate_kinetic_energy)
     table_output_structs.emplace_back(
       this->kinetic_energy_table,
-      prefix + post_processing.kinetic_energy_output_name + suffix);
+      prefix + post_processing.kinetic_energy_output_name);
   if (post_processing.calculate_pressure_power)
     table_output_structs.emplace_back(
       this->pressure_power_table,
-      prefix + post_processing.pressure_power_output_name + suffix);
+      prefix + post_processing.pressure_power_output_name);
   if (post_processing.calculate_viscous_dissipation)
     table_output_structs.emplace_back(
       this->viscous_dissipation_table,
-      prefix + post_processing.viscous_dissipation_output_name + suffix);
+      prefix + post_processing.viscous_dissipation_output_name);
   if (post_processing.calculate_apparent_viscosity)
     table_output_structs.emplace_back(
       this->apparent_viscosity_table,
-      prefix + post_processing.apparent_viscosity_output_name + suffix);
+      prefix + post_processing.apparent_viscosity_output_name);
   if (post_processing.calculate_flow_rate)
     table_output_structs.emplace_back(this->flow_rate_table,
                                       prefix +
-                                        post_processing.flow_rate_output_name +
-                                        suffix);
+                                        post_processing.flow_rate_output_name);
   if (post_processing.calculate_pressure_drop)
     table_output_structs.emplace_back(
       this->pressure_drop_table,
-      prefix + post_processing.pressure_drop_output_name + suffix);
+      prefix + post_processing.pressure_drop_output_name);
   if (this->simulation_parameters.forces_parameters.calculate_force)
     for (auto const &[boundary_id, type] :
          this->simulation_parameters.boundary_conditions.type)
@@ -3016,7 +3045,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
           this->forces_tables[boundary_id],
           prefix +
             this->simulation_parameters.forces_parameters.force_output_name +
-            "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+            "_" + Utilities::int_to_string(boundary_id, 2));
       }
   if (this->simulation_parameters.forces_parameters.calculate_torque)
     for (auto const &[boundary_id, type] :
@@ -3026,13 +3055,13 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
           this->torques_tables[boundary_id],
           prefix +
             this->simulation_parameters.forces_parameters.torque_output_name +
-            "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+            "_" + Utilities::int_to_string(boundary_id, 2));
       }
   if (this->simulation_parameters.analytical_solution->calculate_error())
     table_output_structs.emplace_back(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_FD" + suffix);
+        "_FD");
 
   return table_output_structs;
 }
@@ -3042,9 +3071,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
-  std::string        prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
+  const std::string  prefix = this->get_checkpoint_prefix();
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);
@@ -3055,10 +3082,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 
       if (this->simulation_control->get_output_boundaries())
         {
-          std::string prefix_boundary =
-            this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.restart_parameters.filename +
-            ".boundary";
+          const std::string prefix_boundary =
+            this->get_checkpoint_prefix() + ".boundary";
 
           this->pvdhandler_boundary.save(prefix_boundary);
         }
@@ -3085,19 +3110,37 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  multiphysics->write_checkpoint();
+  multiphysics->write_checkpoint(this->get_checkpoint_slot_label());
 
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
     {
-      std::string triangulationName = prefix + ".triangulation";
       tria->save(prefix + ".triangulation");
     }
 
   // Serialize all post-processing tables that are currently used
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  serialize_tables_vector(table_output_structs, this->mpi_communicator);
+  serialize_tables_vector(table_output_structs,
+                          this->get_checkpoint_slot_label(),
+                          this->mpi_communicator);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::string
+NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_prefix() const
+{
+  return this->simulation_parameters.simulation_control.output_folder +
+         this->simulation_parameters.restart_parameters.filename +
+         this->get_checkpoint_slot_label();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::string
+NavierStokesBase<dim, VectorType, DofsType>::get_checkpoint_slot_label() const
+{
+  return "_" + Utilities::int_to_string(
+                 this->checkpoint_controller.get_next_checkpoint_id());
 }
 
 template <int dim, typename VectorType, typename DofsType>

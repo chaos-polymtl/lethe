@@ -52,6 +52,36 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
 
 template <int dim, typename number>
 void
+VANSOperator<dim, number>::compute_forcing_term()
+{
+  NavierStokesOperatorBase<dim, number>::compute_forcing_term();
+
+  if (!this->forcing_function)
+    return;
+
+  const unsigned int n_cells = this->matrix_free.n_cell_batches() +
+                               this->matrix_free.n_ghost_cell_batches();
+
+  FECellIntegrator integrator(this->matrix_free);
+
+  mass_source_terms.reinit(n_cells, integrator.n_q_points);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      integrator.reinit(cell);
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          // The mass source term is the last component of the forcing function
+          mass_source_terms(cell, q) =
+            evaluate_function<dim, number>(*(this->forcing_function),
+                                           integrator.quadrature_point(q),
+                                           dim);
+        }
+    }
+}
+
+template <int dim, typename number>
+void
 VANSOperator<dim, number>::compute_void_fraction(
   const DoFHandler<dim>                            &void_fraction_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
@@ -202,15 +232,15 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                            Parameters::DragCoupling::fully_explicit;
 
   // If the coupling is implicit, we do not need to gather the drag force since
-  // the drag is calculated from the momentum_transfer term. Consequently, these
-  // two FEValues will never be reinit and used.
+  // the drag is calculated from the momentum_transfer term. Consequently, this
+  // FEValues will never be reinit and used.
   const bool is_implicit = cfd_dem_parameters.drag_coupling !=
                            Parameters::DragCoupling::fully_explicit;
 
   // The calculation of the volumetric source term arising from the force
   // requires the density of the fluid at the particle location. Right now the
   // model only supports the usage of a constant density. Consequently, we can
-  // gather the reference density as a contant density.
+  // gather the reference density as a constant density.
   AssertThrow(
     this->properties_manager->density_is_constant(),
     ExcMessage(
@@ -238,7 +268,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                                 update_values);
 
   FEValues<dim> fe_values_drag(*(this->matrix_free.get_mapping_info().mapping),
-                               fp_force_dof_handler.get_fe(),
+                               fp_drag_dof_handler.get_fe(),
                                this->matrix_free.get_quadrature(),
                                update_values);
 
@@ -458,8 +488,12 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
 }
 
 /**
- * Calculates the Jacobian of VANS equations. Here, we note  f_pf
- * the forces from the particles to the fluid.
+ * Calculates the Jacobian of the VANS equations (model A). Here, we note f_pf
+ * the forces from the particles to the fluid (including the drag β(u_p-u)),
+ * f the body force (forcing function and dynamic flow control force), m the
+ * mass source term (last component of the forcing function) and
+ * (∇u)_ik = ∂u_i/∂x_k. The viscous terms are the weak form of
+ * -εν∇·(∇u+∇u^T), that is ν(∇v,ε(∇u+∇u^T)) + ν(v,(∇u+∇u^T)·∇ε).
  * The expressions calculated in this cell integral are:
  * (Continuity equation)
  * (q,ε∇·δu) + (q,δu·∇ε) +
@@ -467,19 +501,19 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
  * \+ (v, ε ∂t δu)  -> Time derivative
  * \+ (v, ε (u·∇)δu) + (v, ε (δu·∇)u) -> Advection
  * \- (∇·v, ε δp) - (v,δp∇ε) -> Pressure
- * \+ (v, βu) -> Drag force (this is positive because f_pf = - beta(u-v))
- * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   -> Viscous term  ---> There are currently
- * two terms missing here which would be:
- *\+ ε*ν(∇v,∇δu^T)  +  ν(v,∇ε·∇δu^T)
- * plus three additional terms in the case of
- * SUPG-PSPG stabilization:
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu +βδu)τ·∇q (PSPG
- * Jacobian)
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu +βδu)τu·∇v (SUPG
- * Jacobian P.1)
- * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf - f_pf )τδu·∇v (SUPG Jacobian
- * P.2), in the case of additional grad-div stabilization
+ * \+ (v, βδu) -> Drag force (positive since the drag in f_pf is β(u_p-u))
+ * \+ (v, m δu) -> Momentum of the mass source m
+ * \+ ν(∇v,ε∇δu) + ν(∇v,ε∇δu^T) + ν(v,∇δu·∇ε) + ν(v,∇δu^T·∇ε) -> Viscous
+ * plus three additional terms in the case of SUPG-PSPG stabilization:
+ * \+ (ε∂t δu + ε(u·∇)δu + ε(δu·∇)u + ε∇δp - εν∆δu - νɛ∇(∇·δu) + βδu + mδu)
+ * τ∇q (PSPG Jacobian)
+ * \+ (ε∂t δu + ε(u·∇)δu + ε(δu·∇)u + ε∇δp - εν∆δu - νɛ∇(∇·δu) + βδu + mδu)
+ * τ(u·∇)v (SUPG Jacobian P.1)
+ * \+ (ε∂t u + ε(u·∇)u + ε∇p - εν∆u - νɛ∇(∇·u) - εf - f_pf + mu)τ(δu·∇)v
+ * (SUPG Jacobian P.2),
+ * and in the case of additional grad-div stabilization:
  * \+ (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term)
+ * The derivatives of τ and γ with respect to u are neglected.
  */
 template <int dim, typename number>
 void
@@ -516,6 +550,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
   if (transient)
     bdf_coefs = &this->simulation_control->get_bdf_coefficients();
 
+  // Coefficient multiplying the present solution in the BDF time derivative
+  const double time_derivative_coefficient = transient ? (*bdf_coefs)[0] : 0.;
+
   for (const auto q : integrator.quadrature_point_indices())
     {
       // Gather void fraction value and gradient
@@ -537,8 +574,12 @@ VANSOperator<dim, number>::do_cell_integral_local(
       source_value = pf_force_value + pf_drag_value;
 
       // Evaluate source term function if enabled
+      VectorizedArray<number> mass_source = 0.;
       if (this->forcing_function)
-        source_value += vf_value * this->forcing_terms(cell, q);
+        {
+          source_value += vf_value * this->forcing_terms(cell, q);
+          mass_source = this->mass_source_terms(cell, q);
+        }
 
       // Add to source term the dynamic flow control force (zero if not
       // enabled)
@@ -552,24 +593,34 @@ VANSOperator<dim, number>::do_cell_integral_local(
       typename FECellIntegrator::hessian_type  hessian;
 
       // The strong form of the residual requires both the laplacian
-      // and the gradient of the divergence of the velocity field.
-      if (this->enable_hessians_residual)
+      // and the gradient of the divergence of the velocity field. The
+      // hessians are only evaluated if they are enabled in the Jacobian. This
+      // flag differs from the residual one on the multigrid levels.
+      if (this->enable_hessians_jacobian)
         {
           hessian_diagonal = integrator.get_hessian_diagonal(q);
           hessian          = integrator.get_hessian(q);
         }
 
-      // Result value/gradient we will use
+      // Result value/gradient we will use. The VANS Jacobian (PSPG/SUPG and
+      // grad-div) has no term with the hessians of the test functions, so no
+      // hessian is submitted.
       typename FECellIntegrator::value_type    value_result;
       typename FECellIntegrator::gradient_type gradient_result;
-      typename FECellIntegrator::hessian_type  hessian_result;
 
-      // Gather previous values of the velocity and the pressure
+      // Gather previous values of the velocity and the pressure. The hessian
+      // tables of the linearization point are only filled when the hessians
+      // are enabled in the Jacobian.
       auto previous_values   = this->nonlinear_previous_values(cell, q);
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
-      auto previous_hessian_diagonal =
-        this->nonlinear_previous_hessian_diagonal(cell, q);
-      auto previous_hessian = this->nonlinear_previous_hessian(cell, q);
+      typename FECellIntegrator::gradient_type previous_hessian_diagonal;
+      typename FECellIntegrator::hessian_type  previous_hessian;
+      if (this->enable_hessians_jacobian)
+        {
+          previous_hessian_diagonal =
+            this->nonlinear_previous_hessian_diagonal(cell, q);
+          previous_hessian = this->nonlinear_previous_hessian(cell, q);
+        }
 
       // Add the drag force with the momentum coupling
       for (int d = 0; d < dim; ++d)
@@ -584,12 +635,60 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Get stabilization parameter
       const auto tau = this->stabilization_parameter[cell][q];
 
+      // The PSPG and SUPG terms share two strong forms of the momentum
+      // equation, which are computed once per quadrature point. The viscous
+      // terms are zero when the hessians are disabled.
+
+      // Will contain the strong residual linearized around the previous Newton
+      // iterate and applied to the increment (δu, δp):
+      // ɛ∂t δu + ɛ(u·∇)δu + ɛ(δu·∇)u + ɛ∇δp - νɛ∆δu - νɛ∇(∇·δu) + βδu + mδu
+      Tensor<1, dim, VectorizedArray<number>> linearized_strong_residual;
+      // Will contain the strong residual of the previous Newton iterate:
+      // ɛ∂t u + ɛ(u·∇)u + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - ɛf - f_pf + mu
+      Tensor<1, dim, VectorizedArray<number>> previous_strong_residual;
+
       // Weak form Jacobian
       value_result[dim] = 0;
       for (int i = 0; i < dim; ++i)
         {
-          // The first two calculations are equalities (=) instead of sum (+=)
-          // since the arrays are not initialized to 0. ν(∇v,ɛ∇δu)
+          // Will contain (u·∇)δu + (δu·∇)u
+          VectorizedArray<number> linearized_advection = 0.;
+          // Will contain (u·∇)u
+          VectorizedArray<number> previous_advection = 0.;
+          // Will contain ∆δu + ∇(∇·δu)
+          VectorizedArray<number> viscous_term = 0.;
+          // Will contain ∆u + ∇(∇·u)
+          VectorizedArray<number> previous_viscous_term = 0.;
+          for (int k = 0; k < dim; ++k)
+            {
+              // (u·∇)δu + (δu·∇)u
+              linearized_advection += gradient[i][k] * previous_values[k] +
+                                      previous_gradient[i][k] * value[k];
+              // (u·∇)u
+              previous_advection +=
+                previous_gradient[i][k] * previous_values[k];
+              // ∆δu + ∇(∇·δu)
+              viscous_term += hessian_diagonal[i][k] + hessian[k][k][i];
+              // ∆u + ∇(∇·u)
+              previous_viscous_term +=
+                previous_hessian_diagonal[i][k] + previous_hessian[k][k][i];
+            }
+
+          // ɛ(u·∇)δu + ɛ(δu·∇)u - νɛ∆δu - νɛ∇(∇·δu) + ɛ∇δp + βδu + mδu
+          linearized_strong_residual[i] =
+            vf_value * (linearized_advection -
+                        kinematic_viscosity * viscous_term + gradient[dim][i]) +
+            (beta_momentum_transfer + mass_source) * value[i];
+          // ɛ(u·∇)u - νɛ∆u - νɛ∇(∇·u) + ɛ∇p - ɛf - f_pf + mu
+          previous_strong_residual[i] =
+            vf_value * (previous_advection -
+                        kinematic_viscosity * previous_viscous_term +
+                        previous_gradient[dim][i]) -
+            source_value[i] + mass_source * previous_values[i];
+
+          // The first two calculations are assignments (=) instead of sums
+          // (+=) since they are the first contributions to the results.
+          // ν(∇v,ɛ∇δu)
           gradient_result[i] = kinematic_viscosity * vf_value * gradient[i];
           // -(v,δp∇ɛ)
           value_result[i] = -vf_gradient[i] * value[dim];
@@ -599,126 +698,78 @@ VANSOperator<dim, number>::do_cell_integral_local(
           value_result[dim] += vf_value * gradient[i][i];
           // +(q,∇ɛ·δu)
           value_result[dim] += vf_gradient[i] * value[i];
-          // +(v, βδu)
-          value_result[i] += beta_momentum_transfer * value[i];
+          // +(v, βδu) + (v, mδu)
+          value_result[i] += (beta_momentum_transfer + mass_source) * value[i];
+          // +(v,ɛ(u·∇)δu + ɛ(δu·∇)u)
+          value_result[i] += vf_value * linearized_advection;
 
           for (int k = 0; k < dim; ++k)
             {
-              // +(v,ɛ(u·∇)δu + ɛ(δu·∇)u)
-              value_result[i] +=
-                vf_value * (gradient[i][k] * previous_values[k] +
-                            previous_gradient[i][k] * value[k]);
               // ν(∇v,ɛ∇δu^T)
               gradient_result[i][k] +=
                 kinematic_viscosity * vf_value * gradient[k][i];
-              // ν(v,∇ɛ∇δu)
-              value_result[i] +=
-                kinematic_viscosity * vf_gradient[k] * gradient[k][i];
-              // ν(v,∇ɛ∇δu^T)
-              value_result[i] +=
-                kinematic_viscosity * vf_gradient[k] * gradient[i][k];
+              // ν(v,∇δu^T·∇ɛ) + ν(v,∇δu·∇ɛ)
+              value_result[i] += kinematic_viscosity * vf_gradient[k] *
+                                 (gradient[k][i] + gradient[i][k]);
             }
-          // +(v,ɛ ∂t δu)
+
           if (transient)
-            value_result[i] += vf_value * (*bdf_coefs)[0] * value[i];
+            {
+              // Will contain ɛ∂t δu
+              const VectorizedArray<number> time_derivative =
+                vf_value * time_derivative_coefficient * value[i];
+              // +(v,ɛ ∂t δu)
+              value_result[i] += time_derivative;
+              // +ɛ∂t δu
+              linearized_strong_residual[i] += time_derivative;
+              // +ɛ∂t u
+              previous_strong_residual[i] +=
+                vf_value * (time_derivative_coefficient * previous_values[i] +
+                            previous_time_derivatives[i]);
+            }
         }
 
       // PSPG Jacobian
-      for (int i = 0; i < dim; ++i)
-        {
-          for (int k = 0; k < dim; ++k)
-            {
-              // (τ∇q,(-νɛ∆δu - νɛ∇(∇·u) + ɛ(u·∇)δu + ɛ(δu·∇)u))
-              gradient_result[dim][i] +=
-                tau * vf_value *
-                (-kinematic_viscosity *
-                   (hessian_diagonal[i][k] + hessian[k][k][i]) +
-                 gradient[i][k] * previous_values[k] +
-                 previous_gradient[i][k] * value[k]);
-            }
-          // +ɛ(∂t δu)·τ∇q
-          if (transient)
-            gradient_result[dim][i] +=
-              tau * vf_value * (*bdf_coefs)[0] * value[i];
-
-          // +βδu·τ∇q
-          gradient_result[dim][i] += tau * beta_momentum_transfer * value[i];
-        }
-      // (ɛ∇δp)τ·∇q
-      gradient_result[dim] += tau * vf_value * gradient[dim];
+      // (ɛ∂t δu + ɛ(u·∇)δu + ɛ(δu·∇)u + ɛ∇δp - νɛ∆δu - νɛ∇(∇·δu) + βδu +
+      // mδu)τ∇q
+      gradient_result[dim] = tau * linearized_strong_residual;
 
       // Grad-div stabilization Jacobian
       // (∇·v,γ(ɛ∇·δu+δu·∇ɛ))
       if (cfd_dem_parameters.grad_div == true)
         {
+          // Will contain the linearized continuity equation: ɛ∇·δu + δu·∇ɛ
+          VectorizedArray<number> continuity = 0.;
+          // ɛ∇·δu + δu·∇ɛ
+          for (int k = 0; k < dim; ++k)
+            continuity += vf_value * gradient[k][k] + value[k] * vf_gradient[k];
+
+          // Will contain γ(ɛ∇·δu + δu·∇ɛ)
+          const VectorizedArray<number> grad_div_term =
+            grad_div_gamma(cell, q) * continuity;
+          // +(∇·v,γ(ɛ∇·δu + δu·∇ɛ))
           for (int i = 0; i < dim; ++i)
-            {
-              for (int k = 0; k < dim; ++k)
-                {
-                  gradient_result[i][i] +=
-                    grad_div_gamma(cell, q) *
-                    (vf_value * gradient[k][k] + value[k] * vf_gradient[k]);
-                }
-            }
+            gradient_result[i][i] += grad_div_term;
         }
 
       // SUPG Jacobian
       for (int i = 0; i < dim; ++i)
         {
+          const VectorizedArray<number> tau_linearized_strong_residual =
+            tau * linearized_strong_residual[i];
+          const VectorizedArray<number> tau_previous_strong_residual =
+            tau * previous_strong_residual[i];
           for (int k = 0; k < dim; ++k)
             {
               // Part 1
-              for (int l = 0; l < dim; ++l)
-                {
-                  // +(τ(u·∇)v,(ɛ(u·∇)δu + ɛ(δu·∇)u - νɛ∆δu -νɛ∇(∇·δu)))
-                  gradient_result[i][k] +=
-                    tau * vf_value * previous_values[k] *
-                    (gradient[i][l] * previous_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     kinematic_viscosity *
-                       (hessian_diagonal[i][l] + hessian[l][l][i]));
-                }
-              // +(ɛ∇δp)τ(u·∇)v
-              gradient_result[i][k] +=
-                tau * vf_value * previous_values[k] * (gradient[dim][i]);
-
-              // +(ɛ∂t δu)τ(u·∇)v
-              if (transient)
-                gradient_result[i][k] += tau * previous_values[k] * vf_value *
-                                         ((*bdf_coefs)[0] * value[i]);
-
-              // +(βδu)τ(u·∇)v
-              gradient_result[i][k] +=
-                beta_momentum_transfer * value[i] * tau * previous_values[k];
-
+              // +(ɛ∂t δu + ɛ(u·∇)δu + ɛ(δu·∇)u + ɛ∇δp - νɛ∆δu - νɛ∇(∇·δu) + βδu
+              // + mδu)τ(u·∇)v
               // Part 2
-              for (int l = 0; l < dim; ++l)
-                {
-                  // +(ɛ(u·∇)u - νɛ∆u)τ(δu·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] * vf_value *
-                    (previous_gradient[i][l] * previous_values[l] -
-                     kinematic_viscosity * previous_hessian_diagonal[i][l]);
-
-                  // (-νɛ∇(∇·u))τ(δu·∇)v
-                  gradient_result[i][k] += -tau * kinematic_viscosity *
-                                           vf_value * value[k] *
-                                           previous_hessian[l][l][i];
-                }
-              // +(ɛ∇p - ɛf)τ(δu·∇)v
+              // +(ɛ∂t u + ɛ(u·∇)u + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - ɛf - f_pf +
+              // mu)τ(δu·∇)v
               gradient_result[i][k] +=
-                tau * value[k] *
-                (vf_value * previous_gradient[dim][i] - source_value[i]);
-
-              // +(ɛ∂t u)τ(δu·∇)v
-              if (transient)
-                gradient_result[i][k] += tau * value[k] * vf_value *
-                                         ((*bdf_coefs)[0] * previous_values[i] +
-                                          previous_time_derivatives[i]);
-
-              // +(βu)τ(δu·∇)v
-              gradient_result[i][k] +=
-                beta_momentum_transfer * previous_values[i] * tau * value[k];
+                tau_linearized_strong_residual * previous_values[k] +
+                tau_previous_strong_residual * value[k];
             }
         }
 
@@ -726,35 +777,30 @@ VANSOperator<dim, number>::do_cell_integral_local(
         {
           gradient_result = gradient_result * cell_mask;
           value_result    = value_result * cell_mask;
-          if (this->enable_hessians_jacobian)
-            hessian_result = hessian_result * cell_mask;
         }
 
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
-
-      if (this->enable_hessians_jacobian)
-        integrator.submit_hessian(hessian_result, q);
     }
 
-  if (this->enable_hessians_jacobian)
-    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients |
-                         EvaluationFlags::hessians);
-  else
-    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
 /**
- * The expressions calculated in this cell integral are:
- * (q, ∂tɛ) + (q, ɛ ∇·u) + (q, u·∇ɛ) (Continuity equation)
- * \+(v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) - (v,p∇ɛ)
- * \+ ɛν(∇v,∇u) + ν(v,∇u∇ɛ) - (v, f_pf) - (v,ɛf) (Weak form of VANS),
- * plus two additional terms in the case of SUPG-PSPG
- * stabilization:
- * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τ∇·q (PSPG term)
- * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τu·∇v (SUPG term),
- * With additional grad-div stabilization
- * (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ)) (grad-div term)
+ * Calculates the residual of the VANS equations (model A), with the same
+ * notation as the Jacobian above. The expressions calculated in this cell
+ * integral are:
+ * (q, ∂tɛ) + (q, ɛ ∇·u) + (q, u·∇ɛ) - (q, m) (Continuity equation)
+ * \+(v,ɛ∂t u) + (v,ɛ(u·∇)u) + (v, mu) - (∇·v,ɛp) - (v,p∇ɛ)
+ * \+ ν(∇v,ɛ∇u) + ν(∇v,ɛ∇u^T) + ν(v,∇u·∇ɛ) + ν(v,∇u^T·∇ɛ)
+ * \- (v, f_pf) - (v,ɛf) (Weak form of VANS),
+ * plus two additional terms in the case of SUPG-PSPG stabilization:
+ * \+ (ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf)τ∇q
+ * (PSPG term)
+ * \+ (ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf)τ(u·∇)v
+ * (SUPG term),
+ * and in the case of additional grad-div stabilization:
+ * \+ (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ-m)) (grad-div term)
  */
 template <int dim, typename number>
 void
@@ -802,6 +848,11 @@ VANSOperator<dim, number>::local_evaluate_residual(
       if (transient)
         bdf_coefs = &this->simulation_control->get_bdf_coefficients();
 
+      // Coefficient multiplying the present solution in the BDF time
+      // derivative
+      const double time_derivative_coefficient =
+        transient ? (*bdf_coefs)[0] : 0.;
+
       for (const auto q : integrator.quadrature_point_indices())
         {
           // Gather particle-fluid force and drag force, will be zero if they
@@ -823,8 +874,12 @@ VANSOperator<dim, number>::local_evaluate_residual(
             this->time_derivative_void_fraction(cell, q);
 
           // Evaluate source term function if enabled
+          VectorizedArray<number> mass_source = 0.;
           if (this->forcing_function)
-            source_value += this->forcing_terms(cell, q) * vf_value;
+            {
+              source_value += this->forcing_terms(cell, q) * vf_value;
+              mass_source = this->mass_source_terms(cell, q);
+            }
 
           // Add to source term the dynamic flow control force (zero if
           // not enabled)
@@ -859,34 +914,75 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Get stabilization parameter
           const auto tau = this->stabilization_parameter[cell][q];
 
-          // Result value/gradient we will use
+          // Result value/gradient we will use. The VANS residual (PSPG/SUPG
+          // and grad-div) has no term with the hessians of the test functions,
+          // so no hessian is submitted.
           typename FECellIntegrator::value_type    value_result;
           typename FECellIntegrator::gradient_type gradient_result;
-          typename FECellIntegrator::hessian_type  hessian_result;
 
-          value_result[dim] = 0;
+          // +(q,∂t ɛ)
+          value_result[dim] = vf_time_derivative;
+
+          // -(q,m)
+          value_result[dim] -= mass_source;
+
+          // The PSPG and SUPG terms share the strong residual of the momentum
+          // equation, which is computed once per quadrature point. The viscous
+          // terms are zero when the hessians are disabled.
+
+          // Will contain the strong residual of the momentum equation:
+          // ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf
+          Tensor<1, dim, VectorizedArray<number>> strong_residual;
+
           // Weak form
           for (int i = 0; i < dim; ++i)
             {
+              // Will contain (u·∇)u
+              VectorizedArray<number> advection = 0.;
+              // Will contain ∆u + ∇(∇·u)
+              VectorizedArray<number> viscous_term = 0.;
+              for (int k = 0; k < dim; ++k)
+                {
+                  // (u·∇)u
+                  advection += gradient[i][k] * value[k];
+                  // ∆u + ∇(∇·u)
+                  viscous_term += hessian_diagonal[i][k] + hessian[k][k][i];
+                }
+
+              // ɛ(u·∇)u - νɛ∆u - νɛ∇(∇·u) + ɛ∇p - f_pf - ɛf + mu
+              strong_residual[i] =
+                vf_value * (advection - kinematic_viscosity * viscous_term +
+                            gradient[dim][i]) -
+                source_value[i] + mass_source * value[i];
+
               // ν(∇v,ɛ∇u)
               gradient_result[i] = kinematic_viscosity * vf_value * gradient[i];
 
               // -(∇·v,ɛp)
               gradient_result[i][i] += -vf_value * value[dim];
 
-              // -(v,ɛf)
+              // -(v,f_pf + ɛf)
               value_result[i] = -source_value[i];
 
               // -(v,p∇ɛ)
               value_result[i] += -vf_gradient[i] * value[dim];
 
-              // +(v,ɛ∂t u)
+              // +(v,mu)
+              value_result[i] += mass_source * value[i];
+
+              // +(v,ɛ(u·∇)u)
+              value_result[i] += vf_value * advection;
+
               if (transient)
                 {
-                  value_result[i] += vf_value * ((*bdf_coefs)[0] * value[i] +
-                                                 previous_time_derivatives[i]);
-                  // +(q,∂t ɛ)
-                  value_result[dim] += vf_time_derivative;
+                  // Will contain ɛ∂t u
+                  const VectorizedArray<number> time_derivative =
+                    vf_value * (time_derivative_coefficient * value[i] +
+                                previous_time_derivatives[i]);
+                  // +(v,ɛ∂t u)
+                  value_result[i] += time_derivative;
+                  // +ɛ∂t u
+                  strong_residual[i] += time_derivative;
                 }
 
               // +(q,ɛ∇·u)
@@ -896,115 +992,63 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
               for (int k = 0; k < dim; ++k)
                 {
-                  // ν(v,∇u∇ɛ)
-                  value_result[i] +=
-                    kinematic_viscosity * gradient[i][k] * vf_gradient[k];
-
-                  // ν(v,∇ɛ∇u)
-                  value_result[i] +=
-                    kinematic_viscosity * gradient[k][i] * vf_gradient[k];
+                  // ν(v,∇u·∇ɛ) + ν(v,∇u^T·∇ɛ)
+                  value_result[i] += kinematic_viscosity * vf_gradient[k] *
+                                     (gradient[i][k] + gradient[k][i]);
 
                   // ν(∇v,ɛ∇u^T)
                   gradient_result[i][k] +=
                     kinematic_viscosity * vf_value * gradient[k][i];
-
-                  // +(v,ɛ(u·∇)u)
-                  value_result[i] += vf_value * gradient[i][k] * value[k];
                 }
             }
 
           // PSPG term
-          for (int i = 0; i < dim; ++i)
-            {
-              for (int k = 0; k < dim; ++k)
-                {
-                  // (τ∇q,(-νɛ∆u -νɛ∇(∇·u) + ɛ(u·∇)u))
-                  gradient_result[dim][i] +=
-                    tau * vf_value *
-                    (-kinematic_viscosity *
-                       (hessian_diagonal[i][k] + hessian[k][k][i]) +
-                     gradient[i][k] * value[k]);
-                }
-              // +(-ɛf)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
-
-              // +(ɛ∂t u)·τ∇q
-              if (transient)
-                gradient_result[dim][i] +=
-                  tau * vf_value *
-                  ((*bdf_coefs)[0] * value[i] + previous_time_derivatives[i]);
-            }
-          // +ɛ(∇p)τ∇·q
-          gradient_result[dim] += tau * vf_value * gradient[dim];
+          // (ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf - ɛf)·τ∇q
+          gradient_result[dim] = tau * strong_residual;
 
           // Grad-div stabilization
-          // (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ))
+          // (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ-m))
           if (cfd_dem_parameters.grad_div == true)
             {
+              // Will contain the strong form of the continuity equation:
+              // ∂tɛ + ɛ∇·u + u·∇ɛ - m
+              // ∂tɛ - m
+              auto continuity_residual = vf_time_derivative - mass_source;
+              // +ɛ∇·u + u·∇ɛ
+              for (int k = 0; k < dim; ++k)
+                continuity_residual +=
+                  vf_value * gradient[k][k] + value[k] * vf_gradient[k];
+
+              // +(∇·v,γ(∂tɛ + ɛ∇·u + u·∇ɛ - m))
               for (int i = 0; i < dim; ++i)
-                {
-                  for (int k = 0; k < dim; ++k)
-                    {
-                      gradient_result[i][i] +=
-                        grad_div_gamma(cell, q) *
-                        (vf_value * gradient[k][k] + value[k] * vf_gradient[k] +
-                         vf_time_derivative);
-                    }
-                }
+                gradient_result[i][i] +=
+                  grad_div_gamma(cell, q) * continuity_residual;
             }
 
           // SUPG term
+          // (ɛ∂t u + ɛ(u·∇)u + mu + ɛ∇p - νɛ∆u - νɛ∇(∇·u) - f_pf -
+          // ɛf)τ(u·∇)v
           for (int i = 0; i < dim; ++i)
             {
+              const VectorizedArray<number> tau_strong_residual =
+                tau * strong_residual[i];
               for (int k = 0; k < dim; ++k)
-                {
-                  for (int l = 0; l < dim; ++l)
-                    {
-                      // (τ(u·∇)v,-νɛ∆u -νɛ∇(∇·u))
-                      gradient_result[i][k] +=
-                        -tau * kinematic_viscosity * vf_value * value[k] *
-                        (hessian_diagonal[i][l] + hessian[l][l][i]);
-
-                      // + (τ(u·∇)v,(ɛ(u·∇)u))
-                      gradient_result[i][k] +=
-                        tau * vf_value * value[k] * gradient[i][l] * value[l];
-                    }
-                  // + (τ(u·∇)v,ɛ∇p - ɛf)
-                  gradient_result[i][k] +=
-                    tau * value[k] *
-                    (vf_value * gradient[dim][i] - source_value[i]);
-
-                  // + (τ(u·∇)v,ɛ∂t u)
-                  if (transient)
-                    gradient_result[i][k] += tau * value[k] * vf_value *
-                                             ((*bdf_coefs)[0] * value[i] +
-                                              previous_time_derivatives[i]);
-                }
+                gradient_result[i][k] += tau_strong_residual * value[k];
             }
 
           if (this->has_solids)
             {
               gradient_result = gradient_result * cell_mask;
               value_result    = value_result * cell_mask;
-              if (this->enable_hessians_residual)
-                hessian_result = hessian_result * cell_mask;
             }
 
           integrator.submit_gradient(gradient_result, q);
           integrator.submit_value(value_result, q);
-          if (this->enable_hessians_residual)
-            integrator.submit_hessian(hessian_result, q);
         }
 
-      if (this->enable_hessians_residual)
-        integrator.integrate_scatter(EvaluationFlags::values |
-                                       EvaluationFlags::gradients |
-                                       EvaluationFlags::hessians,
-                                     dst);
-      else
-        integrator.integrate_scatter(EvaluationFlags::values |
-                                       EvaluationFlags::gradients,
-                                     dst);
+      integrator.integrate_scatter(EvaluationFlags::values |
+                                     EvaluationFlags::gradients,
+                                   dst);
     }
 }
 

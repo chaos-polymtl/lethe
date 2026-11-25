@@ -73,9 +73,9 @@ namespace Parameters
    */
   enum class FluidIndicator : std::uint8_t
   {
-    fluid0, ///< fluid 0 only
-    fluid1, ///< fluid 1 only
-    both    ///< both fluids
+    fluid_0, ///< fluid 0 only
+    fluid_1, ///< fluid 1 only
+    both     ///< both fluids
   };
 
   /**
@@ -95,7 +95,7 @@ namespace Parameters
       bdf3,
       sdirk22,
       sdirk33,
-      sdirk43
+      sdirk45
     } method = TimeSteppingMethod::steady;
 
     // Initial time step
@@ -233,8 +233,19 @@ namespace Parameters
     /// Number of vtu files written at an output step
     unsigned int group_files = 1;
 
+    /**
+     * @brief Declare the simulation control parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the simulation control parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -290,8 +301,21 @@ namespace Parameters
     /// Darcy penalty of solid - Units in 1/(s)
     double penalty_s = 0.;
 
+    /**
+     * @brief Declare the phase change parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the phase change parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -310,8 +334,21 @@ namespace Parameters
     // since power-law does not allow for minimal kinematic viscosity
     double shear_rate_min = 0.001;
 
+    /**
+     * @brief Declare the power-law rheology parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the power-law rheology parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -334,8 +371,21 @@ namespace Parameters
     // Power parameter
     double n = 0.5;
 
+    /**
+     * @brief Declare the Carreau rheology parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the Carreau rheology parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -349,8 +399,21 @@ namespace Parameters
     CarreauParameters  carreau_parameters;
     PowerLawParameters powerlaw_parameters;
 
+    /**
+     * @brief Declare the parameters for the selected non-Newtonian model.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     void
     declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the parameters for the selected non-Newtonian model.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -367,8 +430,21 @@ namespace Parameters
     double tracer_reaction_constant_outside = 0.0;
     double thickness                        = 1.0;
 
+    /**
+     * @brief Declare the immersed-solid tanh model parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the immersed-solid tanh model parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -386,8 +462,21 @@ namespace Parameters
     double tracer_reaction_constant_bulk      = 0.0;
     double thickness                          = 1.0;
 
+    /**
+     * @brief Declare the immersed-solid Gaussian model parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the immersed-solid Gaussian model parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -405,8 +494,21 @@ namespace Parameters
     /// Absolute temperature of the ideal gas in K
     double T = 293.15;
 
+    /**
+     * @brief Declare the isothermal ideal-gas density parameters.
+     *
+     * @param[in,out] prm The parameter handler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the isothermal ideal-gas density parameters.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
@@ -443,7 +545,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
+     * @param[in] prm The ParameterHandler.
      *
      * @param[in] dimensions The Dimensionality object controlling the
      * fundamental dimensions (length, time, mass, temperature) of the problem.
@@ -472,7 +574,7 @@ namespace Parameters
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
+     * @param[in] prm The ParameterHandler.
      *
      * @param[in] dimensions The Dimensionality object controlling the
      * fundamental dimensions (length, time, mass, temperature) of the problem.
@@ -493,10 +595,27 @@ namespace Parameters
   public:
     Material() = default;
 
+    /**
+     * @brief Declare the parameters for a material.
+     *
+     * @param[in,out] prm The parameter handler object.
+     * @param[in] material_prefix Prefix used for this material's subsection.
+     * @param[in] id Identifier of the material.
+     */
     void
     declare_parameters(ParameterHandler  &prm,
                        const std::string &material_prefix,
                        unsigned int       id) const;
+
+    /**
+     * @brief Parse the parameters for a material.
+     *
+     * @param[in] prm The parameter handler object.
+     * @param[in] material_prefix Prefix used for this material's subsection.
+     * @param[in] id Identifier of the material.
+     * @param[in] dimensions Dimensionality used to interpret the parameter
+     * units.
+     */
     void
     parse_parameters(ParameterHandler     &prm,
                      const std::string    &material_prefix,
@@ -642,7 +761,8 @@ namespace Parameters
     enum class MaterialInteractionsType : std::int8_t
     {
       fluid_fluid,
-      fluid_solid
+      fluid_solid,
+      fluid_dispersed_phase
     } material_interaction_type = MaterialInteractionsType::fluid_fluid;
 
     // Surface tension models
@@ -662,16 +782,33 @@ namespace Parameters
     } mobility_cahn_hilliard_model = MobilityCahnHilliardModel::constant;
     MobilityCahnHilliardParameters mobility_cahn_hilliard_parameters;
 
+    // Effective medium model for calculating effective properties of a
+    // composite material.
+    enum class EffectiveMediumModelType : std::int8_t
+    {
+      /// No effective medium model is applied; the properties of the fluid
+      /// phase are used directly.
+      none,
+      /// Bruggeman effective medium model
+      bruggeman
+    };
+
+    EffectiveMediumModelType electric_permittivity_effective_medium_model =
+      EffectiveMediumModelType::none;
+    EffectiveMediumModelType magnetic_permeability_effective_medium_model =
+      EffectiveMediumModelType::none;
+
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interaction_with_material_interaction_id;
+    std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_dispersed_phase_interaction_with_material_interaction_id;
 
     /**
      * @brief Declare the parameters.
      *
      * @param[in,out] prm The ParameterHandler.
-     *
      * @param[in] id The material id.
      */
     void
@@ -680,10 +817,8 @@ namespace Parameters
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm The ParameterHandler.
-     *
+     * @param[in] prm The ParameterHandler.
      * @param[in] id The material id.
-     *
      * @param[in] dimensions The Dimensionality object controlling the
      * fundamental dimensions (length, time, mass, temperature) of the problem.
      */
@@ -715,7 +850,14 @@ namespace Parameters
     unsigned int                  number_of_solids = 0;
     static constexpr unsigned int max_solids       = 1;
 
-    // Fluid-fluid or fluid-solid interactions
+    // Unresolved dispersed phase objects that live in a host. The host can
+    // only be a fluid for now.
+    std::vector<Material>         unresolved_dispersed_phases;
+    unsigned int                  number_of_unresolved_dispersed_phases = 0;
+    static constexpr unsigned int max_unresolved_dispersed_phases =
+      1; // Only one (monodisperse) phase for now.
+
+    // Fluid-fluid, fluid-solid, or fluid-dispersed phase interactions
     std::vector<MaterialInteractions> material_interactions;
     unsigned int                      number_of_material_interactions = 0;
     static constexpr unsigned int     max_material_interactions       = 3;
@@ -723,15 +865,30 @@ namespace Parameters
       fluid_fluid_interactions_with_material_interaction_ids;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interactions_with_material_interaction_ids;
-
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_dispersed_phase_interactions_with_material_interaction_ids;
     /*
      * Reference Temperature for all physical properties of fluids and solids.
      * Currently, this is only used by the thermal expansion models.
      */
     double reference_temperature = 0.;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     * @param[in] id The material id.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     * @param[in] dimensions The Dimensionality object controlling the
+     * fundamental dimensions (length, time, mass, temperature) of the problem.
+     */
     void
     parse_parameters(ParameterHandler     &prm,
                      const Dimensionality &dimensions = Dimensionality());
@@ -787,7 +944,6 @@ namespace Parameters
      * @brief Declare the parameters.
      *
      * @param[in,out] prm ParameterHandler object.
-     *
      * @param[in] max_number_of_constraints Maximum number of zero velocity
      * constraints applied to the domain.
      */
@@ -808,7 +964,6 @@ namespace Parameters
      * @brief Declare the default parameters for each constraint.
      *
      * @param[in,out] prm ParameterHandler object.
-     *
      */
     static void
     declare_default_entries(ParameterHandler &prm);
@@ -818,7 +973,6 @@ namespace Parameters
      * @brief Parse parameters for each constraint.
      *
      * @param[in] prm ParameterHandler object.
-     *
      * @param[in] constraint_id Identifiers of the constraint (1 per fluid). The
      * numbering starts at 0.
      */
@@ -863,8 +1017,19 @@ namespace Parameters
       none
     } scalar_limiter = ScalarLimiters::none;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -890,8 +1055,19 @@ namespace Parameters
 
     bool write_time_in_error_table = false;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -926,8 +1102,19 @@ namespace Parameters
     // Prefix for the torque output
     std::string torque_output_name = "torque";
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -945,8 +1132,19 @@ namespace Parameters
     double emissivity                = 0.6;
     double Tinf                      = 0.0;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1063,8 +1261,19 @@ namespace Parameters
     // Parameters for the radiation term at the melt pool free surface
     Laser_FreeSurfaceRadiation radiation;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1130,7 +1339,7 @@ namespace Parameters
       /**
        * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -1187,7 +1396,7 @@ namespace Parameters
       std::map<Variable, ProbingPointsPerVariable> probing_points_per_variable;
 
       /**
-       * @brief Declares the parameters in the parameter handler.
+       * @brief Declare the parameters in the parameter handler.
        *
        * @param[in,out] prm The parameter handler.
        */
@@ -1195,9 +1404,9 @@ namespace Parameters
       declare_parameters(ParameterHandler &prm);
 
       /**
-       * @brief Parses the parameters from the parameter handler.
+       * @brief Parse the parameters from the parameter handler.
        *
-       * @param[in,out] prm The parameter handler.
+       * @param[in] prm The parameter handler.
        */
       void
       parse_parameters(ParameterHandler &prm);
@@ -1341,7 +1550,7 @@ namespace Parameters
 
     /// FluidIndicator corresponding to the fluid which has phase change
     Parameters::FluidIndicator monitored_fluid_with_phase_change =
-      Parameters::FluidIndicator::fluid0;
+      Parameters::FluidIndicator::fluid_0;
 
     /// Melting temperature iso-value
     double melting_temperature = 0.;
@@ -1351,6 +1560,13 @@ namespace Parameters
 
     /// Prefix for the total heat flux output
     std::string heat_flux_output_name = "heat_flux";
+
+    /// Enable the calculation of the incident, outgoing and absorbed
+    /// electromagnetic powers
+    bool calculate_electromagnetic_power = false;
+
+    /// Prefix for the electromagnetic power output
+    std::string electromagnetic_power_output_name = "electromagnetic_power";
 
     /// Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid =
@@ -1397,8 +1613,19 @@ namespace Parameters
     /// Enable output of velocity gradient field
     bool output_velocity_gradient = true;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1450,8 +1677,31 @@ namespace Parameters
     unsigned int electromagnetics_trial_degree = 1;
     unsigned int electromagnetics_test_degree  = 2;
 
+    /// Polynomial degree of the solid velocity of the Euler-Euler model.
+    unsigned int solid_velocity_degree = 1;
+
+    /// Polynomial degree of the solid volume fraction of the Euler-Euler
+    /// model.
+    unsigned int solid_volume_fraction_degree = 1;
+
+    /// Polynomial degree of the discontinuous Galerkin discretization of all
+    /// the fields of the QMOM physics (scalars and moments). A degree of 0 is a
+    /// finite volume discretization.
+    unsigned int qmom_degree = 1;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm The ParameterHandler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1519,8 +1769,21 @@ namespace Parameters
     // Abort solver if non-linear solution has not reached tolerance
     bool abort_at_convergence_failure = false;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     * @param[in] physics_name Name of the current physics
+     */
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     * @param[in] physics_name Name of the current physics
+     */
     void
     parse_parameters(ParameterHandler &prm, const std::string &physics_name);
   };
@@ -1657,12 +1920,12 @@ namespace Parameters
     /// Type of preconditioner for the MG smoother
     enum class MultigridSmootherPreconditionerType : std::int8_t
     {
-      InverseDiagonal,
-      AdditiveSchwarzMethod,
-      Chebyshev
+      inverse_diagonal,
+      additive_schwarz_method,
+      chebyshev
     };
     MultigridSmootherPreconditionerType mg_smoother_preconditioner_type =
-      MultigridSmootherPreconditionerType::InverseDiagonal;
+      MultigridSmootherPreconditionerType::inverse_diagonal;
 
     /// Chebyshev smoother polynomial degree
     unsigned int mg_smoother_chebyshev_degree = 3;
@@ -1719,8 +1982,21 @@ namespace Parameters
     /// MG information about levels
     Verbosity mg_verbosity = Verbosity::verbose;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     * @param[in] physics_name Name of the current physics
+     */
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     * @param[in] physics_name Name of the current physics
+     */
     void
     parse_parameters(ParameterHandler &prm, const std::string &physics_name);
   };
@@ -1794,8 +2070,19 @@ namespace Parameters
     /// Rescale the grid by the scale factor
     double scale = 1.;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1839,9 +2126,6 @@ namespace Parameters
 
     // Map containing the refinement variables
     std::map<Variable, MultipleAdaptationParameters> variables;
-    // declaration for parsing variables
-    Variable                     vars = Variable::velocity;
-    MultipleAdaptationParameters var_adaptation_param;
 
     /// Decision factor for adaptive refinement (number or fraction)
     enum class FractionType : std::int8_t
@@ -1873,8 +2157,19 @@ namespace Parameters
     // List of boundary ids to fix to their initial refinement state
     std::vector<int> boundaries_to_fix;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1909,8 +2204,19 @@ namespace Parameters
     std::vector<unsigned int> box_additional_refinements =
       std::vector<unsigned int>(max_number_of_refinement_boxes);
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1932,8 +2238,19 @@ namespace Parameters
       subdomain
     } test_type = TestType::particles;
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1950,8 +2267,20 @@ namespace Parameters
     bool         restart    = false;
     bool         checkpoint = false;
     unsigned int frequency  = 1;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1992,7 +2321,7 @@ namespace Parameters
     PermeabilityModel permeability_model = PermeabilityModel::none;
 
     /// Indicates which fluids are with liquid-solid phase change.
-    FluidIndicator fluid_with_phase_change = FluidIndicator::fluid0;
+    FluidIndicator fluid_with_phase_change = FluidIndicator::fluid_0;
 
     /**
      * Enable the multiplication of the Darcy force term
@@ -2015,8 +2344,19 @@ namespace Parameters
     /// Tolerance in the Carman-Kozeny source term that avoids division by zero.
     std::vector<double> carman_kozeny_tolerance{1e-3, 1e-3};
 
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -2025,12 +2365,6 @@ namespace Parameters
   class IBParticles
   {
   public:
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    declare_default_entry(ParameterHandler &prm, unsigned int index);
-    void
-    parse_parameters(ParameterHandler &prm);
     // Vector of particles
     std::vector<IBParticle<dim>> particles;
 
@@ -2131,6 +2465,32 @@ namespace Parameters
     // Name of the independent file containing particles' information at
     // insertion. Only used if load_particles_from_file is true.
     std::string particles_file = "particles";
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Declare the default parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     * @param[in] index Zero-based index of the immersed-boundary particle
+     * whose default parameters are being declared.
+     */
+    void
+    declare_default_entry(ParameterHandler &prm, unsigned int index);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
   /**
@@ -2168,8 +2528,19 @@ namespace Parameters
     // Apply scaled beta force to particles
     bool enable_beta_particle = false;
 
+    /**
+     * @brief Declare the default parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -2202,8 +2573,19 @@ namespace Parameters
     double liquid_density              = 10.0;
     double universal_gas_constant      = 8.3145;
 
+    /**
+     * @brief Declare the default parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -2247,37 +2629,58 @@ namespace Parameters
     /// Type of verbosity for mortar
     Verbosity verbosity = Verbosity::quiet;
 
+    /**
+     * @brief Declare the default parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
     void
     declare_parameters(ParameterHandler &prm);
 
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
 
   /**
-   * @brief Convert a Verbosity value to the string used in parameter files.
+   * @brief Return the deprecated strings of the parameters parsed into a
+   * Verbosity, which remain accepted in parameter files.
    *
-   * @param[in] verbosity Verbosity level to convert.
-   *
-   * @return The parameter-file string ("quiet", "verbose" or "extra verbose").
-   *
-   * TODO: Replace with a Magic Enum
+   * @return The deprecated strings, each paired with its Verbosity.
    */
-  std::string
-  to_string(const Verbosity verbosity);
+  const DeprecatedEnumNames<Verbosity> &
+  deprecated_verbosity_names();
 
   /**
-   * @brief Convert a FluidIndicator value to the string used in parameter
-   * files.
+   * @brief Return the verbosity levels accepted by the parameters which do
+   * not support Verbosity::extra_verbose.
    *
-   * @param[in] indicator Fluid indicator to convert.
-   *
-   * @return The parameter-file string ("fluid 0", "fluid 1" or "both").
-   *
-   * TODO: Replace with a Magic Enum
+   * @return Verbosity::quiet and Verbosity::verbose.
    */
-  std::string
-  to_string(const FluidIndicator indicator);
+  const std::vector<Verbosity> &
+  quiet_or_verbose();
+
+  /**
+   * @brief Return the deprecated strings of the parameters parsed into a
+   * FluidIndicator, which remain accepted in parameter files.
+   *
+   * @return The deprecated strings, each paired with its FluidIndicator.
+   */
+  const DeprecatedEnumNames<FluidIndicator> &
+  deprecated_fluid_indicator_names();
+
+  /**
+   * @brief Return the fluid indicators accepted by the parameters which
+   * designate a single fluid.
+   *
+   * @return FluidIndicator::fluid_0 and FluidIndicator::fluid_1.
+   */
+  const std::vector<FluidIndicator> &
+  single_fluid_indicators();
 
 } // namespace Parameters
 #endif

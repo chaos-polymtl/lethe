@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tracer_assemblers_h
 #define lethe_tracer_assemblers_h
 
 #include <core/simulation_control.h>
+#include <core/tracer_boundary_conditions.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/multiphysics_interface.h>
@@ -174,8 +175,7 @@ template <int dim>
 class TracerAssemblerSIPG : public TracerFaceAssemblerBase<dim>
 {
 public:
-  TracerAssemblerSIPG()
-  {}
+  TracerAssemblerSIPG() = default;
 
   /**
    * @brief Interface for the call to matrix assembly
@@ -219,8 +219,8 @@ class TracerAssemblerBoundaryNitsche : public TracerFaceAssemblerBase<dim>
 public:
   TracerAssemblerBoundaryNitsche(
     const BoundaryConditions::TracerBoundaryConditions<dim>
-      &p_boundary_conditions_tracer)
-    : boundary_conditions_tracer(p_boundary_conditions_tracer)
+      &p_tracer_boundary_conditions)
+    : tracer_boundary_conditions(p_tracer_boundary_conditions)
   {}
 
   /**
@@ -248,7 +248,7 @@ public:
   assemble_rhs(const TracerScratchData<dim> &scratch_data,
                StabilizedDGMethodsCopyData  &copy_data) override;
 
-  BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
+  BoundaryConditions::TracerBoundaryConditions<dim> tracer_boundary_conditions;
 };
 
 /**

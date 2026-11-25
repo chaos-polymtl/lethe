@@ -20,8 +20,8 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-turbulent-taylor-couette``).
 
 - Parameter file: ``tc-matrix-free.prm``
-- Reference data files from Wang and Jourdan (2021): [#wang2021]_ (``enstrophy_wang_p%.dat``)
-- Postprocessing Python scripts: ``tc-postprocessing.py`` and ``tc-functions.py``
+- Reference data files from Wang and Jourdan (2021): [#wang2021]_ (``references/enstrophy_wang_p%.tsv``)
+- Postprocessing Python scripts: ``tc-postprocessing.py`` and ``tc_functions.py``
 
 ------------------------
 Description of the Case
@@ -229,7 +229,7 @@ To monitor the kinetic energy and the enstrophy, we set calculation to ``true`` 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 10 time steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 2``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 100 time steps, which is enough to monitor the flow; decrease the ``output frequency`` to generate a smoother animation. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 2``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
@@ -241,7 +241,7 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
       set adapt time step to respect CFL = true
       set max cfl                        = 1
       set time step                      = 0.01
-      set output frequency               = 10
+      set output frequency               = 100
       set subdivision                    = 2
     end
 

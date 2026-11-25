@@ -97,13 +97,13 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_zero_constraints()
                                           this->zero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CLSBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions.periodic_boundaries
-              .at(id);
+            this->simulation_parameters.cls_boundary_conditions
+              .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
                                                  periodic_boundary.neighbor_id,
@@ -112,9 +112,9 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_zero_constraints()
         }
     }
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+      if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
@@ -139,13 +139,13 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_non_zero_constraints()
                                           this->nonzero_constraints);
 
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::CLSBoundaryType::periodic)
         {
           const auto &periodic_boundary =
-            this->simulation_parameters.boundary_conditions.periodic_boundaries
-              .at(id);
+            this->simulation_parameters.cls_boundary_conditions
+              .periodic_boundaries.at(id);
           DoFTools::make_periodicity_constraints(*this->dof_handler,
                                                  id,
                                                  periodic_boundary.neighbor_id,
@@ -154,14 +154,14 @@ CLSPDEBasedInterfaceReinitialization<dim>::define_non_zero_constraints()
         }
     }
   for (auto const &[id, type] :
-       this->simulation_parameters.boundary_conditions_cls.type)
+       this->simulation_parameters.cls_boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
+      if (type == BoundaryConditions::CLSBoundaryType::dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_cls.phase_indicator
+            *this->simulation_parameters.cls_boundary_conditions.phase_indicator
                .at(id),
             this->nonzero_constraints);
         }

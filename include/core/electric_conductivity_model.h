@@ -7,6 +7,8 @@
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 
+#include <algorithm>
+
 /**
  * @brief Abstract class that allows to calculate the
  * electric conductivity on each quadrature point.
@@ -96,7 +98,7 @@ public:
     [[maybe_unused]] const field id,
     std::vector<double>         &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   };
 
 private:
@@ -270,7 +272,7 @@ public:
       }
     else
       {
-        std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+        std::ranges::fill(jacobian_vector, 0);
       }
   }
 

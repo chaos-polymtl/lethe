@@ -1,0 +1,15 @@
+
+DEAL::Dimension 2
+DEAL::Rebound is the restitution coefficient 1: true
+DEAL::Momentum is conserved with the restitution coefficient 1: true
+DEAL::Rebound is the restitution coefficient 0.9: true
+DEAL::Momentum is conserved with the restitution coefficient 0.9: true
+DEAL::Rebound is the restitution coefficient 0.5: true
+DEAL::Momentum is conserved with the restitution coefficient 0.5: true
+DEAL::Dimension 3
+DEAL::Rebound is the restitution coefficient 1: true
+DEAL::Momentum is conserved with the restitution coefficient 1: true
+DEAL::Rebound is the restitution coefficient 0.9: true
+DEAL::Momentum is conserved with the restitution coefficient 0.9: true
+DEAL::Rebound is the restitution coefficient 0.5: true
+DEAL::Momentum is conserved with the restitution coefficient 0.5: true
