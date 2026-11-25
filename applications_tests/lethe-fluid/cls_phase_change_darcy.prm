@@ -193,17 +193,17 @@ end
 subsection non-linear solver
   subsection heat transfer
     set verbosity      = quiet
-    set tolerance      = 1e-8
+    set tolerance      = 1e-11
     set max iterations = 5
   end
   subsection fluid dynamics
     set verbosity      = quiet
-    set tolerance      = 1e-8
+    set tolerance      = 1e-11
     set max iterations = 5
   end
   subsection CLS
     set verbosity      = quiet
-    set tolerance      = 1e-8
+    set tolerance      = 1e-11
     set max iterations = 15
   end
 end

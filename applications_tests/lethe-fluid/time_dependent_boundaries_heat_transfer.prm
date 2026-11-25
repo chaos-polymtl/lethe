@@ -170,10 +170,12 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity = quiet
+    set verbosity      = quiet
+    set tolerance      = 1e-11
   end
   subsection heat transfer
-    set verbosity = quiet
+    set verbosity      = quiet
+    set tolerance      = 1e-11
   end
 end
 
@@ -183,9 +185,11 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity = quiet
+    set verbosity         = quiet
+    set minimum residual  = 1e-11
   end
   subsection heat transfer
-    set verbosity = quiet
+    set verbosity          = quiet
+    set  minimum residual  = 1e-11
   end
 end
