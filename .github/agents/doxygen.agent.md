@@ -24,6 +24,8 @@ No new functionality. Do not add TODOs for features; only document what exists.
 
 Be consistent with existing style. Match the project’s Doxygen conventions (brief vs full, line wrapping, grouping, tags). If none exist, use standard Doxygen best practices.
 
+The @brief is one or two short sentences that state what the function does. Details go in a paragraph after it.
+
 What to document
 
 File header (@file, @brief, optional @details, author/date if style uses it).

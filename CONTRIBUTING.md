@@ -45,7 +45,8 @@ of the branch owner to ensure that the pull request goes as smoothly as possible
 Pushing to GitHub after a rebase requires a force push. You can accomplish
 this by using `git push --force-with-lease`
 - All functions should be documented in the `.h`. All functions should contain
-a `@brief` that describes the function and a `@param` for each argument.
+a `@brief` that describes the function in one or two short sentences, followed
+by the details in a separate paragraph, and a `@param` for each argument.
 - Classes should be implemented in their `.cc`. All possibilities of the classes
 should be instantiated at the end of the `.cc` files.
 - Lethe follows strict indentation guidelines. Automatic indentation can be

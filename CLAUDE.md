@@ -151,7 +151,8 @@ this summary; naming details are in `.claude/rules/cpp.md`.
 ## What a change must include
 
 - **Doxygen**: `@brief`, a `@param` per argument and a `@tparam` per template
-  parameter, in the header, for every function.
+  parameter, in the header, for every function. The `@brief` is one or two short
+  sentences; details go in a paragraph after it.
 - **Tests**: a new feature needs unit and/or application tests; a bug fix needs
   a test reproducing the bug and a PR description explaining the root cause.
 - **Docs**: new/changed input-file parameters update `doc/source/parameters/`

@@ -158,3 +158,9 @@ Memory in Lethe is managed with smart pointers, so that every object has a clear
 
 * Only pass a smart pointer to a function that shares the ownership of the object, such as a constructor that stores it. Lethe passes them as ``const std::shared_ptr<T> &``. A function that only uses the object takes it by reference (``const T &``).
 * Avoid cycles of ``std::shared_ptr`` (two objects that own each other): neither of them is ever destroyed.
+
+Documentation
+-------------
+
+* Every function is documented in its header with Doxygen: a ``@brief``, a ``@param`` for each argument, a ``@tparam`` for each template parameter and a ``@return`` if it returns a value.
+* The ``@brief`` is one or two short sentences that state what the function does. Details, such as the method, the assumptions, or the references, go in a paragraph after it.
