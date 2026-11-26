@@ -67,22 +67,8 @@ for file in $plots $data; do
   fi
 done
 
-# Append the plots to the report, which only exists when this script is
-# launched by validate_lethe.sh
-existing_plots=""
-for plot in $plots; do
-  if [ -f "$plot" ]; then
-    existing_plots="$existing_plots $plot"
-  fi
-done
-report="$output_root/report.pdf"
-previous_report=""
-if [ -f "$report" ]; then
-  previous_report="$report"
-fi
-if [ -n "$existing_plots" ]; then
-  magick -density 300 $previous_report $existing_plots -quality 100 "$output_root/temporary.pdf"
-  mv "$output_root/temporary.pdf" "$report"
-fi
+# Add the plots to the report. A plot that was not produced is reported as
+# missing.
+add_to_report "$folder" $plots
 
 exit $status
