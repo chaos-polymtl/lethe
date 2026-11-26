@@ -266,16 +266,17 @@ ContinuumSolidDynamics<dim>::build_constraints(
 
   for (const auto &[id, type] : boundary_conditions.type)
     {
-      if (type == BoundaryConditions::ContinuumSolidDynamicsBoundaryType::noslip)
+      if (type ==
+          BoundaryConditions::ContinuumSolidDynamicsBoundaryType::noslip)
         {
           // Zero solid velocity, the solid volume fraction is free
-          VectorTools::interpolate_boundary_values(
-            *mapping,
-            *dof_handler,
-            id,
-            Functions::ZeroFunction<dim>(dim + 1),
-            constraints,
-            velocity_mask);
+          VectorTools::interpolate_boundary_values(*mapping,
+                                                   *dof_handler,
+                                                   id,
+                                                   Functions::ZeroFunction<dim>(
+                                                     dim + 1),
+                                                   constraints,
+                                                   velocity_mask);
         }
       else if (type ==
                BoundaryConditions::ContinuumSolidDynamicsBoundaryType::slip)
@@ -320,7 +321,6 @@ ContinuumSolidDynamics<dim>::build_constraints(
                                                  periodic_boundary.direction,
                                                  constraints);
         }
-      
     }
   constraints.close();
 }

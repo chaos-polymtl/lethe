@@ -160,7 +160,7 @@ namespace Parameters
       prm.enter_subsection("continuum solid dynamics");
       continuum_solid_dynamics.declare_parameters(prm, dim + 1);
       prm.leave_subsection();
-      
+
       prm.enter_subsection("average velocity profile");
       prm.declare_entry(
         "checkpoint folder",
@@ -226,7 +226,7 @@ namespace Parameters
       prm.enter_subsection("continuum solid dynamics");
       continuum_solid_dynamics.parse_parameters(prm);
       prm.leave_subsection();
-      
+
       prm.enter_subsection("average velocity profile");
       average_velocity_folder    = prm.get("checkpoint folder");
       average_velocity_file_name = prm.get("checkpoint file name");

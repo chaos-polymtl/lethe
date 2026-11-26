@@ -34,10 +34,10 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <../tests/tests.h>
+
 #include <memory>
 #include <string>
-
-#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -73,8 +73,8 @@ void
 test()
 {
   // Boundary ids of the colorized hyper cube: 0 (x = 0), 1 (x = 1), 2 (y = 0)
-  auto tria = std::make_shared<parallel::distributed::Triangulation<dim>>(
-    MPI_COMM_WORLD);
+  auto tria =
+    std::make_shared<parallel::distributed::Triangulation<dim>>(MPI_COMM_WORLD);
   GridGenerator::hyper_cube(*tria, 0., 1., true);
   tria->refine_global(2);
 
