@@ -1,0 +1,9 @@
+
+DEAL::Initial condition (center): 1.00000 2.00000 0.400000
+DEAL::Noslip boundary: 0.00000 0.00000 0.400000
+DEAL::Function boundary: 0.500000 0.00000 0.300000
+DEAL::Slip boundary: 1.00000 0.00000 0.400000
+DEAL::Initial condition (center): 1.00000 2.00000 3.00000 0.400000
+DEAL::Noslip boundary: 0.00000 0.00000 0.00000 0.400000
+DEAL::Function boundary: 0.500000 0.00000 0.00000 0.300000
+DEAL::Slip boundary: 1.00000 0.00000 3.00000 0.400000
