@@ -7,6 +7,7 @@
 #include <core/ale.h>
 #include <core/cahn_hilliard_boundary_conditions.h>
 #include <core/cls_boundary_conditions.h>
+#include <core/continuum_solid_dynamics_boundary_conditions.h>
 #include <core/dimensionality.h>
 #include <core/fluid_dynamics_boundary_conditions.h>
 #include <core/heat_transfer_boundary_conditions.h>
@@ -61,6 +62,8 @@ public:
     cahn_hilliard_boundary_conditions;
   BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
     boundary_conditions_time_harmonic_electromagnetics;
+  BoundaryConditions::ContinuumSolidDynamicsBoundaryConditions<dim>
+    continuum_solid_dynamics_boundary_conditions;
   Parameters::InitialConditions<dim>           *initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
   SourceTerms::SourceTerm<dim>                  source_term;
@@ -119,6 +122,8 @@ public:
     cahn_hilliard_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_time_harmonic_electromagnetics.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    continuum_solid_dynamics_boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
 
     initial_condition = new Parameters::InitialConditions<dim>;
@@ -224,6 +229,7 @@ public:
     qmom_boundary_conditions.parse_parameters(prm);
     cls_boundary_conditions.parse_parameters(prm);
     cahn_hilliard_boundary_conditions.parse_parameters(prm);
+    continuum_solid_dynamics_boundary_conditions.parse_parameters(prm);
     boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
