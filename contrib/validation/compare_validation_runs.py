@@ -71,6 +71,21 @@ SLACK_WEBHOOK_VARIABLE = "LETHE_VALIDATION_SLACK_WEBHOOK"
 SLACK_TOKEN_VARIABLE = "LETHE_VALIDATION_SLACK_TOKEN"
 SLACK_CHANNEL_VARIABLE = "LETHE_VALIDATION_SLACK_CHANNEL"
 SLACK_API_URL = "https://slack.com/api/"
+SLACK_CHANNEL_ID_REGEX = re.compile(r"^[CGD][A-Z0-9]{6,}$")
+
+# How to fix the most common errors of the Slack Web API
+SLACK_ERROR_HINTS = {
+    "missing_scope": "Add files:write to the Bot Token Scopes of the Slack "
+                     "app, under OAuth & Permissions, and reinstall the app.",
+    "not_in_channel": "Invite the bot to the channel with "
+                      "/invite @<app name>.",
+    "channel_not_found": f"Check that {SLACK_CHANNEL_VARIABLE} is the ID of "
+                         "the channel.",
+    "invalid_auth": f"{SLACK_TOKEN_VARIABLE} must contain the Bot User OAuth "
+                    "Token (xoxb-...) of the Slack app.",
+    "not_authed": f"{SLACK_TOKEN_VARIABLE} must contain the Bot User OAuth "
+                  "Token (xoxb-...) of the Slack app.",
+}
 
 # Validation report of a run, written by generate_validation_report.py
 VALIDATION_REPORT_NAME = "report.pdf"
@@ -1027,11 +1042,22 @@ def post_to_slack(webhook_url, text):
     return True
 
 
+class SlackError(Exception):
+    """Error returned by a method of the Slack Web API."""
+
+    def __init__(self, method, code, details):
+        self.code = code
+        text = f"{method} failed with the error '{code}'"
+        if details:
+            text += f" ({'; '.join(details)})"
+        super().__init__(text)
+
+
 def call_slack_api(token, method, arguments):
     """Call a method of the Slack Web API and return its response.
 
-    Raises ValueError if Slack answers with an error, and URLError or OSError
-    if Slack cannot be reached.
+    Raises SlackError if Slack answers with an error, ValueError if its answer
+    is not JSON, and URLError or OSError if Slack cannot be reached.
     """
     request = urllib.request.Request(
         SLACK_API_URL + method,
@@ -1042,8 +1068,11 @@ def call_slack_api(token, method, arguments):
             request, timeout=SLACK_UPLOAD_TIMEOUT_SECONDS) as response:
         answer = json.loads(response.read())
     if not answer.get("ok"):
-        raise ValueError(f"{method} failed with the error "
-                         f"'{answer.get('error', 'unknown')}'")
+        # Slack explains some errors, e.g. invalid_arguments, in the messages
+        # of the metadata of its answer
+        raise SlackError(method, answer.get("error", "unknown"),
+                         answer.get("response_metadata", {})
+                         .get("messages", []))
     return answer
 
 
@@ -1069,11 +1098,17 @@ def share_file_on_slack(token, channel, path, comment):
                                               "title": path.name}]),
                         "channel_id": channel,
                         "initial_comment": comment})
-    except (urllib.error.URLError, OSError, ValueError, KeyError) as error:
-        print(f"Warning: {path} could not be shared on Slack: {error}. The "
-              f"bot of {SLACK_TOKEN_VARIABLE} needs the files:write scope "
-              f"and must be a member of the channel {channel}.",
-              file=sys.stderr)
+    except (urllib.error.URLError, OSError, ValueError, KeyError,
+            SlackError) as error:
+        message = f"Warning: {path} could not be shared on Slack: {error}."
+        if not SLACK_CHANNEL_ID_REGEX.match(channel):
+            message += (f" {SLACK_CHANNEL_VARIABLE} is '{channel}', which is "
+                        "not the ID of a channel: the ID starts with C and is "
+                        "shown at the bottom of the About tab of the channel "
+                        "in Slack.")
+        elif getattr(error, "code", None) in SLACK_ERROR_HINTS:
+            message += " " + SLACK_ERROR_HINTS[error.code]
+        print(message, file=sys.stderr)
         return False
     print(f"{path} shared on Slack.")
     return True
