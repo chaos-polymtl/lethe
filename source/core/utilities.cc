@@ -222,6 +222,22 @@ make_table_tensors_scalars(
 }
 
 void
+create_random_number_container(std::vector<double> &random_container,
+                               const unsigned int   number_of_elements,
+                               const std::pair<double, double> &range,
+                               std::mt19937                    &generator)
+{
+  random_container.reserve(random_container.size() + number_of_elements);
+  for (unsigned int i = 0; i < number_of_elements; ++i)
+    {
+      const double fraction_of_range = static_cast<double>(generator()) /
+                                       static_cast<double>(std::mt19937::max());
+      random_container.push_back(range.first + fraction_of_range *
+                                                 (range.second - range.first));
+    }
+}
+
+void
 check_file_exists(const std::string &file_name,
                   const std::string &file_description)
 {

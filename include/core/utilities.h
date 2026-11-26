@@ -32,6 +32,7 @@
 #include <fstream>
 #include <map>
 #include <optional>
+#include <random>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -1301,29 +1302,29 @@ radius_to_point(const double       radius,
 }
 
 /**
- * @brief Creates a vector of random doubles between 0 and a maximum value using
- * a pseudo random seed.
+ * @brief Fills a container with random doubles uniformly distributed in the
+ * closed interval [@p range.first, @p range.second], drawn from a
+ * pseudo-random number engine.
+ *
+ * Each double is range.first + (range.second - range.first) * g / g_max,
+ * where g is the next output of @p generator and g_max is
+ * std::mt19937::max(), so both bounds can be drawn.
+ *
  * @param[in,out] random_container Container in which the doubles are stored.
  * @param[in] number_of_elements Number of random doubles to generate.
- * @param[in] maximum_range Maximum value that the random double can have.
- * @param[in] prn_seed Pseudo random seed used to generate the random doubles.
+ * @param[in] range Minimum and maximum values that the random doubles can
+ * have, both included.
+ * @param[in,out] generator Pseudo random number engine used to generate the
+ * doubles. Each successive number modifies its state, so successive calls
+ * produce different numbers.
  *
  */
 
-inline void
+void
 create_random_number_container(std::vector<double> &random_container,
                                const unsigned int   number_of_elements,
-                               const double         maximum_range,
-                               const unsigned int   prn_seed)
-{
-  for (unsigned int i = 0; i < number_of_elements; ++i)
-    {
-      srand(prn_seed * (i + 1));
-      random_container.push_back(
-        (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) *
-        maximum_range);
-    }
-}
+                               const std::pair<double, double> &range,
+                               std::mt19937                    &generator);
 
 /**
  * @brief Return the vector of size N of entry @entry_string. If the entry is

@@ -6,6 +6,8 @@
 
 #include <dem/insertion.h>
 
+#include <deal.II/base/tensor.h>
+
 using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
@@ -97,22 +99,19 @@ private:
     unsigned int             &inserted_this_step);
 
   /**
-   * @brief Converts id of particles to volume insertion location
+   * @brief Converts the index of an insertion point to the insertion location
+   * of its particle, shifted by the random offsets.
    *
    * @param[out] insertion_location Insertion location of the particle
-   * @param[in] id Particle_id
-   * @param[in] random_number1 A random number to create randomness in volume
-   * insertion
-   * @param[in] random_number2 A random number to create randomness in volume
-   * insertion
+   * @param[in] id Index of the insertion point in the insertion box
+   * @param[in] offsets Random offsets applied to the insertion location.
    * @param[in] insertion_information DEM insertion parameters declared in the
    * .prm file
    */
   void
   find_insertion_location(Point<dim>               &insertion_location,
                           const unsigned int        id,
-                          const double              random_number1,
-                          const double              random_number2,
+                          const Tensor<1, dim>     &offsets,
                           const InsertionInfo<dim> &insertion_information);
 
   /**

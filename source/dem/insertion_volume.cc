@@ -5,6 +5,9 @@
 
 #include <dem/insertion_volume.h>
 
+#include <array>
+#include <random>
+
 using namespace DEM;
 
 // The constructor of the volume insertion class. In the constructor, we
@@ -86,14 +89,28 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      // Call the random number generator for the offsets
+      // The engine is seeded at every insertion step from the insertion seed,
+      // the particle type being inserted and the number of particles of that
+      // type remaining. The type and the number remaining change at every
+      // insertion step, so each batch gets new offsets. They are also stored
+      // in the checkpoint, so a restarted simulation draws the same offsets
+      // as an uninterrupted one. std::seed_seq combines the three integers
+      // into the seed of the engine.
+      std::seed_seq seed_sequence{
+        static_cast<unsigned int>(
+          dem_parameters.insertion_info.seed_for_insertion),
+        current_inserting_particle_type,
+        particles_of_each_type_remaining};
+      std::mt19937 generator(seed_sequence);
+
+      // Call the random number generator for the offsets, generating a random
+      // number for each axis of dim
       std::vector<double> random_number_vector;
-      random_number_vector.reserve(filted_box_index.size());
       create_random_number_container(
         random_number_vector,
-        filted_box_index.size(),
-        dem_parameters.insertion_info.insertion_maximum_offset,
-        dem_parameters.insertion_info.seed_for_insertion);
+        dim * inserted_this_step,
+        {0., dem_parameters.insertion_info.insertion_maximum_offset},
+        generator);
 
       Point<dim>              insertion_location;
       std::vector<Point<dim>> insertion_points_on_proc;
@@ -107,12 +124,15 @@ InsertionVolume<dim, PropertiesIndex>::insert(
            global_index < inserted_this_step;
            ++global_index, ++particle_counter)
         {
+          // The random numbers are identical on every process, so each particle
+          // uses the offsets associated with its global index
+          Tensor<1, dim> offsets;
+          for (int d = 0; d < dim; ++d)
+            offsets[d] = random_number_vector.at(dim * global_index + d);
+
           find_insertion_location(insertion_location,
                                   filted_box_index.at(particle_counter),
-                                  random_number_vector.at(particle_counter),
-                                  random_number_vector.at(
-                                    filted_box_index.size() - particle_counter -
-                                    1),
+                                  offsets,
                                   dem_parameters.insertion_info);
 
           insertion_points_on_proc.push_back(insertion_location);
@@ -149,58 +169,40 @@ void
 InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
   Point<dim>                                       &insertion_location,
   const unsigned int                                id,
-  const double                                      random_number1,
-  const double                                      random_number2,
+  const Tensor<1, dim>                             &offsets,
   const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information)
 {
-  std::vector<int> insertion_index;
-  insertion_index.resize(dim);
+  // Index of the insertion point along each axis. The id runs first along the
+  // first direction of the direction sequence, then along the second and,
+  // in 3D, along the third.
+  std::array<unsigned int, dim> insertion_index{};
 
-  // First direction (axis) to have particles inserted
-  unsigned int axis_0 = insertion_information.direction_sequence[0];
-  unsigned int number_of_particles_0 = number_of_particles_directions[axis_0];
-  insertion_index[axis_0]            = id % number_of_particles_0;
-  insertion_location[axis_0] =
-    axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
-                          insertion_information.distance_threshold -
-                        random_number1) *
-                         maximum_diameter;
+  const unsigned int axis_0 = insertion_information.direction_sequence[0];
+  const unsigned int axis_1 = insertion_information.direction_sequence[1];
 
-  // Second direction (axis) to have particles inserted
-  unsigned int axis_1 = insertion_information.direction_sequence.at(1);
+  const unsigned int number_of_particles_0 =
+    number_of_particles_directions[axis_0];
+  const unsigned int number_of_particles_1 =
+    number_of_particles_directions[axis_1];
 
-  if constexpr (dim == 2)
+  insertion_index[axis_0] = id % number_of_particles_0;
+  insertion_index[axis_1] =
+    (id / number_of_particles_0) % number_of_particles_1;
+
+  if constexpr (dim == 3)
     {
-      insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
-      insertion_location[axis_1] =
-        axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                              insertion_information.distance_threshold -
-                            random_number2) *
-                             maximum_diameter;
-    }
-  else
-    {
-      unsigned int number_of_particles_1 =
-        number_of_particles_directions[axis_1];
-      insertion_index[axis_1] =
-        static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
-        (number_of_particles_0);
-      insertion_location[axis_1] =
-        axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                              insertion_information.distance_threshold -
-                            random_number2) *
-                             maximum_diameter;
-
-      // Third direction (axis) to have particles inserted
-      unsigned int axis_2 = insertion_information.direction_sequence[2];
+      const unsigned int axis_2 = insertion_information.direction_sequence[2];
       insertion_index[axis_2] =
-        static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
-      insertion_location[axis_2] =
-        axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
-                              insertion_information.distance_threshold -
-                            random_number1) *
-                             maximum_diameter;
+        id / (number_of_particles_0 * number_of_particles_1);
     }
+
+  // The offsets shift the particle from the center of its insertion point
+  for (int d = 0; d < dim; ++d)
+    insertion_location[d] =
+      axis_min[d] +
+      ((insertion_index[d] + 0.5) * insertion_information.distance_threshold -
+       offsets[d]) *
+        maximum_diameter;
 }
 
 
@@ -292,8 +294,10 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
     {
       // Create the insertion point, associated with the current index, with
       // no offset
-      find_insertion_location(
-        insertion_location, index, 0., 0., insertion_information);
+      find_insertion_location(insertion_location,
+                              index,
+                              Tensor<1, dim>(),
+                              insertion_information);
 
       // If the point respects the acceptance function, we insert the index in
       // the vector.
