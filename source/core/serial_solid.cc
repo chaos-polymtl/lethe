@@ -186,7 +186,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
             triangles[v] = this_triangle->vertex(v);
 
           intersected_cubes.clear();
-          // Find the cubes (associated to each ground cell) that intersect the
+          // Find the cubes (associated to each baground cell) that intersect the
           // bounding box of the triangle. Stores the intersected cubes in
           // intersected_cubes.
           cube_tree.query(boost::geometry::index::intersects(
@@ -204,7 +204,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
                 LetheGridTools::find_point_triangle_distance(
                   triangles, local_background_cell_centers[local_index]);
 
-              // If the distance between the back ground cell center and the
+              // If the distance between the background cell center and the
               // triangle is smaller than the diameter of the cell,
               // the triangle is mapped to the cell.
               if (distance < local_background_cell_diameters[local_index])
