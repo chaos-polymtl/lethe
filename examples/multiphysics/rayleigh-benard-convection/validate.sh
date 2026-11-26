@@ -41,6 +41,5 @@ python3 ./rayleigh-benard-convection.py -f ./output_10k -Ra 10k --validate
 cp $plots $folder
 cp $data $folder
 
-# Append the information to the report
-magick -density 300  $output_root/report.pdf $plots  -quality 100 $output_root/temporary.pdf
-cp $output_root/temporary.pdf $output_root/report.pdf
+# Add the plots to the report
+add_to_report "$folder" $plots

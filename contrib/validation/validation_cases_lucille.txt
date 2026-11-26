@@ -3,45 +3,60 @@
 
 # This file contains the list of validation test cases used in the large-scale validation of Lethe
 # The cases assume that the validation is ran from the root folder of the Lethe source code
-# For every cases, the path of the case must be specified followed by the number of processors with which
-# the case must be ran. The file allows for comments, which are specified by a "#"
+# Every case is given by three columns: the path of the case, the number of processors with which
+# the case must be ran, and the solver it validates, under which the case is listed in the report.
+# The cases are grouped by solver. The file allows for comments, which are specified by a "#"
 
-examples/incompressible-flow/2d-lid-driven-cavity 1
-examples/incompressible-flow/2d-taylor-couette 1
-examples/incompressible-flow/3d-taylor-green-vortex 128
-examples/incompressible-flow/3d-flow-around-sphere 128
-examples/multiphysics/fichera-oven 128
-examples/multiphysics/rising-bubble 128
-examples/dem/3d-rectangular-hopper 64
-examples/dem/3d-rotating-drum 128
-examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed 128
-examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed 128
-examples/sharp-immersed-boundary/sedimentation-1-cuboid 128
-examples/incompressible-flow/2d-taylor-couette-nitsche 128
-examples/multiphysics/stefan-problem 1
-examples/multiphysics/rayleigh-benard-convection 128
-examples/multiphysics/concentric-heat-exchanger 128
-examples/multiphysics/air-bubble-compression 128
-examples/multiphysics/water-injection-in-a-closed-cell 128
-examples/multiphysics/jurins-law-2d 64
-examples/dem-mp/3d-heated-packed-bed 128
-examples/unresolved-cfd-dem/cylindrical-packed-bed 128
-examples/unresolved-cfd-dem/single-particle-sedimentation 128
-examples/multiphysics/melting-cavity 128
-examples/multiphysics/capillary-wave 128
-examples/multiphysics/dam-break 128
-# The three rolling resistance models are launched at the same time, each on a third of the given number of cores
-# The sandpile case is repeated for three rolling resistance models (epsd, constant, and viscous). They are launched at the same time, each on a third of the given number of cores.
-examples/dem/2d-sandpile-formation 128
+# lethe-fluid
+examples/incompressible-flow/2d-lid-driven-cavity                 1 lethe-fluid
+examples/incompressible-flow/2d-taylor-couette                    1 lethe-fluid
+examples/incompressible-flow/2d-sudden-expansion-flow           128 lethe-fluid
+examples/incompressible-flow/2d-backward-facing-step            128 lethe-fluid
+examples/incompressible-flow/3d-ribbon-mixer-srf                128 lethe-fluid
+examples/multiphysics/fichera-oven                              128 lethe-fluid
+examples/multiphysics/rising-bubble                             128 lethe-fluid
+examples/multiphysics/stefan-problem                              1 lethe-fluid
+examples/multiphysics/rayleigh-benard-convection                128 lethe-fluid
+examples/multiphysics/concentric-heat-exchanger                 128 lethe-fluid
+examples/multiphysics/air-bubble-compression                    128 lethe-fluid
+examples/multiphysics/water-injection-in-a-closed-cell          128 lethe-fluid
+examples/multiphysics/jurins-law-2d                              64 lethe-fluid
+examples/multiphysics/melting-cavity                            128 lethe-fluid
+examples/multiphysics/capillary-wave                            128 lethe-fluid
+examples/multiphysics/dam-break                                 128 lethe-fluid
+examples/multiphysics/warming-up-viscous-fluid                    1 lethe-fluid
+examples/multiphysics/cooling_fin                               128 lethe-fluid
+examples/multiphysics/waveguide                                 128 lethe-fluid
+
+# lethe-fluid-matrix-free
+examples/incompressible-flow/3d-taylor-green-vortex             128 lethe-fluid-matrix-free
+# The flow around a sphere is also simulated with lethe-fluid, for comparison
+examples/incompressible-flow/3d-flow-around-sphere              128 lethe-fluid-matrix-free
+examples/incompressible-flow/3d-turbulent-taylor-couette        128 lethe-fluid-matrix-free
+
+# lethe-fluid-nitsche
+examples/incompressible-flow/2d-taylor-couette-nitsche          128 lethe-fluid-nitsche
+
+# lethe-fluid-sharp
+examples/sharp-immersed-boundary/sedimentation-1-cuboid         128 lethe-fluid-sharp
+examples/sharp-immersed-boundary/sedimentation-1-particle       128 lethe-fluid-sharp
+
+# lethe-particles
+examples/dem/3d-rectangular-hopper                               64 lethe-particles
+examples/dem/3d-rotating-drum                                   128 lethe-particles
+# The sandpile case is repeated for three rolling resistance models (epsd, constant, and viscous).
+# They are launched at the same time, each on a third of the given number of cores.
+examples/dem/2d-sandpile-formation                              128 lethe-particles
 # The given number of cores is the number of serial simulations launched at the same time
-examples/dem/3d-oblique-wall-impact 34
-examples/incompressible-flow/2d-sudden-expansion-flow 128
-examples/incompressible-flow/2d-backward-facing-step 128
-examples/multiphysics/warming-up-viscous-fluid 1
-examples/multiphysics/cooling_fin 128
-examples/multiphysics/waveguide 128
-examples/incompressible-flow/3d-turbulent-taylor-couette 128
-examples/incompressible-flow/3d-ribbon-mixer-srf 128
-examples/sharp-immersed-boundary/sedimentation-1-particle 128
+examples/dem/3d-oblique-wall-impact                              34 lethe-particles
+examples/dem-mp/3d-heated-packed-bed                            128 lethe-particles
 
+# lethe-fluid-vans
+examples/unresolved-cfd-dem/cylindrical-packed-bed              128 lethe-fluid-vans
 
+# lethe-fluid-particles
+examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed   128 lethe-fluid-particles
+examples/unresolved-cfd-dem/single-particle-sedimentation       128 lethe-fluid-particles
+
+# lethe-fluid-particles-matrix-free
+examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed    128 lethe-fluid-particles-matrix-free

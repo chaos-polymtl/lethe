@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # -----------------------------------------------------------------------------
@@ -22,11 +22,16 @@
 #
 # Requirements:
 # - Lethe must be installed and accessible from the environment.
-# - Required dependencies: [list dependencies, if any].
+# - Required dependencies: git, and python3 with matplotlib and pypdf
+#   (python3 -m pip install --user pypdf).
 # - Reference results must be available in the specified directory.
 #
 # Notes:
 # - The program needs to be launched from the main folder of lethe
+# - The cases are listed in the input file with their number of cores and the
+#   solver they validate. After every case, generate_validation_report.py
+#   updates report.pdf in the output folder, from the files listed in
+#   report_contents.txt by the validate.sh script of every case.
 # - Once all the cases are done, compare_validation_runs.py compares the results
 #   with the previous runs stored next to the output folder. Set the environment
 #   variable LETHE_VALIDATION_SLACK_WEBHOOK to post the summary to Slack.
@@ -98,6 +103,8 @@ verify_or_create_folder() {
 
 show_splash
 
+lethe_path=$(pwd)
+
 # Default values for options
 input_file="$lethe_path/contrib/validation/validation_cases.txt"
 force=false # Flag to skip confirmation prompts
@@ -150,27 +157,25 @@ fi
 
 echo "The output path has been set to $output_path"
 verify_or_create_folder "$output_path"
-lethe_path=$(pwd)
 echo "The current path is: $lethe_path"
 echo "Please ensure that the current path is the root folder of lethe"
 
-# Check if magick is available. Otherwise reports will not be generated.
-# If magick is not available, the script will exit with an error status.
-# Check if the application exists
-if ! command -v "magick" &> /dev/null; then
-  echo "Error: magick is not installed or not in the PATH." >&2
-  exit 1
-fi
-
 # Check if git is available. Otherwise it is not possible to have a git hash
 if ! command -v "git" &> /dev/null; then
-  error exit echo "Error: git is not installed or not in the PATH." >&2
+  echo "Error: git is not installed or not in the PATH." >&2
   exit 1
 fi
 
 # Check if python3 is available. Otherwise it is not possible to post-process the simulations
 if ! command -v "python3" &> /dev/null; then
-  error exit echo "Error: python3 is not installed or not in the PATH." >&2
+  echo "Error: python3 is not installed or not in the PATH." >&2
+  exit 1
+fi
+
+# Check if the Python packages used to generate the report are available
+if ! python3 -c "import matplotlib, pypdf" &> /dev/null; then
+  echo "Error: the Python packages matplotlib and pypdf are required to generate the report." >&2
+  echo "Install them with: python3 -m pip install --user matplotlib pypdf" >&2
   exit 1
 fi
 
@@ -197,28 +202,39 @@ fi
 
 cases=()
 n_procs=()
+solvers=()
 
-# Loop through each line of the file and store the cases and number of procs
+# Loop through each line of the file and store the cases, number of procs and solvers
+line_number=0
 while IFS= read -r line; do
+  line_number=$((line_number + 1))
 
   # Skip lines that are empty or start with a comment
   if [[ -z "$line" || "$line" =~ ^# ]]; then
       continue
   fi
 
-  # Split the line into two parts
+  # Split the line into three parts
   part1=$(echo "$line" | awk '{print $1}')
   part2=$(echo "$line" | awk '{print $2}')
-  
+  part3=$(echo "$line" | awk '{print $3}')
+
+  if [[ -z "$part3" ]]; then
+      echo "Error: line $line_number of $input_file does not give the solver of the case: '$line'." >&2
+      echo "Every case is given by its path, its number of cores and the solver it validates." >&2
+      exit 1
+  fi
+
   # Append the parts to the respective arrays
   cases+=("$part1")
   n_procs+=("$part2")
+  solvers+=("$part3")
 
 done < "$input_file"
 
-#Create the first page of the PDF report
-echo -e "Lethe validation \nDate: $(date) \nGit hash: $git_hash  \nComputer: $(hostname -f) \n" | \
-magick -density 300 -pointsize 12 text:- $output_path/report.pdf
+# Start the list of the content of the report, which the cases complete
+report_contents="$output_path/report_contents.txt"
+echo "computer $(hostname -f)" > "$report_contents"
 
 
 echo "Proceeding with validation..."
@@ -226,6 +242,7 @@ echo "-----------------------------"
 date +"%Y-%m-%d: %H:%M"
 for i in "${!cases[@]}"; do
   echo "---> Processing ${cases[i]} using ${n_procs[i]} cores"
+  echo "case ${cases[i]} ${n_procs[i]} ${solvers[i]}" >> "$report_contents"
   cd $lethe_path/${cases[i]}
   # Remove any PDF artifacts to ensure that previous post-processing outputs are not used in the generation of the report
   rm -f *.pdf
@@ -233,6 +250,8 @@ for i in "${!cases[@]}"; do
   bash validate.sh -p $output_path -np ${n_procs[i]}
   echo "     Finished processing ${cases[i]}"
   cd $lethe_path
+  # Update the report, so that it is complete up to this case even if the run is interrupted
+  python3 "$lethe_path/contrib/validation/generate_validation_report.py" --run "$output_path"
   date +"%Y-%m-%d: %H:%M"
 done
 
