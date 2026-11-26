@@ -4,6 +4,7 @@ add_library(lethe-core
   cahn_hilliard_boundary_conditions.cc
   checkpoint_control.cc
   cls_boundary_conditions.cc
+  continuum_solid_dynamics_boundary_conditions.cc
   dem_properties.cc
   density_model.cc
   dimensionality.cc
@@ -66,6 +67,7 @@ add_library(lethe-core
   ../../include/core/cahn_hilliard_boundary_conditions.h
   ../../include/core/checkpoint_control.h
   ../../include/core/cls_boundary_conditions.h
+  ../../include/core/continuum_solid_dynamics_boundary_conditions.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
