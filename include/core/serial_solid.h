@@ -10,25 +10,17 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 #include <core/utilities.h>
 
-#include <deal.II/base/bounding_box.h>
 #include <deal.II/base/function.h>
-#include <deal.II/base/point.h>
-
-#include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/mapping_fe.h>
-
-#include <deal.II/grid/tria.h>
 
 #include <deal.II/numerics/rtree.h>
 
 #include <deal.II/particles/particle_handler.h>
 
 #include <unordered_map>
-#include <utility>
-#include <vector>
 
 using namespace dealii;
 
