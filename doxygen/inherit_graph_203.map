@@ -1,17 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsScratchDataBase.html" title="Base class for scratch data objects of physics and subequations." alt="" coords="5,204,187,232"/>
-<area shape="rect" id="Node000001" href="$classCLSScratchData.html" title="Store the information required by the assembly procedure for a CLS free surface equation...." alt="" coords="255,5,434,33"/>
-<area shape="poly" id="edge225_Node000000_Node000001" title=" " alt="" coords="109,189,129,155,157,115,192,75,233,42,259,32,255,35,236,47,196,79,161,118,134,158,114,192"/>
-<area shape="rect" id="Node000002" href="$classCahnHilliardScratchData.html" title="Class that stores the information required by the assembly procedure for the Cahn&#45;Hilliard equations...." alt="" coords="255,57,435,102"/>
-<area shape="poly" id="edge226_Node000000_Node000002" title=" " alt="" coords="122,192,172,151,233,111,263,100,259,104,236,116,175,155,126,195"/>
-<area shape="rect" id="Node000003" href="$classHeatTransferScratchData.html" title="Class that stores the information required by the assembly procedure for a heat transfer advection&#45;di..." alt="" coords="253,126,436,171"/>
-<area shape="poly" id="edge227_Node000000_Node000003" title=" " alt="" coords="162,197,264,170,260,173,164,202"/>
-<area shape="rect" id="Node000004" href="$classNavierStokesScratchData.html" title="Class that stores the information required by the assembly procedure for a Navier&#45;Stokes equation...." alt="" coords="252,196,438,240"/>
-<area shape="poly" id="edge228_Node000000_Node000004" title=" " alt="" coords="201,215,254,217,249,219,203,220"/>
-<area shape="rect" id="Node000005" href="$classQMOMScratchData.html" title="Scratch data of the transport of the QMOM components." alt="" coords="245,264,444,292"/>
-<area shape="poly" id="edge229_Node000000_Node000005" title=" " alt="" coords="168,233,235,250,283,263,278,264,234,255,168,239"/>
-<area shape="rect" id="Node000006" href="$classTimeHarmonicMaxwellScratchData.html" title="Class that stores the information required by the assembly of the Discontinuous Petrov&#45;Galerkin (DPG)..." alt="" coords="235,316,455,360"/>
-<area shape="poly" id="edge230_Node000000_Node000006" title=" " alt="" coords="130,238,179,270,236,301,266,315,261,315,234,306,177,275,129,244"/>
-<area shape="rect" id="Node000007" href="$classTracerScratchData.html" title="Class that stores the information required by the assembly procedure for a Tracer advection&#45;diffusion..." alt="" coords="270,385,420,430"/>
-<area shape="poly" id="edge231_Node000000_Node000007" title=" " alt="" coords="115,242,166,307,199,341,236,370,272,390,266,389,233,375,195,345,162,311,114,247"/>
+<area shape="rect" id="Node000000" href="$classPhysicsFaceAssemblerBase.html" title=" " alt="" coords="5,32,269,93"/>
+<area shape="rect" id="Node000001" href="$classTracerAssemblerBoundaryNitsche.html" title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace..." alt="" coords="317,5,557,50"/>
+<area shape="poly" id="edge223_Node000000_Node000001" title=" " alt="" coords="284,43,319,41,314,42,285,48"/>
+<area shape="rect" id="Node000002" href="$classTracerAssemblerSIPG.html" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="357,75,516,119"/>
+<area shape="poly" id="edge224_Node000000_Node000002" title=" " alt="" coords="284,77,359,88,354,88,284,82"/>
 </map>

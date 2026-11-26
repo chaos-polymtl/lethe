@@ -10,5 +10,6 @@ var searchData=
   ['clsassemblerbase_7',['CLSAssemblerBase',['../cls__assemblers_8h.html#adb4298226f8ff37147c77a790fdb32bf',1,'cls_assemblers.h']]],
   ['clsfaceassemblerbase_8',['CLSFaceAssemblerBase',['../cls__assemblers_8h.html#aded0c44b6413917467ca26bbedf3866f',1,'cls_assemblers.h']]],
   ['clssubequationassemblerbase_9',['CLSSubequationAssemblerBase',['../cls__assemblers_8h.html#a712b2d42ce71116e667b780bc876dd74',1,'cls_assemblers.h']]],
-  ['coarsegridsolverapply_10',['CoarseGridSolverApply',['../classMFNavierStokesPreconditionGMGBase.html#a68a8ae733320def6b2f5499fa56d8443',1,'MFNavierStokesPreconditionGMGBase']]]
+  ['coarsegridsolverapply_10',['CoarseGridSolverApply',['../classMFNavierStokesPreconditionGMGBase.html#a68a8ae733320def6b2f5499fa56d8443',1,'MFNavierStokesPreconditionGMGBase']]],
+  ['cubeandindex_11',['CubeAndIndex',['../classBackgroundCellsSearchTree.html#ab1184b60b19bdf015227827693584c42',1,'BackgroundCellsSearchTree']]]
 ];

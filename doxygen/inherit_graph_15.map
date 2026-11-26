@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classBoundaryConditions_1_1BoundaryConditions.html" title=" " alt="" coords="5,5,255,84"/>
-<area shape="rect" id="Node000001" href="$classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html" title="This class manages the boundary conditions for Time Harmonic Maxwell solver. It introduces the bounda..." alt="" coords="303,14,545,76"/>
-<area shape="poly" id="edge26_Node000000_Node000001" title=" " alt="" coords="270,42,305,44,300,45,270,47"/>
+<area shape="rect" id="Node000000" href="$classBoundaryConditions_1_1BoundaryConditions.html" title=" " alt="" coords="5,5,193,67"/>
+<area shape="rect" id="Node000001" href="$classBoundaryConditions_1_1QMOMBoundaryConditions.html" title="Boundary conditions of the QMOM physics. They apply to the advective flux of all the QMOM fields (sca..." alt="" coords="241,5,445,67"/>
+<area shape="poly" id="edge25_Node000000_Node000001" title=" " alt="" coords="208,34,243,36,238,36,209,39"/>
 </map>

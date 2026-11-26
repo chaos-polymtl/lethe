@@ -1,7 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsFaceAssemblerBase.html" title=" " alt="" coords="5,32,269,93"/>
-<area shape="rect" id="Node000001" href="$classTracerAssemblerBoundaryNitsche.html" title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace..." alt="" coords="317,5,557,50"/>
-<area shape="poly" id="edge223_Node000000_Node000001" title=" " alt="" coords="284,43,319,41,314,42,285,48"/>
-<area shape="rect" id="Node000002" href="$classTracerAssemblerSIPG.html" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="357,75,516,119"/>
-<area shape="poly" id="edge224_Node000000_Node000002" title=" " alt="" coords="284,77,359,88,354,88,284,82"/>
+<area shape="rect" id="Node000000" href="$classPhysicsFaceAssemblerBase.html" title=" " alt="" coords="5,32,272,93"/>
+<area shape="rect" id="Node000001" href="$classTimeHarmonicMaxwellAssemblerRobinBC.html" title="Class that assembles the Robin boundary conditions of the time&#45;harmonic Maxwell equations (silver_mul..." alt="" coords="320,5,561,50"/>
+<area shape="poly" id="edge221_Node000000_Node000001" title=" " alt="" coords="286,43,322,41,317,42,287,48"/>
+<area shape="rect" id="Node000002" href="$classTimeHarmonicMaxwellAssemblerSkeleton.html" title="Class that assembles the skeleton terms of the ultraweak DPG formulation of the time&#45;harmonic Maxwell..." alt="" coords="320,75,561,119"/>
+<area shape="poly" id="edge222_Node000000_Node000002" title=" " alt="" coords="287,77,322,83,317,83,287,82"/>
 </map>

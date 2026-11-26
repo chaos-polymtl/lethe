@@ -1,11 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsAssemblerBase.html" title=" " alt="" coords="5,71,249,133"/>
-<area shape="rect" id="Node000001" href="$classCLSAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the CLS equation...." alt="" coords="316,5,513,33"/>
-<area shape="poly" id="edge161_Node000000_Node000001" title=" " alt="" coords="231,63,296,43,347,32,343,35,297,48,233,68"/>
-<area shape="rect" id="Node000002" href="$classCLSAssemblerCore.html" title="Class that assembles the core of the CLS solver. According to the following weak form: &#160;with an SUPG ..." alt="" coords="314,57,514,85"/>
-<area shape="poly" id="edge162_Node000000_Node000002" title=" " alt="" coords="264,85,316,81,311,83,265,90"/>
-<area shape="rect" id="Node000003" href="$classCLSAssemblerDCDDStabilization.html" title="Assemble the Discontinuity&#45;Capturing Directional Dissipation (DCDD) stabilization term for the CLS ph..." alt="" coords="297,109,532,154"/>
-<area shape="poly" id="edge163_Node000000_Node000003" title=" " alt="" coords="264,113,299,119,294,120,264,118"/>
-<area shape="rect" id="Node000004" href="$classCLSAssemblerDGCore.html" title="Class that assembles the core (cells) of the CLS equation for DG elements. This class assembles the w..." alt="" coords="332,178,497,223"/>
-<area shape="poly" id="edge164_Node000000_Node000004" title=" " alt="" coords="222,136,298,163,336,178,331,178,296,168,221,141"/>
+<area shape="rect" id="Node000000" href="$classPhysicsAssemblerBase.html" title=" " alt="" coords="5,101,289,162"/>
+<area shape="rect" id="Node000001" href="$classCahnHilliardAssemblerAngleOfContact.html" title="Class that assembles the boundary condition on the angle of contact in the Cahn&#45;Hilliard equations." alt="" coords="337,5,544,50"/>
+<area shape="poly" id="edge157_Node000000_Node000001" title=" " alt="" coords="245,93,336,60,373,49,368,52,338,65,247,98"/>
+<area shape="rect" id="Node000002" href="$classCahnHilliardAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the Cahn&#45;Hilliard equat..." alt="" coords="342,75,539,119"/>
+<area shape="poly" id="edge158_Node000000_Node000002" title=" " alt="" coords="303,111,344,108,339,109,305,116"/>
+<area shape="rect" id="Node000003" href="$classCahnHilliardAssemblerCore.html" title="Class that assembles the core of the Cahn&#45;Hilliard equation : &#160;&#160;." alt="" coords="340,144,540,189"/>
+<area shape="poly" id="edge159_Node000000_Node000003" title=" " alt="" coords="304,148,342,154,337,155,304,153"/>
+<area shape="rect" id="Node000004" href="$classCahnHilliardAssemblerFreeAngle.html" title="Class that assembles the boundary condition that allows a free angle of contact, thus adding a degree..." alt="" coords="341,213,540,258"/>
+<area shape="poly" id="edge160_Node000000_Node000004" title=" " alt="" coords="246,166,338,198,373,213,368,213,336,204,246,171"/>
 </map>

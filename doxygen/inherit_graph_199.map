@@ -1,5 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsFaceAssemblerBase.html" title=" " alt="" coords="5,5,254,67"/>
-<area shape="rect" id="Node000001" href="$classCLSAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="302,22,502,50"/>
-<area shape="poly" id="edge220_Node000000_Node000001" title=" " alt="" coords="269,34,304,36,298,36,269,39"/>
+<area shape="rect" id="Node000000" href="$classPhysicsAssemblerBase.html" title=" " alt="" coords="5,92,232,171"/>
+<area shape="rect" id="Node000001" href="$classTracerAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the Tracer equations...." alt="" coords="295,5,451,50"/>
+<area shape="poly" id="edge216_Node000000_Node000001" title=" " alt="" coords="223,83,279,60,312,49,307,52,281,65,225,88"/>
+<area shape="rect" id="Node000002" href="$classTracerAssemblerCore.html" title="Class that assembles the core of the Tracer equation. This class assembles the weak form of: &#160;with an..." alt="" coords="293,75,452,119"/>
+<area shape="poly" id="edge217_Node000000_Node000002" title=" " alt="" coords="246,112,295,107,290,109,248,117"/>
+<area shape="rect" id="Node000003" href="$classTracerAssemblerDGCore.html" title="Class that assembles the core (cells) of the Tracer equation for DG elements. This class assembles th..." alt="" coords="283,144,462,189"/>
+<area shape="poly" id="edge218_Node000000_Node000003" title=" " alt="" coords="247,147,285,154,280,155,247,152"/>
+<area shape="rect" id="Node000004" href="$classTracerAssemblerReaction.html" title="Class that assembles the reaction source term of the Tracer equation. It assembles the term: &#160;Where C..." alt="" coords="280,213,466,258"/>
+<area shape="poly" id="edge219_Node000000_Node000004" title=" " alt="" coords="224,175,281,199,312,213,307,213,279,203,224,180"/>
 </map>
