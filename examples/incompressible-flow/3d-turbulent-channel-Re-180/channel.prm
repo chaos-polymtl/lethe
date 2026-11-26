@@ -1,0 +1,232 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Turbulent channel flow at Re_tau = 180 (lethe-fluid-matrix-free).
+#
+# Box 4 pi x 2 x 2 pi, 64x32x64 Q2-Q2 cells (4.3 M DoFs), PSPG/SUPG,
+# statistics averaged over t = 100 to 301. With initial refinement = 2, the
+# mesh has 128x64x128 cells (34 M DoFs).
+#
+# Half-height delta = 1, bulk velocity U_b = 1 (held by the flow control) and
+# nu = 3.5e-4: the Re_b = U_b delta / nu = 2857 of the DNS of Lee & Moser
+# (2015), Re_tau = 182. Periodic in x (streamwise) and z (spanwise), walls at
+# y = -1 and y = 1. The coarse mesh is stretched towards the walls with a tanh
+# law (gamma = 2, channel_mesh.py); each initial refinement halves the cells.
+#
+# Run with the standard output in log.txt: the postprocessing reads the
+# flow-control force from it.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method                         = bdf2
+  set adapt time step to respect CFL = true
+  set max cfl                        = 1
+  set end control                    = time
+  set time step                      = 0.01
+  set time end                       = 301
+  set output name                    = channel
+  set output path                    = ./output/
+  set output control                 = time
+  set output time frequency          = 50
+  # Write each Q2 cell as 2x2x2 sub-cells, so the output holds every node.
+  set subdivision = 2
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 2
+  set pressure degree = 2
+end
+
+#---------------------------------------------------
+# Restart: a checkpoint every 2000 time steps. To resume a run, set restart
+# to true.
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 2000
+  set filename   = restart
+  set restart    = false
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    # u' = curl(psi_x, 0, psi_z) with psi_x = A1 f sin(b1 z) cos(a1 x) and
+    # psi_z = A3 f sin(a3 x) cos(b3 z), f = (1 - y^2)^2, f' = -4 y (1 - y^2).
+    # With a1 = 0.5 and b3 = 1, the waves are not periodic on a 2 pi x pi
+    # sub-box, so the flow does not stay locked to it.
+    set Function constants  = A1=0.05, a1=0.5, b1=4, A3=0.1, a3=2, b3=1
+    set Function expression = 9/8*(1-y^8) - A3*4*y*(1-y*y)*sin(a3*x)*cos(b3*z); A1*b1*(1-y*y)^2*cos(b1*z)*cos(a1*x) - A3*a3*(1-y*y)^2*cos(a3*x)*cos(b3*z); A1*4*y*(1-y*y)*sin(b1*z)*cos(a1*x); 0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 3.5e-4
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
+  end
+end
+
+#---------------------------------------------------
+# Flow control: bulk velocity 1 through the periodic face x = 0. The initial
+# beta is u_tau^2 of the DNS (the mean pressure gradient of the developed
+# flow). verbose prints the bulk velocity and beta at every time step.
+#---------------------------------------------------
+
+subsection flow control
+  set enable            = true
+  set inlet boundary id = 0
+  set average velocity  = 1
+  set flow direction    = 0
+  set initial beta      = 4.06e-3
+  set verbosity         = verbose
+end
+
+#---------------------------------------------------
+# Force on each boundary (force.<id>.dat); the walls (ids 2 and 3) give the
+# wall shear stress
+#---------------------------------------------------
+
+subsection forces
+  set calculate force  = true
+  set verbosity        = quiet
+  set output frequency = 100
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                         = verbose
+  set calculate kinetic energy          = true
+  set calculate enstrophy               = true
+  set calculate average velocities      = true
+  set initial time for average velocity = 100
+end
+
+#---------------------------------------------------
+# Mesh: grid arguments written by channel_mesh.py
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414,0.39269908169872414;0.023497296183941141,0.037579095869406443,0.058986500866377023,0.089924277887288517,0.13116347102697323,0.17948842823943822,0.22530319603430726,0.25405773389226816,0.25405773389226816,0.22530319603430726,0.17948842823943822,0.13116347102697323,0.089924277887288517,0.058986500866377023,0.037579095869406443,0.023497296183941141;0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207,0.19634954084936207 : 0, -1, 0 : 12.566370614359172, 1, 6.2831853071795862 : true
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number                = 4
+  set fix pressure constant = true
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+  subsection bc 1
+    set type = noslip
+    set id   = 2
+  end
+  subsection bc 2
+    set type = noslip
+    set id   = 3
+  end
+  subsection bc 3
+    set type               = periodic
+    set id                 = 4
+    set periodic id        = 5
+    set periodic direction = 2
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control: with a tolerance of 1e-5, every time step does
+# two Newton iterations. The multigrid preconditioner is built at the first
+# Newton iteration of each time step and reused for the second.
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance            = 1e-5
+    set reuse preconditioner = true
+    set verbosity            = verbose
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity          = verbose
+    set method             = gmres
+    set max iters          = 200
+    set max krylov vectors = 200
+    set relative residual  = 1e-4
+    set minimum residual   = 1e-7
+    set preconditioner     = gcmg
+
+    # Multigrid parameters. hp: the coarsest level is Q1 on the coarse mesh.
+    set mg verbosity                   = quiet
+    set mg enable hessians in jacobian = false
+    set mg coarsening type             = hp
+
+    # Smoother
+    set mg smoother iterations     = 5
+    set mg smoother eig estimation = true
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+
+    # Coarse-grid solver: one AMG cycle (a direct solve is far too slow).
+    set mg coarse grid solver = amg
+  end
+end

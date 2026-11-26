@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="490" viewBox="0 116 1060 490" role="img" aria-labelledby="title desc">
+  <title id="title">Turbulent channel flow domain</title>
+  <desc id="desc">Two parallel walls separated by 2δ in the wall-normal y direction, where the half-height δ is 1. The channel extends 4πδ in the streamwise x direction and 2πδ in the spanwise z direction. An arrow marks the mean flow along positive x.</desc>
+  <defs>
+    <linearGradient id="upper-fill" x1="0" y1="0" x2="0.8" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#f1f7f9"/><stop offset="1" stop-color="#d0e2ea"/>
+    </linearGradient>
+    <linearGradient id="lower-fill" x1="0" y1="0" x2="0.7" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#c4dae4"/><stop offset="1" stop-color="#eaf4f7"/>
+    </linearGradient>
+    <marker id="dim-tip" viewBox="0 0 10 8" refX="10" refY="4" markerWidth="9" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0 0 10 4 0 8Z" fill="#364951"/>
+    </marker>
+    <style>
+      .plate {stroke:#345460;stroke-width:1.8;stroke-linejoin:round}
+      .edge {fill:none;stroke:#77919b;stroke-width:1.4;stroke-dasharray:6 6}
+      .extension {fill:none;stroke:#86969c;stroke-width:1.1}
+      .dimension {fill:none;stroke:#364951;stroke-width:1.4;marker-start:url(#dim-tip);marker-end:url(#dim-tip)}
+      .math {font-family:Georgia,'Times New Roman',serif;font-size:27px;fill:#20363e;text-anchor:middle}
+    </style>
+  </defs>
+  <rect id="background" x="-10" y="106" width="1080" height="510" fill="#ffffff"/>
+  <g id="lower-wall" class="plate">
+    <path fill="#98b2bc" d="M145 495H805V502H145Z"/>
+    <path fill="#abc4cd" d="M805 495 960 380V387L805 502Z"/>
+    <path fill="url(#lower-fill)" d="M145 495 300 380H960L805 495Z"/>
+  </g>
+  <g id="domain-edges" class="edge">
+    <path d="M145 285V495 M805 285V495 M960 170V380 M300 170V380"/>
+  </g>
+  <g id="upper-wall" class="plate">
+    <path fill="url(#upper-fill)" d="M145 278 300 163H960L805 278Z"/>
+    <path fill="#98b2bc" d="M145 278H805V285H145Z"/>
+    <path fill="#abc4cd" d="M805 278 960 163V170L805 285Z"/>
+  </g>
+  <g id="mean-flow" fill="#007c81">
+    <text x="561" y="329" fill="#006c72" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="23">Mean flow</text>
+    <path d="M450 349H667" fill="none" stroke="#007c81" stroke-width="4" stroke-linecap="round"/>
+    <path d="M684 349 663 340 667 349 663 358Z"/>
+  </g>
+  <g id="extension-lines" class="extension">
+    <path d="M137 285H56 M137 495H56 M137 390H112 M145 510V552 M805 510V552 M817 495H870 M972 380H1025"/>
+  </g>
+  <g id="dimension-arrows" class="dimension">
+    <path d="M66 286V494"/>
+    <path d="M122 286V389"/>
+    <path d="M146 542H804"/>
+    <path d="M860 495 1015 380"/>
+  </g>
+  <g id="dimension-labels" class="math">
+    <text x="475" y="580"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">x</tspan><tspan dy="-5"> = 4π</tspan><tspan font-style="italic">δ</tspan></text>
+    <text transform="translate(46 390) rotate(-90)"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">y</tspan><tspan dy="-5"> = 2</tspan><tspan font-style="italic">δ</tspan></text>
+    <text transform="translate(104 338) rotate(-90)"><tspan font-style="italic">δ</tspan> = 1</text>
+    <text transform="translate(959 464) rotate(-36.57)"><tspan font-style="italic">L</tspan><tspan dy="5" font-size="17" font-style="italic">z</tspan><tspan dy="-5"> = 2π</tspan><tspan font-style="italic">δ</tspan></text>
+  </g>
+</svg>
