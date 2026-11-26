@@ -1,5 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Function to add files of a case folder to the validation report, in the given
+# order. The first argument is the case folder and the others are the names of
+# its files to show: PDF files, whose pages are added as they are, or text
+# files, which are shown verbatim. The files are listed in report_contents.txt,
+# in the output folder, from which generate_validation_report.py assembles the
+# report. A file that does not exist is reported as missing.
+add_to_report() {
+    local folder="$1"
+    shift
+    for file in "$@"; do
+        echo "file $(basename "$folder") $file" >> "$output_root/report_contents.txt"
+    done
+}
 
 # Function to recreate the folder
 recreate_folder() {

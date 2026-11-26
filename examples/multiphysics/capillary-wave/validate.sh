@@ -44,6 +44,5 @@ python3 ./capillary-wave-postprocess.py . capillary-wave-TSM-15.prm ./capillaryW
 cp $plots $folder
 cp $data $folder
 
-# Append the information to the report
-magick -density 300  $output_root/report.pdf $plots  -quality 100 $output_root/temporary.pdf
-cp $output_root/temporary.pdf $output_root/report.pdf
+# Add the plots to the report
+add_to_report "$folder" $plots

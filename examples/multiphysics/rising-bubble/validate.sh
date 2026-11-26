@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2020-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This script automates the validation process for the 2D lid-driven cavity benchmark
@@ -44,8 +44,7 @@ python3 ./rising-bubble.py -p rising-bubble-proj -g rising-bubble-geo -a rising-
 cp $plots $folder
 cp $data $folder
 
-# Append the information to the report
-magick -density 300  $output_root/report.pdf $plots  -quality 100 $output_root/temporary.pdf
-cp $output_root/temporary.pdf $output_root/report.pdf
+# Add the plots to the report
+add_to_report "$folder" $plots
 
 

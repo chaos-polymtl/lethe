@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This script automates the validation process for the pseudo-2D gas-solid fluidized
@@ -45,8 +45,7 @@ python3 ./fluidized-bed-postprocessing.py -f ./ --validate
 cp $plots $folder
 cp $data $folder
 
-# Append the information to the report
-magick -density 300  $output_root/report.pdf $plots  -quality 100 $output_root/temporary.pdf
-cp $output_root/temporary.pdf $output_root/report.pdf
+# Add the plots to the report
+add_to_report "$folder" $plots
 
 
