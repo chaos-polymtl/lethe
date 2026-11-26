@@ -7,7 +7,7 @@ The case is from Glowinski et al., J. Comput. Phys. 169 (2001) 363–426, §8.5.
 
 This case is part of the Lucille validation suite
 (`contrib/validation/validation_cases_lucille.txt`). It is not yet a documented
-example: this file is its documentation.
+example: this file is its temporary documentation.
 
 ## Running
 
@@ -47,25 +47,22 @@ not part of the validation for now. Add `q2q1-h128` to `discretizations` in
 
 | Quantity | Value | Origin |
 |---|---|---|
-| Tank | 1 x 1 x 4 | paper |
-| Spheres | diameter 1/6, density 1.14 | paper |
-| p0 (upper) | (0.5 + 1/300, 0.5, 3.5) | paper |
-| p1 (lower) | (0.5, 0.5, 3.16) | paper, see below |
-| Fluid | density 1, kinematic viscosity 0.01 | paper (0.001 Pa s) |
-| Gravity | (0, 0, -980) | paper |
-| Contact | E = 1e12 dyn/cm² (100 GPa), Poisson 0.3, restitution 1, no friction | paper |
-| Time integration | BDF2, initial time step 0.001, then adapted to a CFL of 0.8 | the paper uses a constant time step of 0.001 |
-| Refinement around the spheres | inside factor 0.5, outside factor 1.5 | paper |
-| Lubrication range max | 2 | paper (lambda = 2) |
+| Tank | 1 x 1 x 4 | Barbeau 2024 |
+| Spheres | diameter 1/6, density 1.14 | Barbeau 2024 |
+| p0 (upper) | (0.5 + 1/300, 0.5, 3.5) | Barbeau 2024 |
+| p1 (lower) | (0.5, 0.5, 3.16) | Barbeau 2024, see below |
+| Fluid | density 1, kinematic viscosity 0.01 | Barbeau 2024 (0.001 Pa s) |
+| Gravity | (0, 0, -980) | Barbeau 2024 |
+| Contact | E = 1e12 dyn/cm² (100 GPa), Poisson 0.3, restitution 1, no friction | Barbeau 2024 |
+| Time integration | BDF2, initial time step 0.001, then adapted to a CFL of 0.8 | Barbeau 2024 uses a constant time step of 0.001 |
+| Refinement around the spheres | inside factor 0.5, outside factor 1.5 | Barbeau 2024 |
+| Lubrication range max | 2 | Barbeau 2024 (lambda = 2) |
 
 **Initial height of p1.** Glowinski et al. give 3.1666... (3.16 with an overbar:
-the centers are two diameters apart). The overbar was lost in our paper, and the
+the centers are two diameters apart). The overbar was lost in Barbeau 2024, and the
 simulations did use 3.16: integrating the velocities of Fig. 12 closes a gap of
 0.1732–0.1740 cm before contact, against 0.1733 for 3.16 and 0.1667 for 3.1666...
-This case keeps 3.16 to be comparable with the paper.
-
-**Diameter.** Text extracted from the PDF of the paper reads "16 cm". It is
-1/6 cm, as in the LaTeX source and in Fig. 11.
+This case keeps 3.16 to be comparable with the Barbeau 2024 results.
 
 ## Choices that the paper does not give
 
@@ -130,10 +127,7 @@ every discretization `<d>` that it runs (`q1q1-h128` for now):
 
 ## Reference data
 
-`reference/` comes from the original vector file of Fig. 12
-(`validation_contact.pdf`, in `article 2/im/` of the LaTeX sources of the thesis
-of L. Barbeau). The coordinates are read from the PDF and calibrated on its
-ticks.
+`reference/` comes from the Barbeau 2024. The coordinates are read from the PDF and calibrated on its ticks.
 
 - The Lethe curves are the plotted ones, as simplified by matplotlib. Only the
   two discretizations with h = 1/128 are kept; the figure also has Q1Q1 1/256.

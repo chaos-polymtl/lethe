@@ -10,21 +10,19 @@
 # Load the validation functions
 . ../../../contrib/validation/validation_functions.sh
 
-# Discretizations that are simulated. q2q1-h128 is also supported, but it is
-# about ten times more expensive than q1q1-h128 and is not part of the
+# Discretization that is simulated. q2q1-h128 is also supported, but it is
+# about 40 times more expensive than q1q1-h128 and is not part of the
 # validation for now.
-discretizations="q1q1-h128"
+discretization="q1q1-h128"
 
-# Store filenames of all plots and data files in variables (space-separated)
-plots=""
-data=""
-for d in $discretizations; do
-  plots="$plots two-particles-velocity-$d.pdf two-particles-trajectories-$d.pdf"
-  data="$data solution-particle-0-$d.dat solution-particle-1-$d.dat solution-metrics-$d.dat"
-done
+# Store filenames of all plots in a variable (space-separated)
+plots="two-particles-velocity-$discretization.pdf two-particles-trajectories-$discretization.pdf"
+
+# Store filenames of all data files in a variable (space-separated)
+data="solution-particle-0-$discretization.dat solution-particle-1-$discretization.dat solution-metrics-$discretization.dat"
 
 # Default path
-output_root="."
+output_root="./"
 # Default number of cores
 n_proc=128
 
@@ -32,43 +30,24 @@ n_proc=128
 parse_command_line "$@"
 
 folder="$output_root/sedimentation-2-particles"
+action="mpirun -np $n_proc lethe-fluid-sharp sedimentation-2-particles-$discretization.prm"
 
 recreate_folder "$folder"
 
 # Remove the outputs of a previous run, so that they are not reported again
-# if this run fails. This must be done before the simulations, which write
+# if this run fails. This must be done before the simulation, which writes
 # some of these files.
 rm -f $plots $data
-for d in $discretizations; do
-  rm -rf "out-$d"
-done
+rm -rf "out-$discretization"
 
-status=0
-for d in $discretizations; do
-  { time mpirun -np $n_proc lethe-fluid-sharp "sedimentation-2-particles-$d.prm" ; } &> "$folder/log-$d"
-  simulation_status=$?
-  if [ $simulation_status -ne 0 ]; then
-    echo "Error: the $d simulation failed, see $folder/log-$d." >&2
-    status=$simulation_status
-  fi
+{ time $action ; } &> "$folder/log-$discretization"
 
-  # Process the simulation, even if it stopped early, to show how far it went
-  if ! python3 ./post-process-sedimentation-2-particles.py -d "$d" --folder "out-$d" --validate; then
-    echo "Error: the post-processing of the $d simulation failed, see $folder/log-$d." >&2
-    status=1
-  fi
-done
+# Process the simulation
+python3 ./post-process-sedimentation-2-particles.py -d "$discretization" --folder "out-$discretization" --validate
 
-# Copy the information to the log folder. A file is missing if its
-# post-processing failed.
-for file in $plots $data; do
-  if [ -f "$file" ]; then
-    cp "$file" "$folder"
-  fi
-done
+# Copy the information to the log folder
+cp $plots $folder
+cp $data $folder
 
-# Add the plots to the report. A plot that was not produced is reported as
-# missing.
-add_to_report "$folder" $plots
-
-exit $status
+# Add the metrics and the plots to the report
+add_to_report "$folder" "solution-metrics-$discretization.dat" $plots
