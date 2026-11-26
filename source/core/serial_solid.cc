@@ -186,8 +186,8 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
             triangles[v] = this_triangle->vertex(v);
 
           intersected_cubes.clear();
-          // Find the cubes (associated to each baground cell) that intersect the
-          // bounding box of the triangle. Stores the intersected cubes in
+          // Find the cubes (associated to each baground cell) that intersect
+          // the bounding box of the triangle. Stores the intersected cubes in
           // intersected_cubes.
           cube_tree.query(boost::geometry::index::intersects(
                             this_triangle->bounding_box()),
