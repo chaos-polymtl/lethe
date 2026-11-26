@@ -102,10 +102,10 @@ where:
 
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
-* :math:`\tau = \rho_f \nu \left( \nabla \mathbf{u} + \nabla \mathbf{u}^T \right)` is the viscous stress tensor, with :math:`\nu` the kinematic viscosity. Since :math:`\nabla \cdot \mathbf{u} = -\left( \partial_t \varepsilon_f + \mathbf{u} \cdot \nabla \varepsilon_f \right) / \varepsilon_f` does not vanish, :math:`\tau` is not traceless: its dilatational part :math:`-\frac{2}{3} \rho_f \nu \left( \nabla \cdot \mathbf{u} \right) \mathbf{I}` is not included;
+* :math:`\tau = \rho_f \nu \left( \nabla \mathbf{u} + \nabla \mathbf{u}^T \right)` is the viscous stress tensor, with :math:`\nu` the kinematic viscosity. Since :math:`\varepsilon_f \nabla \cdot \mathbf{u} = -\left( \partial_t \varepsilon_f + \mathbf{u} \cdot \nabla \varepsilon_f \right)`, the velocity field is not solenoidal (it is not divergence free).
 * :math:`\mathbf{f}_{\mathrm{pf},\mathrm{A}}` and :math:`\mathbf{f}_{\mathrm{pf},\mathrm{B}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively.
 
-It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:
+It is worth noting that the VANS solver in Lethe solves a kinematic (or reduced) pressure variable defined as:
 
 .. math::
     p = \frac{p^*}{\rho_f}
@@ -165,7 +165,7 @@ Since :math:`\varepsilon_f` remains outside the derivatives in Model A, only :ma
     \left( \mathbf{v}, \varepsilon_f \nabla p \right)_{\Omega} &= - \left( \nabla \cdot \mathbf{v}, \varepsilon_f p \right)_{\Omega} - \left( \mathbf{v}, p \nabla \varepsilon_f \right)_{\Omega} + \left( \mathbf{v}, \varepsilon_f p \mathbf{n} \right)_{\partial \Omega} \\
     - \left( \mathbf{v}, \varepsilon_f \nabla \cdot \tilde{\boldsymbol{\tau}} \right)_{\Omega} &= \left( \nabla \mathbf{v}, \varepsilon_f \tilde{\boldsymbol{\tau}} \right)_{\Omega} + \left( \mathbf{v}, \tilde{\boldsymbol{\tau}} \nabla \varepsilon_f \right)_{\Omega} - \left( \mathbf{v}, \varepsilon_f \tilde{\boldsymbol{\tau}} \mathbf{n} \right)_{\partial \Omega}
 
-where :math:`\varepsilon_f` is the projected finite element field described in the Void Fraction section below, so its gradient is defined. Let :math:`\mathcal{V}` be the velocity space satisfying the Dirichlet conditions, :math:`\mathcal{V}_0` its homogeneous counterpart and :math:`\mathcal{Q}` the pressure space. The weak form is: find :math:`(\mathbf{u}, p) \in \mathcal{V} \times \mathcal{Q}` such that, for all :math:`(\mathbf{v}, q) \in \mathcal{V}_0 \times \mathcal{Q}`:
+where :math:`\varepsilon_f` is the projected finite element field described in the :ref:`unresolved-cfd-dem-void-fraction` section below, so its gradient is defined. Let :math:`\mathcal{V}` be the velocity space satisfying the Dirichlet conditions, :math:`\mathcal{V}_0` its homogeneous counterpart and :math:`\mathcal{Q}` the pressure space. The weak form is: find :math:`(\mathbf{u}, p) \in \mathcal{V} \times \mathcal{Q}` such that, for all :math:`(\mathbf{v}, q) \in \mathcal{V}_0 \times \mathcal{Q}`:
 
 .. math::
     & \left( q, \partial_t \varepsilon_f + \varepsilon_f \nabla \cdot \mathbf{u} + \mathbf{u} \cdot \nabla \varepsilon_f \right)_{\Omega} = 0 \\
@@ -199,6 +199,8 @@ where:
 * the particle-fluid term is :math:`\frac{1}{\rho_f} \mathbf{f}_{\mathrm{pf},\mathrm{A}} = -\frac{1}{\rho_f} \Pi \left( \sum_i k_r \mathbf{F}^{\mathrm{tw}}_i \right) + \beta \left( \Pi \mathbf{v}_{\mathrm{p}} - \mathbf{u} \right)`, where :math:`\Pi` denotes the projection on a finite element field, :math:`\mathbf{F}^{\mathrm{tw}}_i` gathers the two-way coupled forces on particle :math:`i` (Saffman and Magnus lift, plus the drag when the coupling is fully explicit), :math:`\mathbf{v}_{\mathrm{p}}` is the particle velocity and :math:`\beta` is the momentum transfer coefficient divided by :math:`\rho_f`, which is zero when the coupling is fully explicit. The pressure gradient, shear and buoyancy forces act on the particles only.
 
 The derivatives of :math:`\tau_{\mathrm{s}}` and :math:`\gamma` with respect to :math:`\mathbf{u}` are neglected in the Jacobian.
+
+.. _unresolved-cfd-dem-void-fraction:
 
 Void Fraction
 --------------
