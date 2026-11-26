@@ -706,20 +706,24 @@ DEMSolver<dim, PropertiesIndex>::execute_contact_detection_and_search()
   // Map solid objects if the action was triggered
   if (action_manager->check_solid_object_search())
     {
+      // Rebuild the R-tree of the background cells if they changed
+      if (action_manager->check_background_cells_search_tree_update())
+        background_cells_search_tree.build(triangulation);
+
       // Store the information about the floating mesh and background mesh
       // intersection
       for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
         {
           solid_surfaces_mesh_info[i_solid] =
             solid_surfaces[i_solid]->map_solid_in_background_triangulation(
-              triangulation);
+              background_cells_search_tree);
         }
 
       for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
         {
           solid_volumes_mesh_info[i_solid] =
             solid_volumes[i_solid]->map_solid_in_background_triangulation(
-              triangulation);
+              background_cells_search_tree);
         }
     }
 

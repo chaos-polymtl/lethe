@@ -65,13 +65,14 @@ public:
     // velocity computed at the first DEM time step (counter = 0) of the CFD
     // time step) The contact search is executed to make sure the mobility
     // status of the cell matches the particles that are in.
-    load_balance_trigger                  = false;
-    contact_search_trigger                = mobility_status_reset_trigger;
-    clear_tangential_displacement_trigger = false;
-    solid_object_search_trigger           = false;
-    sparse_contacts_cells_update_trigger  = false;
-    read_checkpoint_trigger               = false;
-    mobility_status_reset_trigger         = false;
+    load_balance_trigger                        = false;
+    contact_search_trigger                      = mobility_status_reset_trigger;
+    clear_tangential_displacement_trigger       = false;
+    solid_object_search_trigger                 = false;
+    background_cells_search_tree_update_trigger = false;
+    sparse_contacts_cells_update_trigger        = false;
+    read_checkpoint_trigger                     = false;
+    mobility_status_reset_trigger               = false;
   }
 
   /**
@@ -106,6 +107,9 @@ public:
 
     // Allowing the first contact search of solid objects
     solid_object_search_trigger = true;
+
+    // Allowing the first build of the R-tree of the background cells
+    background_cells_search_tree_update_trigger = true;
   }
 
   /**
@@ -185,8 +189,9 @@ public:
    * checkpoint step).
    *
    * It triggers the reading of checkpoints, the contact search,
-   * clearing the contact structures, the solid object mapping (if enabled), and
-   * the update of the sparse contacts cells (if enabled).
+   * clearing the contact structures, the solid object mapping and the rebuild
+   * of the R-tree of the background cells (if enabled), and the update of the
+   * sparse contacts cells (if enabled).
    */
   inline void
   restart_simulation()
@@ -195,6 +200,8 @@ public:
     contact_search_trigger                = true;
     clear_tangential_displacement_trigger = true;
     solid_object_search_trigger = solid_objects_enabled ? true : false;
+    background_cells_search_tree_update_trigger =
+      solid_objects_enabled ? true : false;
     sparse_contacts_cells_update_trigger =
       sparse_contacts_enabled ? true : false;
   }
@@ -216,6 +223,9 @@ public:
    *                            number of local particles.
    * - solid object search (if enabled): the solid objects need to be mapped to
    *                                     the rebalanced cells.
+   * - background cells search tree update (if solid objects are enabled): the
+   *   R-tree of the locally owned background cells used by the solid object
+   *   search needs to be rebuilt since the locally owned cells changed.
    * - update the sparse contacts cells (if enabled): the sparse contacts cells
    *                                    need to be updated since they only
    *                                    contain local and ghost cells.
@@ -228,6 +238,8 @@ public:
     clear_tangential_displacement_trigger = true;
     resize_containers_trigger             = true;
     solid_object_search_trigger = solid_objects_enabled ? true : false;
+    background_cells_search_tree_update_trigger =
+      solid_objects_enabled ? true : false;
     sparse_contacts_cells_update_trigger =
       sparse_contacts_enabled ? true : false;
   }
@@ -357,6 +369,23 @@ public:
   }
 
   /**
+   * @brief Check if the R-tree of the locally owned background cells used by
+   * the solid object search needs to be rebuilt.
+   *
+   * It is the case when the locally owned background cells changed in the
+   * current time step (first time step, restart or load balancing), or at
+   * every time step if the grid moves, since the grid motion moves the centers
+   * of the background cells.
+   *
+   * @return True if the R-tree of the background cells needs to be rebuilt.
+   */
+  inline bool
+  check_background_cells_search_tree_update() const
+  {
+    return background_cells_search_tree_update_trigger || grid_motion_enabled;
+  }
+
+  /**
    * @brief Check if the tangential displacement history needs to be cleared.
    */
   inline bool
@@ -409,6 +438,7 @@ private:
     , resize_containers_trigger(true)
     , contact_search_trigger(true)
     , solid_object_search_trigger(false)
+    , background_cells_search_tree_update_trigger(false)
     , sparse_contacts_cells_update_trigger(false)
     , mobility_status_reset_trigger(false)
   {}
@@ -469,6 +499,17 @@ private:
    * with the background triangulation.
    */
   bool solid_object_search_trigger;
+
+  /**
+   * @brief Flag of the trigger for the rebuild of the R-tree of the locally
+   * owned background cells used by the solid object search.
+   *
+   * Triggers are reset at the end of each time step, so it is set by the same
+   * events as solid_object_search_trigger: the R-tree is rebuilt in the same
+   * time step as the background cells change, right before the solid objects
+   * are mapped.
+   */
+  bool background_cells_search_tree_update_trigger;
 
   /**
    * @brief Flag of the trigger for the update of the sparse contacts cells.
