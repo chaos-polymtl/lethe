@@ -2,16 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/continuum_solid_dynamics_boundary_conditions.h>
 #include <core/utilities.h>
 
 #include <solvers/continuum_solid_dynamics.h>
 
 #include <deal.II/base/exceptions.h>
+#include <deal.II/base/function.h>
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/fe/component_mask.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_q.h>
@@ -22,10 +25,12 @@
 #include <deal.II/lac/sparsity_tools.h>
 
 #include <deal.II/numerics/data_component_interpretation.h>
+#include <deal.II/numerics/vector_tools.h>
 
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <set>
 #include <string>
 #include <utility>
 
@@ -245,17 +250,98 @@ ContinuumSolidDynamics<dim>::gather_tables()
 
 template <int dim>
 void
+ContinuumSolidDynamics<dim>::build_constraints(
+  AffineConstraints<double> &constraints,
+  const bool                 homogeneous)
+{
+  const auto &boundary_conditions =
+    simulation_parameters.continuum_solid_dynamics_boundary_conditions;
+  const double        time = simulation_control->get_current_time();
+  const ComponentMask velocity_mask =
+    fe->component_mask(solid_velocity_extractor);
+
+  constraints.clear();
+  constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(*dof_handler, constraints);
+
+  for (const auto &[id, type] : boundary_conditions.type)
+    {
+      if (type == BoundaryConditions::ContinuumSolidDynamicsBoundaryType::noslip)
+        {
+          // Zero solid velocity, the solid volume fraction is free
+          VectorTools::interpolate_boundary_values(
+            *mapping,
+            *dof_handler,
+            id,
+            Functions::ZeroFunction<dim>(dim + 1),
+            constraints,
+            velocity_mask);
+        }
+      else if (type ==
+               BoundaryConditions::ContinuumSolidDynamicsBoundaryType::slip)
+        {
+          // Zero normal solid velocity
+          const std::set<types::boundary_id> slip_boundaries = {id};
+          VectorTools::compute_no_normal_flux_constraints(
+            *dof_handler, 0, slip_boundaries, constraints, *mapping);
+        }
+      else if (type ==
+               BoundaryConditions::ContinuumSolidDynamicsBoundaryType::function)
+        {
+          // Imposed solid velocity and solid volume fraction
+          if (homogeneous)
+            {
+              VectorTools::interpolate_boundary_values(
+                *mapping,
+                *dof_handler,
+                id,
+                Functions::ZeroFunction<dim>(dim + 1),
+                constraints);
+            }
+          else
+            {
+              boundary_conditions.function.at(id)->set_time(time);
+              VectorTools::interpolate_boundary_values(
+                *mapping,
+                *dof_handler,
+                id,
+                *boundary_conditions.function.at(id),
+                constraints);
+            }
+        }
+      else if (type ==
+               BoundaryConditions::ContinuumSolidDynamicsBoundaryType::periodic)
+        {
+          const auto &periodic_boundary =
+            boundary_conditions.periodic_boundaries.at(id);
+          DoFTools::make_periodicity_constraints(*dof_handler,
+                                                 id,
+                                                 periodic_boundary.neighbor_id,
+                                                 periodic_boundary.direction,
+                                                 constraints);
+        }
+      
+    }
+  constraints.close();
+}
+
+template <int dim>
+void
 ContinuumSolidDynamics<dim>::define_constraints()
 {
-  nonzero_constraints.clear();
-  nonzero_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(*dof_handler, nonzero_constraints);
-  nonzero_constraints.close();
+  build_constraints(nonzero_constraints, false);
+  build_constraints(zero_constraints, true);
+}
 
-  zero_constraints.clear();
-  zero_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(*dof_handler, zero_constraints);
-  zero_constraints.close();
+template <int dim>
+void
+ContinuumSolidDynamics<dim>::update_boundary_conditions()
+{
+  if (!simulation_parameters.continuum_solid_dynamics_boundary_conditions
+         .time_dependent)
+    return;
+
+  build_constraints(nonzero_constraints, false);
 }
 
 template <int dim>
@@ -318,8 +404,13 @@ template <int dim>
 void
 ContinuumSolidDynamics<dim>::set_initial_conditions()
 {
-  // Zero until solid phase initial conditions are added to the parameters
-  *present_solution = 0.;
+  VectorTools::interpolate(
+    *mapping,
+    *dof_handler,
+    simulation_parameters.initial_condition->continuum_solid_dynamics,
+    newton_update);
+  nonzero_constraints.distribute(newton_update);
+  *present_solution = newton_update;
   percolate_time_vectors();
 }
 
