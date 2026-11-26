@@ -5,8 +5,6 @@
  * @brief MyMortarManagerCircle: check generated points.
  */
 
-#include <core/mortar_coupling_manager.h>
-
 #include "./tests.h"
 
 

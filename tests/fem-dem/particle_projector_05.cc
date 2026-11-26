@@ -34,7 +34,6 @@
 #include <deal.II/particles/particle_handler.h>
 
 // Lethe
-#include <core/boundary_conditions.h>
 #include <core/dem_properties.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>

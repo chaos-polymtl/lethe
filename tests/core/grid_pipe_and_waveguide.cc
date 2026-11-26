@@ -20,7 +20,6 @@
 #include <../tests/tests.h>
 
 #include <fstream>
-#include <map>
 
 void
 test(const std::string &grid_arguments)

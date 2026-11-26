@@ -9,8 +9,6 @@
 #include <core/simulation_control.h>
 
 #include <solvers/cls_subequations_interface.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/physical_properties_manager.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/distributed/tria.h>

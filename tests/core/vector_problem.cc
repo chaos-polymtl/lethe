@@ -21,11 +21,6 @@
 #include <deal.II/numerics/data_out.h>
 
 // Lethe
-#include <core/parameters.h>
-#include <core/simulation_control.h>
-#include <core/vector.h>
-
-#include <solvers/postprocessing_velocities.h>
 
 // Tests
 #include <../tests/tests.h>

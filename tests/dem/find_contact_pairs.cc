@@ -21,7 +21,6 @@
 
 // Lethe
 #include <dem/dem_contact_manager.h>
-#include <dem/find_cell_neighbors.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>

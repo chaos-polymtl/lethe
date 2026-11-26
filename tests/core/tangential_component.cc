@@ -17,7 +17,6 @@
 // Tests
 #include <../tests/tests.h>
 
-#include <cmath>
 #include <complex>
 #include <string>
 

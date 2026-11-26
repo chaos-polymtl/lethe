@@ -11,7 +11,6 @@
 #include <dem/velocity_verlet_integrator.h>
 
 #include <fstream>
-#include <iomanip>
 #include <string>
 
 /**

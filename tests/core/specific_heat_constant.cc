@@ -6,7 +6,6 @@
  */
 
 // Lethe
-#include <core/parameters.h>
 #include <core/specific_heat_model.h>
 
 // Tests (with common definitions)

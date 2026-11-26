@@ -20,7 +20,6 @@
 // Lethe
 #include <core/dem_properties.h>
 
-#include <dem/contact_info.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_heat_transfer.h>

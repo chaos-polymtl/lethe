@@ -14,7 +14,6 @@
 // Lethe
 #include <core/parameters.h>
 #include <core/serial_solid.h>
-#include <core/solid_base.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>

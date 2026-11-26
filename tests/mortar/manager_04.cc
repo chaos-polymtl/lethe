@@ -31,8 +31,6 @@
 
 #include <deal.II/physics/transformations.h>
 
-#include <fstream>
-
 #include "./tests.h"
 
 using namespace dealii;

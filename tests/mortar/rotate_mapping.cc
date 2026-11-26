@@ -33,8 +33,6 @@
 
 #include <../tests/tests.h>
 
-#include <fstream>
-
 void
 test()
 {

@@ -41,7 +41,6 @@
 #include <memory>
 #include <string>
 #include <variant>
-#include <vector>
 
 using namespace dealii;
 

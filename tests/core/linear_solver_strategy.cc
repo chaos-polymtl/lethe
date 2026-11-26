@@ -6,7 +6,6 @@
  */
 
 // Lethe
-#include <core/parameters.h>
 
 // Tests
 #include <../tests/core/linear_test_system_01.h>

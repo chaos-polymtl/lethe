@@ -13,7 +13,6 @@
 #include <deal.II/grid/grid_tools.h>
 
 // Lethe
-#include <core/parameters_lagrangian.h>
 
 #include <dem/find_boundary_cells_information.h>
 

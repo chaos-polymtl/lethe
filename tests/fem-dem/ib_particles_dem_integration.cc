@@ -22,7 +22,6 @@
 
 // Lethe
 #include <core/ib_particle.h>
-#include <core/parameters.h>
 
 #include <fem-dem/ib_particles_dem.h>
 
