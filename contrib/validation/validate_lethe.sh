@@ -34,7 +34,10 @@
 #   report_contents.txt by the validate.sh script of every case.
 # - Once all the cases are done, compare_validation_runs.py compares the results
 #   with the previous runs stored next to the output folder. Set the environment
-#   variable LETHE_VALIDATION_SLACK_WEBHOOK to post the summary to Slack.
+#   variable LETHE_VALIDATION_SLACK_WEBHOOK to post the summary to Slack. Also
+#   set LETHE_VALIDATION_SLACK_TOKEN (token of a Slack bot with the files:write
+#   scope, member of the channel) and LETHE_VALIDATION_SLACK_CHANNEL (ID of the
+#   channel) to share report.pdf right after the summary.
 #
 # -----------------------------------------------------------------------------
 
@@ -256,7 +259,9 @@ for i in "${!cases[@]}"; do
 done
 
 # Compare the results with the previous runs stored next to the output folder.
-# The summary is posted to Slack if LETHE_VALIDATION_SLACK_WEBHOOK is set.
+# The summary is posted to Slack if LETHE_VALIDATION_SLACK_WEBHOOK is set, and
+# the report is shared with it if LETHE_VALIDATION_SLACK_TOKEN and
+# LETHE_VALIDATION_SLACK_CHANNEL are set too.
 echo "-----------------------------"
 echo "Comparing with the previous validation runs..."
 python3 "$lethe_path/contrib/validation/compare_validation_runs.py" --current "$output_path" --repo "$lethe_path"

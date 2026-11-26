@@ -24,7 +24,12 @@ a Slack incoming webhook, a summary of every case, with a legend of the
 symbols it uses, is also posted to Slack. It is followed by one message per
 case that changed or has a problem, which gives an excerpt of the diff of
 every changed file and, for a case with a problem, the end of its section of
-the Slurm log (slurm_log.txt in the run folder).
+the Slurm log (slurm_log.txt in the run folder). If, in addition,
+LETHE_VALIDATION_SLACK_TOKEN contains the token of a Slack bot with the
+files:write scope and LETHE_VALIDATION_SLACK_CHANNEL the ID of the channel of
+the webhook, the validation report of the run (report.pdf, written by
+generate_validation_report.py) is shared in that channel right after the
+summary, so that it can be read in Slack.
 
 Usage:
   python3 compare_validation_runs.py --current <run folder> [options]
@@ -35,6 +40,7 @@ Run with --help for the list of options.
 import argparse
 import difflib
 import fnmatch
+import functools
 import json
 import math
 import os
@@ -43,6 +49,7 @@ import subprocess
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -61,6 +68,12 @@ LOG_PATTERN = "log*"
 
 REPORT_NAME = "comparison_report.md"
 SLACK_WEBHOOK_VARIABLE = "LETHE_VALIDATION_SLACK_WEBHOOK"
+SLACK_TOKEN_VARIABLE = "LETHE_VALIDATION_SLACK_TOKEN"
+SLACK_CHANNEL_VARIABLE = "LETHE_VALIDATION_SLACK_CHANNEL"
+SLACK_API_URL = "https://slack.com/api/"
+
+# Validation report of a run, written by generate_validation_report.py
+VALIDATION_REPORT_NAME = "report.pdf"
 GITHUB_COMPARE_URL = "https://github.com/chaos-polymtl/lethe/compare/{}...{}"
 GIT_HASH_REGEX = re.compile(r"^[0-9a-f]{7,40}$")
 SHORT_HASH_LENGTH = 7
@@ -85,6 +98,9 @@ WALL_TIME_REGEX = re.compile(r"^real\s+(?:(\d+)h)?(\d+)m([\d.]+)s\s*$",
 MAX_COMMITS_LISTED = 15
 GIT_TIMEOUT_SECONDS = 60
 SLACK_TIMEOUT_SECONDS = 30
+# Sending the report and sharing it, which waits until Slack has scanned the
+# file, take longer than posting a message
+SLACK_UPLOAD_TIMEOUT_SECONDS = 300
 
 # Folder, next to the report, where the diffs of the changed cases are written
 DIFF_FOLDER_NAME = "comparison_diffs"
@@ -1011,10 +1027,64 @@ def post_to_slack(webhook_url, text):
     return True
 
 
-def post_messages_to_slack(webhook_url, messages):
+def call_slack_api(token, method, arguments):
+    """Call a method of the Slack Web API and return its response.
+
+    Raises ValueError if Slack answers with an error, and URLError or OSError
+    if Slack cannot be reached.
+    """
+    request = urllib.request.Request(
+        SLACK_API_URL + method,
+        data=urllib.parse.urlencode(arguments).encode("utf-8"),
+        headers={"Authorization": f"Bearer {token}",
+                 "Content-Type": "application/x-www-form-urlencoded"})
+    with urllib.request.urlopen(
+            request, timeout=SLACK_UPLOAD_TIMEOUT_SECONDS) as response:
+        answer = json.loads(response.read())
+    if not answer.get("ok"):
+        raise ValueError(f"{method} failed with the error "
+                         f"'{answer.get('error', 'unknown')}'")
+    return answer
+
+
+def share_file_on_slack(token, channel, path, comment):
+    """Share a file in a Slack channel, introduced by a comment.
+
+    Slack gives the URL to which the file is sent, then shares it once it has
+    received and scanned it. Returns whether the file was shared. Never raises.
+    """
+    try:
+        content = path.read_bytes()
+        upload = call_slack_api(token, "files.getUploadURLExternal",
+                                {"filename": path.name,
+                                 "length": len(content)})
+        request = urllib.request.Request(
+            upload["upload_url"], data=content,
+            headers={"Content-Type": "application/octet-stream"})
+        with urllib.request.urlopen(
+                request, timeout=SLACK_UPLOAD_TIMEOUT_SECONDS) as response:
+            response.read()
+        call_slack_api(token, "files.completeUploadExternal",
+                       {"files": json.dumps([{"id": upload["file_id"],
+                                              "title": path.name}]),
+                        "channel_id": channel,
+                        "initial_comment": comment})
+    except (urllib.error.URLError, OSError, ValueError, KeyError) as error:
+        print(f"Warning: {path} could not be shared on Slack: {error}. The "
+              f"bot of {SLACK_TOKEN_VARIABLE} needs the files:write scope "
+              f"and must be a member of the channel {channel}.",
+              file=sys.stderr)
+        return False
+    print(f"{path} shared on Slack.")
+    return True
+
+
+def post_messages_to_slack(webhook_url, messages, share_report=None):
     """Post the summary and then the detailed messages to Slack.
 
-    The detailed messages are not posted if the summary could not be.
+    share_report, if given, is called right after the summary is posted, to
+    share the validation report under it. The detailed messages are not posted
+    if the summary could not be.
     """
     n_posted = 0
     for index, message in enumerate(messages):
@@ -1024,6 +1094,8 @@ def post_messages_to_slack(webhook_url, messages):
             n_posted += 1
         elif index == 0:
             break
+        if index == 0 and share_report:
+            share_report()
     print(f"{n_posted} of {len(messages)} messages posted to Slack.")
 
 #############################################################################
@@ -1039,7 +1111,11 @@ def parse_arguments():
                f"report, in {DIFF_FOLDER_NAME}/. If the environment variable "
                f"{SLACK_WEBHOOK_VARIABLE} contains the URL of a Slack incoming "
                "webhook, a summary is posted to Slack, followed by one message "
-               "per case that changed or has a problem.")
+               "per case that changed or has a problem. If "
+               f"{SLACK_TOKEN_VARIABLE} and {SLACK_CHANNEL_VARIABLE} also "
+               "contain the token of a Slack bot with the files:write scope "
+               "and the ID of the channel of the webhook, "
+               f"{VALIDATION_REPORT_NAME} is shared right after the summary.")
     parser.add_argument(
         "-c", "--current", type=Path, required=True,
         help="Folder of the run to check (the output folder of "
@@ -1074,7 +1150,7 @@ def parse_arguments():
              "Default: 0.05.")
     parser.add_argument(
         "--no-slack", action="store_true",
-        help="Do not post the summary to Slack.")
+        help="Do not post the summary or share the report on Slack.")
     return parser.parse_args()
 
 
@@ -1128,7 +1204,18 @@ def main():
                      for case in sorted(cases,
                                         key=lambda c: SEVERITY.index(c.verdict))
                      if has_slack_details(case)]
-        post_messages_to_slack(webhook_url, messages)
+        token = os.environ.get(SLACK_TOKEN_VARIABLE)
+        channel = os.environ.get(SLACK_CHANNEL_VARIABLE)
+        share_report = None
+        if token and channel:
+            share_report = functools.partial(
+                share_file_on_slack, token, channel,
+                current.path / VALIDATION_REPORT_NAME,
+                f"Validation report of {current.name} ({current.short_hash})")
+        else:
+            print(f"{SLACK_TOKEN_VARIABLE} or {SLACK_CHANNEL_VARIABLE} is not "
+                  "set: the report is not shared on Slack.")
+        post_messages_to_slack(webhook_url, messages, share_report)
     else:
         print(f"{SLACK_WEBHOOK_VARIABLE} is not set: nothing posted to Slack.")
     return 0
