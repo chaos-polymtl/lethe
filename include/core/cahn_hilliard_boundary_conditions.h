@@ -5,7 +5,6 @@
 #define lethe_cahn_hilliard_boundary_conditions_h
 
 #include <core/boundary_conditions.h>
-#include <core/utilities.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>

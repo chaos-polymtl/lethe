@@ -3,6 +3,7 @@
 
 #include <core/interface_tools.h>
 #include <core/output_struct.h>
+#include <core/solutions_output.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
@@ -14,6 +15,8 @@
 #include <deal.II/non_matching/fe_values.h>
 #include <deal.II/non_matching/mesh_classifier.h>
 #include <deal.II/non_matching/quadrature_generator.h>
+
+#include <deal.II/numerics/data_out.h>
 
 template <int dim>
 double

@@ -6,8 +6,6 @@
 
 #include <core/lethe_grid_tools.h>
 #include <core/output_struct.h>
-#include <core/solutions_output.h>
-#include <core/utilities.h>
 #include <core/vector.h>
 
 #include <deal.II/base/conditional_ostream.h>

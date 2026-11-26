@@ -6,9 +6,7 @@
 
 #include <deal.II/base/config.h>
 
-#include <core/lethe_grid_tools.h>
 #include <core/parameters.h>
-#include <core/utilities.h>
 
 #include <deal.II/base/mpi_noncontiguous_partitioner.h>
 

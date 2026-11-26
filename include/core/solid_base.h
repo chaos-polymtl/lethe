@@ -4,7 +4,6 @@
 #ifndef lethe_solid_base_h
 #define lethe_solid_base_h
 
-#include <core/parameters.h>
 #include <core/solid_objects_parameters.h>
 #include <core/vector.h>
 

@@ -6,7 +6,6 @@
 
 #include <core/boundary_conditions.h>
 #include <core/parameters_multiphysics.h>
-#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 

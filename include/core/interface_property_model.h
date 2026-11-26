@@ -4,7 +4,6 @@
 #ifndef lethe_interface_property_model_h
 #define lethe_interface_property_model_h
 
-#include <core/parameters.h>
 #include <core/physical_property_model.h>
 
 using namespace dealii;

@@ -4,7 +4,6 @@
 #ifndef lethe_physical_property_model_h
 #define lethe_physical_property_model_h
 
-#include <core/parameters.h>
 #include <core/simulation_control.h>
 
 #include <cstdint>

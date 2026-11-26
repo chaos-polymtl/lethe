@@ -4,8 +4,6 @@
 #ifndef lethe_manifolds_h
 #define lethe_manifolds_h
 
-#include <core/utilities.h>
-
 #include <deal.II/base/parameter_handler.h>
 
 #include <deal.II/distributed/tria_base.h>
