@@ -275,8 +275,8 @@ QMOM<dim>::finish_simulation()
     {
       for (const std::string &component_name : component_names)
         {
-          error_table.set_scientific("error_" + component_name, true);
-          error_table.set_precision("error_" + component_name,
+          error_table.set_scientific("relative_error_" + component_name, true);
+          error_table.set_precision("relative_error_" + component_name,
                                     simulation_control->get_log_precision());
         }
       error_table.write_text(std::cout);
