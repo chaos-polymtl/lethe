@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_multiphysics.h>
+#include <core/utilities.h>
 
 #include <solvers/qmom_source_terms.h>
 
@@ -116,7 +117,12 @@ QMOMNucleationModelBase::model_cast(
           nucleation_parameters.nuclei_mean_size,
           nucleation_parameters.nuclei_standard_deviation);
     }
-  AssertThrow(false, ExcInternalError());
+  AssertThrow(false,
+              ExcMessage("The nucleation model \"" +
+                         enum_to_string(nucleation_parameters.model) +
+                         "\" of the QMOM physics is not handled by "
+                         "QMOMNucleationModelBase::model_cast(). Add a case "
+                         "for this model to its switch."));
   return nullptr;
 }
 
@@ -194,7 +200,12 @@ QMOMCoalescenceModelBase::model_cast(
         return std::make_unique<QMOMFunctionCoalescence>(
           coalescence_parameters.function_expression);
     }
-  AssertThrow(false, ExcInternalError());
+  AssertThrow(false,
+              ExcMessage("The coalescence model \"" +
+                         enum_to_string(coalescence_parameters.model) +
+                         "\" of the QMOM physics is not handled by "
+                         "QMOMCoalescenceModelBase::model_cast(). Add a case "
+                         "for this model to its switch."));
   return nullptr;
 }
 

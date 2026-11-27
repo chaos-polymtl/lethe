@@ -55,7 +55,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstddef>
 #include <fstream>
 #include <iomanip>
 #include <memory>
@@ -1291,10 +1290,8 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
         qmom_case.state_candidate(qmomkit::MomentSet(local_moments),
                                   evolution_options.realizability_policy);
 
-      // Without particles (zeroth moment below the cutoff of QMOMKit), there
-      // is no quadrature: nothing can grow or coalesce, and only the
-      // nucleation changes the moments. Its rate is integrated with the
-      // midpoint rule, which is exact for the constant model.
+      // Without particles, only the nucleation changes the moments. Its rate
+      // is integrated with the midpoint rule, exact for the constant model.
       if (candidate.status == qmomkit::StateCandidateStatus::empty)
         {
           if (phase_space_source_terms->nucleation_is_enabled())

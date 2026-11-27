@@ -843,9 +843,9 @@ Parameters::QMOMPhaseEvolution::declare_parameters(ParameterHandler &prm) const
                       Patterns::Tools::Convert<double>::to_string(
                         defaults.absolute_tolerance),
                       Patterns::Double(0.),
-                      "Absolute tolerance, in m, of the adaptive Runge-Kutta "
-                      "integration of the trajectories of the quadrature "
-                      "nodes in phase space");
+                      "Absolute tolerance, in the unit of the abscissas, of "
+                      "the adaptive Runge-Kutta integration of the "
+                      "trajectories of the quadrature nodes in phase space");
   }
   prm.leave_subsection();
 }
@@ -860,9 +860,9 @@ Parameters::QMOMPhaseEvolution::parse_parameters(ParameterHandler &prm)
     absolute_tolerance         = prm.get_double("absolute tolerance");
     AssertThrow(relative_tolerance > 0. && absolute_tolerance > 0.,
                 ExcMessage("The \"relative tolerance\" (" +
-                           std::to_string(relative_tolerance) +
+                           Utilities::to_string(relative_tolerance) +
                            ") and the \"absolute tolerance\" (" +
-                           std::to_string(absolute_tolerance) +
+                           Utilities::to_string(absolute_tolerance) +
                            ") of the \"phase evolution\" subsection of the "
                            "QMOM subsection must be strictly positive."));
   }
@@ -967,9 +967,9 @@ Parameters::QMOMNucleation::parse_parameters(ParameterHandler &prm)
     // moments can only be inverted into a single quadrature node
     AssertThrow(nuclei_mean_size > 0. && nuclei_standard_deviation > 0.,
                 ExcMessage("The \"nuclei mean size\" (" +
-                           std::to_string(nuclei_mean_size) +
+                           Utilities::to_string(nuclei_mean_size) +
                            ") and the \"nuclei standard deviation\" (" +
-                           std::to_string(nuclei_standard_deviation) +
+                           Utilities::to_string(nuclei_standard_deviation) +
                            ") of the \"nucleation\" subsection of the QMOM "
                            "subsection must be strictly positive."));
   }

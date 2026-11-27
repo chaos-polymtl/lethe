@@ -537,13 +537,16 @@ namespace Parameters
     bool enable_adaptive_node_count = false;
 
     /// Relative tolerance of the adaptive Runge-Kutta integration of the
-    /// trajectories of the quadrature nodes in phase space [-]
+    /// trajectories of the quadrature nodes in phase space [-], which QMOMKit
+    /// uses for the growth. It is tighter than the QMOMKit default (1e-6), so
+    /// that the error does not come from this step.
     double relative_tolerance = 1e-8;
 
     /// Absolute tolerance of the adaptive Runge-Kutta integration of the
     /// trajectories of the quadrature nodes in phase space, in the unit of the
-    /// abscissas [m]. It is much smaller than the particle sizes, so that the
-    /// relative tolerance controls the integration.
+    /// abscissas. It must be much smaller than the abscissas, so that the
+    /// relative tolerance controls the integration: the default of QMOMKit
+    /// (1e-9) would be larger than abscissas of the order of a nanometre.
     double absolute_tolerance = 1e-20;
 
     /**

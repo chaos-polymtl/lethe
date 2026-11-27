@@ -12,9 +12,12 @@
  * vectors and do not depend on QMOMKit. QMOMSourceTerms gathers the models of
  * the three mechanisms and wraps them into the callbacks of QMOMKit.
  *
- * The phase space has a single dimension, the particle size xi in m. A
- * quadrature of the particle size distribution is a set of nodes, each with a
- * weight (number of particles per m^3) and an abscissa (size in m).
+ * The phase space has a single dimension, the internal coordinate xi of the
+ * particles. A quadrature of the distribution is a set of nodes, each with a
+ * weight (number of particles per m^3) and an abscissa (value of xi). The
+ * growth and nucleation models apply to any internal coordinate; the
+ * coalescence model, which conserves the volume of the particles, requires xi
+ * to be the particle size, in m. The units below are given for that case.
  *
  * Local scalars: the phase-space evolution is done independently at every
  * degree of freedom, and every model receives the values of the QMOM scalars
