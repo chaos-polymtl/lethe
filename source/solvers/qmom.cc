@@ -1139,10 +1139,14 @@ QMOM<dim>::advance_physical_space()
     linear_solver_parameters.verbosity != Parameters::Verbosity::quiet;
   const double rescale_metric = this->get_residual_rescale_metric();
 
+  // present_solutions are ghosted, hence read-only: the solution is updated
+  // in a locally owned copy
+  GlobalVectorType locally_owned_present_solution(
+    locally_owned_dofs, triangulation->get_mpi_communicator());
+  GlobalVectorType residual(locally_owned_dofs,
+                            triangulation->get_mpi_communicator());
   GlobalVectorType completely_distributed_solution(
     locally_owned_dofs, triangulation->get_mpi_communicator());
-  GlobalVectorType initial_residual(locally_owned_dofs,
-                                    triangulation->get_mpi_communicator());
 
   const auto preconditioner_type = linear_solver_parameters.preconditioner;
 
@@ -1150,30 +1154,18 @@ QMOM<dim>::advance_physical_space()
   // right-hand side changes
   for (unsigned int component = 0; component < n_components; ++component)
     {
-      // The solution at the beginning of the time step is the initial guess
-      completely_distributed_solution = present_solutions[component];
-
-      // The components have very different magnitudes, so the tolerance is
-      // relative to the initial residual of each component. Unlike in a Newton
-      // iteration, the right-hand side is not this residual, since the initial
-      // guess is not zero.
+      // The system is solved for the correction of the present solution: the
+      // right-hand side is the residual of that solution, and the tolerance
+      // is relative to it.
+      locally_owned_present_solution = present_solutions[component];
       const double current_residual =
-        system_matrix.residual(initial_residual,
-                               completely_distributed_solution,
+        system_matrix.residual(residual,
+                               locally_owned_present_solution,
                                system_rhs[component]) /
         rescale_metric;
-      // GMRES cannot reduce the residual below the round-off of the
-      // right-hand side. Without this floor, a component that is already at
-      // steady state (e.g. in a fluid at rest) has an initial residual made of
-      // round-off, and its relative tolerance cannot be reached.
-      constexpr double round_off_relative_tolerance = 1e-13;
-      const double     round_off_residual = round_off_relative_tolerance *
-                                        system_rhs[component].l2_norm() /
-                                        rescale_metric;
       const double linear_solver_tolerance =
-        std::max({linear_solver_parameters.relative_residual * current_residual,
-                  linear_solver_parameters.minimum_residual,
-                  round_off_residual});
+        std::max(linear_solver_parameters.relative_residual * current_residual,
+                 linear_solver_parameters.minimum_residual);
       if (verbose)
         this->pcout << "  -Tolerance of iterative solver of "
                     << component_names[component]
@@ -1187,16 +1179,17 @@ QMOM<dim>::advance_physical_space()
         false, linear_solver_parameters.max_krylov_vectors);
       TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
+      completely_distributed_solution = 0.;
       if (preconditioner_type ==
           Parameters::LinearSolver::PreconditionerType::ilu)
         solver.solve(system_matrix,
                      completely_distributed_solution,
-                     system_rhs[component],
+                     residual,
                      *ilu_preconditioner);
       else
         solver.solve(system_matrix,
                      completely_distributed_solution,
-                     system_rhs[component],
+                     residual,
                      *amg_preconditioner);
 
       if (verbose)
@@ -1206,8 +1199,9 @@ QMOM<dim>::advance_physical_space()
                     << solver_control.last_value() / rescale_metric
                     << std::endl;
 
-      constraints.distribute(completely_distributed_solution);
-      present_solutions[component] = completely_distributed_solution;
+      locally_owned_present_solution += completely_distributed_solution;
+      constraints.distribute(locally_owned_present_solution);
+      present_solutions[component] = locally_owned_present_solution;
     }
 }
 
