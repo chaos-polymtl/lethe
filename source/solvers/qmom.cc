@@ -1263,7 +1263,16 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
   std::vector<double> local_scalars(n_scalars);
   std::vector<double> local_moments(n_moments);
   std::vector<double> nucleation_moment_rates(n_moments);
-  bool                evolution_failed = false;
+  // Error message of the failure of this rank, empty if none
+  std::string failure_message;
+  // Moments of a degree of freedom, printed in the error message
+  const auto moments_to_string = [](const std::vector<double> &moments) {
+    std::string moments_string;
+    for (const double moment : moments)
+      moments_string +=
+        (moments_string.empty() ? "" : ", ") + Utilities::to_string(moment);
+    return "(" + moments_string + ")";
+  };
   for (const types::global_dof_index dof : locally_owned_dofs)
     {
       // The models of the mechanisms may depend on the scalars at this degree
@@ -1307,7 +1316,16 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
       // The moments cannot be inverted into a quadrature
       if (!candidate.ok())
         {
-          evolution_failed = true;
+          failure_message =
+            "The QMOM phase-space evolution failed in QMOMKit, which cannot "
+            "invert the moments " +
+            moments_to_string(local_moments) +
+            " of a degree of freedom into a quadrature. If the moments are "
+            "not realizable, refine the mesh or reduce the time step to limit "
+            "the oscillations of the transport in physical space, or set "
+            "\"enable adaptive node count\" to true in the \"phase "
+            "evolution\" subsection of the QMOM subsection.\nQMOMKit message (" +
+            enum_to_string(candidate.status) + "): " + candidate.message;
           break;
         }
 
@@ -1320,10 +1338,14 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
                                           boundary_contribution,
                                           evolution_options);
 
-      // The evolved quadrature cannot be rebuilt into moments
       if (!result.ok())
         {
-          evolution_failed = true;
+          failure_message =
+            "The QMOM phase-space evolution failed in QMOMKit, which cannot "
+            "evolve the moments " +
+            moments_to_string(local_moments) +
+            " of a degree of freedom.\nQMOMKit message (" +
+            enum_to_string(result.status) + "): " + result.message;
           break;
         }
 
@@ -1333,17 +1355,21 @@ QMOM<dim>::advance_phase_space([[maybe_unused]] const double time_step)
     }
 
   // A rank that throws alone would leave the others waiting in the next
-  // collective call, so the failure is shared by all the ranks
-  AssertThrow(
-    !Utilities::MPI::logical_or(evolution_failed,
-                                triangulation->get_mpi_communicator()),
-    ExcMessage(
-      "The QMOM phase-space evolution failed: the moments of at least one "
-      "degree of freedom are not realizable and cannot be inverted or "
-      "evolved by QMOMKit. Refine the mesh or reduce the time step to limit "
-      "the oscillations of the transport in physical space, or set \"enable "
-      "adaptive node count\" to true in the \"phase evolution\" subsection "
-      "of the QMOM subsection."));
+  // collective call, so all the ranks throw the message of the first rank
+  // that failed
+  const MPI_Comm mpi_communicator = triangulation->get_mpi_communicator();
+  if (Utilities::MPI::logical_or(!failure_message.empty(), mpi_communicator))
+    {
+      const std::vector<std::string> failure_messages =
+        Utilities::MPI::all_gather(mpi_communicator, failure_message);
+      const auto first_failure_message =
+        std::find_if(failure_messages.begin(),
+                     failure_messages.end(),
+                     [](const std::string &message) {
+                       return !message.empty();
+                     });
+      AssertThrow(false, ExcMessage(*first_failure_message));
+    }
 
   for (unsigned int i_moment = 0; i_moment < n_moments; ++i_moment)
     {
