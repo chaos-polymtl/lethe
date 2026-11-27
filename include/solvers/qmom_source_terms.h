@@ -588,7 +588,8 @@ public:
   compute_critical_size(const double supersaturation) const;
 
   /**
-   * @brief Compute the inverse of the Debye length,
+   * @brief Compute the inverse of the Debye length of the local mixture.
+   *
    * kappa = sqrt(2 e^2 N_A c_i / (eps_0 eps_r k_B T)), with c_i the ion
    * concentration of the mixture and eps_r = phi_a eps_a + phi_o eps_o the
    * relative permittivity of the local mixture.

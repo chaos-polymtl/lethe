@@ -731,7 +731,9 @@ namespace Parameters
 
   /**
    * @brief Operator splitting scheme between the physical-space transport (T)
-   * and the phase-space evolution (P) of the QMOM fields:
+   * and the phase-space evolution (P) of the QMOM fields.
+   *
+   * The schemes are:
    *  - lie: T then P over the whole time step (first order);
    *  - strang: P over half a time step, T, then P over half a time step
    *    (second order).
@@ -870,9 +872,10 @@ namespace Parameters
   };
 
   /**
-   * @brief Physical constants used by the QMOM physics, in SI units. Their
-   * default values are the exact values of the 2019 redefinition of the SI
-   * base units and the CODATA 2022 value of the vacuum permittivity.
+   * @brief Physical constants used by the QMOM physics, in SI units.
+   *
+   * Their default values are the exact values of the 2019 redefinition of the
+   * SI base units and the CODATA 2022 value of the vacuum permittivity.
    */
   struct QMOMPhysicalConstants
   {
@@ -904,8 +907,10 @@ namespace Parameters
 
   /**
    * @brief Family of the particle size distribution from which the moments of
-   * the QMOM physics are computed. The moments of each family are computed
-   * analytically by QMOMKit:
+   * the QMOM physics are computed.
+   *
+   * The moments of each family are computed analytically by QMOMKit. The
+   * families and their parameters are:
    *  - none: no particles, all the moments are zero;
    *  - normal: mean and standard deviation;
    *  - lognormal: mean and standard deviation of the logarithm of the size;
@@ -941,7 +946,9 @@ namespace Parameters
 
   /**
    * @brief Functions of space and time prescribing the fields of the QMOM
-   * physics. They are used for the initial conditions, the Dirichlet boundary
+   * physics.
+   *
+   * They are used for the initial conditions, the Dirichlet boundary
    * conditions, the analytical solution and the source terms.
    *
    * The scalars are given as a list of expressions, one per scalar, in the
@@ -975,8 +982,9 @@ namespace Parameters
 
     /**
      * @brief Declare the "scalars" and "distribution" subsections in the
-     * current subsection. All the functions are zero and the distribution type
-     * is none by default.
+     * current subsection.
+     *
+     * All the functions are zero and the distribution type is none by default.
      *
      * @param[in,out] prm Parameter handler.
      */
@@ -985,10 +993,12 @@ namespace Parameters
 
     /**
      * @brief Parse the "scalars" and "distribution" subsections of the
-     * current subsection. The number of components of each function is the
-     * number of expressions separated by semicolons. The number of expressions
-     * of the distribution must be one (the number density) plus the number of
-     * parameters of its family.
+     * current subsection.
+     *
+     * The number of components of each function is the number of expressions
+     * separated by semicolons. The number of expressions of the distribution
+     * must be one (the number density) plus the number of parameters of its
+     * family.
      *
      * @param[in,out] prm Parameter handler.
      */

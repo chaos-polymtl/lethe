@@ -104,7 +104,7 @@ The Debye length uses the ion concentration of the mixture and the relative perm
 Consumption of the Free Lipids
 ------------------------------
 
-The particles nucleation and growth consume and release free lipids; at the end of the phase-space step, the free lipid concentration of every degree of freedom loses the mass of lipid gained by its particles:
+The particles nucleation and growth consume and release free lipids; at the end of the phase-space step, the free lipid concentration of every degree of freedom loses the mass of lipid gained by its particles (end of step 2 of :ref:`qmom-operator-splitting`):
 
 .. math::
 
@@ -112,11 +112,11 @@ The particles nucleation and growth consume and release free lipids; at the end 
 
 where:
 
-- :math:`C` is the free lipid concentration;
+- :math:`C` is the free lipid concentration, at the end of its transport in physical space before the update;
 - :math:`\rho_l` is the density of the lipid in the particles (:math:`\text{kg} \cdot \text{m}^{-3}`);
 - :math:`k_v` is the volume shape factor;
 - :math:`M_3` is the third moment of the size distribution at the end of the step;
-- :math:`M_3^0` is the moment :math:`M_3` at the beginning of the step.
+- :math:`M_3^0` is the moment :math:`M_3` at the beginning of the phase-space step, i.e. at the end of its transport in physical space.
 
 The lipid mass is therefore conserved. 
 

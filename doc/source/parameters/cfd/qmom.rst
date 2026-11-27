@@ -9,7 +9,7 @@ This subsection defines the parameters of the quadrature method of moments (QMOM
 
 The QMOM physics transports ``number of scalars`` user-defined scalar fields and ``number of moments`` :math:`K` moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, discretized with a discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`). 
 
-Each time step is split into the transport of the moments in physical space, then the transport of the scalars in physical space, followed by the evolution of the moments in phase space (growth, nucleation and coalescence) by QMOMKit. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+With the ``lie`` splitting scheme, each time step is split into the transport of the scalars and of the moments in physical space, independently from each other, followed by the evolution of the moments in phase space (growth, nucleation and coalescence) by QMOMKit. During the phase-space evolution, the scalars keep their values at the end of their transport; if the process couples them to the particles, they are then updated with the change of the moments. The order of these steps is detailed in :ref:`qmom-operator-splitting`. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
 
 .. seealso::
     The governing equations, the discretization and the phase-space models are described in :doc:`../../theory/multiphysics/qmom/qmom_equations`.
@@ -135,7 +135,7 @@ General
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
-  * ``lie``: physical-space transport of the moments and then of the scalars over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t` (first-order accurate).
+  * ``lie``: physical-space transport of the scalars and of the moments, independently from each other, over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t`, which ends with the update of the scalars coupled to the particles (first-order accurate).
   * ``strang``: phase-space evolution over :math:`\Delta t / 2`, physical-space transport over :math:`\Delta t`, then phase-space evolution over :math:`\Delta t / 2` (second-order accurate).
 
 .. warning::

@@ -1112,8 +1112,10 @@ QMOM<dim>::solve_linear_system()
   switch (simulation_parameters.multiphysics.qmom_parameters.splitting_scheme)
     {
       case Parameters::QMOMSplittingScheme::lie:
-        // The scalars are transported before the phase-space evolution, whose
-        // mechanisms receive their values at the end of the time step
+        // Transport of the scalars and then of the moments, which are
+        // independent, then phase-space evolution with the scalars at the end
+        // of their transport, which ends with the update of the scalars
+        // coupled to the particles (see qmom.h)
         advance_scalars_physical_space();
         advance_moments_physical_space();
         if (has_phase_space_mechanism)

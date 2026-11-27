@@ -22,17 +22,30 @@ where :math:`n` is the number density and :math:`L` the size of the particles. I
 
 All the scalars and moments are discretized with the same scalar discontinuous Galerkin finite element, on a single set of degrees of freedom, and each of them is stored in its own vector.
 
+.. _qmom-operator-splitting:
+
 Operator Splitting
 ------------------
 
 Each time step :math:`\Delta t` of the fluid dynamics is split into the transport of the scalars and moments in physical space, :math:`T`, and their evolution in phase space, :math:`P`. Two splitting schemes are defined:
 
-* Lie splitting: :math:`T(\Delta t)` followed by :math:`P(\Delta t)`. This scheme is first-order accurate in time. The transport :math:`T` solves the moments first, then the scalars, so that the phase-space evolution uses the scalars at the end of their transport.
+* Lie splitting: :math:`T(\Delta t)` followed by :math:`P(\Delta t)`. This scheme is first-order accurate in time.
 * Strang splitting: :math:`P(\Delta t / 2)`, then :math:`T(\Delta t)`, then :math:`P(\Delta t / 2)`. This scheme is second-order accurate in time when both parts are at least second-order accurate.
 
 .. warning::
 
   Only the Lie splitting is currently implemented.
+
+With the Lie splitting, a time step from :math:`t^n` to :math:`t^{n+1}` starts once the velocity of the fluid at :math:`t^{n+1}` is solved, and is made of the following steps:
+
+#. Transport of the scalars and of the moments in physical space, with their source terms, independently from each other (see `Transport in Physical Space`_).
+#. Evolution in phase space, independently at every degree of freedom (see `Evolution in Phase Space`_):
+
+   * the scalars keep their values at the end of their transport during the whole phase-space step;
+   * the moments at the end of their transport are inverted into a quadrature, which is evolved by the nucleation, the growth and the coalescence, whose rates may depend on these scalars, and the moments are rebuilt from it;
+   * if the process couples the scalars to the particles, the scalars are then updated with this change of the moments, e.g. the free lipids consumed by the lipid nanoparticles (see :ref:`qmom-lipid-nanoparticle-production`).
+
+The time step ends with the phase-space evolution. The moments of every degree of freedom with particles are therefore rebuilt from a quadrature at the end of every time step, and the scalars include the mass exchanged with the particles during the time step.
 
 Transport in Physical Space
 ---------------------------
@@ -50,7 +63,7 @@ The components are ordered as the scalars, followed by the moments: :math:`\zeta
 Linear Systems
 ^^^^^^^^^^^^^^
 
-Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every moment, and then of every scalar. The linear systems are solved with the GMRES method and an ILU or AMG preconditioner.
+Since all the scalars and moments share the same element and the same velocity, they share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every scalar, and then of every moment. The linear systems are solved with the GMRES method and an ILU or AMG preconditioner.
 
 The equations are linear, so no non-linear solver is used. Since the moments have very different magnitudes, the tolerance of each scalar and moment is a relative residual times its initial residual, computed with the solution at the beginning of the time step as initial guess, but at least a minimum residual. The minimum residual should therefore be much smaller than the initial residual of the smallest moment.
 
@@ -106,7 +119,7 @@ Time Integration in Phase Space
 
 The changes of the moments due to the nucleation and the coalescence are integrated with a third-order Runge-Kutta method, and combined with the growth within the phase-space step by a Strang splitting, the default of QMOMKit. This inner splitting is distinct from the splitting of the transport and the phase-space evolution. QMOMKit also provides two first-order alternatives (growth then sources, or sources then growth), which are not exposed as parameters.
 
-The rates of the three mechanisms can depend on the scalars of the degree of freedom, which keep their values at the end of the transport during the phase-space step: the models of the generic process do not use them, while those of the lipid nanoparticle production process compute the supersaturation of the lipid from them (see :ref:`qmom-lipid-nanoparticle-production`). Without any mechanism enabled, the quadrature does not evolve and the moments are unchanged, up to the round-off of the inversion.
+The rates of the three mechanisms can depend on the scalars of the degree of freedom, which keep their values at the end of their transport during the whole phase-space step (see :ref:`qmom-operator-splitting`): the models of the generic process do not use them, while those of the lipid nanoparticle production process compute the supersaturation of the lipid from them (see :ref:`qmom-lipid-nanoparticle-production`). If the process couples the scalars to the particles, the scalars are only updated at the end of the phase-space step, with the change of the moments. Without any mechanism enabled, the quadrature does not evolve and the moments are unchanged, up to the round-off of the inversion.
 
 Realizability
 ^^^^^^^^^^^^^
