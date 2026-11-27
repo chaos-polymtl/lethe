@@ -1,0 +1,193 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set output name      = cylinder-output
+  set output frequency = 5
+  set output path      = ./Re200-bdf2-base/
+  set time end         = 200.0
+  set time step        = 0.05
+  set subdivision      = 1
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 2
+  set pressure degree = 2
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration # <none|iteration|end>
+end
+
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+
+subsection forces
+  set verbosity             = verbose
+  set calculate force       = true
+  set calculate torque      = false
+  set force name            = force
+  set output precision      = 10
+  set calculation frequency = 1
+  set output frequency      = 10
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.005
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = gmsh
+  set file name          = cylinder-structured.msh
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set type = noslip
+  end
+  subsection bc 1
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set type = slip
+  end
+  subsection bc 3
+    set type = outlet
+  end
+end
+
+#---------------------------------------------------
+# Manifolds
+#---------------------------------------------------
+
+subsection manifolds
+  set number = 1
+  subsection manifold 0
+    set id                = 0
+    set type              = spherical
+    set point coordinates = 8,8
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                 = adaptive
+  set error estimator      = kelly
+  set variable             = pressure
+  set fraction type        = number
+  set max number elements  = 70000
+  set max refinement level = 3
+  set min refinement level = 1
+  set frequency            = 1
+  set fraction refinement  = 0.02
+  set fraction coarsening  = 0.01
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = verbose
+    set solver         = inexact_newton
+    set tolerance      = 1e-6
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set max iters         = 100
+    set relative residual = 1e-4
+    set minimum residual  = 1e-7
+    set preconditioner    = gcmg
+    set verbosity         = verbose
+
+    # MG parameters
+    set mg verbosity                   = verbose
+    set mg enable hessians in jacobian = false
+
+    # Smoother
+    set mg smoother iterations          = 5
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse_diagonal
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+
+    #coarse-grid solver
+    set mg coarse grid solver = amg
+
+
+  set mg coarsening type             = hp
+  set mg p coarsening type           = decrease_by_one
+
+  end
+end
