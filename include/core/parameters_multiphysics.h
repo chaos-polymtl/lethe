@@ -543,10 +543,11 @@ namespace Parameters
     double relative_tolerance = 1e-8;
 
     /// Absolute tolerance of the adaptive Runge-Kutta integration of the
-    /// trajectories of the quadrature nodes in phase space, in the unit of the
-    /// abscissas. It must be much smaller than the abscissas, so that the
-    /// relative tolerance controls the integration: the default of QMOMKit
-    /// (1e-9) would be larger than abscissas of the order of a nanometre.
+    /// trajectories of the quadrature nodes in phase space, in the unit of
+    /// their positions. It must be much smaller than these positions, so that
+    /// the relative tolerance controls the integration. The QMOMKit default
+    /// (1e-9) is too large when the positions are lengths, such as particle
+    /// sizes of the order of a nanometre.
     double absolute_tolerance = 1e-20;
 
     /**

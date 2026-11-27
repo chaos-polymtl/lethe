@@ -843,9 +843,9 @@ Parameters::QMOMPhaseEvolution::declare_parameters(ParameterHandler &prm) const
                       Patterns::Tools::Convert<double>::to_string(
                         defaults.absolute_tolerance),
                       Patterns::Double(0.),
-                      "Absolute tolerance, in the unit of the abscissas, of "
-                      "the adaptive Runge-Kutta integration of the "
-                      "trajectories of the quadrature nodes in phase space");
+                      "Absolute tolerance, in the unit of the positions of the "
+                      "quadrature nodes, of the adaptive Runge-Kutta "
+                      "integration of their trajectories in phase space");
   }
   prm.leave_subsection();
 }

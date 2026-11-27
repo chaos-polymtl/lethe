@@ -140,7 +140,7 @@ Phase-Space Source Terms
 
   * ``enable adaptive node count``: whether QMOMKit may reduce the number of quadrature nodes when the moments are close to the boundary of the realizable set, instead of stopping the simulation with an error.
   * ``relative tolerance``: relative tolerance of the adaptive Runge-Kutta integration of the growth of the quadrature nodes in phase space.
-  * ``absolute tolerance``: absolute tolerance of this integration, in the unit of the abscissas of the quadrature nodes. It must be much smaller than the abscissas, so that the ``relative tolerance`` controls the integration.
+  * ``absolute tolerance``: absolute tolerance of this integration, in the unit of the positions of the quadrature nodes. It must be much smaller than these positions, so that the ``relative tolerance`` controls the integration.
 
 Growth
 """"""
