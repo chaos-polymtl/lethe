@@ -9,7 +9,13 @@ This subsection defines the boundary conditions associated with fluid dynamics p
 * ``slip`` boundary conditions impose :math:`\mathbf{u} \cdot \mathbf{n}=0`, with :math:`\mathbf{n}` the normal vector of the boundary. Imposing slip boundary conditions strongly is not trivial in FEM. We refer the reader to the deal.II `documentation <https://www.dealii.org/current/doxygen/deal.II/group__constraints.html>`_ for explanations on how this is achieved.
 * ``periodic`` boundary conditions, in which fluid exiting the domain will reenter on the opposite side. 
 * ``function`` where a Dirichlet boundary condition is set from an arbitrary function. These functions can be used to define all sorts of steady-state and transient velocity boundary conditions such as rotating walls. It is also possible to weakly impose a Dirichlet boundary condition. In this case, the type should be set to ``function_weak``. This will result in Nitsche method being used to weakly impose the boundary condition instead of it being strongly imposed by overwriting the values of the degrees of freedom. The ``function_weak`` boundary type should only be used in very specific cases where the problem is very stiff, for example when it is fully enclosed and a non-trivial velocity profile is imposed. It can also be used to impose an outbound dirichlet boundary condition.
-* ``pressure`` where the pressure value at the boundary condition is weakly imposed. This is equivalent to a non-zero traction boundary condition.
+* ``pressure`` where the pressure value at the boundary condition is weakly imposed. This is equivalent to a non-zero traction boundary condition:
+
+.. math::
+    \nu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathcal{I} \cdot \mathbf{n} = - p_{bc} \mathbf{n}
+
+where :math:`p_{bc}` is the pressure function of the ``p`` subsection.
+
 * ``partial_slip`` boundary condition simulates an intermediary between ``slip`` and ``noslip`` boundary conditions, in which the fluid feels an attenuated stress due to the walls. The attenuation is controlled by the  boundary layer thickness (m). The ``partial_slip`` boundary condition introduces the "penalization factor" ``beta`` to the :math:`\mathbf{n}` normal vector of the boundary, and the ``boundary layer thickness`` (m) as a parameter to calculate the shear stress at the boundaries.
 * ``outlet`` where a *do nothing* boundary condition (equivalent to ``none``), which is a zero traction, is imposed when the fluid is leaving the domain (:math:`\mathbf{u} \cdot \mathbf{n}>0`) and a penalization is imposed when the fluid is inbound. This is useful when turbulent structures or vortices are leaving the domain since it prevents the re-entry of the fluid. The boundary condition imposed is thus:
 

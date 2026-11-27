@@ -554,7 +554,7 @@
 <!-- Node29 -->
 <g id="Node000029" class="node">
 <title>Node29</title>
-<g id="a_Node000029"><a xlink:href="classPressureBoundaryCondition.html" target="_top" xlink:title="Class that assembles a Neumann boundary condition. According to the following weak form: (p&#45;mu*grad_u...">
+<g id="a_Node000029"><a xlink:href="classPressureBoundaryCondition.html" target="_top" xlink:title="Class that assembles a pressure boundary condition, imposed as a prescribed normal traction &#45;p_bc n....">
 <polygon fill="white" stroke="#666666" points="409.25,-421.5 258.25,-421.5 258.25,-388 409.25,-388 409.25,-421.5"/>
 <text xml:space="preserve" text-anchor="start" x="266.25" y="-408" font-family="Helvetica,sans-Serif" font-size="10.00">PressureBoundaryCondition</text>
 <text xml:space="preserve" text-anchor="middle" x="333.75" y="-395.25" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

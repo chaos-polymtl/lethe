@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Class that assembles a Neumann boundary condition. According to the following weak form: (p&#45;mu*grad_u...">
+<g id="a_Node000001"><a xlink:title="Class that assembles a pressure boundary condition, imposed as a prescribed normal traction &#45;p_bc n....">
 <polygon fill="#999999" stroke="#666666" points="153.62,-33.5 2.62,-33.5 2.62,0 153.62,0 153.62,-33.5"/>
 <text xml:space="preserve" text-anchor="start" x="10.62" y="-20" font-family="Helvetica,sans-Serif" font-size="10.00">PressureBoundaryCondition</text>
 <text xml:space="preserve" text-anchor="middle" x="78.12" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

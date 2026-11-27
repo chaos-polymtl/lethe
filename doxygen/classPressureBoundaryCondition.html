@@ -117,7 +117,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class PressureBoundaryCondition&lt; dim &gt;</div><p>Class that assembles a Neumann boundary condition. According to the following weak form: (p-mu*grad_u)*n at the boundary. </p>
+class PressureBoundaryCondition&lt; dim &gt;</div><p>Class that assembles a pressure boundary condition, imposed as a prescribed normal traction -p_bc n. This is the Neumann boundary condition that arises naturally from the weak formulation, in both single-phase and multiphase flows. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
@@ -131,7 +131,7 @@ class PressureBoundaryCondition&lt; dim &gt;</div><p>Class that assembles a Neum
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00492">492</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00494">494</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a690071275b31f1b3a5e8abb5c6f0dfff" name="a690071275b31f1b3a5e8abb5c6f0dfff"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a690071275b31f1b3a5e8abb5c6f0dfff">&#9670;&#160;</a></span>PressureBoundaryCondition()</h2>
@@ -162,9 +162,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00495">495</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00497">497</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__assemblers_8h_source.html#l00523">pressure_boundary_conditions</a>, and <a class="el" href="navier__stokes__assemblers_8h_source.html#l00521">simulation_control</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__assemblers_8h_source.html#l00525">pressure_boundary_conditions</a>, and <a class="el" href="navier__stokes__assemblers_8h_source.html#l00523">simulation_control</a>.</p>
 
 </div>
 </div>
@@ -211,8 +211,6 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8cc_source.html#l02111">2111</a> of file <a class="el" href="navier__stokes__assemblers_8cc_source.html">navier_stokes_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00964">NavierStokesScratchData&lt; dim &gt;::boundary_face_id</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00986">NavierStokesScratchData&lt; dim &gt;::face_grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00967">NavierStokesScratchData&lt; dim &gt;::face_JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00969">NavierStokesScratchData&lt; dim &gt;::face_normal</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00983">NavierStokesScratchData&lt; dim &gt;::face_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00956">NavierStokesScratchData&lt; dim &gt;::fe_face_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00951">NavierStokesScratchData&lt; dim &gt;::is_boundary_cell</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00963">NavierStokesScratchData&lt; dim &gt;::is_boundary_face</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00725">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity_scale</a>, <a class="el" href="copy__data_8h_source.html#l00255">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00776">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00958">NavierStokesScratchData&lt; dim &gt;::n_faces</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00959">NavierStokesScratchData&lt; dim &gt;::n_faces_q_points</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00034">BoundaryConditions::pressure</a>, and <a class="el" href="navier__stokes__assemblers_8h_source.html#l00523">pressure_boundary_conditions</a>.</p>
-
 </div>
 </div>
 <a id="a15f5248ea2a8e371158406396700d5b3" name="a15f5248ea2a8e371158406396700d5b3"></a>
@@ -255,9 +253,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsAssemblerBase.html#aeaa14d0a42eca7f74da5af2dd41b2262">PhysicsAssemblerBase&lt; NavierStokesScratchData&lt; dim &gt;, StabilizedMethodsTensorCopyData&lt; dim &gt; &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8cc_source.html#l02181">2181</a> of file <a class="el" href="navier__stokes__assemblers_8cc_source.html">navier_stokes_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8cc_source.html#l02122">2122</a> of file <a class="el" href="navier__stokes__assemblers_8cc_source.html">navier_stokes_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00964">NavierStokesScratchData&lt; dim &gt;::boundary_face_id</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00967">NavierStokesScratchData&lt; dim &gt;::face_JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00969">NavierStokesScratchData&lt; dim &gt;::face_normal</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00983">NavierStokesScratchData&lt; dim &gt;::face_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00968">NavierStokesScratchData&lt; dim &gt;::face_quadrature_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00975">NavierStokesScratchData&lt; dim &gt;::face_velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00956">NavierStokesScratchData&lt; dim &gt;::fe_face_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00951">NavierStokesScratchData&lt; dim &gt;::is_boundary_cell</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00963">NavierStokesScratchData&lt; dim &gt;::is_boundary_face</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00725">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity_scale</a>, <a class="el" href="copy__data_8h_source.html#l00256">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00958">NavierStokesScratchData&lt; dim &gt;::n_faces</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00959">NavierStokesScratchData&lt; dim &gt;::n_faces_q_points</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00034">BoundaryConditions::pressure</a>, <a class="el" href="navier__stokes__assemblers_8h_source.html#l00523">pressure_boundary_conditions</a>, and <a class="el" href="fluid__dynamics__boundary__conditions_8cc_source.html#l00326">FluidDynamicsPressureFunctionDefined&lt; dim &gt;::value()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00964">NavierStokesScratchData&lt; dim &gt;::boundary_face_id</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00967">NavierStokesScratchData&lt; dim &gt;::face_JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00969">NavierStokesScratchData&lt; dim &gt;::face_normal</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00983">NavierStokesScratchData&lt; dim &gt;::face_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00968">NavierStokesScratchData&lt; dim &gt;::face_quadrature_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00956">NavierStokesScratchData&lt; dim &gt;::fe_face_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00951">NavierStokesScratchData&lt; dim &gt;::is_boundary_cell</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00963">NavierStokesScratchData&lt; dim &gt;::is_boundary_face</a>, <a class="el" href="copy__data_8h_source.html#l00256">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00958">NavierStokesScratchData&lt; dim &gt;::n_faces</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00959">NavierStokesScratchData&lt; dim &gt;::n_faces_q_points</a>, <a class="el" href="fluid__dynamics__boundary__conditions_8h_source.html#l00034">BoundaryConditions::pressure</a>, <a class="el" href="navier__stokes__assemblers_8h_source.html#l00525">pressure_boundary_conditions</a>, and <a class="el" href="fluid__dynamics__boundary__conditions_8cc_source.html#l00326">FluidDynamicsPressureFunctionDefined&lt; dim &gt;::value()</a>.</p>
 
 </div>
 </div>
@@ -276,7 +274,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00523">523</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00525">525</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -294,7 +292,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00521">521</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00523">523</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
 
 </div>
 </div>
