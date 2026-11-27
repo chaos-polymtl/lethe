@@ -760,9 +760,14 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
                   scalar_product(velocity_gradient, grad_phi_u_i) +
                 kinematic_viscosity * velocity_gradient *
                   void_fraction_gradients * phi_u_i) -
-              (void_fraction * kinematic_viscosity * div_phi_u_i *
-                 velocity_divergence +
-               kinematic_viscosity * velocity_divergence *
+              // Transposed viscous term: ν(∇v,ε∇u^T) + ν(v,∇u^T·∇ε). This
+              // used to be written with (∇·u)(∇·v) and (∇·u)(∇ε·v), which is
+              // only the same thing up to boundary terms. Now everything uses
+              // ∇u^T, which makes Newton converge quadratically instead of
+              // linearly.
+              (void_fraction * kinematic_viscosity *
+                 scalar_product(transpose(velocity_gradient), grad_phi_u_i) +
+               kinematic_viscosity * transpose(velocity_gradient) *
                  void_fraction_gradients * phi_u_i) -
               velocity_gradient * velocity * void_fraction * phi_u_i
               // Mass Source
