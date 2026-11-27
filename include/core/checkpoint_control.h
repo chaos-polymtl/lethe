@@ -5,8 +5,10 @@
 #define lethe_checkpoint_control_h
 
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 
 #include <deal.II/base/mpi.h>
+#include <deal.II/base/timer.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -29,26 +31,25 @@ public:
     , checkpointing_frequency(param.frequency)
     , restart(param.checkpoint)
     , filename(param.filename)
+    , checkpoint_control(param.checkpoint_control)
+    , time_frequency(param.time_frequency)
+    , wall_time_frequency(param.wall_time_frequency)
   {}
 
   /**
    * @brief Return true if a checkpoint should be made at the current time step:
-   * at each checkpointing frequency time step and at the last time step.
-   * @param time_step_number Current time step.
+   * at the last time step, and according to the checkpoint control at each
+   * checkpointing frequency time step, each time frequency of simulated time,
+   * or at the first log iteration after each wall time frequency.
+   * @param simulation_control Simulation control of the simulation.
    * @param is_last_time_step Whether the current time step is the last one.
+   * @param mpi_communicator MPI communicator of the simulation.
+   * @return Whether a checkpoint is written at this time step.
    */
   bool
-  is_checkpoint_time_step(const unsigned int time_step_number,
-                          const bool         is_last_time_step)
-  {
-    if (restart &&
-        (!(time_step_number % checkpointing_frequency) || is_last_time_step))
-      {
-        increment_checkpoint_id();
-        return true;
-      }
-    return false;
-  }
+  is_checkpoint_time_step(SimulationControl &simulation_control,
+                          const bool         is_last_time_step,
+                          const MPI_Comm    &mpi_communicator);
 
   /**
    * @brief Return the next checkpoint id.
@@ -141,5 +142,12 @@ private:
   const unsigned int checkpointing_frequency;
   const bool         restart;
   const std::string  filename;
+
+  const Parameters::Restart::CheckpointControlType checkpoint_control;
+  const double                                     time_frequency;
+  const double                                     wall_time_frequency;
+
+  // Wall time since the last checkpoint, for the wall_time checkpoint control
+  Timer wall_time_timer;
 };
 #endif

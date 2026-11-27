@@ -11,6 +11,7 @@
 // Lethe
 #include <core/checkpoint_control.h>
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 
 // Boost
 #include <boost/archive/text_iarchive.hpp>
@@ -25,6 +26,13 @@
 void
 test()
 {
+  Parameters::SimulationControl simulation_control_parameters;
+  simulation_control_parameters.method =
+    Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+  simulation_control_parameters.dt       = 0.1;
+  simulation_control_parameters.time_end = 100.;
+  SimulationControlTransient simulation_control(simulation_control_parameters);
+
   Parameters::Restart restart_parameters;
   restart_parameters.checkpoint = true;
   restart_parameters.frequency  = 2;
@@ -34,10 +42,14 @@ test()
   CheckpointControl  checkpoint_control(restart_parameters);
   const unsigned int n_time_steps = 5;
   for (unsigned int time_step = 1; time_step <= n_time_steps; ++time_step)
-    if (checkpoint_control.is_checkpoint_time_step(time_step,
-                                                   time_step == n_time_steps))
-      deallog << "Time step " << time_step << ": checkpoint in slot "
-              << checkpoint_control.get_next_checkpoint_id() << std::endl;
+    {
+      simulation_control.integrate();
+      if (checkpoint_control.is_checkpoint_time_step(simulation_control,
+                                                     time_step == n_time_steps,
+                                                     MPI_COMM_WORLD))
+        deallog << "Time step " << time_step << ": checkpoint in slot "
+                << checkpoint_control.get_next_checkpoint_id() << std::endl;
+    }
 
   // A restart reads the slot of the last checkpoint, and its first checkpoint
   // is written in the other slot.
@@ -53,7 +65,10 @@ test()
   }
   deallog << "Restart from slot "
           << restarted_checkpoint_control.get_next_checkpoint_id() << std::endl;
-  if (restarted_checkpoint_control.is_checkpoint_time_step(6, false))
+  simulation_control.integrate();
+  if (restarted_checkpoint_control.is_checkpoint_time_step(simulation_control,
+                                                           false,
+                                                           MPI_COMM_WORLD))
     deallog << "Time step 6: checkpoint in slot "
             << restarted_checkpoint_control.get_next_checkpoint_id()
             << std::endl;
@@ -62,15 +77,17 @@ test()
   restart_parameters.checkpoint = false;
   CheckpointControl disabled_checkpoint_control(restart_parameters);
   deallog << "Checkpoint with checkpointing disabled: "
-          << disabled_checkpoint_control.is_checkpoint_time_step(2, true)
+          << disabled_checkpoint_control.is_checkpoint_time_step(
+               simulation_control, true, MPI_COMM_WORLD)
           << std::endl;
 }
 
 int
-main()
+main(int argc, char **argv)
 {
   try
     {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       initlog();
       test();
     }

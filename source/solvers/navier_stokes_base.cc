@@ -590,8 +590,9 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
     }
   if (simulation_control->get_iteration_number() != 0 &&
       this->checkpoint_controller.is_checkpoint_time_step(
-        simulation_control->get_iteration_number(),
-        simulation_control->is_at_end()))
+        *simulation_control,
+        simulation_control->is_at_end(),
+        this->mpi_communicator))
     {
       this->write_checkpoint();
       this->checkpoint_controller.write(

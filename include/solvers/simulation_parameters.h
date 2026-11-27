@@ -532,6 +532,17 @@ public:
           "to be respected for CLS multiphase flows with surface tension.\n "));
 
     AssertThrow(
+      !restart_parameters.checkpoint ||
+        restart_parameters.checkpoint_control !=
+          Parameters::Restart::CheckpointControlType::time ||
+        simulation_control.method !=
+          Parameters::SimulationControl::TimeSteppingMethod::steady,
+      ExcMessage(
+        "The time checkpoint control (subsection restart) cannot be used "
+        "with a steady simulation, whose time does not advance. Use the "
+        "iteration or wall_time checkpoint control."));
+
+    AssertThrow(
       velocity_sources.fluid_with_phase_change ==
           Parameters::FluidIndicator::fluid_0 ||
         multiphysics.CLS,

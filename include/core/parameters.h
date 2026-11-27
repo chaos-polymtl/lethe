@@ -2268,6 +2268,21 @@ namespace Parameters
     bool         checkpoint = false;
     unsigned int frequency  = 1;
 
+    /// Quantity that sets when the checkpoints are written
+    enum class CheckpointControlType : std::uint8_t
+    {
+      iteration,
+      time,
+      wall_time
+    } checkpoint_control = CheckpointControlType::iteration;
+
+    /// Simulated time between checkpoints (for time checkpoint control)
+    double time_frequency = 1.;
+
+    /// Wall time between checkpoints in seconds (for wall_time checkpoint
+    /// control)
+    double wall_time_frequency = 7200.;
+
     /**
      * @brief Declare the parameters.
      *
