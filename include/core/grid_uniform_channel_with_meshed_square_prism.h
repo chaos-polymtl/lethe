@@ -9,9 +9,6 @@
 
 #include <deal.II/grid/tria.h>
 
-#include <cmath>
-#include <sstream>
-
 using namespace dealii;
 
 /**

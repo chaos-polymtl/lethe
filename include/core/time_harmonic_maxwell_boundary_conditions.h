@@ -13,7 +13,6 @@
 
 #include <map>
 #include <memory>
-#include <vector>
 
 using namespace dealii;
 

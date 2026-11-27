@@ -4,7 +4,6 @@
 #ifndef lethe_thermal_expansion_model_h
 #define lethe_thermal_expansion_model_h
 
-#include <core/phase_change.h>
 #include <core/physical_property_model.h>
 
 #include <algorithm>

@@ -8,9 +8,6 @@
 
 #include <deal.II/grid/manifold_lib.h>
 
-#include <array>
-#include <sstream>
-
 using namespace dealii;
 
 /**

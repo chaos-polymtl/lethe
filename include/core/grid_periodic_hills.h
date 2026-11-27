@@ -12,8 +12,6 @@
 
 #include <deal.II/lac/vector.h>
 
-#include <sstream>
-
 using namespace dealii;
 
 /**

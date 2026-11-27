@@ -3,6 +3,7 @@
 
 #include <deal.II/base/config.h>
 
+#include <core/lethe_grid_tools.h>
 #include <core/mortar_coupling_manager.h>
 
 #include <deal.II/base/exceptions.h>

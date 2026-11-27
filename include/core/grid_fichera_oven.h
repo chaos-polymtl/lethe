@@ -8,8 +8,6 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <sstream>
-
 using namespace dealii;
 
 /**

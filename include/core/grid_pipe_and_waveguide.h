@@ -10,9 +10,6 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 
-#include <array>
-#include <sstream>
-
 using namespace dealii;
 
 /**
