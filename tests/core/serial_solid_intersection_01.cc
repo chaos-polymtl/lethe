@@ -18,8 +18,6 @@
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/fe/mapping_q_generic.h>
-
 #include <deal.II/grid/grid_generator.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -66,6 +64,19 @@ test()
   // floating solid
   auto cell_and_triangle_intersection =
     solid.map_solid_in_background_triangulation(background_cells_search_tree);
+
+  // The R-tree returns the background cells of a triangle in an order that
+  // depends on the versions of Boost and of the standard library. Sort the
+  // pairs by solid cell, then by background cell, so that the output does not
+  // depend on these versions.
+  std::ranges::sort(cell_and_triangle_intersection,
+            [](const auto &pair_a, const auto &pair_b) {
+              return std::make_pair(pair_a.second->active_cell_index(),
+                                    pair_a.first->active_cell_index()) <
+                     std::make_pair(pair_b.second->active_cell_index(),
+                                    pair_b.first->active_cell_index());
+            });
+
   deallog << "Cell pairs (background, solid)" << std::endl;
   for (auto &cell_pair : cell_and_triangle_intersection)
     {

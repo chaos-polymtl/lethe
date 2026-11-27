@@ -186,14 +186,16 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
             triangles[v] = this_triangle->vertex(v);
 
           intersected_cubes.clear();
-          // Find the cubes (associated to each baground cell) that intersect
+          // Find the cubes (associated to each background cell) that intersect
           // the bounding box of the triangle. Stores the intersected cubes in
           // intersected_cubes.
           cube_tree.query(boost::geometry::index::intersects(
                             this_triangle->bounding_box()),
                           std::back_inserter(intersected_cubes));
 
-          // For each intersected_cubes
+          // For each intersected_cubes, we check the distance of its center to
+          // the triangle. If the distance is smaller than the diameter of
+          // the background cell, we map the background cell to the triangle.
           for (const auto &intersected_cube : intersected_cubes)
             {
               // Get the index of the cell associated with the cube.
