@@ -1,0 +1,176 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Checks quasi-static RBVMS on a rotating mortar mesh with Q2-Q2 elements.
+# The cross-stress must use physical velocity, while SUPG uses velocity
+# relative to the mesh. Velocity error, energy and enstrophy detect mixing
+# these two velocities in the residual and its Newton linearization.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time step        = 0.1
+  set time end         = 0.3
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 2
+  set pressure degree = 2
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = cos(x)*sin(y); -sin(x)*cos(y); -1./4*(cos(2*x)+cos(2*y));
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 0.01
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set verbosity = verbose
+  set enable    = true
+  subsection uvwp
+    set Function constants  = viscosity=0.01
+    set Function expression = exp(-2*viscosity*t)*   cos(x) * sin(y) ; -sin(x) * cos(y) * exp(-2*viscosity*t); 0
+  end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                = verbose
+  set calculate enstrophy      = true
+  set calculate kinetic energy = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube_with_cylindrical_hole
+  set grid arguments     = 2.0 : 3.141592654 : 1 : 1 : true
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Mortar
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type           = dealii
+    set grid type      = hyper_ball_balanced
+    set grid arguments = 0, 0 : 2.0
+  end
+  set rotor boundary id  = 5
+  set stator boundary id = 4
+  set center of rotation = 0, 0
+  subsection rotor rotation angle
+    set Function expression = 1.0*t
+  end
+  subsection rotor angular velocity
+    set Function expression = 1.0
+  end
+  set verbosity = verbose
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number                = 4
+  set fix pressure constant = true
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+  subsection bc 1
+    set type               = periodic
+    set id                 = 2
+    set periodic id        = 3
+    set periodic direction = 1
+  end
+  subsection bc 2
+    set type = none
+    set id   = 4
+  end
+  subsection bc 3
+    set type = none
+    set id   = 5
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-10
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set max iters         = 5000
+    set relative residual = 1e-4
+    set minimum residual  = 1e-12
+    set preconditioner    = ilu
+    set verbosity         = quiet
+  end
+end
+
+subsection stabilization
+  set use default stabilization = false
+  set stabilization             = rbvms
+end
+
+subsection timer
+  set type = none
+end

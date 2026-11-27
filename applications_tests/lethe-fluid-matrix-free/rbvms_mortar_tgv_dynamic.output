@@ -1,0 +1,69 @@
+Running on 1 MPI rank(s)...
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.000000e+00 rad 
+Rotor grid velocity: 1.000000e+00 rad/time 
+
+   Number of active cells:       80
+   Number of degrees of freedom: 1107
+   Volume of triangulation:      3.947842e+01
+Enstrophy: 4.988403e-01
+Kinetic energy: 2.488216e-01
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.04     Time step: 0.04     CFL: 0.352902
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    4.000000e-02 rad 
+Rotor grid velocity: 1.000000e+00 rad/time 
+
+Enstrophy: 4.978784e-01
+Kinetic energy: 2.481550e-01
+L2 error velocity: 4.991635e-02
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.1      Time step: 0.06     CFL: 0.141248
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.000000e-01 rad 
+Rotor grid velocity: 1.000000e+00 rad/time 
+
+Enstrophy: 4.964942e-01
+Kinetic energy: 2.473782e-01
+L2 error velocity: 5.555355e-02
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.2      Time step: 0.1      CFL: 0.210799
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    2.000000e-01 rad 
+Rotor grid velocity: 1.000000e+00 rad/time 
+
+Enstrophy: 4.942670e-01
+Kinetic energy: 2.461706e-01
+L2 error velocity: 6.724006e-02
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.3      Time step: 0.1      CFL: 0.350983
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    3.000000e-01 rad 
+Rotor grid velocity: 1.000000e+00 rad/time 
+
+Enstrophy: 4.920494e-01
+Kinetic energy: 2.449658e-01
+L2 error velocity: 8.020763e-02
+ time  error_velocity 
+0.0400   4.991635e-02 
+0.1000   5.555355e-02 
+0.2000   6.724006e-02 
+0.3000   8.020763e-02 

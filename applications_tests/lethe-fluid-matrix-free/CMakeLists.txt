@@ -30,6 +30,18 @@ file(COPY turbulent_taylor_couette_restart/restart_0.triangulation.info DESTINAT
 file(COPY turbulent_taylor_couette_restart/enstrophy_0.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
 file(COPY turbulent_taylor_couette_restart/kinetic_energy_0.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
 
+
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/rbvms_transient_bdf3_dynamic_restart_0.fine_scale_velocity DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/rbvms_transient_bdf3_dynamic_restart_0.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/rbvms_transient_bdf3_dynamic_restart_0.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/rbvms_transient_bdf3_dynamic_restart.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/rbvms_transient_bdf3_dynamic_restart_0.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/rbvms_transient_bdf3_dynamic_restart_0.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/rbvms_transient_bdf3_dynamic_restart_0.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/enstrophy_0.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/kinetic_energy_0.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+file(COPY rbvms_transient_bdf3_dynamic_restart_files/L2Error_FD_0.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbvms_transient_bdf3_dynamic_restart.${_build_type}/mpirun=2/")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

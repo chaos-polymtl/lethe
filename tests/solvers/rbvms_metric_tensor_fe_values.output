@@ -1,0 +1,6 @@
+
+DEAL::metric tensor G (eq. 66) matches analytic : OK
+DEAL::metric vector g (eq. 69) matches analytic  : OK
+DEAL::u.G.u (eq. 68) matches analytic            : OK
+DEAL::G:G   (eq. 67) matches analytic            : OK
+DEAL::g.g   (eq. 70) matches analytic            : OK

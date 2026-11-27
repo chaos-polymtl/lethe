@@ -53,6 +53,44 @@ FluidDynamicsMatrixBased<dim>::FluidDynamicsMatrixBased(
          .amg_precond_ilu_fill :
        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .ilu_precond_fill);
+
+  // The dynamic RBVMS velocity subscale stores the history of the fine-scale
+  // velocity at the quadrature points of the cells. This history is advanced
+  // with BDF schemes only. It is written to the checkpoint files and
+  // transferred when the mesh is adapted, which requires the tensor-product
+  // quadrature of hypercube cells. For steady simulations, the dynamic and
+  // quasi-static subscales coincide.
+  if (this->simulation_parameters.stabilization.velocity_subscale ==
+      Parameters::Stabilization::VelocitySubscale::dynamic)
+    {
+      using Method = Parameters::SimulationControl::TimeSteppingMethod;
+      const Method method =
+        this->simulation_parameters.simulation_control.method;
+
+      AssertThrow(
+        !this->simulation_parameters.stabilization.use_default_stabilization &&
+          this->simulation_parameters.stabilization.stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::rbvms,
+        ExcMessage(
+          "The dynamic velocity subscale is only available with the rbvms stabilization. Set 'use default stabilization = false' and 'stabilization = rbvms' in the stabilization subsection."));
+      AssertThrow(
+        fluid_dynamics_formulation == FluidDynamicsFormulation::standard,
+        ExcMessage(
+          "The dynamic velocity subscale is not available for the volume-averaged Navier-Stokes equations."));
+      AssertThrow(
+        method == Method::steady || method == Method::steady_bdf ||
+          method == Method::bdf1 || method == Method::bdf2 ||
+          method == Method::bdf3,
+        ExcMessage(
+          "The dynamic velocity subscale is only available with the steady and BDF time-stepping methods."));
+      AssertThrow(
+        !this->simulation_parameters.mesh.simplex,
+        ExcMessage(
+          "The dynamic velocity subscale is not available for simplex meshes."));
+    }
+
+  this->fine_scale_velocity_history =
+    std::make_shared<FineScaleVelocityHistory<dim>>();
 }
 
 template <int dim>
@@ -201,6 +239,21 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                    this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              this->previous_solutions);
+
+  // History of the fine-scale velocity of the dynamic RBVMS velocity subscale,
+  // which starts from zero. Only a transient simulation with the dynamic
+  // subscale needs it. In a steady simulation, the memory would always be
+  // zero.
+  const bool is_dynamic_subscale =
+    this->simulation_parameters.stabilization.velocity_subscale ==
+    Parameters::Stabilization::VelocitySubscale::dynamic;
+  this->fine_scale_velocity_history->reinit(
+    *this->triangulation,
+    is_dynamic_subscale ?
+      number_of_previous_solutions(
+        this->simulation_parameters.simulation_control.method) :
+      0,
+    this->cell_quadrature->size());
 }
 
 template <int dim>
@@ -397,6 +450,21 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                              "for flows with a variable density. Use a BDF "
                              "method instead."));
     }
+
+  // The multiphase (CLS and Cahn-Hilliard) core assemblers below implement
+  // their own stabilization and would otherwise silently replace the RBVMS
+  // stabilization.
+  AssertThrow(
+    this->simulation_parameters.stabilization.use_default_stabilization ||
+      this->simulation_parameters.stabilization.stabilization !=
+        Parameters::Stabilization::NavierStokesStabilization::rbvms ||
+      (!this->simulation_parameters.multiphysics.CLS &&
+       !this->simulation_parameters.multiphysics.cahn_hilliard),
+    ExcMessage("The rbvms stabilization is not supported for multiphase flows "
+               "with the conservative level set (CLS) or the Cahn-Hilliard "
+               "equations. Use the pspg_supg or gls stabilization, or set "
+               "'use default stabilization = true' in the stabilization "
+               "subsection."));
 
   this->assemblers.clear();
 
@@ -675,6 +743,18 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                 .phase_change_parameters.T_solidus));
         }
 
+      // The RBVMS stabilization is only implemented for Newtonian flows. Check
+      // it here since the non-Newtonian core below would otherwise silently
+      // replace it.
+      AssertThrow(
+        this->simulation_parameters.stabilization.use_default_stabilization ||
+          this->simulation_parameters.stabilization.stabilization !=
+            Parameters::Stabilization::NavierStokesStabilization::rbvms ||
+          !this->simulation_parameters.physical_properties_manager
+             .is_non_newtonian(),
+        ExcMessage(
+          "The RBVMS stabilization is only supported for Newtonian flows."));
+
       if (this->simulation_parameters.physical_properties_manager
             .is_non_newtonian())
         {
@@ -724,10 +804,28 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                       this->simulation_control));
                 }
             }
+          else if (this->simulation_parameters.stabilization.stabilization ==
+                   Parameters::Stabilization::NavierStokesStabilization::rbvms)
+            {
+              // The RBVMS stabilization is currently only implemented for
+              // constant-density (incompressible) Newtonian flows, mirroring
+              // the matrix-free implementation.
+              AssertThrow(
+                this->simulation_parameters.physical_properties_manager
+                  .density_is_constant(),
+                ExcMessage(
+                  "The RBVMS stabilization is only supported for "
+                  "constant-density (incompressible) Newtonian flows."));
+              this->assemblers.emplace_back(
+                std::make_shared<RBVMSNavierStokesAssemblerCore<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.stabilization.velocity_subscale,
+                  this->fine_scale_velocity_history));
+            }
           else
             throw std::runtime_error(
-              "Using the GLS solver with a stabilization other than the pspg_supg or gls "
-              "stabilization will lead to an unstable solver that is unable to converge");
+              "Using the GLS solver with a stabilization other than the pspg_supg, gls or "
+              "rbvms stabilization will lead to an unstable solver that is unable to converge");
         }
     }
 }
@@ -967,14 +1065,9 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
 
 
 template <int dim>
-void
-FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
+NavierStokesScratchData<dim>
+FluidDynamicsMatrixBased<dim>::create_rhs_scratch_data()
 {
-  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-
-  this->system_rhs = 0;
-  setup_assemblers();
-
   auto scratch_data = NavierStokesScratchData<dim>(
     this->simulation_control,
     this->simulation_parameters.physical_properties_manager,
@@ -1035,6 +1128,146 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.enable_mortar();
+
+  return scratch_data;
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::update_fine_scale_velocity_history()
+{
+  // The fine-scale velocity is calculated at the converged solution.
+  this->evaluation_point = *this->present_solution;
+
+  setup_assemblers();
+
+  auto scratch_data = this->create_rhs_scratch_data();
+  StabilizedMethodsTensorCopyData<dim> copy_data(this->fe->n_dofs_per_cell(),
+                                                 this->cell_quadrature->size());
+
+  // The RBVMS assembler stores the fine-scale velocity while the local
+  // right-hand sides are assembled. They are not added to the right-hand side
+  // of the system.
+  this->fine_scale_velocity_history->set_recording(true);
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+    if (cell->is_locally_owned())
+      this->assemble_local_system_rhs(cell, scratch_data, copy_data);
+  this->fine_scale_velocity_history->set_recording(false);
+
+  this->fine_scale_velocity_history->advance();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::percolate_time_vectors_fd()
+{
+  // The fine-scale velocity of the dynamic RBVMS subscale is calculated from
+  // the converged solution before the time vectors are percolated, while the
+  // previous solutions still describe the time step that just converged. The
+  // initial condition is also percolated, before any time step is solved
+  // (iteration 0). Its fine-scale velocity is zero, which is what the history
+  // already holds, so the history is left untouched in that case.
+  if (this->fine_scale_velocity_history->n_values_per_cell() > 0 &&
+      time_stepping_is_bdf(this->simulation_control->get_assembly_method()) &&
+      this->simulation_control->get_iteration_number() > 0)
+    this->update_fine_scale_velocity_history();
+
+  NavierStokesBase<dim, GlobalVectorType, IndexSet>::
+    percolate_time_vectors_fd();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::write_checkpoint()
+{
+  NavierStokesBase<dim, GlobalVectorType, IndexSet>::write_checkpoint();
+
+  // The triangulation has been saved with the history of the fine-scale
+  // velocity attached to its cells, so the cell-wise copy is released.
+  this->fine_scale_velocity_transfer.reset();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::attach_cell_data_to_checkpoint(
+  const std::string &checkpoint_file_prefix)
+{
+  // The object must stay alive until the triangulation is saved, so it is a
+  // member released by write_checkpoint().
+  this->fine_scale_velocity_transfer =
+    std::make_unique<FineScaleVelocityTransfer<dim>>(
+      *this->triangulation,
+      this->mpi_communicator,
+      this->number_quadrature_points);
+  this->fine_scale_velocity_transfer->attach_to_checkpoint(
+    checkpoint_file_prefix,
+    this->fine_scale_velocity_history->n_values_per_cell(),
+    this->fine_scale_velocity_history->get_cell_data());
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::read_cell_data_from_checkpoint(
+  const std::string &checkpoint_file_prefix)
+{
+  FineScaleVelocityTransfer<dim> transfer(*this->triangulation,
+                                          this->mpi_communicator,
+                                          this->number_quadrature_points);
+  const auto                     cell_data = transfer.read_from_checkpoint(
+    checkpoint_file_prefix,
+    this->fine_scale_velocity_history->n_values_per_cell(),
+    this->pcout);
+
+  // The data is empty if the checkpoint holds no history or if the simulation
+  // does not use it.
+  if (!cell_data.empty())
+    this->fine_scale_velocity_history->set_cell_data(cell_data);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::prepare_cell_data_for_mesh_adaptation()
+{
+  if (this->fine_scale_velocity_history->n_values_per_cell() == 0)
+    return;
+
+  // The object must stay alive until the history is transferred to the
+  // adapted mesh, so it is a member released by
+  // transfer_cell_data_after_mesh_adaptation().
+  this->fine_scale_velocity_transfer =
+    std::make_unique<FineScaleVelocityTransfer<dim>>(
+      *this->triangulation,
+      this->mpi_communicator,
+      this->number_quadrature_points);
+  this->fine_scale_velocity_transfer->prepare_for_coarsening_and_refinement(
+    this->fine_scale_velocity_history->get_cell_data());
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::transfer_cell_data_after_mesh_adaptation()
+{
+  if (this->fine_scale_velocity_transfer == nullptr)
+    return;
+
+  // The history has been allocated again, and set to zero, when the degrees
+  // of freedom were set up on the adapted mesh.
+  this->fine_scale_velocity_history->set_cell_data(
+    this->fine_scale_velocity_transfer
+      ->unpack_after_coarsening_and_refinement());
+  this->fine_scale_velocity_transfer.reset();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
+{
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
+  this->system_rhs = 0;
+  setup_assemblers();
+
+  auto scratch_data = this->create_rhs_scratch_data();
 
   WorkStream::run(
     this->dof_handler->begin_active(),

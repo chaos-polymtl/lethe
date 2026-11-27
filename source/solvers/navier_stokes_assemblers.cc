@@ -3,6 +3,7 @@
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_assemblers.h>
@@ -309,6 +310,466 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
 
 template class PSPGSUPGNavierStokesAssemblerCore<2>;
 template class PSPGSUPGNavierStokesAssemblerCore<3>;
+
+template <int dim>
+void
+RBVMSNavierStokesAssemblerCore<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector =
+    scratch_data.kinematic_viscosity;
+
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.kinematic_viscosity_for_stabilization;
+
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // RBVMS-only quantities (Bazilevs et al. 2007). The transient term of tau_M
+  // (eq. 64) is 4/dt^2 (0 for steady). The inverse Jacobian is scaled by 2k
+  // (see calculate_rbvms_reference_scaling) and the inverse-estimate constant
+  // C_I (see paper text after eq. 70) is rbvms_inverse_estimate_constant.
+  const bool is_steady =
+    this->simulation_control->get_assembly_method() ==
+    Parameters::SimulationControl::TimeSteppingMethod::steady;
+  const double four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
+  const double rbvms_reference_scaling =
+    calculate_rbvms_reference_scaling(scratch_data.fe_values.get_fe().degree);
+
+  // Dynamic velocity subscale: the steady parameter tau_s is
+  // calculate_rbvms_tau without the 4/dt^2 term, the continuity parameter
+  // tau_C is built from tau_s, and the momentum parameter is
+  // tau_t = (alpha + 1/tau_s)^(-1), where alpha is the coefficient of the
+  // current fine-scale velocity in its time derivative (beta_0 for BDF, 0 for
+  // steady problems). The memory m' of the fine-scale velocity is calculated
+  // from its history, which is empty when there is no memory.
+  const auto assembly_method = this->simulation_control->get_assembly_method();
+  const bool is_dynamic_subscale =
+    this->velocity_subscale ==
+    Parameters::Stabilization::VelocitySubscale::dynamic;
+  const double rbvms_transient_term =
+    is_dynamic_subscale ? 0. : four_over_dt_squared;
+  const bool subscale_is_transient =
+    is_dynamic_subscale && time_stepping_is_bdf(assembly_method);
+  const double fine_scale_alpha =
+    subscale_is_transient ?
+      this->simulation_control->get_bdf_coefficients()[0] :
+      0.;
+  const bool has_fine_scale_memory =
+    subscale_is_transient && this->fine_scale_velocity_history != nullptr &&
+    this->fine_scale_velocity_history->n_values_per_cell() > 0;
+  const Vector<double> &bdf_coefficients =
+    this->simulation_control->get_bdf_coefficients();
+  const unsigned int n_previous_solutions =
+    number_of_previous_solutions(assembly_method);
+  const unsigned int active_cell_index =
+    scratch_data.fe_values.get_cell()->active_cell_index();
+
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
+  // Per-trial-function quantities computed once per quadrature point in the
+  // loop over the columns and reused in the loop over the rows. They are
+  // allocated once, outside of the loop over the quadrature points.
+  std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+  std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+  std::vector<Tensor<1, dim>> delta_fine_scale_velocity(n_dofs);
+  std::vector<Tensor<2, dim>> fine_scale_terms_linearization(n_dofs);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double          kinematic_viscosity = viscosity_vector[q];
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
+
+      const Tensor<1, dim> &pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Forcing term
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // RBVMS stabilization parameters from the element metric tensor. The
+      // FEValues inverse Jacobian has entry [i][j] = dxi_i/dx_j, the transpose
+      // of the convention expected by compute_metric_tensor (which follows the
+      // matrix-free inverse_jacobian, [i][j] = dxi_j/dx_i); hence the
+      // transpose.
+      const Tensor<2, dim> inverse_jacobian =
+        scratch_data.fe_values.inverse_jacobian(q).transpose();
+
+      Tensor<2, dim> metric_tensor;
+      Tensor<1, dim> metric_vector;
+      compute_metric_tensor(inverse_jacobian,
+                            rbvms_reference_scaling,
+                            metric_tensor,
+                            metric_vector);
+
+      double tau;      // tau_M (eq. 64)
+      double tau_lsic; // tau_C (eq. 65)
+      calculate_rbvms_tau<dim, double>(metric_tensor,
+                                       metric_vector,
+                                       advective_velocity,
+                                       viscosity_for_stabilization_vector[q],
+                                       rbvms_transient_term,
+                                       rbvms_inverse_estimate_constant,
+                                       tau,
+                                       tau_lsic);
+      if (is_dynamic_subscale)
+        tau = calculate_rbvms_dynamic_tau(tau, fine_scale_alpha);
+
+      // Calculate the strong residual r_M (eq. 62)
+      auto strong_residual = velocity_gradient * advective_velocity +
+                             pressure_gradient -
+                             kinematic_viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
+
+      // Fine-scale velocity u' = -tau_M r_M at the linearization point. The
+      // jacobian matrix does not include the jacobian of the stabilization
+      // parameters tau (frozen-tau linearization, consistently with the
+      // SUPG/PSPG and GLS assemblers), so the increment of u' is
+      // δu' = -tau_M δr_M.
+      // With the dynamic subscale, u' = -tau_t (r_M + m').
+      const Tensor<1, dim> fine_scale_velocity =
+        has_fine_scale_memory ?
+          -tau *
+            (strong_residual +
+             this->fine_scale_velocity_history->calculate_memory(
+               active_cell_index, q, bdf_coefficients, n_previous_solutions)) :
+          -tau * strong_residual;
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j           = scratch_data.phi_u[q][j];
+          const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
+          const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
+
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
+
+          strong_jacobian_vec[q][j] +=
+            (velocity_gradient * phi_u_j + grad_phi_u_j * advective_velocity +
+             grad_phi_p_j - kinematic_viscosity * laplacian_phi_u_j +
+             mass_source * phi_u_j);
+
+          // Store these temporary products in auxiliary variables for speed
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
+          velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
+
+          // Fine-scale velocity increment δu' and linearization of the
+          // cross-stress and Reynolds-stress terms (eq. 72) for this trial
+          // function.
+          delta_fine_scale_velocity[j] = -tau * strong_jacobian_vec[q][j];
+          fine_scale_terms_linearization[j] =
+            rbvms_fine_scale_terms_linearization(velocity,
+                                                 phi_u_j,
+                                                 fine_scale_velocity,
+                                                 delta_fine_scale_velocity[j]);
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const int component_i = scratch_data.components[i];
+
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+
+          // Store these temporary products in auxiliary variables for speed.
+          // grad_phi_u_i_x_velocity contracts the velocity with the derivative
+          // (gradient) index (SUPG weight u·∇v), whereas
+          // fine_scale_velocity_x_grad_phi_u_i contracts u' with the component
+          // index and is used by the second part of the SUPG jacobian.
+          const auto grad_phi_u_i_x_velocity =
+            grad_phi_u_i * advective_velocity;
+          const auto fine_scale_velocity_x_grad_phi_u_i =
+            fine_scale_velocity * grad_phi_u_i;
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const int component_j = scratch_data.components[j];
+
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
+
+              const auto &delta_fine_scale_velocity_j =
+                delta_fine_scale_velocity[j];
+
+              double local_matrix_ij =
+                component_j == dim ? -div_phi_u_i * phi_p_j : 0;
+              if (component_i == dim)
+                {
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
+
+                  local_matrix_ij += phi_p_i * div_phi_u_j; // continuity
+
+                  // PSPG term -(∇q, δu')
+                  local_matrix_ij +=
+                    -(delta_fine_scale_velocity_j * grad_phi_p_i);
+                }
+
+              if (component_i < dim && component_j < dim)
+                {
+                  const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+
+                  local_matrix_ij += velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                                     grad_phi_u_j_x_velocity[j] * phi_u_i;
+
+                  // LSIC / grad-div term (uses tau_C)
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
+                  local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
+
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij +=
+                        kinematic_viscosity * (grad_phi_u_j[component_j] *
+                                               grad_phi_u_i[component_i]) +
+                        mass_source * phi_u_j * phi_u_i;
+                    }
+                }
+              if (component_i < dim)
+                {
+                  // SUPG term -((u·∇)v, δu') - ((δu·∇)v, u')
+                  local_matrix_ij +=
+                    -(delta_fine_scale_velocity_j * grad_phi_u_i_x_velocity +
+                      fine_scale_velocity_x_grad_phi_u_i * phi_u_j);
+
+                  // RBVMS cross-stress and Reynolds-stress terms (eq. 72),
+                  // linearization of -(∇v, u ⊗ u') - (∇v, u' ⊗ u').
+                  local_matrix_ij +=
+                    scalar_product(fine_scale_terms_linearization[j],
+                                   grad_phi_u_i);
+                }
+
+              local_matrix_ij *= JxW;
+              local_matrix(i, j) += local_matrix_ij;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+RBVMSNavierStokesAssemblerCore<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector =
+    scratch_data.kinematic_viscosity;
+
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.kinematic_viscosity_for_stabilization;
+
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  const bool is_steady =
+    this->simulation_control->get_assembly_method() ==
+    Parameters::SimulationControl::TimeSteppingMethod::steady;
+  const double four_over_dt_squared = is_steady ? 0. : 4. * sdt * sdt;
+  const double rbvms_reference_scaling =
+    calculate_rbvms_reference_scaling(scratch_data.fe_values.get_fe().degree);
+
+  // Dynamic velocity subscale: the steady parameter tau_s is
+  // calculate_rbvms_tau without the 4/dt^2 term, the continuity parameter
+  // tau_C is built from tau_s, and the momentum parameter is
+  // tau_t = (alpha + 1/tau_s)^(-1), where alpha is the coefficient of the
+  // current fine-scale velocity in its time derivative (beta_0 for BDF, 0 for
+  // steady problems). The memory m' of the fine-scale velocity is calculated
+  // from its history, which is empty when there is no memory.
+  const auto assembly_method = this->simulation_control->get_assembly_method();
+  const bool is_dynamic_subscale =
+    this->velocity_subscale ==
+    Parameters::Stabilization::VelocitySubscale::dynamic;
+  const double rbvms_transient_term =
+    is_dynamic_subscale ? 0. : four_over_dt_squared;
+  const bool subscale_is_transient =
+    is_dynamic_subscale && time_stepping_is_bdf(assembly_method);
+  const double fine_scale_alpha =
+    subscale_is_transient ?
+      this->simulation_control->get_bdf_coefficients()[0] :
+      0.;
+  const bool has_fine_scale_memory =
+    subscale_is_transient && this->fine_scale_velocity_history != nullptr &&
+    this->fine_scale_velocity_history->n_values_per_cell() > 0;
+  const Vector<double> &bdf_coefficients =
+    this->simulation_control->get_bdf_coefficients();
+  const unsigned int n_previous_solutions =
+    number_of_previous_solutions(assembly_method);
+  const unsigned int active_cell_index =
+    scratch_data.fe_values.get_cell()->active_cell_index();
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Physical properties
+      const double kinematic_viscosity = viscosity_vector[q];
+
+      // Velocity
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
+
+      // Pressure
+      const double          pressure = scratch_data.pressure_values[q];
+      const Tensor<1, dim> &pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Forcing term
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // RBVMS stabilization parameters from the element metric tensor (see the
+      // matching comment in assemble_matrix for the transpose convention).
+      const Tensor<2, dim> inverse_jacobian =
+        scratch_data.fe_values.inverse_jacobian(q).transpose();
+
+      Tensor<2, dim> metric_tensor;
+      Tensor<1, dim> metric_vector;
+      compute_metric_tensor(inverse_jacobian,
+                            rbvms_reference_scaling,
+                            metric_tensor,
+                            metric_vector);
+
+      double tau;      // tau_M (eq. 64)
+      double tau_lsic; // tau_C (eq. 65)
+      calculate_rbvms_tau<dim, double>(metric_tensor,
+                                       metric_vector,
+                                       advective_velocity,
+                                       viscosity_for_stabilization_vector[q],
+                                       rbvms_transient_term,
+                                       rbvms_inverse_estimate_constant,
+                                       tau,
+                                       tau_lsic);
+      if (is_dynamic_subscale)
+        tau = calculate_rbvms_dynamic_tau(tau, fine_scale_alpha);
+
+      // Calculate the strong residual r_M (eq. 62)
+      auto strong_residual = velocity_gradient * advective_velocity +
+                             pressure_gradient -
+                             kinematic_viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
+
+      // Fine-scale velocity u' = -tau_M r_M, and cross-stress and
+      // Reynolds-stress terms -(∇v, u ⊗ u') - (∇v, u' ⊗ u') (eq. 72), which
+      // are contracted with the test-function gradients below.
+      // With the dynamic subscale, u' = -tau_t (r_M + m').
+      const Tensor<1, dim> fine_scale_velocity =
+        has_fine_scale_memory ?
+          -tau *
+            (strong_residual +
+             this->fine_scale_velocity_history->calculate_memory(
+               active_cell_index, q, bdf_coefficients, n_previous_solutions)) :
+          -tau * strong_residual;
+
+      // Fine-scale velocity of the converged time step, which enters the
+      // history of the dynamic subscale.
+      if (this->fine_scale_velocity_history != nullptr &&
+          this->fine_scale_velocity_history->is_recording())
+        this->fine_scale_velocity_history->store_new_value(active_cell_index,
+                                                           q,
+                                                           fine_scale_velocity);
+
+      const Tensor<2, dim> fine_scale_terms =
+        rbvms_fine_scale_terms(velocity, fine_scale_velocity);
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+
+          double local_rhs_i = 0;
+
+          // Navier-Stokes Residual
+          local_rhs_i +=
+            (
+              // Momentum
+              -kinematic_viscosity *
+                scalar_product(velocity_gradient, grad_phi_u_i) -
+              velocity_gradient * advective_velocity * phi_u_i +
+              pressure * div_phi_u_i + force * phi_u_i -
+              mass_source * velocity * phi_u_i -
+              // Continuity
+              velocity_divergence * phi_p_i + mass_source * phi_p_i) *
+            JxW;
+
+          // PSPG term -(∇q, u')
+          local_rhs_i += (fine_scale_velocity * grad_phi_p_i) * JxW;
+
+          // SUPG term -((u·∇)v, u') ( u·∇v weight only, no GLS -ν∆v part )
+          local_rhs_i +=
+            (fine_scale_velocity * (grad_phi_u_i * advective_velocity)) * JxW;
+
+          // LSIC / grad-div term uses the continuity residual, including
+          // the prescribed mass source.
+          local_rhs_i +=
+            -tau_lsic * div_phi_u_i * (velocity_divergence - mass_source) * JxW;
+
+          // RBVMS cross-stress and Reynolds-stress terms (eq. 72)
+          local_rhs_i += -scalar_product(fine_scale_terms, grad_phi_u_i) * JxW;
+
+          local_rhs(i) += local_rhs_i;
+        }
+    }
+}
+
+template class RBVMSNavierStokesAssemblerCore<2>;
+template class RBVMSNavierStokesAssemblerCore<3>;
 
 template <int dim>
 void
