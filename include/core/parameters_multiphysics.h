@@ -538,8 +538,8 @@ namespace Parameters
 
     /// Relative tolerance of the adaptive Runge-Kutta integration of the
     /// trajectories of the quadrature nodes in phase space [-], which QMOMKit
-    /// uses for the growth. It is tighter than the QMOMKit default (1e-6), so
-    /// that the error does not come from this step.
+    /// uses for the growth. It is tighter than the QMOMKit default (1e-6) to
+    /// reduce the contribution of the growth to the overall error.
     double relative_tolerance = 1e-8;
 
     /// Absolute tolerance of the adaptive Runge-Kutta integration of the
