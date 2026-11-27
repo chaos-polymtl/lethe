@@ -460,4 +460,50 @@ For Time-Harmonic Maxwell boundary conditions, the possible ``types`` are ``pec`
 
         For more information on how to specify the waveguide port, see the :doc:`./time_harmonic_maxwell` section.
 
+Continuum Solid Dynamics
+^^^^^^^^^^^^^^^^^^^^^^^^
 
+For the continuum solid dynamics (solid phase of the Euler-Euler model), an example of boundary conditions is:
+
+.. code-block:: text
+
+  subsection boundary conditions continuum solid dynamics
+    set number         = 4
+    set time dependent = false
+    subsection bc 0
+      set id   = 0
+      set type = none
+    end
+    subsection bc 1
+      set id   = 1
+      set type = slip
+    end
+    subsection bc 2
+      set id   = 2
+      set type = outlet
+    end
+    subsection bc 3
+      set id   = 3
+      set type = function
+      subsection function
+        set Function expression = 0; 0; 0
+      end
+    end
+  end
+
+* ``number``: This is the number of boundary conditions of the problem. Periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
+
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This improves the computational efficiency for transient cases in which the boundary conditions do not change.
+
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
+
+* ``type``: This is the type of boundary condition being imposed:
+    * ``noslip`` (default) imposes a zero solid velocity. The solid volume fraction is not constrained;
+    * ``slip`` imposes a zero normal solid velocity;
+    * ``function`` imposes the solid velocity and the solid volume fraction. The ``function`` subsection has ``dim + 1`` components: the components of the solid velocity followed by the solid volume fraction;
+    * ``none`` imposes no constraint on the solid velocity. The boundary remains impermeable to the solid phase, as the continuity equation has no boundary flux there. This can be used, for example, on the distributor plate of a fluidized bed, so that the particles resting on it can lift off when the drag exceeds their weight;
+    * ``outlet`` imposes no constraint on the solid velocity and the solid volume fraction, to let the solid phase leave the domain;
+    * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.
+
+.. note::
+  The equations of the continuum solid dynamics are not solved yet. The boundary conditions are already applied to the solid velocity and solid volume fraction fields, but ``none`` and ``outlet`` currently behave the same, since the boundary terms of the continuity equation will only be added with the equations.

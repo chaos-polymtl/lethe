@@ -145,6 +145,10 @@ namespace Parameters
     Functions::ParsedFunction<dim> electromagnetics =
       Functions::ParsedFunction<dim>(4 * dim);
 
+    // Continuum Solid Dynamics
+    Functions::ParsedFunction<dim> continuum_solid_dynamics =
+      Functions::ParsedFunction<dim>(dim + 1);
+
     // Path to the checkpointed average velocity profile
     std::string average_velocity_folder    = "./";
     std::string average_velocity_file_name = "restart";

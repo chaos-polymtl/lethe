@@ -187,6 +187,14 @@ public:
   void
   set_initial_conditions() override;
 
+
+  /**
+   * @brief Update the boundary conditions at the current time if they are
+   * time-dependent.
+   */
+  void
+  update_boundary_conditions() override;
+
   /**
    * @brief Solve the linear system. Not implemented yet.
    */
@@ -315,6 +323,18 @@ private:
    */
   void
   define_constraints();
+
+
+  /**
+   * @brief Build the hanging node, periodic and boundary condition constraints.
+   *
+   * @param[out] constraints Constraints to build.
+   * @param[in] homogeneous If true, the boundary values are set to zero (used
+   * for the Newton update), otherwise the boundary functions are used.
+   */
+  void
+  build_constraints(AffineConstraints<double> &constraints,
+                    const bool                 homogeneous);
 
   /// Multiphysics interface used to exchange fields with other physics
   MultiphysicsInterface<dim> *multiphysics;
