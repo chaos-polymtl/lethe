@@ -165,6 +165,39 @@ QMOM<dim>::QMOM(
   // Growth, nucleation and coalescence of the particles in phase space
   phase_space_source_terms = std::make_unique<QMOMSourceTerms>(qmom_parameters);
 
+  // Transport operators. The first one, without diffusion, transports the
+  // moments and the scalars that do not diffuse. Each distinct positive
+  // diffusivity has its own operator, shared by the scalars that have this
+  // diffusivity. The comparison is purely relative, so that a small
+  // diffusivity is never confused with zero.
+  const auto diffusivities_are_equal = [](const double first_diffusivity,
+                                          const double second_diffusivity) {
+    return std::abs(first_diffusivity - second_diffusivity) <=
+           parameter_relative_tolerance *
+             std::max(first_diffusivity, second_diffusivity);
+  };
+  operator_diffusivities = {0.};
+  component_operators.assign(n_components, 0);
+  for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
+    {
+      const double diffusivity = qmom_parameters.scalar_diffusivities[i_scalar];
+      const auto   operator_iterator =
+        std::find_if(operator_diffusivities.begin(),
+                     operator_diffusivities.end(),
+                     [&](const double operator_diffusivity) {
+                       return diffusivities_are_equal(operator_diffusivity,
+                                                      diffusivity);
+                     });
+      component_operators[i_scalar] = static_cast<unsigned int>(
+        std::distance(operator_diffusivities.begin(), operator_iterator));
+      if (operator_iterator == operator_diffusivities.end())
+        operator_diffusivities.emplace_back(diffusivity);
+    }
+  const unsigned int n_operators = operator_diffusivities.size();
+  system_matrices.resize(n_operators);
+  ilu_preconditioners.resize(n_operators);
+  amg_preconditioners.resize(n_operators);
+
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
 
@@ -515,10 +548,19 @@ QMOM<dim>::setup_dofs()
                                              locally_owned_dofs,
                                              mpi_communicator,
                                              locally_relevant_dofs);
-  system_matrix.reinit(locally_owned_dofs,
-                       locally_owned_dofs,
-                       dsp,
-                       mpi_communicator);
+  // The diffusion couples the same degrees of freedom as the upwind fluxes,
+  // so all the matrices share the flux sparsity pattern
+  for (TrilinosWrappers::SparseMatrix &system_matrix : system_matrices)
+    system_matrix.reinit(locally_owned_dofs,
+                         locally_owned_dofs,
+                         dsp,
+                         mpi_communicator);
+  if (operator_diffusivities.size() > 1)
+    diffusion_matrix.reinit(locally_owned_dofs,
+                            locally_owned_dofs,
+                            dsp,
+                            mpi_communicator);
+  diffusion_matrix_is_assembled = false;
 
   this->pcout << "   Number of QMOM degrees of freedom: "
               << n_components * dof_handler->n_dofs() << " (" << n_components
@@ -613,7 +655,10 @@ QMOM<dim>::assemble_system_matrix()
 {
   TimerOutput::Scope t(computing_timer, "Assemble matrix");
 
-  system_matrix = 0.;
+  // The advection matrix is assembled first. The matrices of the scalars that
+  // diffuse are built from it at the end.
+  TrilinosWrappers::SparseMatrix &advection_matrix = system_matrices[0];
+  advection_matrix                                 = 0.;
 
   const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -795,39 +840,8 @@ QMOM<dim>::assemble_system_matrix()
         }
     };
 
-  // A face between a locally owned and a ghost cell is assembled by the two
-  // processes that own its cells. Each process only adds the rows that it
-  // owns, so that every row receives the flux of each of its faces exactly
-  // once.
-  std::vector<types::global_dof_index> row_columns;
-  std::vector<double>                  row_values;
   const auto copier = [&](const QMOMCopyData &copy_data) {
-    if (copy_data.cell_is_local)
-      constraints.distribute_local_to_global(copy_data.local_matrix,
-                                             copy_data.local_dof_indices,
-                                             system_matrix);
-
-    for (const QMOMCopyData::FaceData &copy_data_face : copy_data.face_data)
-      {
-        const unsigned int n_interface_dofs =
-          copy_data_face.joint_dof_indices.size();
-        for (unsigned int i = 0; i < n_interface_dofs; ++i)
-          {
-            const types::global_dof_index row =
-              copy_data_face.joint_dof_indices[i];
-            if (!locally_owned_dofs.is_element(row))
-              continue;
-
-            row_columns.clear();
-            row_values.clear();
-            for (unsigned int j = 0; j < n_interface_dofs; ++j)
-              {
-                row_columns.push_back(copy_data_face.joint_dof_indices[j]);
-                row_values.push_back(copy_data_face.face_matrix(i, j));
-              }
-            system_matrix.add(row, row_columns, row_values);
-          }
-      }
+    copy_local_to_global_matrix(copy_data, advection_matrix);
   };
 
   MeshWorker::mesh_loop(dof_handler->begin_active(),
@@ -844,7 +858,219 @@ QMOM<dim>::assemble_system_matrix()
                         boundary_worker,
                         face_worker);
 
-  system_matrix.compress(VectorOperation::add);
+  advection_matrix.compress(VectorOperation::add);
+
+  // Matrices of the scalars that diffuse: advection matrix plus the diffusion
+  // matrix scaled by their diffusivity. The diffusion matrix does not depend
+  // on the velocity or on the time step.
+  if (operator_diffusivities.size() > 1 && !diffusion_matrix_is_assembled)
+    assemble_diffusion_matrix();
+  for (unsigned int i_operator = 1; i_operator < operator_diffusivities.size();
+       ++i_operator)
+    {
+      system_matrices[i_operator].copy_from(advection_matrix);
+      system_matrices[i_operator].add(operator_diffusivities[i_operator],
+                                      diffusion_matrix);
+    }
+}
+
+template <int dim>
+void
+QMOM<dim>::assemble_diffusion_matrix()
+{
+  diffusion_matrix = 0.;
+
+  QMOMScratchData<dim> scratch_data(
+    *fe,
+    *cell_quadrature,
+    *face_quadrature,
+    *mapping,
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics).get_fe(),
+    n_components);
+  QMOMCopyData copy_data(fe->n_dofs_per_cell(), n_components);
+
+  const auto cell_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        QMOMScratchData<dim>                                 &scratch_data,
+        QMOMCopyData                                         &copy_data) {
+      // The copy data is reset for every cell, including ghost cells, whose
+      // faces are assembled when they are finer than an owned neighbor
+      copy_data.local_matrix = 0.;
+      copy_data.face_data.clear();
+      copy_data.cell_is_local = cell->is_locally_owned();
+      if (!copy_data.cell_is_local)
+        return;
+
+      cell->get_dof_indices(copy_data.local_dof_indices);
+      scratch_data.reinit(cell);
+
+      for (unsigned int q = 0; q < scratch_data.n_q_points; ++q)
+        {
+          const double JxW = scratch_data.JxW[q];
+          for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+            {
+              const Tensor<1, dim> &grad_phi_i = scratch_data.grad_phi[q][i];
+              for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                {
+                  // Diffusion integrated by parts: \nabla \phi_i . \nabla
+                  // \phi_j
+                  copy_data.local_matrix(i, j) +=
+                    grad_phi_i * scratch_data.grad_phi[q][j] * JxW;
+                }
+            }
+        }
+    };
+
+  const auto boundary_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                    face_no,
+        QMOMScratchData<dim>                                 &scratch_data,
+        QMOMCopyData                                         &copy_data) {
+      // The Dirichlet values are imposed weakly by the Nitsche method on the
+      // whole Dirichlet boundary. No diffusive flux crosses the outlet and
+      // noflux boundaries.
+      if (simulation_parameters.qmom_boundary_conditions.type.at(
+            cell->face(face_no)->boundary_id()) !=
+          BoundaryConditions::QMOMBoundaryType::dirichlet)
+        return;
+
+      scratch_data.reinit_boundary_face(cell, face_no);
+
+      const FEFaceValuesBase<dim> &fe_face =
+        scratch_data.fe_interface_values.get_fe_face_values(0);
+      const double penalty_factor = scratch_data.penalty_factor;
+
+      for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
+        {
+          const Tensor<1, dim> &normal = fe_face.normal_vector(q);
+          const double          JxW    = fe_face.JxW(q);
+
+          for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+            {
+              const double phi_i        = fe_face.shape_value(i, q);
+              const double grad_phi_i_n = fe_face.shape_grad(i, q) * normal;
+              for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                {
+                  const double phi_j        = fe_face.shape_value(j, q);
+                  const double grad_phi_j_n = fe_face.shape_grad(j, q) * normal;
+
+                  // Nitsche method:
+                  // - \phi_i (\nabla \phi_j . n) - \phi_j (\nabla \phi_i . n)
+                  // + \beta \phi_i \phi_j
+                  copy_data.local_matrix(i, j) +=
+                    (-phi_i * grad_phi_j_n - phi_j * grad_phi_i_n +
+                     penalty_factor * phi_i * phi_j) *
+                    JxW;
+                }
+            }
+        }
+    };
+
+  const auto face_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                    face_no,
+        const unsigned int                                    sub_face_no,
+        const typename DoFHandler<dim>::active_cell_iterator &neighbor_cell,
+        const unsigned int                                    neighbor_face_no,
+        const unsigned int    neighbor_sub_face_no,
+        QMOMScratchData<dim> &scratch_data,
+        QMOMCopyData         &copy_data) {
+      scratch_data.reinit_internal_face(cell,
+                                        face_no,
+                                        sub_face_no,
+                                        neighbor_cell,
+                                        neighbor_face_no,
+                                        neighbor_sub_face_no);
+
+      const unsigned int n_interface_dofs = scratch_data.n_interface_dofs;
+
+      QMOMCopyData::FaceData &copy_data_face =
+        copy_data.face_data.emplace_back();
+      copy_data_face.joint_dof_indices =
+        scratch_data.fe_interface_values.get_interface_dof_indices();
+      copy_data_face.face_matrix.reinit(n_interface_dofs, n_interface_dofs);
+
+      const std::vector<double> &JxW =
+        scratch_data.fe_interface_values.get_JxW_values();
+      const double penalty_factor = scratch_data.penalty_factor;
+
+      for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
+        {
+          const auto &jump_phi = scratch_data.face_jump_phi[q];
+          const auto &average_grad_phi_n =
+            scratch_data.face_average_grad_phi_dot_n[q];
+
+          for (unsigned int i = 0; i < n_interface_dofs; ++i)
+            {
+              for (unsigned int j = 0; j < n_interface_dofs; ++j)
+                {
+                  // Symmetric interior penalty method (Larson and Bengzon,
+                  // chap. 14):
+                  // - {\nabla \phi_j . n} [\phi_i]
+                  // - {\nabla \phi_i . n} [\phi_j] + \beta [\phi_i] [\phi_j]
+                  copy_data_face.face_matrix(i, j) +=
+                    (-average_grad_phi_n[j] * jump_phi[i] -
+                     average_grad_phi_n[i] * jump_phi[j] +
+                     penalty_factor * jump_phi[i] * jump_phi[j]) *
+                    JxW[q];
+                }
+            }
+        }
+    };
+
+  const auto copier = [&](const QMOMCopyData &copy_data) {
+    copy_local_to_global_matrix(copy_data, diffusion_matrix);
+  };
+
+  // Same cells and faces as the advection matrix
+  MeshWorker::mesh_loop(dof_handler->begin_active(),
+                        dof_handler->end(),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        copy_data,
+                        MeshWorker::assemble_own_cells |
+                          MeshWorker::assemble_ghost_cells |
+                          MeshWorker::assemble_boundary_faces |
+                          MeshWorker::assemble_own_interior_faces_once |
+                          MeshWorker::assemble_ghost_faces_both,
+                        boundary_worker,
+                        face_worker);
+
+  diffusion_matrix.compress(VectorOperation::add);
+  diffusion_matrix_is_assembled = true;
+}
+
+template <int dim>
+void
+QMOM<dim>::copy_local_to_global_matrix(
+  const QMOMCopyData             &copy_data,
+  TrilinosWrappers::SparseMatrix &matrix) const
+{
+  if (copy_data.cell_is_local)
+    constraints.distribute_local_to_global(copy_data.local_matrix,
+                                           copy_data.local_dof_indices,
+                                           matrix);
+
+  // A face between a locally owned and a ghost cell is assembled by the two
+  // processes that own its cells. Each process only adds the rows that it
+  // owns, so that every row receives the flux of each of its faces exactly
+  // once. The rows of the full matrix are contiguous.
+  for (const QMOMCopyData::FaceData &copy_data_face : copy_data.face_data)
+    {
+      const unsigned int n_interface_dofs =
+        copy_data_face.joint_dof_indices.size();
+      for (unsigned int i = 0; i < n_interface_dofs; ++i)
+        {
+          const types::global_dof_index row =
+            copy_data_face.joint_dof_indices[i];
+          if (locally_owned_dofs.is_element(row))
+            matrix.add(row,
+                       n_interface_dofs,
+                       copy_data_face.joint_dof_indices.data(),
+                       &copy_data_face.face_matrix(i, 0));
+        }
+    }
 }
 
 template <int dim>
@@ -884,6 +1110,9 @@ QMOM<dim>::assemble_system_rhs()
                                     dof_handler_fluid.get_fe(),
                                     n_components);
   QMOMCopyData         copy_data(fe->n_dofs_per_cell(), n_components);
+
+  // Whether at least one scalar diffuses
+  const bool scalars_diffuse = operator_diffusivities.size() > 1;
 
   const auto cell_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -937,8 +1166,9 @@ QMOM<dim>::assemble_system_rhs()
         const unsigned int                                    face_no,
         QMOMScratchData<dim>                                 &scratch_data,
         QMOMCopyData                                         &copy_data) {
-      // Only the inflow through the Dirichlet boundaries contributes to the
-      // right-hand side
+      // Only the Dirichlet boundaries contribute to the right-hand side: the
+      // inflow of all the components and, for the scalars that diffuse, the
+      // Nitsche terms
       const types::boundary_id boundary_id = cell->face(face_no)->boundary_id();
       if (simulation_parameters.qmom_boundary_conditions.type.at(boundary_id) !=
           BoundaryConditions::QMOMBoundaryType::dirichlet)
@@ -958,12 +1188,15 @@ QMOM<dim>::assemble_system_rhs()
 
       for (unsigned int q = 0; q < scratch_data.n_face_q_points; ++q)
         {
-          const double velocity_dot_n =
-            scratch_data.face_velocity_values[q] * fe_face.normal_vector(q);
+          const Tensor<1, dim> &normal = fe_face.normal_vector(q);
+          const double          velocity_dot_n =
+            scratch_data.face_velocity_values[q] * normal;
 
           // The Dirichlet values only enter the domain through the inflow part
-          // of the boundary. The outflow is assembled in the matrix.
-          if (velocity_dot_n >= 0.)
+          // of the boundary, while the outflow is assembled in the matrix. The
+          // Nitsche terms of the diffusion apply to the whole boundary.
+          const bool is_inflow = velocity_dot_n < 0.;
+          if (!is_inflow && !scalars_diffuse)
             continue;
 
           // All the components are evaluated at once, since the moments are
@@ -971,18 +1204,39 @@ QMOM<dim>::assemble_system_rhs()
           dirichlet_function.vector_value(fe_face.quadrature_point(q),
                                           dirichlet_values);
 
-          const double advection_factor = velocity_dot_n * fe_face.JxW(q);
+          const double JxW = fe_face.JxW(q);
 
           for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
             {
               const double phi_i = fe_face.shape_value(i, q);
-              for (unsigned int component = 0; component < n_components;
-                   ++component)
+
+              if (is_inflow)
+                for (unsigned int component = 0; component < n_components;
+                     ++component)
+                  {
+                    // Inflow of the Dirichlet values:
+                    // - \phi_i * \zeta_{c,D} * (u . n)
+                    copy_data.local_rhs[component](i) -=
+                      phi_i * dirichlet_values[component] * velocity_dot_n *
+                      JxW;
+                  }
+
+              if (scalars_diffuse)
                 {
-                  // Inflow of the Dirichlet values:
-                  // - \phi_i * \zeta_{c,D} * (u . n)
-                  copy_data.local_rhs[component](i) -=
-                    phi_i * dirichlet_values[component] * advection_factor;
+                  const double nitsche_factor =
+                    (scratch_data.penalty_factor * phi_i -
+                     fe_face.shape_grad(i, q) * normal) *
+                    JxW;
+                  for (unsigned int i_scalar = 0; i_scalar < n_scalars;
+                       ++i_scalar)
+                    {
+                      // Nitsche terms of the Dirichlet values, zero for the
+                      // scalars that do not diffuse:
+                      // D_c * (\beta \phi_i - \nabla \phi_i . n) * \zeta_{c,D}
+                      copy_data.local_rhs[i_scalar](i) +=
+                        operator_diffusivities[component_operators[i_scalar]] *
+                        dirichlet_values[i_scalar] * nitsche_factor;
+                    }
                 }
             }
         }
@@ -998,8 +1252,9 @@ QMOM<dim>::assemble_system_rhs()
                                              system_rhs[component]);
   };
 
-  // The right-hand side has no interior face terms: the upwind fluxes between
-  // cells only involve the unknown solution, and are assembled in the matrix
+  // The right-hand side has no interior face terms: the upwind and SIPG fluxes
+  // between cells only involve the unknown solution, and are assembled in the
+  // matrix
   MeshWorker::mesh_loop(dof_handler->begin_active(),
                         dof_handler->end(),
                         cell_worker,
@@ -1047,8 +1302,14 @@ QMOM<dim>::setup_ilu()
                            linear_solver_parameters.ilu_precond_rtol,
                            0);
 
-  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
-  ilu_preconditioner->initialize(system_matrix, preconditioner_options);
+  for (unsigned int i_operator = 0; i_operator < system_matrices.size();
+       ++i_operator)
+    {
+      ilu_preconditioners[i_operator] =
+        std::make_shared<TrilinosWrappers::PreconditionILU>();
+      ilu_preconditioners[i_operator]->initialize(system_matrices[i_operator],
+                                                  preconditioner_options);
+    }
 }
 
 template <int dim>
@@ -1065,7 +1326,7 @@ QMOM<dim>::setup_amg()
   std::vector<std::vector<bool>> constant_modes =
     DoFTools::extract_constant_modes(*dof_handler, components);
 
-  // The transport operator is non-symmetric since the components are
+  // The transport operators are non-symmetric since the components are
   // advected by the fluid velocity
   const bool  elliptic              = false;
   const bool  higher_order_elements = fe->degree > 1;
@@ -1089,7 +1350,7 @@ QMOM<dim>::setup_amg()
   std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
   preconditioner_options.set_parameters(parameter_ml,
                                         distributed_constant_modes,
-                                        system_matrix);
+                                        system_matrices[0]);
   const double ilu_fill = linear_solver_parameters.amg_precond_ilu_fill;
   const double ilu_atol = linear_solver_parameters.amg_precond_ilu_atol;
   const double ilu_rtol = linear_solver_parameters.amg_precond_ilu_rtol;
@@ -1101,8 +1362,16 @@ QMOM<dim>::setup_amg()
   parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
   parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
 
-  amg_preconditioner = std::make_shared<TrilinosWrappers::PreconditionAMG>();
-  amg_preconditioner->initialize(system_matrix, parameter_ml);
+  // The matrices share their sparsity pattern, hence the parameters built
+  // from the advection matrix
+  for (unsigned int i_operator = 0; i_operator < system_matrices.size();
+       ++i_operator)
+    {
+      amg_preconditioners[i_operator] =
+        std::make_shared<TrilinosWrappers::PreconditionAMG>();
+      amg_preconditioners[i_operator]->initialize(system_matrices[i_operator],
+                                                  parameter_ml);
+    }
 }
 
 template <int dim>
@@ -1152,8 +1421,9 @@ QMOM<dim>::advance_scalars_physical_space()
 
   TimerOutput::Scope t(computing_timer, "Solve scalars transport");
 
-  // Without diffusion, the scalars are transported by the same operator as
-  // the moments and reuse their matrix and preconditioner. Their source is
+  // The scalars that do not diffuse are transported by the same operator as
+  // the moments and reuse their matrix and preconditioner. The others use the
+  // matrix and preconditioner of their diffusivity. Their source is
   // the source term of the "QMOM" subsection of the source term subsection:
   // the exchange of mass with the particles is applied by the phase-space
   // evolution.
@@ -1173,6 +1443,12 @@ QMOM<dim>::solve_component_transport(const unsigned int component,
     simulation_parameters.linear_solver.at(PhysicsID::qmom);
   const bool verbose =
     linear_solver_parameters.verbosity != Parameters::Verbosity::quiet;
+
+  // Transport operator of the component: advection, plus diffusion for the
+  // scalars that diffuse
+  const unsigned int i_operator = component_operators[component];
+  const TrilinosWrappers::SparseMatrix &system_matrix =
+    system_matrices[i_operator];
 
   // present_solutions are ghosted, hence read-only: the solution is updated
   // in a locally owned copy
@@ -1214,12 +1490,12 @@ QMOM<dim>::solve_component_transport(const unsigned int component,
     solver.solve(system_matrix,
                  completely_distributed_solution,
                  residual,
-                 *ilu_preconditioner);
+                 *ilu_preconditioners[i_operator]);
   else
     solver.solve(system_matrix,
                  completely_distributed_solution,
                  residual,
-                 *amg_preconditioner);
+                 *amg_preconditioners[i_operator]);
 
   if (verbose)
     this->pcout << "  -Iterative solver of " << component_names[component]

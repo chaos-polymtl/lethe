@@ -13,9 +13,14 @@
  * components are discretized with the same scalar discontinuous Galerkin
  * element, on a single DoFHandler, and each component is stored in its own
  * vector. Since all the components are advected by the same fluid velocity,
- * the matrix of their transport is the same: it is assembled and
+ * the matrix of their advection is the same: it is assembled and
  * preconditioned once per time step, then solved with one right-hand side per
- * component.
+ * component. The scalars may also diffuse, with the "scalar diffusivities" of
+ * the QMOM subsection. The diffusion is discretized with the symmetric interior
+ * penalty (SIPG) method, and the Dirichlet boundary conditions are imposed
+ * weakly by the Nitsche method. The scalars that share a diffusivity share a
+ * transport matrix (the advection matrix plus the diffusion matrix scaled by
+ * the diffusivity) and its preconditioner.
  *
  * Each time step of the fluid dynamics, from t^n to t^{n+1}, is split (Lie
  * splitting) into the following steps, run by solve_linear_system() once the
@@ -62,6 +67,7 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/copy_data.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/qmom_field_function.h>
 #include <solvers/qmom_scratch_data.h>
@@ -275,8 +281,9 @@ public:
   update_boundary_conditions() override;
 
   /**
-   * @brief Build the preconditioner (ILU or AMG) of the transport matrix,
-   * shared by all the components.
+   * @brief Build the preconditioner (ILU or AMG) of every transport matrix:
+   * the advection matrix and, if the scalars diffuse, the matrix of each
+   * distinct diffusivity.
    */
   void
   setup_preconditioner() override;
@@ -401,11 +408,15 @@ public:
 
 private:
   /**
-   * @brief Assemble the transport matrix shared by all the components.
+   * @brief Assemble the transport matrices of the components.
    *
-   * It contains the BDF time derivative, the upwind discontinuous Galerkin
-   * advection and the outflow through the boundaries, with the present
-   * velocity of the fluid dynamics.
+   * The advection matrix contains the BDF time derivative, the upwind
+   * discontinuous Galerkin advection and the outflow through the boundaries,
+   * with the present velocity of the fluid dynamics. It transports the
+   * moments and the scalars that do not diffuse. The matrix of each distinct
+   * diffusivity of the scalars is the advection matrix plus the diffusion
+   * matrix scaled by that diffusivity. The diffusion matrix is assembled at
+   * the first call after setup_dofs().
    */
   void
   assemble_system_matrix() override;
@@ -414,7 +425,8 @@ private:
    * @brief Assemble the right-hand side of every component.
    *
    * It contains the previous solutions of the BDF time derivative, the source
-   * term and the inflow through the Dirichlet boundaries.
+   * term and the inflow through the Dirichlet boundaries, and, for the
+   * scalars that diffuse, the Nitsche terms of the Dirichlet boundaries.
    */
   void
   assemble_system_rhs() override;
@@ -449,6 +461,35 @@ private:
     QMOMScratchData<dim>                                 &scratch_data);
 
   /**
+   * @brief Assemble diffusion_matrix, the discontinuous Galerkin diffusion
+   * operator with a unit diffusivity.
+   *
+   * It contains the cell term, the symmetric interior penalty (SIPG) terms of
+   * the interior faces and the Nitsche terms of the Dirichlet boundaries. The
+   * outlet and noflux boundaries have no diffusive flux. It does not depend on
+   * the velocity or on the time step, and is only assembled when the degrees
+   * of freedom change.
+   */
+  void
+  assemble_diffusion_matrix();
+
+  /**
+   * @brief Add the contributions of a cell and of its interior faces to a
+   * global matrix.
+   *
+   * A face between a locally owned and a ghost cell is assembled by the two
+   * processes that own its cells. Each process only adds the rows that it
+   * owns, so that every row receives the flux of each of its faces exactly
+   * once.
+   *
+   * @param[in] copy_data Contributions of the cell and of its interior faces.
+   * @param[in,out] matrix Global matrix to which the contributions are added.
+   */
+  void
+  copy_local_to_global_matrix(const QMOMCopyData             &copy_data,
+                              TrilinosWrappers::SparseMatrix &matrix) const;
+
+  /**
    * @brief Define the (empty) constraints of the discontinuous Galerkin
    * discretization.
    */
@@ -456,13 +497,15 @@ private:
   define_constraints();
 
   /**
-   * @brief Set up the ILU preconditioner stored in ilu_preconditioner.
+   * @brief Set up the ILU preconditioner of every transport matrix, stored in
+   * ilu_preconditioners.
    */
   void
   setup_ilu();
 
   /**
-   * @brief Set up the AMG preconditioner stored in amg_preconditioner.
+   * @brief Set up the AMG preconditioner of every transport matrix, stored in
+   * amg_preconditioners.
    */
   void
   setup_amg();
@@ -484,13 +527,12 @@ private:
    * The transport system of every scalar is solved, with the right-hand sides
    * assembled by the linear solver strategy. Does nothing without scalars.
    *
-   * The scalars are only advected for now, so they share the matrix and the
-   * preconditioner of the moments. They are separated from the moments so
-   * that terms that only apply to the scalars (e.g. diffusion) can be added.
-   * Their source in physical space is the source term of the "QMOM"
-   * subsection of the source term subsection: the exchange of mass with the
-   * particles is applied at the end of the phase-space step (see
-   * advance_phase_space()).
+   * The scalars that do not diffuse share the advection matrix and its
+   * preconditioner with the moments. The others use the matrix of their
+   * diffusivity, which includes the diffusion. Their source in physical space
+   * is the source term of the "QMOM" subsection of the source term subsection:
+   * the exchange of mass with the particles is applied at the end of the
+   * phase-space step (see advance_phase_space()).
    */
   void
   advance_scalars_physical_space();
@@ -498,10 +540,10 @@ private:
   /**
    * @brief Solve the transport system of one component over the time step.
    *
-   * The system is solved with the transport matrix and its preconditioner,
-   * for the correction of the present solution of the component: the
-   * right-hand side is the residual of that solution, and the tolerance is
-   * relative to it.
+   * The system is solved with the transport matrix of the component and its
+   * preconditioner, for the correction of the present solution of the
+   * component: the right-hand side is the residual of that solution, and the
+   * tolerance is relative to it.
    *
    * @param[in] component Component to transport: scalar component if
    * component < n_scalars, moment M_{component - n_scalars} otherwise.
@@ -620,14 +662,33 @@ private:
   /// Empty constraints of the discontinuous Galerkin discretization
   AffineConstraints<double> constraints;
 
-  /// Transport matrix, shared by all the components
-  TrilinosWrappers::SparseMatrix system_matrix;
+  /// Diffusivity of each transport operator. The first operator, without
+  /// diffusion, transports the moments and the scalars that do not diffuse.
+  /// Each distinct positive diffusivity of the scalars has its own operator.
+  std::vector<double> operator_diffusivities;
 
-  /// ILU preconditioner of the transport matrix
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+  /// Index of the transport operator of each component, in
+  /// operator_diffusivities: component_operators[component]
+  std::vector<unsigned int> component_operators;
 
-  /// AMG preconditioner of the transport matrix
-  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+  /// Transport matrix of each operator: system_matrices[0] is the advection
+  /// matrix
+  std::vector<TrilinosWrappers::SparseMatrix> system_matrices;
+
+  /// Diffusion matrix with a unit diffusivity, only used if the scalars
+  /// diffuse
+  TrilinosWrappers::SparseMatrix diffusion_matrix;
+
+  /// Whether diffusion_matrix is assembled for the present degrees of freedom
+  bool diffusion_matrix_is_assembled = false;
+
+  /// ILU preconditioner of each transport matrix
+  std::vector<std::shared_ptr<TrilinosWrappers::PreconditionILU>>
+    ilu_preconditioners;
+
+  /// AMG preconditioner of each transport matrix
+  std::vector<std::shared_ptr<TrilinosWrappers::PreconditionAMG>>
+    amg_preconditioners;
 
   /// Ghosted present solution of each component:
   /// present_solutions[component]

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
+#include <core/utilities.h>
 #include <core/vector.h>
 
 #include <solvers/qmom_scratch_data.h>
@@ -28,8 +29,9 @@ QMOMScratchData<dim>::QMOMScratchData(
   , fe_interface_values(mapping,
                         fe_qmom,
                         face_quadrature,
-                        update_values | update_quadrature_points |
-                          update_JxW_values | update_normal_vectors)
+                        update_values | update_gradients |
+                          update_quadrature_points | update_JxW_values |
+                          update_normal_vectors)
   , fe_values_fluid(mapping, fe_fluid, quadrature, update_values)
   , fe_face_values_fluid(mapping, fe_fluid, face_quadrature, update_values)
   , velocities(0)
@@ -63,6 +65,7 @@ QMOMScratchData<dim>::allocate()
   n_q_points       = fe_values.get_quadrature().size();
   n_face_q_points  = fe_interface_values.get_quadrature().size();
   n_interface_dofs = 0;
+  penalty_factor   = 0.;
 
   // Initialize arrays related to quadrature
   JxW.resize(n_q_points);
@@ -88,6 +91,7 @@ QMOMScratchData<dim>::allocate()
   face_phi_here.reinit(n_face_q_points, max_n_interface_dofs);
   face_phi_there.reinit(n_face_q_points, max_n_interface_dofs);
   face_jump_phi.reinit(n_face_q_points, max_n_interface_dofs);
+  face_average_grad_phi_dot_n.reinit(n_face_q_points, max_n_interface_dofs);
   face_velocity_values.resize(n_face_q_points);
 }
 
@@ -164,6 +168,17 @@ QMOMScratchData<dim>::reinit_internal_face(
                              neighbor_sub_face_no);
   n_interface_dofs = fe_interface_values.n_current_interface_dofs();
 
+  // The extent of a cell normal to the face is measured by the ratio of its
+  // volume to the area of the face
+  const double extent_here = cell->measure() / cell->face(face_no)->measure();
+  const double extent_there =
+    neighbor_cell->measure() / neighbor_cell->face(neighbor_face_no)->measure();
+  penalty_factor =
+    get_penalty_factor(fe_values.get_fe().degree, extent_here, extent_there);
+
+  const std::vector<Tensor<1, dim>> &normals =
+    fe_interface_values.get_normal_vectors();
+
   for (unsigned int q = 0; q < n_face_q_points; ++q)
     {
       // Gather the shape function quantities once per quadrature point, since
@@ -175,6 +190,8 @@ QMOMScratchData<dim>::reinit_internal_face(
           face_phi_here[q][i]  = fe_interface_values.shape_value(true, i, q);
           face_phi_there[q][i] = fe_interface_values.shape_value(false, i, q);
           face_jump_phi[q][i]  = face_phi_here[q][i] - face_phi_there[q][i];
+          face_average_grad_phi_dot_n[q][i] =
+            fe_interface_values.average_of_shape_gradients(i, q) * normals[q];
         }
     }
 }
@@ -186,6 +203,11 @@ QMOMScratchData<dim>::reinit_boundary_face(
   const unsigned int                                    face_no)
 {
   fe_interface_values.reinit(cell, face_no);
+
+  // A boundary face has a single cell, whose extent is used on both sides
+  const double extent = cell->measure() / cell->face(face_no)->measure();
+  penalty_factor =
+    get_penalty_factor(fe_values.get_fe().degree, extent, extent);
 }
 
 template <int dim>

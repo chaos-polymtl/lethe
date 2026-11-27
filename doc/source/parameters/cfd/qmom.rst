@@ -9,7 +9,7 @@ This subsection defines the parameters of the quadrature method of moments (QMOM
 
 The QMOM physics transports ``number of scalars`` user-defined scalar fields and ``number of moments`` :math:`K` moments :math:`M_0, \dots, M_{K-1}` of the particle size distribution, discretized with a discontinuous Galerkin finite element of degree ``qmom degree`` (see :doc:`fem`). 
 
-With the ``lie`` splitting scheme, each time step is split into the transport of the scalars and of the moments in physical space, independently from each other, followed by the evolution of the moments in phase space (growth, nucleation and coalescence) by QMOMKit. During the phase-space evolution, the scalars keep their values at the end of their transport; if the process couples them to the particles, they are then updated with the change of the moments. The order of these steps is detailed in :ref:`qmom-operator-splitting`. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``.
+With the ``lie`` splitting scheme, each time step is split into the transport of the scalars and of the moments in physical space, independently from each other, followed by the evolution of the moments in phase space (growth, nucleation and coalescence) by QMOMKit. During the phase-space evolution, the scalars keep their values at the end of their transport; if the process couples them to the particles, they are then updated with the change of the moments. The order of these steps is detailed in :ref:`qmom-operator-splitting`. The scalars are named after the ``scalar names`` and the moments are named ``moment_0`` to ``moment_<K-1>``. The scalars may diffuse, with the ``scalar diffusivities``, while the moments are only advected.
 
 .. seealso::
     The governing equations, the discretization and the phase-space models are described in :doc:`../../theory/multiphysics/qmom/qmom_equations`.
@@ -34,14 +34,15 @@ The default values of the QMOM parameters are given in the text box below:
 .. code-block:: text
 
   subsection QMOM
-    set process            = generic
-    set number of scalars  = 0
-    set scalar names       = # empty: scalar_0, scalar_1, ...
-    set number of moments  = 4
-    set splitting scheme   = lie
-    set enable nucleation  = false
-    set enable coalescence = false
-    set enable growth      = false
+    set process              = generic
+    set number of scalars    = 0
+    set scalar names         = # empty: scalar_0, scalar_1, ...
+    set scalar diffusivities = # empty: no diffusion
+    set number of moments    = 4
+    set splitting scheme     = lie
+    set enable nucleation    = false
+    set enable coalescence   = false
+    set enable growth        = false
 
     subsection growth
       set model               = constant
@@ -130,6 +131,8 @@ General
 * ``number of scalars``: number of user-defined scalars transported together with the moments.
 
 * ``scalar names``: comma-separated list of scalars names, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). The names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
+
+* ``scalar diffusivities``: comma-separated list of the diffusivities of the scalars, in :math:`\text{m}^{2} \cdot \text{s}^{-1}`, in the same order as the ``scalar names`` (e.g. ``set scalar diffusivities = 1e-9, 0`` for two scalars, of which only the first one diffuses). The default value is empty, in which case the scalars do not diffuse. Otherwise, there must be one non-negative value per scalar, including for a process that imposes the scalars. The moments of the particle size distribution never diffuse.
 
 * ``number of moments``: number :math:`K` of transported moments, which must be even. The quadrature has :math:`N = K/2` nodes. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 

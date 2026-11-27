@@ -8,8 +8,10 @@
  *
  * All the QMOM components (scalars and moments) are discretized with the same
  * scalar discontinuous element and advected by the same fluid velocity. The
- * matrix of the transport is therefore the same for every component, while
- * each component has its own right-hand side.
+ * matrix of the advection is therefore the same for every component, while
+ * each component has its own right-hand side. The scalars may also diffuse:
+ * the scratch data then provides the shape function gradients on the faces
+ * and the penalty factor of the symmetric interior penalty (SIPG) method.
  */
 
 #ifndef lethe_qmom_scratch_data_h
@@ -137,8 +139,9 @@ public:
 
   /**
    * @brief Evaluate the shape functions of the two cells that share an
-   * interior face (the "here" and "there" sides), and their jump, at the face
-   * quadrature points.
+   * interior face (the "here" and "there" sides), their jump and the average
+   * of their normal gradient at the face quadrature points, and the SIPG
+   * penalty factor of the face.
    *
    * @param[in] cell Cell on the "here" side of the face.
    * @param[in] face_no Face number in cell.
@@ -158,7 +161,8 @@ public:
     const unsigned int                                    neighbor_sub_face_no);
 
   /**
-   * @brief Reinitialize the interface values on a boundary face.
+   * @brief Reinitialize the interface values on a boundary face, and compute
+   * the penalty factor of the Nitsche method on that face.
    *
    * @param[in] cell Cell of the QMOM DoFHandler.
    * @param[in] face_no Face number in cell.
@@ -222,6 +226,11 @@ public:
   /// Number of degrees of freedom of the current interior face (both cells)
   unsigned int n_interface_dofs;
 
+  /// Penalty factor of the SIPG method on the current interior face, or of
+  /// the Nitsche method on the current boundary face. It is multiplied by the
+  /// diffusivity in the assembly.
+  double penalty_factor;
+
   /// JxW values at the cell quadrature points
   std::vector<double> JxW;
 
@@ -256,6 +265,12 @@ public:
   /// Jump of the shape functions, here minus there, at the face quadrature
   /// points: face_jump_phi[q][i], with i an interface degree of freedom
   Table<2, double> face_jump_phi;
+
+  /// Average of the normal gradient of the shape functions, with the normal
+  /// pointing from the "here" cell to the "there" cell, at the face quadrature
+  /// points: face_average_grad_phi_dot_n[q][i], with i an interface degree of
+  /// freedom
+  Table<2, double> face_average_grad_phi_dot_n;
 
   /// Fluid velocity at the face quadrature points
   std::vector<Tensor<1, dim>> face_velocity_values;

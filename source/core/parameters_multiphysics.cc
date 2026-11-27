@@ -45,6 +45,15 @@ DeclException2(
   << " names, but the \"number of scalars\" is " << arg2 << "." << std::endl
   << "Give one name per scalar, or no name to use scalar_0, scalar_1, ...");
 
+DeclException2(
+  QMOMScalarDiffusivitiesCountError,
+  std::size_t,
+  unsigned int,
+  << "The \"scalar diffusivities\" of the QMOM subsection has " << arg1
+  << " values, but the number of scalars is " << arg2 << "." << std::endl
+  << "Give one diffusivity per scalar, or none if the scalars do not "
+  << "diffuse.");
+
 DeclException1(
   QMOMScalarNameError,
   std::string,
@@ -1051,6 +1060,12 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
                       "output. If empty, the scalars are named scalar_0, "
                       "scalar_1, ...");
 
+    prm.declare_entry("scalar diffusivities",
+                      "",
+                      Patterns::List(Patterns::Double(0.)),
+                      "Comma-separated diffusivities of the scalars, in "
+                      "m^2/s. If empty, the scalars do not diffuse.");
+
     prm.declare_entry("number of moments",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.number_of_moments),
@@ -1101,6 +1116,8 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
     number_of_scalars = prm.get_integer("number of scalars");
     number_of_moments = prm.get_integer("number of moments");
     scalar_names      = Utilities::split_string_list(prm.get("scalar names"));
+    scalar_diffusivities = Utilities::string_to_double(
+      Utilities::split_string_list(prm.get("scalar diffusivities")));
 
     // A process other than generic imposes its scalars and its number of
     // moments. The entries of the parameter file are ignored, but must not
@@ -1151,6 +1168,13 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
     for (const std::string &scalar_name : scalar_names)
       AssertThrow(is_valid_scalar_name(scalar_name),
                   QMOMScalarNameError(scalar_name));
+
+    // Without diffusivities, no scalar diffuses
+    if (scalar_diffusivities.empty())
+      scalar_diffusivities.assign(number_of_scalars, 0.);
+    AssertThrow(scalar_diffusivities.size() == number_of_scalars,
+                QMOMScalarDiffusivitiesCountError(scalar_diffusivities.size(),
+                                                  number_of_scalars));
 
     splitting_scheme = string_to_enum<Parameters::QMOMSplittingScheme>(
       prm.get("splitting scheme"));

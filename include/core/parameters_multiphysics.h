@@ -1031,6 +1031,10 @@ namespace Parameters
     /// they are not given in the parameter file.
     std::vector<std::string> scalar_names;
 
+    /// Diffusivity of each scalar, in m^2/s. Zero for every scalar if they are
+    /// not given in the parameter file.
+    std::vector<double> scalar_diffusivities;
+
     /// Number of transported moments M_0 to M_{number_of_moments - 1}
     unsigned int number_of_moments = 4;
 
