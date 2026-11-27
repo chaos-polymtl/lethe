@@ -2329,7 +2329,7 @@ $(function() {
 <div class="line"><a id="l02207" name="l02207"></a><span class="lineno"> 2207</span>    dr * this-&gt;<a class="code hl_variable" href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">simulation_parameters</a>.particlesParameters-&gt;lubrication_range_min;</div>
 <div class="line"><a id="l02208" name="l02208"></a><span class="lineno"> 2208</span>  <span class="keywordtype">double</span> h_max =</div>
 <div class="line"><a id="l02209" name="l02209"></a><span class="lineno"> 2209</span>    dr * this-&gt;<a class="code hl_variable" href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">simulation_parameters</a>.particlesParameters-&gt;lubrication_range_max;</div>
-<div class="line"><a id="l02210" name="l02210"></a><span class="lineno"> 2210</span>  <span class="comment">// Deactivated the lubrication force if the fluid is Non-newtonian.</span></div>
+<div class="line"><a id="l02210" name="l02210"></a><span class="lineno"> 2210</span>  <span class="comment">// Deactivate the lubrication force if it is not enabled.</span></div>
 <div class="line"><a id="l02211" name="l02211"></a><span class="lineno"> 2211</span>  <span class="keywordflow">if</span> (this-&gt;<a class="code hl_variable" href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">simulation_parameters</a>.particlesParameters</div>
 <div class="line"><a id="l02212" name="l02212"></a><span class="lineno"> 2212</span>        -&gt;enable_lubrication_force == <span class="keyword">false</span>)</div>
 <div class="line"><a id="l02213" name="l02213"></a><span class="lineno"> 2213</span>    h_max = 0;</div>

@@ -323,21 +323,26 @@ to define a conformal mesh for the fluid between the particles.
     lubrication forces. This parameter must be set to ``false`` when using a
     non-newtonian fluid rheology.
 
-    .. note::
+    .. warning::
 
-       When using a non-Newtonian fluid, the lubrication force will be
-       automatically deactivated.
+       With a non-Newtonian fluid, an error is thrown if the lubrication force
+       is enabled and the motion of at least one particle is integrated.
 
   * The ``lubrication range max`` parameter defines the distance below which
     the lubrication force between 2 particles or between a particle and a wall
-    is calculated. The range is defined as a multiple of the smallest cell. The
+    is calculated. The range is defined as a multiple of the length
+    :math:`\Delta`, which is the smallest cell diameter (the length of its
+    diagonal) divided by :math:`\sqrt{2}`. For the smallest cell, this is the
+    edge of a square in 2D and 1.22 times the edge of a cube in 3D. The
     lubrication force model is used to model the force between particles when
     they are too close to each other to accurately resolve the flow between
     them.
 
   * The ``lubrication range min`` parameter defines the minimal distance used
     in the lubrication force calculation. The range is defined as a multiple of
-    the smallest cell. This limits the force that can be applied on a particle
+    the same length :math:`\Delta` and cannot be larger than the
+    ``lubrication range max``, unless the latter is 0 or the lubrication force
+    is disabled. This limits the force that can be applied on a particle
     since the lubrification force has a singularity when the distance between 2
     particles is 0. We use this parameter to define a lower bound on the
     distance between 2 particles for the force calculation to avoid this
@@ -346,19 +351,32 @@ to define a conformal mesh for the fluid between the particles.
 
     .. note::
 
-       The lubrication force between two particles is expressed by the equation
-       :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`.
+       The lubrication force exerted by particle :math:`j` on particle
+       :math:`i` is expressed by the equation
+       :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \left(\frac{1}{y} - \frac{1}{y_{max}}\right)(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`.
        Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter
        of the first particle, :math:`d_{p_j}` the diameter of the second
-       particle, :math:`y` the gap between the two particles,
-       :math:`\mathbf{v_{ij}}` the relative velocity of the two particles,
-       :math:`\mathbf{e_{ij}}` the unit vector along the line joining the
-       centroids of the two particles. In the case of particle wall lubrication
-       force we take the diameter of the second particle to be infinity
-       [#kim2005]_. The lubrication force on a particle is the sum of the
-       forces of all the particles and walls that are within the lubrication
-       range. This model requires a constant viscosity and density of the
-       fluid.
+       particle, :math:`y` the gap between the two particles, bounded below by
+       :math:`\Delta` times the ``lubrication range min``, :math:`y_{max}`
+       equal to :math:`\Delta` times the ``lubrication range max``,
+       :math:`\mathbf{v_{ij}} = \mathbf{v_j} - \mathbf{v_i}` the relative
+       velocity of the two particles, and :math:`\mathbf{e_{ij}}` the unit
+       vector from the centroid of particle :math:`j` to the centroid of
+       particle :math:`i`. The :math:`1/y_{max}` term makes the force vanish at
+       the end of the lubrication range. In the case of particle wall
+       lubrication force we take the diameter of the second particle to be
+       infinity [#kim2005]_, which gives
+       :math:`\mathbf{F_{lub_{ij}}} = 6 \pi \mu_f R_{p_i}^2 \left(\frac{1}{y} - \frac{1}{y_{max}}\right)(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`,
+       where :math:`R_{p_i}` is the radius of the particle,
+       :math:`\mathbf{v_j}` the velocity of the wall and
+       :math:`\mathbf{e_{ij}}` the unit normal from the wall to the particle.
+       The lubrication force on a particle is the sum of the forces of all the
+       particles and walls that are within the lubrication range. This model
+       requires a constant viscosity and density of the fluid.
+
+       The model treats every particle as a sphere, whose radius is its
+       effective radius. This is also the case in 2D, where the force is thus
+       not a force per unit length.
 
   * The ``particle nonlinear tolerance`` parameter controls particle dynamics'
     nonlinear tolerance. The nonlinear solver won't have converged until the

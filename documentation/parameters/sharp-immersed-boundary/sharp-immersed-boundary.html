@@ -767,21 +767,26 @@ large value of <code class="docutils literal notranslate"><span class="pre">cont
 <li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">lubrication</span> <span class="pre">force</span></code> parameter enables or disables the use of
 lubrication forces. This parameter must be set to <code class="docutils literal notranslate"><span class="pre">false</span></code> when using a
 non-newtonian fluid rheology.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When using a non-Newtonian fluid, the lubrication force will be
-automatically deactivated.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>With a non-Newtonian fluid, an error is thrown if the lubrication force
+is enabled and the motion of at least one particle is integrated.</p>
 </div>
 </li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">lubrication</span> <span class="pre">range</span> <span class="pre">max</span></code> parameter defines the distance below which
 the lubrication force between 2 particles or between a particle and a wall
-is calculated. The range is defined as a multiple of the smallest cell. The
+is calculated. The range is defined as a multiple of the length
+<span class="math notranslate nohighlight">\(\Delta\)</span>, which is the smallest cell diameter (the length of its
+diagonal) divided by <span class="math notranslate nohighlight">\(\sqrt{2}\)</span>. For the smallest cell, this is the
+edge of a square in 2D and 1.22 times the edge of a cube in 3D. The
 lubrication force model is used to model the force between particles when
 they are too close to each other to accurately resolve the flow between
 them.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">lubrication</span> <span class="pre">range</span> <span class="pre">min</span></code> parameter defines the minimal distance used
 in the lubrication force calculation. The range is defined as a multiple of
-the smallest cell. This limits the force that can be applied on a particle
+the same length <span class="math notranslate nohighlight">\(\Delta\)</span> and cannot be larger than the
+<code class="docutils literal notranslate"><span class="pre">lubrication</span> <span class="pre">range</span> <span class="pre">max</span></code>, unless the latter is 0 or the lubrication force
+is disabled. This limits the force that can be applied on a particle
 since the lubrification force has a singularity when the distance between 2
 particles is 0. We use this parameter to define a lower bound on the
 distance between 2 particles for the force calculation to avoid this
@@ -789,19 +794,31 @@ singularity. Physically, this distance can be interpreted as the surface
 roughness of the particles.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The lubrication force between two particles is expressed by the equation
-<span class="math notranslate nohighlight">\(\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}\)</span>.
+<p>The lubrication force exerted by particle <span class="math notranslate nohighlight">\(j\)</span> on particle
+<span class="math notranslate nohighlight">\(i\)</span> is expressed by the equation
+<span class="math notranslate nohighlight">\(\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \left(\frac{1}{y} - \frac{1}{y_{max}}\right)(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}\)</span>.
 Where <span class="math notranslate nohighlight">\(\mu_f\)</span> is the fluid viscosity, <span class="math notranslate nohighlight">\(d_{p_i}\)</span> the diameter
 of the first particle, <span class="math notranslate nohighlight">\(d_{p_j}\)</span> the diameter of the second
-particle, <span class="math notranslate nohighlight">\(y\)</span> the gap between the two particles,
-<span class="math notranslate nohighlight">\(\mathbf{v_{ij}}\)</span> the relative velocity of the two particles,
-<span class="math notranslate nohighlight">\(\mathbf{e_{ij}}\)</span> the unit vector along the line joining the
-centroids of the two particles. In the case of particle wall lubrication
-force we take the diameter of the second particle to be infinity
-<a class="footnote-reference brackets" href="#kim2005" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. The lubrication force on a particle is the sum of the
-forces of all the particles and walls that are within the lubrication
-range. This model requires a constant viscosity and density of the
-fluid.</p>
+particle, <span class="math notranslate nohighlight">\(y\)</span> the gap between the two particles, bounded below by
+<span class="math notranslate nohighlight">\(\Delta\)</span> times the <code class="docutils literal notranslate"><span class="pre">lubrication</span> <span class="pre">range</span> <span class="pre">min</span></code>, <span class="math notranslate nohighlight">\(y_{max}\)</span>
+equal to <span class="math notranslate nohighlight">\(\Delta\)</span> times the <code class="docutils literal notranslate"><span class="pre">lubrication</span> <span class="pre">range</span> <span class="pre">max</span></code>,
+<span class="math notranslate nohighlight">\(\mathbf{v_{ij}} = \mathbf{v_j} - \mathbf{v_i}\)</span> the relative
+velocity of the two particles, and <span class="math notranslate nohighlight">\(\mathbf{e_{ij}}\)</span> the unit
+vector from the centroid of particle <span class="math notranslate nohighlight">\(j\)</span> to the centroid of
+particle <span class="math notranslate nohighlight">\(i\)</span>. The <span class="math notranslate nohighlight">\(1/y_{max}\)</span> term makes the force vanish at
+the end of the lubrication range. In the case of particle wall
+lubrication force we take the diameter of the second particle to be
+infinity <a class="footnote-reference brackets" href="#kim2005" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, which gives
+<span class="math notranslate nohighlight">\(\mathbf{F_{lub_{ij}}} = 6 \pi \mu_f R_{p_i}^2 \left(\frac{1}{y} - \frac{1}{y_{max}}\right)(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}\)</span>,
+where <span class="math notranslate nohighlight">\(R_{p_i}\)</span> is the radius of the particle,
+<span class="math notranslate nohighlight">\(\mathbf{v_j}\)</span> the velocity of the wall and
+<span class="math notranslate nohighlight">\(\mathbf{e_{ij}}\)</span> the unit normal from the wall to the particle.
+The lubrication force on a particle is the sum of the forces of all the
+particles and walls that are within the lubrication range. This model
+requires a constant viscosity and density of the fluid.</p>
+<p>The model treats every particle as a sphere, whose radius is its
+effective radius. This is also the case in 2D, where the force is thus
+not a force per unit length.</p>
 </div>
 </li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">nonlinear</span> <span class="pre">tolerance</span></code> parameter controls particle dynamics’
