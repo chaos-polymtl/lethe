@@ -63,9 +63,8 @@ print_value_at_point(const std::string          &label,
     values);
 
   deallog << label << ":";
-  for (unsigned int c = 0; c < dim + 1; ++c)
-    deallog << " " << values[c];
-  deallog << std::endl;
+  for (const double value : values)
+    deallog << " " << value;
 }
 
 template <int dim>
@@ -139,7 +138,7 @@ test()
 
   // Mid-points of the domain and of the boundaries (away from the corners)
   Point<dim> center, noslip_point, function_point, slip_point;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (unsigned int d = 0; d < Point<dim>::dimension; ++d)
     {
       center[d]         = 0.5;
       noslip_point[d]   = 0.5;
