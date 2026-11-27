@@ -75,6 +75,10 @@ QMOM<dim>::QMOM(
   , n_moments(
       p_simulation_parameters.multiphysics.qmom_parameters.number_of_moments)
   , n_components(n_scalars + n_moments)
+  , has_phase_space_mechanism(
+      p_simulation_parameters.multiphysics.qmom_parameters.enable_growth ||
+      p_simulation_parameters.multiphysics.qmom_parameters.enable_nucleation ||
+      p_simulation_parameters.multiphysics.qmom_parameters.enable_coalescence)
   , multiphysics(multiphysics_interface)
   , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,
@@ -151,10 +155,7 @@ QMOM<dim>::QMOM(
   // 3 extrapolates them, so that the transport repeats part of these changes,
   // even without velocity. The Lie splitting is first-order accurate, so the
   // bdf1 scheme loses no accuracy.
-  const bool phase_space_is_evolved = qmom_parameters.enable_growth ||
-                                      qmom_parameters.enable_nucleation ||
-                                      qmom_parameters.enable_coalescence;
-  AssertThrow(!phase_space_is_evolved || method == TimeSteppingMethod::bdf1,
+  AssertThrow(!has_phase_space_mechanism || method == TimeSteppingMethod::bdf1,
               ExcMessage("The growth, nucleation and coalescence of the QMOM "
                          "physics only support the bdf1 time-stepping method, "
                          "but \"method\" is " +
@@ -1118,7 +1119,8 @@ QMOM<dim>::solve_linear_system()
     {
       case Parameters::QMOMSplittingScheme::lie:
         advance_physical_space();
-        advance_phase_space(simulation_control->get_time_step());
+        if (has_phase_space_mechanism)
+          advance_phase_space(simulation_control->get_time_step());
         break;
       case Parameters::QMOMSplittingScheme::strang:
         AssertThrow(false,

@@ -23,7 +23,7 @@
  *    (advance_physical_space());
  *  - the evolution of the moments in phase space (nucleation, growth and
  *    coalescence), applied independently at every degree of freedom
- *    (advance_phase_space()).
+ *    (advance_phase_space()), skipped when none of them is enabled.
  *
  * The transport is linear in the components, since the fluid velocity is
  * given. The QMOM physics is therefore driven by the linear solver strategy:
@@ -255,8 +255,9 @@ public:
   /**
    * @brief Advance the components over the current time step with Lie
    * splitting:
-   * transport in physical space, then evolution in phase space. This is the
-   * last function called by the linear solver strategy.
+   * transport in physical space, then evolution in phase space if growth,
+   * nucleation or coalescence is enabled. This is the last function called by
+   * the linear solver strategy.
    */
   void
   solve_linear_system() override;
@@ -478,6 +479,10 @@ private:
 
   /// Total number of components: n_scalars + n_moments
   const unsigned int n_components;
+
+  /// Whether growth, nucleation, or coalescence is enabled. Otherwise, the
+  /// phase-space step is skipped.
+  const bool has_phase_space_mechanism;
 
   /// Multiphysics interface, used to get the fluid velocity
   MultiphysicsInterface<dim> *multiphysics;
