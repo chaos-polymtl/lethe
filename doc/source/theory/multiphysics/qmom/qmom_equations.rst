@@ -50,22 +50,28 @@ The time step ends with the phase-space evolution. The moments of every degree o
 Transport in Physical Space
 ---------------------------
 
-Every component :math:`\zeta_c`, scalar or moment, is transported by the velocity :math:`\mathbf{u}` of the fluid at the end of the time step, which is solved before the QMOM physics, with a diffusivity :math:`D_c` and a source term :math:`S_c`:
+The scalars and the moments are transported by the velocity :math:`\mathbf{u}` of the fluid at the end of the time step, which is solved before the QMOM physics.
+
+Each scalar :math:`\psi_i`, :math:`0 \le i < n_s`, is advected and diffused, with a diffusivity :math:`D_i` and a source term :math:`S_{\psi_i}`:
 
 .. math::
 
-  \frac{\partial \zeta_c}{\partial t} + \nabla \cdot (\mathbf{u} \zeta_c) - \nabla \cdot (D_c \nabla \zeta_c) = S_c
+  \frac{\partial \psi_i}{\partial t} + \nabla \cdot (\mathbf{u} \psi_i) - \nabla \cdot (D_i \nabla \psi_i) = S_{\psi_i}
 
-The diffusivity of each scalar is constant and given by the ``scalar diffusivities`` of the QMOM subsection (see :doc:`../../../parameters/cfd/qmom`), and is zero if this list is empty. The moments do not diffuse: :math:`D_c = 0` for every moment.
+The diffusivity of each scalar is constant and given by the ``scalar diffusivities`` of the QMOM subsection (see :doc:`../../../parameters/cfd/qmom`). It is zero by default, in which case the scalar is only advected.
 
-The advection is discretized with an upwind flux on the interior faces. The diffusion is discretized with the symmetric interior penalty (SIPG) method on the interior faces, and the Dirichlet values are imposed weakly on the whole Dirichlet boundaries by the Nitsche method, with the same penalty factor. The ``outlet`` and ``noflux`` boundaries have no diffusive flux.
+Each moment :math:`M_k`, :math:`0 \le k < K`, is only advected, with a source term :math:`S_{M_k}`:
 
-The components are ordered as the scalars, followed by the moments: :math:`\zeta_c` is the scalar :math:`c` for :math:`c < n_s`, and the moment :math:`M_{c - n_s}` otherwise.
+.. math::
+
+  \frac{\partial M_k}{\partial t} + \nabla \cdot (\mathbf{u} M_k) = S_{M_k}
+
+The advection is discretized with an upwind flux on the interior faces. The diffusion of the scalars is discretized with the symmetric interior penalty (SIPG) method on the interior faces, and the Dirichlet values are imposed weakly on the whole Dirichlet boundaries by the Nitsche method, with the same penalty factor. The ``outlet`` and ``noflux`` boundaries have no diffusive flux.
 
 Linear Systems
 ^^^^^^^^^^^^^^
 
-Since all the scalars and moments share the same element and the same velocity, the moments and the scalars that do not diffuse share the same linear system matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of each of these components. The matrix of a scalar that diffuses is this matrix plus the diffusion matrix, which is assembled once per mesh with a unit diffusivity, scaled by the diffusivity of the scalar. It is preconditioned once per time step, and shared by the scalars with the same diffusivity. The linear systems are solved with the GMRES method and an ILU or AMG preconditioner.
+Since all the moments share the same element and the same velocity, they share the same advection matrix: it is assembled and preconditioned once per time step, then solved for the right-hand side of every moment. Each scalar has its own matrix, the advection matrix plus the diffusion matrix scaled by the diffusivity of the scalar, which is also preconditioned once per time step. The diffusion matrix is assembled once per mesh with a unit diffusivity. The linear systems are solved with the GMRES method and an ILU or AMG preconditioner.
 
 The equations are linear, so no non-linear solver is used. Since the moments have very different magnitudes, the tolerance of each scalar and moment is a relative residual times its initial residual, computed with the solution at the beginning of the time step as initial guess, but at least a minimum residual. The minimum residual should therefore be much smaller than the initial residual of the smallest moment.
 

@@ -165,38 +165,11 @@ QMOM<dim>::QMOM(
   // Growth, nucleation and coalescence of the particles in phase space
   phase_space_source_terms = std::make_unique<QMOMSourceTerms>(qmom_parameters);
 
-  // Transport operators. The first one, without diffusion, transports the
-  // moments and the scalars that do not diffuse. Each distinct positive
-  // diffusivity has its own operator, shared by the scalars that have this
-  // diffusivity. The comparison is purely relative, so that a small
-  // diffusivity is never confused with zero.
-  const auto diffusivities_are_equal = [](const double first_diffusivity,
-                                          const double second_diffusivity) {
-    return std::abs(first_diffusivity - second_diffusivity) <=
-           parameter_relative_tolerance *
-             std::max(first_diffusivity, second_diffusivity);
-  };
-  operator_diffusivities = {0.};
-  component_operators.assign(n_components, 0);
-  for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
-    {
-      const double diffusivity = qmom_parameters.scalar_diffusivities[i_scalar];
-      const auto   operator_iterator =
-        std::find_if(operator_diffusivities.begin(),
-                     operator_diffusivities.end(),
-                     [&](const double operator_diffusivity) {
-                       return diffusivities_are_equal(operator_diffusivity,
-                                                      diffusivity);
-                     });
-      component_operators[i_scalar] = static_cast<unsigned int>(
-        std::distance(operator_diffusivities.begin(), operator_iterator));
-      if (operator_iterator == operator_diffusivities.end())
-        operator_diffusivities.emplace_back(diffusivity);
-    }
-  const unsigned int n_operators = operator_diffusivities.size();
-  system_matrices.resize(n_operators);
-  ilu_preconditioners.resize(n_operators);
-  amg_preconditioners.resize(n_operators);
+  // Transport matrices: the advection matrix, shared by all the moments, then
+  // the advection-diffusion matrix of each scalar
+  system_matrices.resize(1 + n_scalars);
+  ilu_preconditioners.resize(1 + n_scalars);
+  amg_preconditioners.resize(1 + n_scalars);
 
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
@@ -555,7 +528,7 @@ QMOM<dim>::setup_dofs()
                          locally_owned_dofs,
                          dsp,
                          mpi_communicator);
-  if (operator_diffusivities.size() > 1)
+  if (n_scalars > 0)
     diffusion_matrix.reinit(locally_owned_dofs,
                             locally_owned_dofs,
                             dsp,
@@ -655,8 +628,8 @@ QMOM<dim>::assemble_system_matrix()
 {
   TimerOutput::Scope t(computing_timer, "Assemble matrix");
 
-  // The advection matrix is assembled first. The matrices of the scalars that
-  // diffuse are built from it at the end.
+  // The advection matrix is assembled first. The matrices of the scalars are
+  // built from it at the end.
   TrilinosWrappers::SparseMatrix &advection_matrix = system_matrices[0];
   advection_matrix                                 = 0.;
 
@@ -860,17 +833,19 @@ QMOM<dim>::assemble_system_matrix()
 
   advection_matrix.compress(VectorOperation::add);
 
-  // Matrices of the scalars that diffuse: advection matrix plus the diffusion
-  // matrix scaled by their diffusivity. The diffusion matrix does not depend
-  // on the velocity or on the time step.
-  if (operator_diffusivities.size() > 1 && !diffusion_matrix_is_assembled)
+  // Matrix of each scalar: advection matrix plus the diffusion matrix scaled
+  // by the diffusivity of the scalar. The diffusion matrix does not depend on
+  // the velocity or on the time step.
+  if (n_scalars > 0 && !diffusion_matrix_is_assembled)
     assemble_diffusion_matrix();
-  for (unsigned int i_operator = 1; i_operator < operator_diffusivities.size();
-       ++i_operator)
+  const std::vector<double> &scalar_diffusivities =
+    simulation_parameters.multiphysics.qmom_parameters.scalar_diffusivities;
+  for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
     {
-      system_matrices[i_operator].copy_from(advection_matrix);
-      system_matrices[i_operator].add(operator_diffusivities[i_operator],
-                                      diffusion_matrix);
+      TrilinosWrappers::SparseMatrix &scalar_matrix =
+        system_matrices[1 + i_scalar];
+      scalar_matrix.copy_from(advection_matrix);
+      scalar_matrix.add(scalar_diffusivities[i_scalar], diffusion_matrix);
     }
 }
 
@@ -1111,8 +1086,8 @@ QMOM<dim>::assemble_system_rhs()
                                     n_components);
   QMOMCopyData         copy_data(fe->n_dofs_per_cell(), n_components);
 
-  // Whether at least one scalar diffuses
-  const bool scalars_diffuse = operator_diffusivities.size() > 1;
+  const std::vector<double> &scalar_diffusivities =
+    simulation_parameters.multiphysics.qmom_parameters.scalar_diffusivities;
 
   const auto cell_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -1167,8 +1142,7 @@ QMOM<dim>::assemble_system_rhs()
         QMOMScratchData<dim>                                 &scratch_data,
         QMOMCopyData                                         &copy_data) {
       // Only the Dirichlet boundaries contribute to the right-hand side: the
-      // inflow of all the components and, for the scalars that diffuse, the
-      // Nitsche terms
+      // inflow of all the components and the Nitsche terms of the scalars
       const types::boundary_id boundary_id = cell->face(face_no)->boundary_id();
       if (simulation_parameters.qmom_boundary_conditions.type.at(boundary_id) !=
           BoundaryConditions::QMOMBoundaryType::dirichlet)
@@ -1194,10 +1168,9 @@ QMOM<dim>::assemble_system_rhs()
 
           // The Dirichlet values only enter the domain through the inflow part
           // of the boundary, while the outflow is assembled in the matrix. The
-          // Nitsche terms of the diffusion apply to the whole boundary.
+          // Nitsche terms of the diffusion of the scalars apply to the whole
+          // boundary.
           const bool is_inflow = velocity_dot_n < 0.;
-          if (!is_inflow && !scalars_diffuse)
-            continue;
 
           // All the components are evaluated at once, since the moments are
           // computed together from the particle size distribution
@@ -1221,22 +1194,17 @@ QMOM<dim>::assemble_system_rhs()
                       JxW;
                   }
 
-              if (scalars_diffuse)
+              const double nitsche_factor =
+                (scratch_data.penalty_factor * phi_i -
+                 fe_face.shape_grad(i, q) * normal) *
+                JxW;
+              for (unsigned int i_scalar = 0; i_scalar < n_scalars; ++i_scalar)
                 {
-                  const double nitsche_factor =
-                    (scratch_data.penalty_factor * phi_i -
-                     fe_face.shape_grad(i, q) * normal) *
-                    JxW;
-                  for (unsigned int i_scalar = 0; i_scalar < n_scalars;
-                       ++i_scalar)
-                    {
-                      // Nitsche terms of the Dirichlet values, zero for the
-                      // scalars that do not diffuse:
-                      // D_c * (\beta \phi_i - \nabla \phi_i . n) * \zeta_{c,D}
-                      copy_data.local_rhs[i_scalar](i) +=
-                        operator_diffusivities[component_operators[i_scalar]] *
-                        dirichlet_values[i_scalar] * nitsche_factor;
-                    }
+                  // Nitsche terms of the Dirichlet values of the scalars:
+                  // D_c * (\beta \phi_i - \nabla \phi_i . n) * \zeta_{c,D}
+                  copy_data.local_rhs[i_scalar](i) +=
+                    scalar_diffusivities[i_scalar] *
+                    dirichlet_values[i_scalar] * nitsche_factor;
                 }
             }
         }
@@ -1302,13 +1270,12 @@ QMOM<dim>::setup_ilu()
                            linear_solver_parameters.ilu_precond_rtol,
                            0);
 
-  for (unsigned int i_operator = 0; i_operator < system_matrices.size();
-       ++i_operator)
+  for (unsigned int i_matrix = 0; i_matrix < system_matrices.size(); ++i_matrix)
     {
-      ilu_preconditioners[i_operator] =
+      ilu_preconditioners[i_matrix] =
         std::make_shared<TrilinosWrappers::PreconditionILU>();
-      ilu_preconditioners[i_operator]->initialize(system_matrices[i_operator],
-                                                  preconditioner_options);
+      ilu_preconditioners[i_matrix]->initialize(system_matrices[i_matrix],
+                                                preconditioner_options);
     }
 }
 
@@ -1364,13 +1331,12 @@ QMOM<dim>::setup_amg()
 
   // The matrices share their sparsity pattern, hence the parameters built
   // from the advection matrix
-  for (unsigned int i_operator = 0; i_operator < system_matrices.size();
-       ++i_operator)
+  for (unsigned int i_matrix = 0; i_matrix < system_matrices.size(); ++i_matrix)
     {
-      amg_preconditioners[i_operator] =
+      amg_preconditioners[i_matrix] =
         std::make_shared<TrilinosWrappers::PreconditionAMG>();
-      amg_preconditioners[i_operator]->initialize(system_matrices[i_operator],
-                                                  parameter_ml);
+      amg_preconditioners[i_matrix]->initialize(system_matrices[i_matrix],
+                                                parameter_ml);
     }
 }
 
@@ -1421,9 +1387,8 @@ QMOM<dim>::advance_scalars_physical_space()
 
   TimerOutput::Scope t(computing_timer, "Solve scalars transport");
 
-  // The scalars that do not diffuse are transported by the same operator as
-  // the moments and reuse their matrix and preconditioner. The others use the
-  // matrix and preconditioner of their diffusivity. Their source is
+  // Each scalar has its own advection-diffusion matrix and preconditioner.
+  // Their source is
   // the source term of the "QMOM" subsection of the source term subsection:
   // the exchange of mass with the particles is applied by the phase-space
   // evolution.
@@ -1444,11 +1409,11 @@ QMOM<dim>::solve_component_transport(const unsigned int component,
   const bool verbose =
     linear_solver_parameters.verbosity != Parameters::Verbosity::quiet;
 
-  // Transport operator of the component: advection, plus diffusion for the
-  // scalars that diffuse
-  const unsigned int i_operator = component_operators[component];
+  // Transport matrix of the component: advection for the moments, and
+  // advection-diffusion for the scalars
+  const unsigned int i_matrix = component < n_scalars ? 1 + component : 0;
   const TrilinosWrappers::SparseMatrix &system_matrix =
-    system_matrices[i_operator];
+    system_matrices[i_matrix];
 
   // present_solutions are ghosted, hence read-only: the solution is updated
   // in a locally owned copy
@@ -1490,12 +1455,12 @@ QMOM<dim>::solve_component_transport(const unsigned int component,
     solver.solve(system_matrix,
                  completely_distributed_solution,
                  residual,
-                 *ilu_preconditioners[i_operator]);
+                 *ilu_preconditioners[i_matrix]);
   else
     solver.solve(system_matrix,
                  completely_distributed_solution,
                  residual,
-                 *amg_preconditioners[i_operator]);
+                 *amg_preconditioners[i_matrix]);
 
   if (verbose)
     this->pcout << "  -Iterative solver of " << component_names[component]

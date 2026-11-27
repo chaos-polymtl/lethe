@@ -15,12 +15,12 @@
  * vector. Since all the components are advected by the same fluid velocity,
  * the matrix of their advection is the same: it is assembled and
  * preconditioned once per time step, then solved with one right-hand side per
- * component. The scalars may also diffuse, with the "scalar diffusivities" of
- * the QMOM subsection. The diffusion is discretized with the symmetric interior
- * penalty (SIPG) method, and the Dirichlet boundary conditions are imposed
- * weakly by the Nitsche method. The scalars that share a diffusivity share a
- * transport matrix (the advection matrix plus the diffusion matrix scaled by
- * the diffusivity) and its preconditioner.
+ * moment. The scalars are also diffused, with the "scalar diffusivities" of
+ * the QMOM subsection (zero by default). The diffusion is discretized with the
+ * symmetric interior penalty (SIPG) method, and the Dirichlet boundary
+ * conditions are imposed weakly by the Nitsche method. Each scalar has its own
+ * transport matrix, the advection matrix plus the diffusion matrix scaled by
+ * its diffusivity, and its own preconditioner.
  *
  * Each time step of the fluid dynamics, from t^n to t^{n+1}, is split (Lie
  * splitting) into the following steps, run by solve_linear_system() once the
@@ -282,8 +282,7 @@ public:
 
   /**
    * @brief Build the preconditioner (ILU or AMG) of every transport matrix:
-   * the advection matrix and, if the scalars diffuse, the matrix of each
-   * distinct diffusivity.
+   * the advection matrix of the moments and the matrix of each scalar.
    */
   void
   setup_preconditioner() override;
@@ -413,10 +412,9 @@ private:
    * The advection matrix contains the BDF time derivative, the upwind
    * discontinuous Galerkin advection and the outflow through the boundaries,
    * with the present velocity of the fluid dynamics. It transports the
-   * moments and the scalars that do not diffuse. The matrix of each distinct
-   * diffusivity of the scalars is the advection matrix plus the diffusion
-   * matrix scaled by that diffusivity. The diffusion matrix is assembled at
-   * the first call after setup_dofs().
+   * moments. The matrix of each scalar is the advection matrix plus the
+   * diffusion matrix scaled by the diffusivity of the scalar. The diffusion
+   * matrix is assembled at the first call after setup_dofs().
    */
   void
   assemble_system_matrix() override;
@@ -426,7 +424,7 @@ private:
    *
    * It contains the previous solutions of the BDF time derivative, the source
    * term and the inflow through the Dirichlet boundaries, and, for the
-   * scalars that diffuse, the Nitsche terms of the Dirichlet boundaries.
+   * scalars, the Nitsche terms of the Dirichlet boundaries.
    */
   void
   assemble_system_rhs() override;
@@ -527,9 +525,8 @@ private:
    * The transport system of every scalar is solved, with the right-hand sides
    * assembled by the linear solver strategy. Does nothing without scalars.
    *
-   * The scalars that do not diffuse share the advection matrix and its
-   * preconditioner with the moments. The others use the matrix of their
-   * diffusivity, which includes the diffusion. Their source in physical space
+   * Each scalar is solved with its own advection-diffusion matrix and
+   * preconditioner. Their source in physical space
    * is the source term of the "QMOM" subsection of the source term subsection:
    * the exchange of mass with the particles is applied at the end of the
    * phase-space step (see advance_phase_space()).
@@ -662,21 +659,13 @@ private:
   /// Empty constraints of the discontinuous Galerkin discretization
   AffineConstraints<double> constraints;
 
-  /// Diffusivity of each transport operator. The first operator, without
-  /// diffusion, transports the moments and the scalars that do not diffuse.
-  /// Each distinct positive diffusivity of the scalars has its own operator.
-  std::vector<double> operator_diffusivities;
-
-  /// Index of the transport operator of each component, in
-  /// operator_diffusivities: component_operators[component]
-  std::vector<unsigned int> component_operators;
-
-  /// Transport matrix of each operator: system_matrices[0] is the advection
-  /// matrix
+  /// Transport matrices: system_matrices[0] is the advection matrix, shared
+  /// by all the moments, and system_matrices[1 + i_scalar] is the
+  /// advection-diffusion matrix of the scalar i_scalar
   std::vector<TrilinosWrappers::SparseMatrix> system_matrices;
 
-  /// Diffusion matrix with a unit diffusivity, only used if the scalars
-  /// diffuse
+  /// Diffusion matrix with a unit diffusivity, used to build the matrices of
+  /// the scalars
   TrilinosWrappers::SparseMatrix diffusion_matrix;
 
   /// Whether diffusion_matrix is assembled for the present degrees of freedom
