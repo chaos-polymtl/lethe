@@ -1,0 +1,210 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+# Transport at the velocity 1, linear growth G = 2 xi and coalescence with a
+# constant kernel of 2e-17 m^3/s. The sizes start from a Weibull distribution
+# of shape 3 and the number density from N_0 = 1e18 (1 + 0.5 sin(2 pi x)).
+# The distribution keeps its shape as the particles move, grow and merge: the
+# particles found at x at time t started at x - t, the growth multiplies their
+# sizes by exp(2 t), and the coalescence divides their number density
+# N_0(x - t) by 1 + 10 N_0(x - t) t / 1e18 and multiplies the scale by the cube
+# root of this factor.
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.05
+  set time step        = 0.005
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 1
+  set pressure degree = 1
+  set qmom degree     = 1
+end
+
+#---------------------------------------------------
+# QMOM
+#---------------------------------------------------
+
+subsection QMOM
+  set number of moments  = 4
+  set enable growth      = true
+  set enable coalescence = true
+  subsection growth
+    set model              = linear
+    set growth coefficient = 2
+  end
+  subsection coalescence
+    set model               = function
+    set Function expression = 2e-17
+  end
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection QMOM
+    subsection distribution
+      set type                = weibull
+      set Function expression = 1e18 * (1 + 0.5 * sin(2 * pi * x)); 3; 1e-7
+    end
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 20, 1 : 0, 0 : 1, 0.05 : true
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set qmom = true
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection QMOM
+    subsection distribution
+      set type                = weibull
+      set Function expression = 1e18 * (1 + 0.5 * sin(2 * pi * (x - t))) / (1 + 10 * (1 + 0.5 * sin(2 * pi * (x - t))) * t); 3; 1e-7 * exp(2 * t) * (1 + 10 * (1 + 0.5 * sin(2 * pi * (x - t))) * t)^(1/3)
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set id   = 2, 3
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 1
+    set type = outlet
+    set beta = 0
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions QMOM
+#---------------------------------------------------
+
+subsection boundary conditions qmom
+  set number         = 3
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      subsection distribution
+        set type                = weibull
+        set Function expression = 1e18 * (1 + 0.5 * sin(2 * pi * (x - t))) / (1 + 10 * (1 + 0.5 * sin(2 * pi * (x - t))) * t); 3; 1e-7 * exp(2 * t) * (1 + 10 * (1 + 0.5 * sin(2 * pi * (x - t))) * t)^(1/3)
+      end
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2, 3
+    set type = noflux
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-9
+    set max iterations = 1
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 100
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-14
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection qmom
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 100
+    set max krylov vectors                    = 100
+    set relative residual                     = 1e-12
+    set minimum residual                      = 1e-30
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end

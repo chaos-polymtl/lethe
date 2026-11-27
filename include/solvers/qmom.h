@@ -23,7 +23,7 @@
  *    (advance_physical_space());
  *  - the evolution of the moments in phase space (nucleation, growth and
  *    coalescence), applied independently at every degree of freedom
- *    (advance_phase_space()).
+ *    (advance_phase_space()), skipped when none of them is enabled.
  *
  * The transport is linear in the components, since the fluid velocity is
  * given. The QMOM physics is therefore driven by the linear solver strategy:
@@ -45,6 +45,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/qmom_field_function.h>
 #include <solvers/qmom_scratch_data.h>
+#include <solvers/qmom_source_terms.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -254,8 +255,9 @@ public:
   /**
    * @brief Advance the components over the current time step with Lie
    * splitting:
-   * transport in physical space, then evolution in phase space. This is the
-   * last function called by the linear solver strategy.
+   * transport in physical space, then evolution in phase space if growth,
+   * nucleation or coalescence is enabled. This is the last function called by
+   * the linear solver strategy.
    */
   void
   solve_linear_system() override;
@@ -438,19 +440,33 @@ private:
 
   /**
    * @brief Evolve the moments in phase space (nucleation, growth and
-   * coalescence) at every locally owned degree of freedom. Not implemented
-   * yet: the moments are constant in phase space.
+   * coalescence) at every locally owned degree of freedom, with QMOMKit.
    *
-   * @param[in] time_step Duration of the phase-space step.
+   * Since the element is nodal and discontinuous, the moments of a degree of
+   * freedom are the moments at its support point: they are inverted into a
+   * quadrature (Wheeler algorithm), the quadrature is evolved over the time
+   * step by qmomkit::advance_qmom_phase_space(), and the moments are rebuilt
+   * from it. The mechanisms are the callbacks of phase_space_source_terms:
+   * the nodes move with the growth rate, the coalescence changes the moments
+   * through the quadrature and the nucleation adds particles. They receive
+   * the scalars of the degree of freedom. Degrees of freedom without particles
+   * (zeroth moment below the cutoff of QMOMKit) only change by nucleation. If
+   * the moments of any degree of freedom cannot be inverted or evolved, an
+   * exception is thrown on every rank.
+   *
+   * @param[in] time_step Duration of the phase-space step, which ends at the
+   * current time of the simulation control.
    */
   void
   advance_phase_space(const double time_step);
 
   /**
    * @brief Compute the L2 error of every component with respect to the
-   * analytical solution at the current time.
+   * analytical solution at the current time, relative to the L2 norm of that
+   * solution. The error of a component whose analytical solution vanishes is
+   * absolute.
    *
-   * @return L2 errors, ordered as the components.
+   * @return Relative L2 errors, ordered as the components.
    */
   std::vector<double>
   calculate_L2_errors();
@@ -463,6 +479,10 @@ private:
 
   /// Total number of components: n_scalars + n_moments
   const unsigned int n_components;
+
+  /// Whether growth, nucleation, or coalescence is enabled. Otherwise, the
+  /// phase-space step is skipped.
+  const bool has_phase_space_mechanism;
 
   /// Multiphysics interface, used to get the fluid velocity
   MultiphysicsInterface<dim> *multiphysics;
@@ -507,6 +527,9 @@ private:
   /// errors
   std::shared_ptr<QMOMFieldFunction<dim>> analytical_solution;
 
+  /// Growth, nucleation and coalescence of the particles in phase space
+  std::unique_ptr<QMOMSourceTerms> phase_space_source_terms;
+
   /// Locally owned and locally relevant DoFs
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
@@ -538,7 +561,8 @@ private:
   /// components, for mesh adaptation and checkpointing
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
-  /// L2 errors of the components with respect to the analytical solution
+  /// Relative L2 errors of the components with respect to the analytical
+  /// solution
   ConvergenceTable error_table;
 };
 

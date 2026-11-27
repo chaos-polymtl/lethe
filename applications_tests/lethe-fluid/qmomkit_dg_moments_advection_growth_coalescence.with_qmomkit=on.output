@@ -1,0 +1,117 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       20
+   Number of degrees of freedom: 126
+   Volume of triangulation:      5.000000e-02
+   Number of QMOM degrees of freedom: 320 (4 components of 80)
+
+********************************************************************************
+Transient iteration: 1        Time: 0.005    Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 3.261989e-03
+Relative L2 error moment_1: 3.007173e-03
+Relative L2 error moment_2: 2.826408e-03
+Relative L2 error moment_3: 3.121294e-03
+
+********************************************************************************
+Transient iteration: 2        Time: 0.01     Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 4.045797e-03
+Relative L2 error moment_1: 3.335217e-03
+Relative L2 error moment_2: 2.977101e-03
+Relative L2 error moment_3: 3.698431e-03
+
+********************************************************************************
+Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 4.735702e-03
+Relative L2 error moment_1: 3.607966e-03
+Relative L2 error moment_2: 3.132740e-03
+Relative L2 error moment_3: 4.267444e-03
+
+********************************************************************************
+Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 5.283678e-03
+Relative L2 error moment_1: 3.813591e-03
+Relative L2 error moment_2: 3.284604e-03
+Relative L2 error moment_3: 4.780999e-03
+
+********************************************************************************
+Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 5.706491e-03
+Relative L2 error moment_1: 3.963807e-03
+Relative L2 error moment_2: 3.434851e-03
+Relative L2 error moment_3: 5.236004e-03
+
+********************************************************************************
+Transient iteration: 6        Time: 0.03     Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 6.031584e-03
+Relative L2 error moment_1: 4.073291e-03
+Relative L2 error moment_2: 3.586609e-03
+Relative L2 error moment_3: 5.641209e-03
+
+********************************************************************************
+Transient iteration: 7        Time: 0.035    Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 6.284322e-03
+Relative L2 error moment_1: 4.154522e-03
+Relative L2 error moment_2: 3.741911e-03
+Relative L2 error moment_3: 6.007521e-03
+
+********************************************************************************
+Transient iteration: 8        Time: 0.04     Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 6.484842e-03
+Relative L2 error moment_1: 4.216852e-03
+Relative L2 error moment_2: 3.901654e-03
+Relative L2 error moment_3: 6.344721e-03
+
+********************************************************************************
+Transient iteration: 9        Time: 0.045    Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 6.647781e-03
+Relative L2 error moment_1: 4.266833e-03
+Relative L2 error moment_2: 4.065925e-03
+Relative L2 error moment_3: 6.660376e-03
+
+********************************************************************************
+Transient iteration: 10       Time: 0.05     Time step: 0.005    CFL: 0.0886227
+********************************************************************************
+L2 error velocity: 1.241267e-17
+Relative L2 error moment_0: 6.783101e-03
+Relative L2 error moment_1: 4.308865e-03
+Relative L2 error moment_2: 4.234289e-03
+Relative L2 error moment_3: 6.959726e-03
+ time  error_velocity 
+0.0050   1.241267e-17 
+0.0100   1.241267e-17 
+0.0150   1.241267e-17 
+0.0200   1.241267e-17 
+0.0250   1.241267e-17 
+0.0300   1.241267e-17 
+0.0350   1.241267e-17 
+0.0400   1.241267e-17 
+0.0450   1.241267e-17 
+0.0500   1.241267e-17 
+ time  relative_error_moment_0 relative_error_moment_1 relative_error_moment_2 relative_error_moment_3 
+0.0050            3.261989e-03            3.007173e-03            2.826408e-03            3.121294e-03 
+0.0100            4.045797e-03            3.335217e-03            2.977101e-03            3.698431e-03 
+0.0150            4.735702e-03            3.607966e-03            3.132740e-03            4.267444e-03 
+0.0200            5.283678e-03            3.813591e-03            3.284604e-03            4.780999e-03 
+0.0250            5.706491e-03            3.963807e-03            3.434851e-03            5.236004e-03 
+0.0300            6.031584e-03            4.073291e-03            3.586609e-03            5.641209e-03 
+0.0350            6.284322e-03            4.154522e-03            3.741911e-03            6.007521e-03 
+0.0400            6.484842e-03            4.216852e-03            3.901654e-03            6.344721e-03 
+0.0450            6.647781e-03            4.266833e-03            4.065925e-03            6.660376e-03 
+0.0500            6.783101e-03            4.308865e-03            4.234289e-03            6.959726e-03 
