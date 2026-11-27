@@ -15,6 +15,11 @@
  * not depend on the order of the two particles, since the distance routine of
  * the sphere is used in both cases and the normal it returns is flipped when
  * the sphere is the second particle.
+ *
+ * Ellipsoid-ellipsoid: ellipsoids with equal radii are spheres, but use the
+ * generic search of the distance. The search must also find a contact far
+ * from the origin after the bounding boxes of the particles did not touch at
+ * the previous evaluation.
  */
 
 // Deal.II includes
@@ -75,21 +80,23 @@ particle_particle_contact_force(
  * @brief Hertz normal force between two particles made of the same material,
  * for the overlap normal_overlap.
  *
- * @param[in] particle_one First particle.
- * @param[in] particle_two Second particle.
+ * @param[in] particle_one One of the particles, which gives the material.
+ * @param[in] radius_one Contact radius of the first particle.
+ * @param[in] radius_two Contact radius of the second particle.
  *
  * @return The magnitude of the force.
  */
 template <int dim>
 double
 hertz_force(const IBParticle<dim> &particle_one,
-            const IBParticle<dim> &particle_two)
+            const double           radius_one,
+            const double           radius_two)
 {
   const double effective_youngs_modulus =
     particle_one.youngs_modulus /
     (2. * (1. - particle_one.poisson_ratio * particle_one.poisson_ratio));
-  const double effective_radius = particle_one.radius * particle_two.radius /
-                                  (particle_one.radius + particle_two.radius);
+  const double effective_radius =
+    radius_one * radius_two / (radius_one + radius_two);
   return 4. / 3. * effective_youngs_modulus * std::sqrt(effective_radius) *
          std::pow(normal_overlap, 1.5);
 }
@@ -150,7 +157,8 @@ test()
       particle_particle_contact_force<dim>(parameters, particles);
 
     const Tensor<1, 3> expected_force =
-      -hertz_force(particles[0], particles[1]) * tensor_nd_to_3d(direction);
+      -hertz_force(particles[0], radius_one, radius_two) *
+      tensor_nd_to_3d(direction);
 
     log_check(
       "Sphere-sphere contact force is the Hertz force of the full overlap",
@@ -179,7 +187,8 @@ test()
 
     // The sphere is pushed away from the box, along x.
     Tensor<1, 3> expected_force;
-    expected_force[0] = hertz_force(box_first[1], box_first[0]);
+    expected_force[0] =
+      hertz_force(box_first[1], box_first[1].radius, box_first[0].radius);
 
     log_check("Sphere-box contact force is the Hertz force of the full overlap",
               (force_sphere_first[0] - expected_force).norm() <
@@ -190,6 +199,90 @@ test()
           tolerance * expected_force.norm() &&
         (force_sphere_first[1] - force_box_first[0]).norm() <
           tolerance * expected_force.norm());
+  }
+
+  const Point<dim>     origin    = get_pair_origin<dim>();
+  const Tensor<1, dim> direction = get_pair_direction<dim>();
+  const Tensor<1, 3>   normal    = tensor_nd_to_3d(direction);
+
+  // Check that the force on the first of two particles is the Hertz force.
+  const auto is_hertz_force =
+    [&](const std::shared_ptr<Parameters::IBParticles<dim>> &used_parameters,
+        const std::vector<IBParticle<dim>>                  &particles,
+        const double                                         radius_one,
+        const double                                         radius_two,
+        const double                                         relative_error) {
+      const auto force =
+        particle_particle_contact_force<dim>(used_parameters, particles);
+      const Tensor<1, 3> expected =
+        -hertz_force(particles[0], radius_one, radius_two) * normal;
+      return (force[0] - expected).norm() < relative_error * expected.norm();
+    };
+
+  // Ellipsoids with equal radii.
+  {
+    const double radius = 0.1;
+
+    const std::vector<IBParticle<dim>> equal_pair{
+      make_ib_ellipsoid<dim>(0, radius, origin),
+      make_ib_ellipsoid<dim>(
+        1, radius, origin + (2. * radius - normal_overlap) * direction)};
+
+    log_check("Ellipsoid-ellipsoid contact force is the Hertz force",
+              is_hertz_force(parameters,
+                             equal_pair,
+                             equal_pair[0].radius,
+                             equal_pair[1].radius,
+                             hertz_tolerance));
+  }
+
+  // No force without overlap.
+  {
+    const double     radius = 0.1;
+    const Point<dim> position_two =
+      origin + (2. * radius + normal_overlap) * direction;
+    const auto sphere_force = particle_particle_contact_force<dim>(
+      parameters,
+      {make_ib_sphere<dim>(0, radius, origin),
+       make_ib_sphere<dim>(1, radius, position_two)});
+    const auto ellipsoid_force = particle_particle_contact_force<dim>(
+      parameters,
+      {make_ib_ellipsoid<dim>(0, radius, origin),
+       make_ib_ellipsoid<dim>(1, radius, position_two)});
+    log_check("No force without overlap",
+              sphere_force[0].norm() + sphere_force[1].norm() +
+                  ellipsoid_force[0].norm() + ellipsoid_force[1].norm() <
+                tolerance);
+  }
+
+  // Far from the origin, the bounding boxes do not touch at the first
+  // evaluation, then the particles overlap.
+  {
+    const double radius = 1.;
+    Point<dim>   center;
+    for (int d = 0; d < dim; ++d)
+      center[d] = 100.;
+    const std::vector<IBParticle<dim>> particles{
+      make_ib_ellipsoid<dim>(0, radius, center),
+      make_ib_ellipsoid<dim>(1, radius, center + 3.6 * radius * direction)};
+
+    IBParticlesDEM<dim> ib_dem;
+    ib_dem.initialize(parameters, nullptr, nullptr, MPI_COMM_WORLD, particles);
+    ib_dem.update_contact_candidates();
+
+    std::vector<Tensor<1, 3>> force(particles.size());
+    std::vector<Tensor<1, 3>> torque(particles.size());
+    ib_dem.calculate_pp_contact_force(dt_dem, force, torque);
+
+    ib_dem.dem_particles[1].set_position(
+      center + (2. * radius - normal_overlap) * direction);
+    ib_dem.calculate_pp_contact_force(dt_dem, force, torque);
+
+    const Tensor<1, 3> expected =
+      -hertz_force(particles[0], particles[0].radius, particles[1].radius) *
+      normal;
+    log_check("Contact is found far from the origin after a miss",
+              (force[0] - expected).norm() < hertz_tolerance * expected.norm());
   }
 }
 

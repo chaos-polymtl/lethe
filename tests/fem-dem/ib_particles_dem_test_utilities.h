@@ -74,6 +74,34 @@ make_ib_sphere(const unsigned int id,
 }
 
 /**
+ * @brief Build an ellipsoid with equal radii at rest, with the material of the
+ * spheres of make_ib_sphere.
+ *
+ * @param[in] id Identifier of the particle.
+ * @param[in] radius The radius, without the layer thickening.
+ * @param[in] position Position of the center.
+ * @param[in] layer_thickening Layer thickening.
+ *
+ * @return The ellipsoid.
+ */
+template <int dim>
+IBParticle<dim>
+make_ib_ellipsoid(const unsigned int id,
+                  const double       radius,
+                  const Point<dim>  &position,
+                  const double       layer_thickening = 0.)
+{
+  IBParticle<dim> particle = make_ib_sphere<dim>(id, radius, position);
+  particle.initialize_shape("ellipsoid", std::vector<double>(dim, radius));
+  particle.set_layer_thickening(layer_thickening);
+  particle.radius = particle.shape->effective_radius;
+  particle.set_position(position);
+  particle.set_orientation(particle.orientation);
+  particle.initialize_previous_solution();
+  return particle;
+}
+
+/**
  * @brief Build the parameters of the IB particles used by IBParticlesDEM.
  *
  * @param[in] gravity Expression of the gravity function, one component per
@@ -131,6 +159,30 @@ get_pair_direction()
       direction[2] = 2. / 3.;
     }
   return direction;
+}
+
+/**
+ * @brief Get a unit vector normal to get_pair_direction().
+ *
+ * @return The unit vector.
+ */
+template <int dim>
+Tensor<1, dim>
+get_pair_tangent()
+{
+  Tensor<1, dim> tangent;
+  if constexpr (dim == 2)
+    {
+      tangent[0] = -0.8;
+      tangent[1] = 0.6;
+    }
+  else
+    {
+      tangent[0] = 2. / 3.;
+      tangent[1] = -2. / 3.;
+      tangent[2] = -1. / 3.;
+    }
+  return tangent;
 }
 
 /**
