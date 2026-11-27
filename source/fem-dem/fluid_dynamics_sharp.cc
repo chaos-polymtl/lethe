@@ -2207,7 +2207,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
     dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
   double h_max =
     dr * this->simulation_parameters.particlesParameters->lubrication_range_max;
-  // Deactivated the lubrication force if the fluid is Non-newtonian.
+  // Deactivate the lubrication force if it is not enabled.
   if (this->simulation_parameters.particlesParameters
         ->enable_lubrication_force == false)
     h_max = 0;

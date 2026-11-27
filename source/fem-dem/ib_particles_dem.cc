@@ -425,16 +425,11 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
             {
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
-              Tensor<1, 3>     radial_vector;
-              double           radial_velocity;
-              Tensor<1, 3>     f_lub;
 
               // Calculation of normal overlap
               double gap =
                 particle_one_location.distance(particle_two_location) -
                 (particle_one.radius + particle_two.radius);
-              radial_vector =
-                tensor_nd_to_3d(particle_one.position - particle_two.position);
               if (gap > 0 and gap < h_max)
                 // This means that the adjacent particles are very close but
                 // not in contact
@@ -445,25 +440,29 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                       gap = h_min;
                     }
 
-                  // Evaluate the force
-                  radial_velocity =
-                    scalar_product(-radial_vector, particle_one.velocity) +
-                    scalar_product(radial_vector, particle_two.velocity);
-                  f_lub =
-                    3. / 2. * PI * mu *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) /
-                      gap * radial_velocity * radial_vector /
-                      radial_vector.norm() -
-                    3. / 2. * PI * mu *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) *
-                      (particle_one.radius * 2 * particle_two.radius * 2 /
-                       (particle_one.radius * 2 + particle_two.radius * 2)) /
-                      h_max * radial_velocity * radial_vector /
-                      radial_vector.norm();
+                  // Unit vector from particle two to particle one. Its norm
+                  // is not zero since the gap is positive. The radial
+                  // velocity is positive when the particles approach each
+                  // other.
+                  const Tensor<1, 3> radial_vector = tensor_nd_to_3d(
+                    particle_one.position - particle_two.position);
+                  const Tensor<1, 3> unit_radial_vector =
+                    radial_vector / radial_vector.norm();
+                  const double radial_velocity =
+                    scalar_product(unit_radial_vector,
+                                   particle_two.velocity -
+                                     particle_one.velocity);
+
+                  // Evaluate the force. The 1/h_max term makes the force
+                  // vanish at the end of the lubrication range.
+                  const double diameter_one = 2. * particle_one.radius;
+                  const double diameter_two = 2. * particle_two.radius;
+                  const double effective_diameter =
+                    diameter_one * diameter_two / (diameter_one + diameter_two);
+                  const Tensor<1, 3> f_lub =
+                    1.5 * PI * mu * effective_diameter * effective_diameter *
+                    (1. / gap - 1. / h_max) * radial_velocity *
+                    unit_radial_vector;
 
                   // A particle can be close to several others: the force of
                   // each pair is added to the force of both particles.
@@ -1006,11 +1005,6 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
 
               double gap = (projected_vector.norm()) - particle.radius;
 
-              Tensor<1, 3> radial_vector;
-              double       radial_velocity;
-              Tensor<1, 3> f_lub;
-
-              radial_vector = projected_vector;
               if (gap > 0 and gap < h_max)
                 // This means that the particles is very close to the wall
                 // but not in contact
@@ -1020,16 +1014,26 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                     {
                       gap = h_min;
                     }
-                  // Evaluate the force
-                  radial_velocity =
-                    scalar_product(-radial_vector,
-                                   particle.velocity - wall_velocity_at_point);
-                  f_lub = 3. / 2. * PI * mu * (particle.radius) *
-                            (particle.radius) / gap * radial_velocity *
-                            radial_vector / radial_vector.norm() -
-                          3. / 2. * PI * mu * (particle.radius) *
-                            (particle.radius) / h_max * radial_velocity *
-                            radial_vector / radial_vector.norm();
+
+                  // Unit vector from the wall to the particle. Its norm is
+                  // not zero since the gap is positive. The radial velocity
+                  // is positive when the particle approaches the wall.
+                  const Tensor<1, 3> unit_radial_vector =
+                    projected_vector / projected_vector.norm();
+                  const double radial_velocity =
+                    scalar_product(unit_radial_vector,
+                                   wall_velocity_at_point - particle.velocity);
+
+                  // Evaluate the force. The wall is a particle of infinite
+                  // diameter, so the effective diameter is the diameter of
+                  // the particle and the force is 6 pi mu R^2 U / h. The
+                  // 1/h_max term makes the force vanish at the end of the
+                  // lubrication range.
+                  const double       effective_diameter = 2. * particle.radius;
+                  const Tensor<1, 3> f_lub =
+                    1.5 * PI * mu * effective_diameter * effective_diameter *
+                    (1. / gap - 1. / h_max) * radial_velocity *
+                    unit_radial_vector;
 
                   // A particle can be close to several walls: the force of
                   // each wall is added.

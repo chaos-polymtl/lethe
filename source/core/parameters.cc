@@ -4630,12 +4630,12 @@ namespace Parameters
         prm.declare_entry(
           "lubrication range max",
           Patterns::Tools::Convert<double>::to_string(lubrication_range_max),
-          Patterns::Double(),
+          Patterns::Double(0.),
           "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
         prm.declare_entry(
           "lubrication range min",
           Patterns::Tools::Convert<double>::to_string(lubrication_range_min),
-          Patterns::Double(),
+          Patterns::Double(0.),
           "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
 
         prm.declare_entry(
@@ -4790,6 +4790,18 @@ namespace Parameters
         enable_lubrication_force = prm.get_bool("enable lubrication force");
         lubrication_range_max    = prm.get_double("lubrication range max");
         lubrication_range_min    = prm.get_double("lubrication range min");
+        // Above the maximum of the range, the force would accelerate the
+        // approach of the particles. A maximum of zero disables the force.
+        AssertThrow(
+          !enable_lubrication_force ||
+            lubrication_range_min <= lubrication_range_max,
+          ExcMessage(
+            "The 'lubrication range min' (" +
+            Utilities::to_string(lubrication_range_min) +
+            ") is larger than the 'lubrication range max' (" +
+            Utilities::to_string(lubrication_range_max) +
+            "). Decrease the minimum, increase the maximum, or set 'enable "
+            "lubrication force' to false."));
         explicit_contact_impulsion_calculation =
           prm.get_bool("explicit contact impulsion");
         explicit_position_integration_calculation =

@@ -1,0 +1,21 @@
+
+DEAL::Dimension 2
+DEAL::Particle-particle lubrication force matches the closed form: true
+DEAL::Particle-particle lubrication forces are opposite: true
+DEAL::Particle-wall lubrication force matches the closed form: true
+DEAL::Particle-particle gap is limited to h_min: true
+DEAL::Particle-wall gap is limited to h_min: true
+DEAL::Particle-particle force is zero beyond h_max: true
+DEAL::Particle-wall force is zero beyond h_max: true
+DEAL::Particle-wall force accounts for the velocity of the wall: true
+DEAL::Inverted lubrication range is rejected: true
+DEAL::Dimension 3
+DEAL::Particle-particle lubrication force matches the closed form: true
+DEAL::Particle-particle lubrication forces are opposite: true
+DEAL::Particle-wall lubrication force matches the closed form: true
+DEAL::Particle-particle gap is limited to h_min: true
+DEAL::Particle-wall gap is limited to h_min: true
+DEAL::Particle-particle force is zero beyond h_max: true
+DEAL::Particle-wall force is zero beyond h_max: true
+DEAL::Particle-wall force accounts for the velocity of the wall: true
+DEAL::Inverted lubrication range is rejected: true
