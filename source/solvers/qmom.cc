@@ -322,9 +322,10 @@ QMOM<dim>::postprocess(bool first_iteration)
       error_table.add_value("time", simulation_control->get_current_time());
       for (unsigned int component = 0; component < n_components; ++component)
         {
-          error_table.add_value("error_" + component_names[component],
+          error_table.add_value("relative_error_" + component_names[component],
                                 errors[component]);
-          error_table.set_scientific("error_" + component_names[component],
+          error_table.set_scientific("relative_error_" +
+                                       component_names[component],
                                      true);
         }
 
@@ -342,8 +343,8 @@ QMOM<dim>::postprocess(bool first_iteration)
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         for (unsigned int component = 0; component < n_components; ++component)
-          this->pcout << "L2 error " << component_names[component] << ": "
-                      << errors[component] << std::endl;
+          this->pcout << "Relative L2 error " << component_names[component]
+                      << ": " << errors[component] << std::endl;
     }
 }
 
@@ -1370,6 +1371,7 @@ QMOM<dim>::calculate_L2_errors()
                                           std::vector<double>(n_q_points));
   Vector<double>                   exact_values(n_components);
   std::vector<double>              squared_errors(n_components, 0.);
+  std::vector<double>              squared_exact_norms(n_components, 0.);
 
   for (const auto &cell : dof_handler->active_cell_iterators())
     {
@@ -1387,19 +1389,35 @@ QMOM<dim>::calculate_L2_errors()
                                             exact_values);
           for (unsigned int component = 0; component < n_components;
                ++component)
-            squared_errors[component] +=
-              Utilities::fixed_power<2>(values[component][q] -
-                                        exact_values[component]) *
-              fe_values.JxW(q);
+            {
+              squared_errors[component] +=
+                Utilities::fixed_power<2>(values[component][q] -
+                                          exact_values[component]) *
+                fe_values.JxW(q);
+              squared_exact_norms[component] +=
+                Utilities::fixed_power<2>(exact_values[component]) *
+                fe_values.JxW(q);
+            }
         }
     }
 
-  std::vector<double> errors(n_components);
+  std::vector<double> global_squared_errors(n_components);
+  std::vector<double> global_squared_exact_norms(n_components);
   Utilities::MPI::sum(squared_errors,
                       triangulation->get_mpi_communicator(),
-                      errors);
-  for (double &error : errors)
-    error = std::sqrt(error);
+                      global_squared_errors);
+  Utilities::MPI::sum(squared_exact_norms,
+                      triangulation->get_mpi_communicator(),
+                      global_squared_exact_norms);
+
+  // The moments differ by orders of magnitude: each error is relative to the
+  // norm of its analytical solution, unless that solution vanishes
+  std::vector<double> errors(n_components);
+  for (unsigned int component = 0; component < n_components; ++component)
+    errors[component] = global_squared_exact_norms[component] > 0. ?
+                          std::sqrt(global_squared_errors[component] /
+                                    global_squared_exact_norms[component]) :
+                          std::sqrt(global_squared_errors[component]);
   return errors;
 }
 

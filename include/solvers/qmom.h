@@ -461,9 +461,11 @@ private:
 
   /**
    * @brief Compute the L2 error of every component with respect to the
-   * analytical solution at the current time.
+   * analytical solution at the current time, relative to the L2 norm of that
+   * solution. The error of a component whose analytical solution vanishes is
+   * absolute.
    *
-   * @return L2 errors, ordered as the components.
+   * @return Relative L2 errors, ordered as the components.
    */
   std::vector<double>
   calculate_L2_errors();
@@ -554,7 +556,8 @@ private:
   /// components, for mesh adaptation and checkpointing
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
-  /// L2 errors of the components with respect to the analytical solution
+  /// Relative L2 errors of the components with respect to the analytical
+  /// solution
   ConvergenceTable error_table;
 };
 

@@ -59,7 +59,7 @@ Analytical solutions for all physics are supported. They are all declared in the
 * ``uvwp``: Analytical solution for the velocity and pressure fields obtained from fluid dynamics. The expression must provide :math:`u`, :math:`v` and :math:`p` for a 2D simulation and :math:`u`, :math:`v`, :math:`w` and :math:`p` for a 3D simulation.
 * ``temperature``: Analytical solution for temperature obtained with the heat transfer physics.
 * ``tracer``: Analytical solution for the tracer physics.
-* ``QMOM``: Analytical solution for the scalars and the particle size distribution of the quadrature method of moments. The format of this subsection is described in :doc:`qmom`.
+* ``QMOM``: Analytical solution for the scalars and the particle size distribution of the quadrature method of moments. The format of this subsection is described in :doc:`qmom`. Since the moments differ by orders of magnitude, the :math:`L^2` error of each field is divided by the :math:`L^2` norm of its analytical solution, unless that solution is zero.
 * ``CLS``: Analytical solution for the CLS field.
 * ``cahn hilliard``: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.
 * ``electromagnetics``: Analytical solution for the electric and magnetic fields obtained with the time-harmonic Maxwell physics. The expression must provide :math:`E_x`, :math:`E_y`, :math:`E_z`, :math:`H_x`, :math:`H_y` and :math:`H_z` for a 3D simulation. Each component of the electric and magnetic fields must be provided as a real and imaginary part (e.g. :math:`\Re(E_x)`, :math:`\Re(E_y)`, :math:`\Re(E_z)` and then :math:`\Im(E_x)`, :math:`\Im(E_y)`, :math:`\Im(E_z)`).
