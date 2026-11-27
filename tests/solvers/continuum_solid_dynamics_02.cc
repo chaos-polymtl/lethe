@@ -65,6 +65,7 @@ print_value_at_point(const std::string          &label,
   deallog << label << ":";
   for (const double value : values)
     deallog << " " << value;
+  deallog << std::endl;
 }
 
 template <int dim>
