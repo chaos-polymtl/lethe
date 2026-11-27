@@ -2109,71 +2109,12 @@ template class PhaseChangeCarmanKozenyAssembler<3>;
 template <int dim>
 void
 PressureBoundaryCondition<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim>   &scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &copy_data)
+  [[maybe_unused]] const NavierStokesScratchData<dim>   &scratch_data,
+  [[maybe_unused]] StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  if (!scratch_data.is_boundary_cell)
-    return;
-
-  // Scheme and physical properties
-  // To generalize for dependent viscosity
-  const double kinematic_viscosity = scratch_data.kinematic_viscosity_scale;
-
-  // Loop and quadrature information
-  Tensor<2, dim> identity;
-  for (int d = 0; d < dim; ++d)
-    {
-      identity[d][d] = 1;
-    }
-
-  std::vector<std::vector<std::vector<Tensor<1, dim>>>> gn_j;
-  gn_j = std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-    scratch_data.n_faces,
-    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces_q_points,
-                                             std::vector<Tensor<1, dim>>(
-                                               scratch_data.n_dofs)));
-
-  auto &local_matrix = copy_data.local_matrix;
-
-  // Loop over the faces of the cell.
-  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
-    {
-      // Check if the face is on a boundary
-      if (scratch_data.is_boundary_face[f])
-        {
-          types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
-          // Check if the face is part of the boundary that as a
-          // pressure BC.
-          if (this->pressure_boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::FluidDynamicsBoundaryType::pressure)
-            {
-              // Assemble the matrix of the BC
-              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
-                {
-                  const double JxW = scratch_data.face_JxW[f][q];
-                  for (const unsigned int j :
-                       scratch_data.fe_face_values.dof_indices())
-                    {
-                      gn_j[f][q][j] =
-                        (-kinematic_viscosity *
-                         (scratch_data.face_grad_phi_u[f][q][j])) *
-                        scratch_data.face_normal[f][q];
-                    }
-                  for (const unsigned int i :
-                       scratch_data.fe_face_values.dof_indices())
-                    {
-                      for (const unsigned int j :
-                           scratch_data.fe_face_values.dof_indices())
-                        {
-                          local_matrix[i][j] +=
-                            -scratch_data.face_phi_u[f][q][i] * gn_j[f][q][j] *
-                            JxW;
-                        }
-                    }
-                }
-            }
-        }
-    }
+  // The pressure boundary condition only adds the prescribed traction
+  // -p_bc n to the right-hand side (see assemble_rhs). Since it does not
+  // depend on the solution, it has no contribution to the Jacobian.
 }
 
 template <int dim>
@@ -2185,15 +2126,6 @@ PressureBoundaryCondition<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  // Scheme and physical properties
-  const double kinematic_viscosity = scratch_data.kinematic_viscosity_scale;
-
-  // Loop and quadrature information
-  Tensor<2, dim> identity;
-  for (int d = 0; d < dim; ++d)
-    {
-      identity[d][d] = 1;
-    }
   std::vector<std::vector<double>> prescribed_pressure_values;
   prescribed_pressure_values = std::vector<std::vector<double>>(
     scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
@@ -2233,11 +2165,8 @@ PressureBoundaryCondition<dim>::assemble_rhs(
                   prescribed_pressure_values[f][q] =
                     function_p.value(scratch_data.face_quadrature_points[f][q],
                                      dim);
-                  gn_bc[f][q] =
-                    (-prescribed_pressure_values[f][q] * identity -
-                     kinematic_viscosity *
-                       (scratch_data.face_velocity_gradients[f][q])) *
-                    scratch_data.face_normal[f][q];
+                  gn_bc[f][q] = -prescribed_pressure_values[f][q] *
+                                scratch_data.face_normal[f][q];
                   for (const unsigned int i :
                        scratch_data.fe_face_values.dof_indices())
                     {
