@@ -971,10 +971,10 @@ namespace Parameters
     unsigned int number_of_moments = 4;
 
     /// Number of nodes of the quadrature that uses all the transported
-    /// moments. N nodes are defined by 2N moments, so an odd number of moments
-    /// requires one more node. It is computed from number_of_moments when the
-    /// parameters are parsed.
-    unsigned int number_of_nodes = (number_of_moments + 1) / 2;
+    /// moments. N nodes are defined by 2N moments, so number_of_moments must be
+    /// even. It is computed from number_of_moments when the parameters are
+    /// parsed.
+    unsigned int number_of_nodes = number_of_moments / 2;
 
     /// Operator splitting scheme between the physical-space transport and
     /// the phase-space evolution

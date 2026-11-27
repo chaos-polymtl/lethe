@@ -52,6 +52,13 @@ DeclException1(
   << std::endl
   << "Scalar names may only contain letters, digits and underscores.");
 
+DeclException1(
+  QMOMOddNumberOfMomentsError,
+  unsigned int,
+  << "The \"number of moments\" of the QMOM subsection is " << arg1
+  << ", but it must be even: a quadrature of N nodes is built from 2N "
+  << "moments.");
+
 DeclException2(QMOMProcessConflictError,
                std::string,
                std::string,
@@ -1047,9 +1054,9 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
     prm.declare_entry("number of moments",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.number_of_moments),
-                      Patterns::Integer(1),
-                      "Number of transported moments. The quadrature has "
-                      "half as many nodes, rounded up.");
+                      Patterns::Integer(2),
+                      "Number of transported moments, which must be even. "
+                      "The quadrature has half as many nodes.");
 
     declare_enum_entry(prm,
                        "splitting scheme",
@@ -1129,7 +1136,9 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
         scalar_names      = process_scalar_names;
         number_of_moments = process_number_of_moments;
       }
-    number_of_nodes = (number_of_moments + 1) / 2;
+    AssertThrow(number_of_moments % 2 == 0,
+                QMOMOddNumberOfMomentsError(number_of_moments));
+    number_of_nodes = number_of_moments / 2;
 
     if (scalar_names.empty())
       for (unsigned int i_scalar = 0; i_scalar < number_of_scalars; ++i_scalar)

@@ -121,7 +121,7 @@ General
 
 * ``scalar names``: comma-separated list of scalars names, used for the output files (e.g. ``set scalar names = ethanol_concentration, free_lipids_concentration``). The names may only contain letters, digits and underscores. The default value is empty, in which case the scalars are named ``scalar_0``, ``scalar_1``, etc.
 
-* ``number of moments``: number :math:`K` of transported moments. The quadrature has :math:`N = \lceil K/2 \rceil` nodes. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
+* ``number of moments``: number :math:`K` of transported moments, which must be even. The quadrature has :math:`N = K/2` nodes. The default value, 4, gives a 2-node quadrature, the smallest one that represents a polydisperse distribution.
 
 * ``splitting scheme``: splitting of the physical-space transport :math:`T` and of the phase-space evolution :math:`P` over a time step :math:`\Delta t`. The choices are:
 
