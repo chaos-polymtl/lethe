@@ -10,3 +10,4 @@ Multiphysics
     heat_transfer/heat_transfer
     passive_tracer/passive_tracer
     electromagnetism/electromagnetism
+    qmom/qmom

@@ -1,0 +1,62 @@
+
+DEAL::Constant growth, a = 2, t = 0.00000
+DEAL::  xi = 0.500000: G = 2.00000
+DEAL::  xi = 1.50000: G = 2.00000
+DEAL::  xi = 3.00000: G = 2.00000
+DEAL::  matches the exact formula: true
+DEAL::Linear growth, a = 0.5, t = 0.00000
+DEAL::  xi = 0.500000: G = 0.250000
+DEAL::  xi = 1.50000: G = 0.750000
+DEAL::  xi = 3.00000: G = 1.50000
+DEAL::  matches the exact formula: true
+DEAL::Function growth, G = 0.5 xi + t, t = 2.00000
+DEAL::  xi = 0.500000: G = 2.25000
+DEAL::  xi = 1.50000: G = 2.75000
+DEAL::  xi = 3.00000: G = 3.50000
+DEAL::  matches the exact formula: true
+DEAL::Constant nucleation, J = 3
+DEAL::  dM_0/dt = 3.00000
+DEAL::  dM_1/dt = 6.00000
+DEAL::  dM_2/dt = 12.7500
+DEAL::  dM_3/dt = 28.7871
+DEAL::  matches the exact formula: true
+DEAL::Function nucleation, J = 3 (1 + t), t = 0.5
+DEAL::  dM_0/dt = 4.50000
+DEAL::  dM_1/dt = 9.00000
+DEAL::  dM_2/dt = 19.1250
+DEAL::  dM_3/dt = 43.1807
+DEAL::  matches the exact formula: true
+DEAL::QMOMSourceTerms, nucleation disabled, nucleation_is_enabled() = false
+DEAL::  dM_0/dt = 0.00000
+DEAL::  dM_1/dt = 0.00000
+DEAL::  dM_2/dt = 0.00000
+DEAL::  dM_3/dt = 0.00000
+DEAL::  matches the exact formula: true
+DEAL::QMOMSourceTerms, constant nucleation J = 3, nucleation_is_enabled() = true
+DEAL::  dM_0/dt = 3.00000
+DEAL::  dM_1/dt = 6.00000
+DEAL::  dM_2/dt = 12.7500
+DEAL::  dM_3/dt = 28.7871
+DEAL::  matches the exact formula: true
+DEAL::Constant kernel, beta = 3, single node
+DEAL::  dM_0/dt = -6.00000
+DEAL::  dM_1/dt = -4.44047
+DEAL::  dM_2/dt = -2.47559
+DEAL::  dM_3/dt = 0.00000
+DEAL::  matches the exact formula: true
+DEAL::Function kernel, beta = (xi_1 + xi_2) t, t = 1.5, single node
+DEAL::  dM_0/dt = -6.00000
+DEAL::  dM_1/dt = -4.44047
+DEAL::  dM_2/dt = -2.47559
+DEAL::  dM_3/dt = 0.00000
+DEAL::  matches the exact formula: true
+DEAL::Constant kernel, beta = 3, with a second node of size zero
+DEAL::  dM_0/dt = -6.00000
+DEAL::  dM_1/dt = -4.44047
+DEAL::  dM_2/dt = -2.47559
+DEAL::  dM_3/dt = 0.00000
+DEAL::  matches the exact formula: true
+DEAL::Constant kernel, beta = 3, three nodes
+DEAL::  dM_0/dt = -1.50000, -beta M_0^2 / 2 = -1.50000
+DEAL::  M_3 is conserved: true
+DEAL::  function kernel beta = 3 gives the same rates: true

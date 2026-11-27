@@ -52,6 +52,13 @@ DeclException1(
   << std::endl
   << "Scalar names may only contain letters, digits and underscores.");
 
+DeclException1(
+  QMOMOddNumberOfMomentsError,
+  unsigned int,
+  << "The \"number of moments\" of the QMOM subsection is " << arg1
+  << ", but it must be even: a quadrature of N nodes is built from 2N "
+  << "moments.");
+
 DeclException2(QMOMProcessConflictError,
                std::string,
                std::string,
@@ -830,6 +837,22 @@ Parameters::QMOMPhaseEvolution::declare_parameters(ParameterHandler &prm) const
                         defaults.enable_adaptive_node_count),
                       Patterns::Bool(),
                       "Enable adaptive quadrature node count <true|false>");
+
+    prm.declare_entry("relative tolerance",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.relative_tolerance),
+                      Patterns::Double(0.),
+                      "Relative tolerance of the adaptive Runge-Kutta "
+                      "integration of the trajectories of the quadrature "
+                      "nodes in phase space");
+
+    prm.declare_entry("absolute tolerance",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.absolute_tolerance),
+                      Patterns::Double(0.),
+                      "Absolute tolerance, in the unit of the positions of the "
+                      "quadrature nodes, of the adaptive Runge-Kutta "
+                      "integration of their trajectories in phase space");
   }
   prm.leave_subsection();
 }
@@ -840,6 +863,164 @@ Parameters::QMOMPhaseEvolution::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("phase evolution");
   {
     enable_adaptive_node_count = prm.get_bool("enable adaptive node count");
+    relative_tolerance         = prm.get_double("relative tolerance");
+    absolute_tolerance         = prm.get_double("absolute tolerance");
+    AssertThrow(relative_tolerance > 0. && absolute_tolerance > 0.,
+                ExcMessage("The \"relative tolerance\" (" +
+                           Utilities::to_string(relative_tolerance) +
+                           ") and the \"absolute tolerance\" (" +
+                           Utilities::to_string(absolute_tolerance) +
+                           ") of the \"phase evolution\" subsection of the "
+                           "QMOM subsection must be strictly positive."));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMGrowth::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMGrowth defaults;
+  prm.enter_subsection("growth");
+  {
+    declare_enum_entry(prm,
+                       "model",
+                       defaults.model,
+                       "Model of the growth rate G of the particle size xi: "
+                       "constant (G = a), linear (G = a xi) or function (G "
+                       "given by an expression of xi and t)");
+
+    prm.declare_entry("growth coefficient",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.growth_coefficient),
+                      Patterns::Double(),
+                      "Coefficient a of the constant (in m/s) and linear (in "
+                      "1/s) growth models");
+
+    prm.declare_entry("Function expression",
+                      defaults.function_expression,
+                      Patterns::Anything(),
+                      "Growth rate G, in m/s, of the function model, as an "
+                      "expression of the particle size xi, in m, and of the "
+                      "time t, in s");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMGrowth::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("growth");
+  {
+    model               = string_to_enum<QMOMGrowthModel>(prm.get("model"));
+    growth_coefficient  = prm.get_double("growth coefficient");
+    function_expression = prm.get("Function expression");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMNucleation::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMNucleation defaults;
+  prm.enter_subsection("nucleation");
+  {
+    declare_enum_entry(prm,
+                       "model",
+                       defaults.model,
+                       "Model of the nucleation rate J: constant (J = a) or "
+                       "function (J given by an expression of t)");
+
+    prm.declare_entry("nucleation coefficient",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nucleation_coefficient),
+                      Patterns::Double(0.),
+                      "Coefficient a, in 1/(m^3 s), of the constant "
+                      "nucleation model");
+
+    prm.declare_entry("Function expression",
+                      defaults.function_expression,
+                      Patterns::Anything(),
+                      "Nucleation rate J, in 1/(m^3 s), of the function model, "
+                      "as an expression of the time t, in s");
+
+    prm.declare_entry("nuclei mean size",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nuclei_mean_size),
+                      Patterns::Double(0.),
+                      "Mean size, in m, of the log-normal distribution of the "
+                      "sizes of the nuclei");
+
+    prm.declare_entry("nuclei standard deviation",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nuclei_standard_deviation),
+                      Patterns::Double(0.),
+                      "Standard deviation, in m, of the log-normal "
+                      "distribution of the sizes of the nuclei");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMNucleation::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("nucleation");
+  {
+    model = string_to_enum<QMOMNucleationModel>(prm.get("model"));
+    nucleation_coefficient    = prm.get_double("nucleation coefficient");
+    function_expression       = prm.get("Function expression");
+    nuclei_mean_size          = prm.get_double("nuclei mean size");
+    nuclei_standard_deviation = prm.get_double("nuclei standard deviation");
+    // A zero standard deviation would create nuclei of a single size, whose
+    // moments can only be inverted into a single quadrature node
+    AssertThrow(nuclei_mean_size > 0. && nuclei_standard_deviation > 0.,
+                ExcMessage("The \"nuclei mean size\" (" +
+                           Utilities::to_string(nuclei_mean_size) +
+                           ") and the \"nuclei standard deviation\" (" +
+                           Utilities::to_string(nuclei_standard_deviation) +
+                           ") of the \"nucleation\" subsection of the QMOM "
+                           "subsection must be strictly positive."));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMCoalescence::declare_parameters(ParameterHandler &prm) const
+{
+  const QMOMCoalescence defaults;
+  prm.enter_subsection("coalescence");
+  {
+    declare_enum_entry(prm,
+                       "model",
+                       defaults.model,
+                       "Model of the coalescence kernel beta: constant (beta = "
+                       "a) or function (beta given by an expression of xi_1, "
+                       "xi_2 and t)");
+
+    prm.declare_entry("coalescence coefficient",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.coalescence_coefficient),
+                      Patterns::Double(0.),
+                      "Coefficient a, in m^3/s, of the constant coalescence "
+                      "model");
+
+    prm.declare_entry("Function expression",
+                      defaults.function_expression,
+                      Patterns::Anything(),
+                      "Coalescence kernel beta, in m^3/s, of the function "
+                      "model, as an expression of the sizes xi_1 and xi_2, in "
+                      "m, of the two particles and of the time t, in s");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::QMOMCoalescence::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("coalescence");
+  {
+    model = string_to_enum<QMOMCoalescenceModel>(prm.get("model"));
+    coalescence_coefficient = prm.get_double("coalescence coefficient");
+    function_expression     = prm.get("Function expression");
   }
   prm.leave_subsection();
 }
@@ -873,9 +1054,9 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
     prm.declare_entry("number of moments",
                       Patterns::Tools::Convert<unsigned int>::to_string(
                         defaults.number_of_moments),
-                      Patterns::Integer(1),
-                      "Number of transported moments. The quadrature has "
-                      "half as many nodes, rounded up.");
+                      Patterns::Integer(2),
+                      "Number of transported moments, which must be even. "
+                      "The quadrature has half as many nodes.");
 
     declare_enum_entry(prm,
                        "splitting scheme",
@@ -901,6 +1082,9 @@ Parameters::QMOM::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Include the growth source <true|false>");
 
+    growth.declare_parameters(prm);
+    nucleation.declare_parameters(prm);
+    coalescence.declare_parameters(prm);
     phase_evolution.declare_parameters(prm);
     lipid_nanoparticle_production.declare_parameters(prm);
     physical_constants.declare_parameters(prm);
@@ -928,8 +1112,10 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
         case QMOMProcess::generic:
           break;
         case QMOMProcess::lipid_nanoparticle_production:
-          process_scalar_names      = {"ethanol_concentration",
-                                       "free_lipids_concentration"};
+          // The scalars are named and ordered after the enumerators
+          for (const std::string_view name :
+               magic_enum::enum_names<QMOMLipidNanoparticleScalar>())
+            process_scalar_names.emplace_back(name);
           process_number_of_moments = 8; // 4-node quadrature
           break;
       }
@@ -952,7 +1138,9 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
         scalar_names      = process_scalar_names;
         number_of_moments = process_number_of_moments;
       }
-    number_of_nodes = (number_of_moments + 1) / 2;
+    AssertThrow(number_of_moments % 2 == 0,
+                QMOMOddNumberOfMomentsError(number_of_moments));
+    number_of_nodes = number_of_moments / 2;
 
     if (scalar_names.empty())
       for (unsigned int i_scalar = 0; i_scalar < number_of_scalars; ++i_scalar)
@@ -971,6 +1159,9 @@ Parameters::QMOM::parse_parameters(ParameterHandler &prm)
     enable_coalescence = prm.get_bool("enable coalescence");
     enable_growth      = prm.get_bool("enable growth");
 
+    growth.parse_parameters(prm);
+    nucleation.parse_parameters(prm);
+    coalescence.parse_parameters(prm);
     phase_evolution.parse_parameters(prm);
     lipid_nanoparticle_production.parse_parameters(prm);
     physical_constants.parse_parameters(prm);
@@ -990,31 +1181,6 @@ Parameters::QMOMLipidNanoparticleProduction::declare_parameters(
                         defaults.operating_temperature),
                       Patterns::Double(0.),
                       "Operating temperature [K]");
-
-    prm.declare_entry(
-      "flow rate ratio",
-      Patterns::Tools::Convert<double>::to_string(defaults.flow_rate_ratio),
-      Patterns::Double(0.),
-      "Ratio of the aqueous phase flow rate to the organic phase flow rate [-]");
-
-    prm.declare_entry(
-      "total flow rate",
-      Patterns::Tools::Convert<double>::to_string(defaults.total_flow_rate),
-      Patterns::Double(0.),
-      "Total flow rate of the aqueous and organic phases [m^3/s]");
-
-    prm.declare_entry(
-      "mixing time scale",
-      Patterns::Tools::Convert<double>::to_string(defaults.mixing_time_scale),
-      Patterns::Double(0.),
-      "Mixing time scale of the aqueous and organic phases [s]");
-
-    prm.declare_entry(
-      "initial concentration organic",
-      Patterns::Tools::Convert<double>::to_string(
-        defaults.initial_concentration_organic),
-      Patterns::Double(0.),
-      "Initial lipid concentration in the organic phase [mol/m^3]");
 
     prm.declare_entry("ion concentration mixture",
                       Patterns::Tools::Convert<double>::to_string(
@@ -1083,6 +1249,67 @@ Parameters::QMOMLipidNanoparticleProduction::declare_parameters(
       Patterns::Tools::Convert<double>::to_string(defaults.shape_factor),
       Patterns::Double(0.),
       "Volume shape factor of the particles, pi/6 for spheres [-]");
+
+    prm.declare_entry("lipid molecular volume",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.lipid_molecular_volume),
+                      Patterns::Double(0.),
+                      "Molecular volume of the lipid [m^3]");
+
+    prm.declare_entry("lipid molar mass",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.lipid_molar_mass),
+                      Patterns::Double(0.),
+                      "Molar mass of the lipid [kg/mol]");
+
+    prm.declare_entry("lipid density",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.lipid_density),
+                      Patterns::Double(0.),
+                      "Density of the lipid in the particles [kg/m^3]");
+
+    prm.declare_entry(
+      "nucleation factor",
+      Patterns::Tools::Convert<double>::to_string(defaults.nucleation_factor),
+      Patterns::Double(0.),
+      "Pre-exponential factor of the nucleation rate [1/(m^3 s)]");
+
+    prm.declare_entry(
+      "surface tension",
+      Patterns::Tools::Convert<double>::to_string(defaults.surface_tension),
+      Patterns::Double(0.),
+      "Surface tension (interfacial energy) of the particles [N/m]");
+
+    prm.declare_entry("nuclei standard deviation",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.nuclei_standard_deviation),
+                      Patterns::Double(0.),
+                      "Standard deviation of the size of the nuclei [m]");
+
+    prm.declare_entry("growth factor",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.growth_factor),
+                      Patterns::Double(0.),
+                      "Kinetic coefficient of the growth rate [m^3/(kg s)]");
+
+    prm.declare_entry("peg factor",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.peg_factor),
+                      Patterns::Double(0., 1.),
+                      "Steric hindrance factor of the PEG lipids, the maximum "
+                      "attachment efficiency of the coalescence [-]");
+
+    prm.declare_entry("surface potential",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.surface_potential),
+                      Patterns::Double(),
+                      "Surface potential of the particles [V]");
+
+    prm.declare_entry("hamaker constant",
+                      Patterns::Tools::Convert<double>::to_string(
+                        defaults.hamaker_constant),
+                      Patterns::Double(0.),
+                      "Hamaker constant of the particles in the mixture [J]");
   }
   prm.leave_subsection();
 }
@@ -1093,12 +1320,7 @@ Parameters::QMOMLipidNanoparticleProduction::parse_parameters(
 {
   prm.enter_subsection("lipid nanoparticle production");
   {
-    operating_temperature = prm.get_double("operating temperature");
-    flow_rate_ratio       = prm.get_double("flow rate ratio");
-    total_flow_rate       = prm.get_double("total flow rate");
-    mixing_time_scale     = prm.get_double("mixing time scale");
-    initial_concentration_organic =
-      prm.get_double("initial concentration organic");
+    operating_temperature     = prm.get_double("operating temperature");
     ion_concentration_mixture = prm.get_double("ion concentration mixture");
     density_aqueous           = prm.get_double("density aqueous");
     molar_mass_aqueous        = prm.get_double("molar mass aqueous");
@@ -1109,9 +1331,19 @@ Parameters::QMOMLipidNanoparticleProduction::parse_parameters(
     molar_mass_organic   = prm.get_double("molar mass organic");
     mole_fraction_solubility_organic =
       prm.get_double("mole fraction solubility organic");
-    permittivity_organic = prm.get_double("permittivity organic");
-    viscosity_mixture    = prm.get_double("viscosity mixture");
-    shape_factor         = prm.get_double("shape factor");
+    permittivity_organic      = prm.get_double("permittivity organic");
+    viscosity_mixture         = prm.get_double("viscosity mixture");
+    shape_factor              = prm.get_double("shape factor");
+    lipid_molecular_volume    = prm.get_double("lipid molecular volume");
+    lipid_molar_mass          = prm.get_double("lipid molar mass");
+    lipid_density             = prm.get_double("lipid density");
+    nucleation_factor         = prm.get_double("nucleation factor");
+    surface_tension           = prm.get_double("surface tension");
+    nuclei_standard_deviation = prm.get_double("nuclei standard deviation");
+    growth_factor             = prm.get_double("growth factor");
+    peg_factor                = prm.get_double("peg factor");
+    surface_potential         = prm.get_double("surface potential");
+    hamaker_constant          = prm.get_double("hamaker constant");
   }
   prm.leave_subsection();
 }

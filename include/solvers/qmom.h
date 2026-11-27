@@ -4,8 +4,9 @@
 /**
  * @file qmom.h
  * @brief Auxiliary physics for the transport of a particle size distribution
- * with the quadrature method of moments (QMOM), coupled to the QMOMKit
- * library.
+ * with the quadrature method of moments (QMOM).
+ *
+ * The evolution in phase space is computed by the QMOMKit library.
  *
  * The unknowns are user-defined scalars and the moments of the particle
  * size distribution, called the components of the QMOM physics. All the
@@ -16,14 +17,33 @@
  * preconditioned once per time step, then solved with one right-hand side per
  * component.
  *
- * Each time step of the fluid dynamics is split (Lie splitting) into:
- *  - the transport of all the components in physical space by the fluid
- *    velocity, with their source terms, solved with an upwind discontinuous
- *    Galerkin discretization and an implicit BDF time integration
- *    (advance_physical_space());
- *  - the evolution of the moments in phase space (nucleation, growth and
- *    coalescence), applied independently at every degree of freedom
- *    (advance_phase_space()).
+ * Each time step of the fluid dynamics, from t^n to t^{n+1}, is split (Lie
+ * splitting) into the following steps, run by solve_linear_system() once the
+ * fluid velocity at t^{n+1} is solved:
+ *  1. the transport of the scalars in physical space by the fluid velocity,
+ *     with their source terms, solved with an upwind discontinuous Galerkin
+ *     discretization and an implicit BDF time integration
+ *     (advance_scalars_physical_space());
+ *  2. the transport of the moments in physical space, with the same
+ *     discretization and their source terms (advance_moments_physical_space());
+ *  3. the evolution in phase space, independently at every degree of freedom
+ *     (advance_phase_space()), skipped when nucleation, growth and
+ *     coalescence are all disabled:
+ *     - the scalars keep their values at the end of step 1 during the whole
+ *       phase-space step;
+ *     - the moments at the end of step 2 are evolved by the nucleation, growth
+ *       and coalescence, whose rates may depend on these scalars;
+ *     - if the process couples the scalars to the particles, the scalars are
+ *       then updated with the change of the moments (e.g. the free lipids
+ *       consumed by the lipid nanoparticles).
+ *
+ * Steps 1 and 2 are independent: the right-hand sides of all the components
+ * are assembled from their values at the beginning of the time step, so their
+ * order does not change the solution. Both must precede step 3. The time step
+ * ends with the phase-space evolution, so that the moments of every degree of
+ * freedom with particles are rebuilt from a quadrature at the end of every
+ * time step, and that the scalars include the mass exchanged with the
+ * particles.
  *
  * The transport is linear in the components, since the fluid velocity is
  * given. The QMOM physics is therefore driven by the linear solver strategy:
@@ -45,6 +65,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/qmom_field_function.h>
 #include <solvers/qmom_scratch_data.h>
+#include <solvers/qmom_source_terms.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -152,11 +173,15 @@ public:
   percolate_time_vectors() override;
 
   /**
-   * @brief Postprocess the auxiliary physics results. Post-processing this case implies
-   * the calculation of all derived quantities using the solution vector of the
-   * physics. It does not concern the output of the solution using the
-   * DataOutObject, which is accomplished through the attach_solution_to_output
-   * function
+   * @brief Calculate the L2 error of every component, if an analytical
+   * solution is given.
+   *
+   * The errors are written to a file and, if the analytical solution is
+   * verbose, printed. The output of the solution itself is done by
+   * attach_solution_to_output().
+   *
+   * @param[in] first_iteration Whether this is the first call, in which case
+   * the errors are not calculated.
    */
   void
   postprocess(bool first_iteration) override;
@@ -221,25 +246,30 @@ public:
   gather_tables() override;
 
   /**
-   * @brief Distribute the DoFs, allocate the vectors and the transport
-   * matrix, and register the DoFHandler and the mapping of the QMOM physics
-   * in the multiphysics interface. The solution vectors are not registered.
+   * @brief Distribute the DoFs and allocate the vectors and the transport
+   * matrix.
+   *
+   * The DoFHandler and the mapping of the QMOM physics are registered in the
+   * multiphysics interface, but not the solution vectors.
    */
   void
   setup_dofs() override;
 
   /**
-   * @brief Interpolate the initial conditions of the "QMOM" subsection of the
-   * "initial conditions" at the support points of the element, component by
-   * component.
+   * @brief Interpolate the initial conditions of every component.
+   *
+   * They are given in the "QMOM" subsection of the "initial conditions" and
+   * are interpolated at the support points of the element.
    */
   void
   set_initial_conditions() override;
 
   /**
    * @brief Update the time of the Dirichlet boundary conditions if they are
-   * time-dependent. The boundary conditions are imposed weakly, through the
-   * upwind fluxes, so there are no constraints to rebuild.
+   * time-dependent.
+   *
+   * The boundary conditions are imposed weakly, through the upwind fluxes, so
+   * there are no constraints to rebuild.
    */
   void
   update_boundary_conditions() override;
@@ -252,10 +282,15 @@ public:
   setup_preconditioner() override;
 
   /**
-   * @brief Advance the components over the current time step with Lie
-   * splitting:
-   * transport in physical space, then evolution in phase space. This is the
-   * last function called by the linear solver strategy.
+   * @brief Advance the components over the current time step with the Lie
+   * splitting.
+   *
+   * The scalars and then the moments are transported in physical space. If
+   * nucleation, growth or coalescence is enabled, the moments then evolve in
+   * phase space with the scalars at the end of their transport, which ends
+   * with the update of the scalars coupled to the particles (see the
+   * description of the file). This is the last function
+   * called by the linear solver strategy.
    */
   void
   solve_linear_system() override;
@@ -332,9 +367,10 @@ public:
   }
 
   /**
-   * @brief Get the constraints. They are empty, since the discontinuous
-   * Galerkin discretization has no hanging-node constraints and imposes the
-   * boundary conditions weakly.
+   * @brief Get the constraints, which are empty.
+   *
+   * The discontinuous Galerkin discretization has no hanging-node constraints
+   * and imposes the boundary conditions weakly.
    *
    * @return Reference to the constraints.
    */
@@ -365,17 +401,20 @@ public:
 
 private:
   /**
-   * @brief Assemble the transport matrix shared by all the components: BDF
-   * time derivative, upwind discontinuous Galerkin advection and outflow
-   * through the boundaries, with the present velocity of the fluid dynamics.
+   * @brief Assemble the transport matrix shared by all the components.
+   *
+   * It contains the BDF time derivative, the upwind discontinuous Galerkin
+   * advection and the outflow through the boundaries, with the present
+   * velocity of the fluid dynamics.
    */
   void
   assemble_system_matrix() override;
 
   /**
-   * @brief Assemble the right-hand side of every component: previous
-   * solutions of the BDF time derivative, source term and inflow through the
-   * Dirichlet boundaries.
+   * @brief Assemble the right-hand side of every component.
+   *
+   * It contains the previous solutions of the BDF time derivative, the source
+   * term and the inflow through the Dirichlet boundaries.
    */
   void
   assemble_system_rhs() override;
@@ -429,28 +468,88 @@ private:
   setup_amg();
 
   /**
-   * @brief Transport all the components in physical space over the time
-   * step: solve the transport system of every component, with the matrix and
-   * the right-hand sides assembled by the linear solver strategy.
+   * @brief Transport the moments in physical space over the time step (step 2
+   * of the time step, see the description of the file).
+   *
+   * The transport system of every moment is solved, with the matrix and the
+   * right-hand sides assembled by the linear solver strategy.
    */
   void
-  advance_physical_space();
+  advance_moments_physical_space();
 
   /**
-   * @brief Evolve the moments in phase space (nucleation, growth and
-   * coalescence) at every locally owned degree of freedom. Not implemented
-   * yet: the moments are constant in phase space.
+   * @brief Transport the scalars in physical space over the time step (step 1
+   * of the time step, see the description of the file).
    *
-   * @param[in] time_step Duration of the phase-space step.
+   * The transport system of every scalar is solved, with the right-hand sides
+   * assembled by the linear solver strategy. Does nothing without scalars.
+   *
+   * The scalars are only advected for now, so they share the matrix and the
+   * preconditioner of the moments. They are separated from the moments so
+   * that terms that only apply to the scalars (e.g. diffusion) can be added.
+   * Their source in physical space is the source term of the "QMOM"
+   * subsection of the source term subsection: the exchange of mass with the
+   * particles is applied at the end of the phase-space step (see
+   * advance_phase_space()).
+   */
+  void
+  advance_scalars_physical_space();
+
+  /**
+   * @brief Solve the transport system of one component over the time step.
+   *
+   * The system is solved with the transport matrix and its preconditioner,
+   * for the correction of the present solution of the component: the
+   * right-hand side is the residual of that solution, and the tolerance is
+   * relative to it.
+   *
+   * @param[in] component Component to transport: scalar component if
+   * component < n_scalars, moment M_{component - n_scalars} otherwise.
+   * @param[in] rescale_metric Metric used to rescale the residual, given by
+   * get_residual_rescale_metric().
+   */
+  void
+  solve_component_transport(const unsigned int component,
+                            const double       rescale_metric);
+
+  /**
+   * @brief Evolve the moments in phase space at every locally owned degree of
+   * freedom, with QMOMKit.
+   *
+   * This is step 3 of the time step (see the description of the file).
+   *
+   * It starts from the scalars and the moments at the end of their transport
+   * in physical space.
+   *
+   * Since the element is nodal and discontinuous, the moments of a degree of
+   * freedom are the moments at its support point: they are inverted into a
+   * quadrature (Wheeler algorithm), the quadrature is evolved over the time
+   * step by qmomkit::advance_qmom_phase_space(), and the moments are rebuilt
+   * from it. The mechanisms are the callbacks of phase_space_source_terms:
+   * the nodes move with the growth rate, the coalescence changes the moments
+   * through the quadrature and the nucleation adds particles. They receive
+   * the scalars of the degree of freedom, which are constant during the step.
+   * Degrees of freedom without particles (zeroth moment below the cutoff of
+   * QMOMKit) only change by nucleation. If the process couples the scalars
+   * to the particles (QMOMSourceTerms::scalars_are_coupled()), the scalars
+   * are then updated with the change of the moments (e.g. the free lipids
+   * consumed by the lipid nanoparticles). If the moments of any degree of
+   * freedom cannot be inverted or evolved, or if its particles consume more
+   * of a scalar than available, an exception is thrown on every rank.
+   *
+   * @param[in] time_step Duration of the phase-space step, which ends at the
+   * current time of the simulation control.
    */
   void
   advance_phase_space(const double time_step);
 
   /**
    * @brief Compute the L2 error of every component with respect to the
-   * analytical solution at the current time.
+   * analytical solution at the current time, relative to the L2 norm of that
+   * solution. The error of a component whose analytical solution vanishes is
+   * absolute.
    *
-   * @return L2 errors, ordered as the components.
+   * @return Relative L2 errors, ordered as the components.
    */
   std::vector<double>
   calculate_L2_errors();
@@ -463,6 +562,10 @@ private:
 
   /// Total number of components: n_scalars + n_moments
   const unsigned int n_components;
+
+  /// Whether growth, nucleation, or coalescence is enabled. Otherwise, the
+  /// phase-space step is skipped.
+  const bool has_phase_space_mechanism;
 
   /// Multiphysics interface, used to get the fluid velocity
   MultiphysicsInterface<dim> *multiphysics;
@@ -507,6 +610,9 @@ private:
   /// errors
   std::shared_ptr<QMOMFieldFunction<dim>> analytical_solution;
 
+  /// Growth, nucleation and coalescence of the particles in phase space
+  std::unique_ptr<QMOMSourceTerms> phase_space_source_terms;
+
   /// Locally owned and locally relevant DoFs
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
@@ -538,7 +644,8 @@ private:
   /// components, for mesh adaptation and checkpointing
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
-  /// L2 errors of the components with respect to the analytical solution
+  /// Relative L2 errors of the components with respect to the analytical
+  /// solution
   ConvergenceTable error_table;
 };
 

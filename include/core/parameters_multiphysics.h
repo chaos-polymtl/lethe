@@ -15,6 +15,8 @@
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/utilities.h>
 
+#include <magic_enum.hpp>
+
 #include <memory>
 #include <numbers>
 #include <string>
@@ -536,6 +538,20 @@ namespace Parameters
     /// Enable the adaptive number of quadrature nodes
     bool enable_adaptive_node_count = false;
 
+    /// Relative tolerance of the adaptive Runge-Kutta integration of the
+    /// trajectories of the quadrature nodes in phase space [-], which QMOMKit
+    /// uses for the growth. It is tighter than the QMOMKit default (1e-6) to
+    /// reduce the contribution of the growth to the overall error.
+    double relative_tolerance = 1e-8;
+
+    /// Absolute tolerance of the adaptive Runge-Kutta integration of the
+    /// trajectories of the quadrature nodes in phase space, in the unit of
+    /// their positions. It must be much smaller than these positions, so that
+    /// the relative tolerance controls the integration. The QMOMKit default
+    /// (1e-9) is too large when the positions are lengths, such as particle
+    /// sizes of the order of a nanometre.
+    double absolute_tolerance = 1e-20;
+
     /**
      * @brief Declare the "phase evolution" subsection.
      *
@@ -554,8 +570,170 @@ namespace Parameters
   };
 
   /**
+   * @brief Model of the growth rate G: the velocity of the particle size xi in
+   * phase space in m/s.
+   *
+   * The model types are:
+   *  - constant: G = a, with a the growth coefficient in m/s;
+   *  - linear: G = a xi, with a the growth coefficient in 1/s;
+   *  - function: G is a function expression of the size xi and of the time t.
+   */
+  enum class QMOMGrowthModel : std::int8_t
+  {
+    constant,
+    linear,
+    function
+  };
+
+  /**
+   * @brief Parameters of the growth of the particles in phase space, declared
+   * in the "growth" subsection of the "QMOM" subsection.
+   *
+   * They are only used if the growth is enabled. All of them are in SI units.
+   */
+  struct QMOMGrowth
+  {
+    /// Model of the growth rate
+    QMOMGrowthModel model = QMOMGrowthModel::constant;
+
+    /// Coefficient of the constant [m/s] and linear [1/s] growth models
+    double growth_coefficient = 0.;
+
+    /// Expression of the growth rate [m/s] of the function model, in terms of
+    /// the particle size xi [m] and of the time t [s]
+    std::string function_expression = "0";
+
+    /**
+     * @brief Declare the "growth" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "growth" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Model of the nucleation rate J: the number of particles created per
+   * unit volume and time, in 1/(m^3 s).
+   *
+   * The model types are:
+   *  - constant: J = a, with a the nucleation coefficient in 1/(m^3 s);
+   *  - function: J is a function expression of the time t.
+   */
+  enum class QMOMNucleationModel : std::int8_t
+  {
+    constant,
+    function
+  };
+
+  /**
+   * @brief Parameters of the nucleation of the particles in phase space,
+   * declared in the "nucleation" subsection of the "QMOM" subsection.
+   *
+   * They are only used if the nucleation is enabled. All of them are in SI
+   * units.
+   */
+  struct QMOMNucleation
+  {
+    /// Model of the nucleation rate
+    QMOMNucleationModel model = QMOMNucleationModel::constant;
+
+    /// Coefficient of the constant nucleation model [1/(m^3 s)]
+    double nucleation_coefficient = 0.;
+
+    /// Expression of the nucleation rate [1/(m^3 s)] of the function model, in
+    /// terms of the time t [s]
+    std::string function_expression = "0";
+
+    /// Mean size of the nuclei [m], whose sizes follow a log-normal
+    /// distribution
+    double nuclei_mean_size = 1e-9;
+
+    /// Standard deviation of the size of the nuclei [m]
+    double nuclei_standard_deviation = 1e-10;
+
+    /**
+     * @brief Declare the "nucleation" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "nucleation" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Model of the coalescence kernel beta: the rate at which two
+   * particles of sizes xi_1 and xi_2 merge, in m^3/s.
+   *
+   * The model types are:
+   *  - constant: beta = a, with a the coalescence coefficient in m^3/s;
+   *  - function: beta is a function expression of the sizes xi_1 and xi_2 of
+   *    the two particles and of the time t.
+   */
+  enum class QMOMCoalescenceModel : std::int8_t
+  {
+    constant,
+    function
+  };
+
+  /**
+   * @brief Parameters of the coalescence of the particles in phase space,
+   * declared in the "coalescence" subsection of the "QMOM" subsection.
+   *
+   * They are only used if the coalescence is enabled. All of them are in SI
+   * units.
+   */
+  struct QMOMCoalescence
+  {
+    /// Model of the coalescence kernel
+    QMOMCoalescenceModel model = QMOMCoalescenceModel::constant;
+
+    /// Coefficient of the constant coalescence model [m^3/s]
+    double coalescence_coefficient = 0.;
+
+    /// Expression of the coalescence kernel [m^3/s] of the function model, in
+    /// terms of the sizes xi_1 and xi_2 [m] of the two particles and of the
+    /// time t [s]
+    std::string function_expression = "0";
+
+    /**
+     * @brief Declare the "coalescence" subsection.
+     *
+     * @param[in,out] prm Parameter handler.
+     */
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    /**
+     * @brief Parse the "coalescence" subsection.
+     *
+     * @param[in] prm Parameter handler.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Operator splitting scheme between the physical-space transport (T)
-   * and the phase-space evolution (P) of the QMOM fields:
+   * and the phase-space evolution (P) of the QMOM fields.
+   *
+   * The schemes are:
    *  - lie: T then P over the whole time step (first order);
    *  - strang: P over half a time step, T, then P over half a time step
    *    (second order).
@@ -577,24 +755,47 @@ namespace Parameters
   };
 
   /**
+   * @brief Scalars imposed by the lipid nanoparticle production process.
+   *
+   * They are in the order of the QMOM scalars, and their names are the names
+   * of the scalars, used for the output:
+   *  - ethanol_concentration: ethanol (organic phase) concentration [kg/m^3];
+   *  - free_lipids_concentration: concentration of the lipids that are not in
+   *    the particles [kg/m^3].
+   */
+  enum class QMOMLipidNanoparticleScalar : std::int8_t
+  {
+    ethanol_concentration,
+    free_lipids_concentration
+  };
+
+  /**
+   * @brief Get the index of a scalar of the lipid nanoparticle production in
+   * the QMOM scalars.
+   *
+   * @param[in] scalar Scalar of the process.
+   *
+   * @return Index of the scalar, which is also its QMOM component.
+   */
+  constexpr unsigned int
+  get_scalar_index(const QMOMLipidNanoparticleScalar scalar)
+  {
+    return static_cast<unsigned int>(magic_enum::enum_integer(scalar));
+  }
+
+  /**
    * @brief Process parameters of the lipid nanoparticle (LNP) production
-   * simulated with the QMOM physics: operating conditions, properties of the
-   * aqueous and organic phases and shape factor of the particles. All of them
-   * are in SI units.
+   * simulated with the QMOM physics.
+
+   * All of them are in SI units. The default lipid properties are those of
+   cholesterol and the default kinetic parameters are those of Shin et al.,
+   Chem. Eng. J. 523 (2025).
    */
   struct QMOMLipidNanoparticleProduction
   {
     /* Operating conditions */
     /// Operating temperature [K]
     double operating_temperature = 295.;
-    /// Ratio of the aqueous phase flow rate to the organic phase flow rate [-]
-    double flow_rate_ratio = 3.;
-    /// Total flow rate of the aqueous and organic phases [m^3/s]
-    double total_flow_rate = 2e-7;
-    /// Mixing time scale of the aqueous and organic phases [s]
-    double mixing_time_scale = 0.;
-    /// Initial lipid concentration in the organic phase [mol/m^3]
-    double initial_concentration_organic = 1.;
     /// Ion concentration in the mixture [mol/m^3]
     double ion_concentration_mixture = 1.;
 
@@ -624,6 +825,35 @@ namespace Parameters
     /// Volume shape factor of the particles, pi/6 for spheres [-]
     double shape_factor = std::numbers::pi / 6.;
 
+    /* Lipid */
+    /// Molecular volume of the lipid [m^3]
+    double lipid_molecular_volume = 6.0173e-28;
+    /// Molar mass of the lipid [kg/mol]
+    double lipid_molar_mass = 0.38665;
+    /// Density of the lipid in the particles [kg/m^3]
+    double lipid_density = 1067.;
+
+    /* Nucleation */
+    /// Pre-exponential factor of the nucleation rate [1/(m^3 s)]
+    double nucleation_factor = 2e22;
+    /// Surface tension (interfacial energy) of the particles [N/m]
+    double surface_tension = 1e-2;
+    /// Standard deviation of the size of the nuclei [m]
+    double nuclei_standard_deviation = 2e-10;
+
+    /* Growth */
+    /// Kinetic coefficient of the growth rate [m^3/(kg s)]
+    double growth_factor = 11.88;
+
+    /* Coalescence */
+    /// Steric hindrance factor of the PEG lipids, the maximum attachment
+    /// efficiency [-]
+    double peg_factor = 6.5e-6;
+    /// Surface potential of the particles [V]
+    double surface_potential = 1e-2;
+    /// Hamaker constant of the particles in the mixture [J]
+    double hamaker_constant = 1.7e-22;
+
     /**
      * @brief Declare the "lipid nanoparticle production" subsection.
      *
@@ -642,9 +872,10 @@ namespace Parameters
   };
 
   /**
-   * @brief Physical constants used by the QMOM physics, in SI units. Their
-   * default values are the exact values of the 2019 redefinition of the SI
-   * base units and the CODATA 2022 value of the vacuum permittivity.
+   * @brief Physical constants used by the QMOM physics, in SI units.
+   *
+   * Their default values are the exact values of the 2019 redefinition of the
+   * SI base units and the CODATA 2022 value of the vacuum permittivity.
    */
   struct QMOMPhysicalConstants
   {
@@ -676,8 +907,10 @@ namespace Parameters
 
   /**
    * @brief Family of the particle size distribution from which the moments of
-   * the QMOM physics are computed. The moments of each family are computed
-   * analytically by QMOMKit:
+   * the QMOM physics are computed.
+   *
+   * The moments of each family are computed analytically by QMOMKit. The
+   * families and their parameters are:
    *  - none: no particles, all the moments are zero;
    *  - normal: mean and standard deviation;
    *  - lognormal: mean and standard deviation of the logarithm of the size;
@@ -713,7 +946,9 @@ namespace Parameters
 
   /**
    * @brief Functions of space and time prescribing the fields of the QMOM
-   * physics. They are used for the initial conditions, the Dirichlet boundary
+   * physics.
+   *
+   * They are used for the initial conditions, the Dirichlet boundary
    * conditions, the analytical solution and the source terms.
    *
    * The scalars are given as a list of expressions, one per scalar, in the
@@ -747,8 +982,9 @@ namespace Parameters
 
     /**
      * @brief Declare the "scalars" and "distribution" subsections in the
-     * current subsection. All the functions are zero and the distribution type
-     * is none by default.
+     * current subsection.
+     *
+     * All the functions are zero and the distribution type is none by default.
      *
      * @param[in,out] prm Parameter handler.
      */
@@ -757,10 +993,12 @@ namespace Parameters
 
     /**
      * @brief Parse the "scalars" and "distribution" subsections of the
-     * current subsection. The number of components of each function is the
-     * number of expressions separated by semicolons. The number of expressions
-     * of the distribution must be one (the number density) plus the number of
-     * parameters of its family.
+     * current subsection.
+     *
+     * The number of components of each function is the number of expressions
+     * separated by semicolons. The number of expressions of the distribution
+     * must be one (the number density) plus the number of parameters of its
+     * family.
      *
      * @param[in,out] prm Parameter handler.
      */
@@ -797,10 +1035,10 @@ namespace Parameters
     unsigned int number_of_moments = 4;
 
     /// Number of nodes of the quadrature that uses all the transported
-    /// moments. N nodes are defined by 2N moments, so an odd number of moments
-    /// requires one more node. It is computed from number_of_moments when the
-    /// parameters are parsed.
-    unsigned int number_of_nodes = (number_of_moments + 1) / 2;
+    /// moments. N nodes are defined by 2N moments, so number_of_moments must be
+    /// even. It is computed from number_of_moments when the parameters are
+    /// parsed.
+    unsigned int number_of_nodes = number_of_moments / 2;
 
     /// Operator splitting scheme between the physical-space transport and
     /// the phase-space evolution
@@ -812,6 +1050,18 @@ namespace Parameters
     bool enable_coalescence = false;
     /// Include the growth source
     bool enable_growth = false;
+
+    /// Growth of the particles ("growth" subsection), used if enable_growth
+    /// is true
+    QMOMGrowth growth;
+
+    /// Nucleation of the particles ("nucleation" subsection), used if
+    /// enable_nucleation is true
+    QMOMNucleation nucleation;
+
+    /// Coalescence of the particles ("coalescence" subsection), used if
+    /// enable_coalescence is true
+    QMOMCoalescence coalescence;
 
     /// Phase-space evolution ("phase evolution" subsection)
     QMOMPhaseEvolution phase_evolution;
